@@ -1,8 +1,12 @@
+import 'package:example/common/tu_chong_repository.dart';
+import 'package:example/custom_image_demo.dart';
+import 'package:example/image_crop_demo.dart';
 import 'package:example/image_demo.dart';
 import 'package:example/image_list_demo.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import "package:oktoast/oktoast.dart";
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() => runApp(MyApp());
 
@@ -51,15 +55,27 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Page> pages = new List<Page>();
+  TuChongRepository listSourceRepository;
   @override
   void initState() {
     // TODO: implement initState
-    pages.add(Page(PageType.Image,
-        "cache network image to local, and clear by condition"));
-    pages.add(Page(PageType.ImageList, "show cache image in list"));
+    pages.add(Page(
+        PageType.Image,
+        "cache image"
+        "save to photo Library"
+        "image border,shape,borderRadius"));
+    pages.add(Page(PageType.List, "show cache image in list"));
+    pages
+        .add(Page(PageType.Custom, "show image with loading,failed,animation"));
+    pages.add(Page(PageType.Crop, "show how to crop image"));
 
     ///clear cache image from 7 days before
     clearDiskCachedImages(duration: Duration(days: 7));
+    listSourceRepository = new TuChongRepository();
+    listSourceRepository.loadData().then((result) {
+      if (listSourceRepository.length > 0)
+        _imageTestUrl = listSourceRepository.first.imageUrl;
+    });
     super.initState();
   }
 
@@ -67,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     // TODO: implement build
 
-    return ListView.builder(
+    var content = ListView.builder(
       itemBuilder: (_, int index) {
         var page = pages[index];
         var pageWidget;
@@ -95,8 +111,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 case PageType.Image:
                   pageWidget = new ImageDemo();
                   break;
-                case PageType.ImageList:
+                case PageType.List:
                   pageWidget = ImageListDemo();
+                  break;
+                case PageType.Custom:
+                  pageWidget = CustomImageDemo();
+                  break;
+                case PageType.Crop:
+                  pageWidget = ImageCropDemo();
                   break;
               }
               Navigator.push(context,
@@ -109,6 +131,20 @@ class _MyHomePageState extends State<MyHomePage> {
       },
       itemCount: pages.length,
     );
+
+    return MaterialApp(
+      builder: (c, w) {
+        ScreenUtil.instance =
+            ScreenUtil(width: 750, height: 1334, allowFontScaling: true)
+              ..init(c);
+        var data = MediaQuery.of(context);
+        return MediaQuery(
+          data: data.copyWith(textScaleFactor: 1.0),
+          child: w,
+        );
+      },
+      home: content,
+    );
   }
 }
 
@@ -118,7 +154,8 @@ class Page {
   Page(this.type, this.description);
 }
 
-enum PageType {
-  Image,
-  ImageList,
-}
+enum PageType { Image, List, Custom, Crop }
+
+String _imageTestUrl;
+String get imageTestUrl =>
+    _imageTestUrl ?? "https://photo.tuchong.com/4870004/f/298584322.jpg";

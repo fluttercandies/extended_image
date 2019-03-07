@@ -1,6 +1,8 @@
 import 'package:example/common/tu_chong_repository.dart';
+import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:math';
 
 import 'package:oktoast/oktoast.dart';
@@ -24,10 +26,7 @@ class _ImageDemoState extends State<ImageDemo> {
 
   @override
   Widget build(BuildContext context) {
-//    var index = tuChongRepository.length;
-//
-//    var url = randomUrl(index);
-    var url = "https://photo.tuchong.com/4870004/f/298584322.jpg";
+    var url = imageTestUrl;
     return Material(
       child: Column(
         children: <Widget>[
@@ -72,7 +71,7 @@ class _ImageDemoState extends State<ImageDemo> {
                 child: Container(),
               ),
               RaisedButton(
-                child: Text("save image to photo"),
+                child: Text("save network image to photo"),
                 onPressed: () {
                   saveNetworkImageToPhoto(url).then((bool done) {
                     showToast(done ? "save succeed" : "save failed",
@@ -86,8 +85,8 @@ class _ImageDemoState extends State<ImageDemo> {
             child: Align(
               child: ExtendedImage.network(
                 url,
-                width: 200.0,
-                height: 200.0,
+                width: ScreenUtil.instance.setWidth(400),
+                height: ScreenUtil.instance.setWidth(400),
                 fit: BoxFit.fill,
                 cache: true,
                 border: Border.all(color: Colors.red, width: 1.0),

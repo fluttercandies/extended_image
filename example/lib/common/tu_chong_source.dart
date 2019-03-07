@@ -1,5 +1,7 @@
 import 'dart:convert' show json;
 
+import 'package:flutter/material.dart';
+
 class TuChongSource {
   int counts;
   bool is_history;
@@ -82,7 +84,13 @@ class TuChongItem {
     return images != null && images.length > 0;
   }
 
+  Size get imageSize {
+    if (!hasImage) return Size(0, 0);
+    return Size(images[0].width.toDouble(), images[0].height.toDouble());
+  }
+
   String get imageUrl {
+    if (!hasImage) return "";
     return "https://photo.tuchong.com/" +
         images[0].user_id.toString() +
         "/f/" +
@@ -333,5 +341,3 @@ class ImageItem {
     return '{"height": $height,"img_id": $img_id,"user_id": $user_id,"width": $width,"description": ${description != null ? '${json.encode(description)}' : 'null'},"excerpt": ${excerpt != null ? '${json.encode(excerpt)}' : 'null'},"title": ${title != null ? '${json.encode(title)}' : 'null'}}';
   }
 }
-
-

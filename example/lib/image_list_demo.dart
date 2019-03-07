@@ -10,17 +10,10 @@ class ImageListDemo extends StatefulWidget {
 }
 
 class _ImageListDemoState extends State<ImageListDemo> {
-  TuChongRepository listSourceRepository;
-  @override
-  void initState() {
-    // TODO: implement initState
-    listSourceRepository = new TuChongRepository();
-    super.initState();
-  }
-
+  TuChongRepository listSourceRepository = TuChongRepository();
   @override
   void dispose() {
-    listSourceRepository?.dispose();
+    listSourceRepository.dispose();
     // TODO: implement dispose
     super.dispose();
   }
@@ -38,8 +31,6 @@ class _ImageListDemoState extends State<ImageListDemo> {
               ListConfig<TuChongItem>(
                   itemBuilder: ItemBuilder.itemBuilder,
                   sourceList: listSourceRepository,
-//                    showGlowLeading: false,
-//                    showGlowTrailing: false,
                   padding: EdgeInsets.all(0.0)),
             ),
           )
