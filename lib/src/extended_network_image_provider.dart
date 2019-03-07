@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui show instantiateImageCodec, Codec;
-
-import 'package:extended_image/src/extended_image.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/extended_network_image_utils.dart';
 import 'package:flutter/foundation.dart';
@@ -60,6 +58,7 @@ class ExtendedNetworkImageProvider
 
   Future<ui.Codec> _loadAsync(ExtendedNetworkImageProvider key) async {
     assert(key == this);
+    print("_loadAsync");
     loadState = LoadState.loading;
     final md5Key = toMd5(key.url);
     ui.Codec reuslt;
