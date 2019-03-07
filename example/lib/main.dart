@@ -1,4 +1,5 @@
-import 'package:example/cache_image_demo.dart';
+import 'package:example/image_demo.dart';
+import 'package:example/image_list_demo.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import "package:oktoast/oktoast.dart";
@@ -53,12 +54,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     // TODO: implement initState
-    pages.add(Page(PageType.CacheImage,
+    pages.add(Page(PageType.Image,
         "cache network image to local, and clear by condition"));
-    pages.add(Page(PageType.CustomImage, "custom image when image is loaded"));
+    pages.add(Page(PageType.ImageList, "show cache image in list"));
 
-    ///clear cache image
-    clearDiskCachedImages();
+    ///clear cache image from 7 days before
+    clearDiskCachedImages(duration: Duration(days: 7));
     super.initState();
   }
 
@@ -91,10 +92,11 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             onTap: () {
               switch (page.type) {
-                case PageType.CacheImage:
-                  pageWidget = new CacheImageDemo();
+                case PageType.Image:
+                  pageWidget = new ImageDemo();
                   break;
-                case PageType.CustomImage:
+                case PageType.ImageList:
+                  pageWidget = ImageListDemo();
                   break;
               }
               Navigator.push(context,
@@ -117,6 +119,6 @@ class Page {
 }
 
 enum PageType {
-  CacheImage,
-  CustomImage,
+  Image,
+  ImageList,
 }

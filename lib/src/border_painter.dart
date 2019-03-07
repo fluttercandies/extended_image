@@ -49,19 +49,28 @@ class BorderPainter extends CustomPainter {
                 borderRadius.resolve(TextDirection.ltr).toRRect(outputRect));
         break;
     }
-    if (clipPath != null) {
-      canvas.save();
-      canvas.clipPath(clipPath);
+//    if (clipPath != null) {
+//      canvas.save();
+//      canvas.clipPath(clipPath);
+//    }
+//
+//    if (clipPath != null) canvas.restore();
+
+    switch (shape) {
+      case BoxShape.circle:
+        border.paint(canvas, outputRect, shape: shape);
+        break;
+      case BoxShape.rectangle:
+        if (borderRadius != null)
+          border.paint(canvas, outputRect,
+              shape: shape, borderRadius: borderRadius);
+        break;
     }
-
-    if (clipPath != null) canvas.restore();
-
-    border.paint(canvas, outputRect, shape: shape, borderRadius: borderRadius);
   }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     // TODO: implement shouldRepaint
-    return null;
+    return true;
   }
 }

@@ -7,52 +7,51 @@ import 'package:oktoast/oktoast.dart';
 
 import 'common/tu_chong_repository.dart';
 
-class CacheImageDemo extends StatefulWidget {
+class ImageDemo extends StatefulWidget {
   @override
-  _CacheImageDemoState createState() => _CacheImageDemoState();
+  _ImageDemoState createState() => _ImageDemoState();
 }
 
-class _CacheImageDemoState extends State<CacheImageDemo> {
+class _ImageDemoState extends State<ImageDemo> {
   TuChongRepository tuChongRepository;
-
+  BoxShape boxShape;
   @override
   void initState() {
+    boxShape = BoxShape.circle;
     // TODO: implement initState
     super.initState();
-    tuChongRepository = TuChongRepository();
-    tuChongRepository.loadMore().whenComplete(() {
-      setState(() {});
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    var index = tuChongRepository.length;
-
-    var url = randomUrl(index);
+//    var index = tuChongRepository.length;
+//
+//    var url = randomUrl(index);
+    var url = "https://photo.tuchong.com/4870004/f/298584322.jpg";
     return Material(
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("CacheImageDemo"),
+            title: Text("ImageDemo"),
           ),
           Row(
             children: <Widget>[
               RaisedButton(
-                child: Text("random image"),
+                child: Text("BoxShape.circle"),
                 onPressed: () {
-                  setState(() {});
+                  setState(() {
+                    boxShape = BoxShape.circle;
+                  });
                 },
               ),
               Expanded(
                 child: Container(),
               ),
               RaisedButton(
-                child: Text("save image to photo"),
+                child: Text("BoxShape.rectangle"),
                 onPressed: () {
-                  saveNetworkImageToPhoto(url).then((bool done) {
-                    showToast(done ? "save succeed" : "save failed",
-                        position: ToastPosition(align: Alignment.topCenter));
+                  setState(() {
+                    boxShape = BoxShape.rectangle;
                   });
                 },
               ),
@@ -72,31 +71,33 @@ class _CacheImageDemoState extends State<CacheImageDemo> {
               Expanded(
                 child: Container(),
               ),
+              RaisedButton(
+                child: Text("save image to photo"),
+                onPressed: () {
+                  saveNetworkImageToPhoto(url).then((bool done) {
+                    showToast(done ? "save succeed" : "save failed",
+                        position: ToastPosition(align: Alignment.topCenter));
+                  });
+                },
+              ),
             ],
           ),
           Expanded(
-            child: index == 0
-                ? Container()
-                : ExtendedImage.network(
-                    url,
-                    width: 200.0,
-                    height: 200.0,
-                    cache: true,
-                  ),
+            child: Align(
+              child: ExtendedImage.network(
+                url,
+                width: 200.0,
+                height: 200.0,
+                fit: BoxFit.fill,
+                cache: true,
+                border: Border.all(color: Colors.red, width: 1.0),
+                shape: boxShape,
+                borderRadius: BorderRadius.all(Radius.circular(30.0)),
+              ),
+            ),
           )
         ],
       ),
     );
-  }
-
-  String randomUrl(int index) {
-    if (index <= 0) return "";
-    var rng = new Random();
-    var imageindex = rng.nextInt(index);
-    String url = "";
-    if (imageindex > -1) {
-      url = tuChongRepository[imageindex].imageUrl;
-    }
-    return url;
   }
 }
