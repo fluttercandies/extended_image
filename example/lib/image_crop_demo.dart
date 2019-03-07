@@ -17,6 +17,8 @@ class _ImageCropDemoState extends State<ImageCropDemo>
     with AutomaticKeepAliveClientMixin {
   TuChongRepository listSourceRepository = TuChongRepository();
 
+  //if you can't konw image size before build,
+  //you have to handle copy when image is loaded.
   bool konwImageSize = true;
   @override
   void dispose() {
@@ -172,6 +174,12 @@ class CropImage extends StatelessWidget {
           case LoadState.loading:
             return Container(
               color: Colors.grey,
+              alignment: Alignment.center,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.0,
+                valueColor:
+                    AlwaysStoppedAnimation(Theme.of(context).primaryColor),
+              ),
             );
 //            return Image.asset(
 //              "assets/loading1.gif",
@@ -179,6 +187,11 @@ class CropImage extends StatelessWidget {
 //            );
             break;
           case LoadState.completed:
+            //if you can't konw image size before build,
+            //you have to handle copy when image is loaded.
+            //so maybe your loading widget size will not the same
+            //as image actual size, set returnLoadStateChangedWidget=true,so that
+            //image will not to be limited by size which you set for ExtendedImage first time.
             state.returnLoadStateChangedWidget = !konwImageSize;
 
             return GestureDetector(
@@ -240,28 +253,32 @@ class CropImage extends StatelessWidget {
           soucreRect: Rect.fromLTWH(
               0.0, 0.0, image.width.toDouble(), 4 * image.width / 3));
       if (n >= 4) {
-        imageWidget = Stack(
-          children: <Widget>[
-            Positioned(
-              top: 0.0,
-              right: 0.0,
-              left: 0.0,
-              bottom: 0.0,
-              child: imageWidget,
-            ),
-            Positioned(
-              bottom: 0.0,
-              right: 0.0,
-              child: Container(
-                padding: EdgeInsets.all(2.0),
-                color: Colors.grey,
-                child: const Text(
-                  "long image",
-                  style: TextStyle(color: Colors.white, fontSize: 10.0),
-                ),
+        imageWidget = Container(
+          width: num300,
+          height: num400,
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                top: 0.0,
+                right: 0.0,
+                left: 0.0,
+                bottom: 0.0,
+                child: imageWidget,
               ),
-            )
-          ],
+              Positioned(
+                bottom: 0.0,
+                right: 0.0,
+                child: Container(
+                  padding: EdgeInsets.all(2.0),
+                  color: Colors.grey,
+                  child: const Text(
+                    "long image",
+                    style: TextStyle(color: Colors.white, fontSize: 10.0),
+                  ),
+                ),
+              )
+            ],
+          ),
         );
       }
       return imageWidget;
@@ -287,28 +304,32 @@ class CropImage extends StatelessWidget {
       );
 
       if (n <= 1 / 4) {
-        imageWidget = Stack(
-          children: <Widget>[
-            Positioned(
-              top: 0.0,
-              right: 0.0,
-              left: 0.0,
-              bottom: 0.0,
-              child: imageWidget,
-            ),
-            Positioned(
-              bottom: 0.0,
-              right: 0.0,
-              child: Container(
-                padding: EdgeInsets.all(2.0),
-                color: Colors.grey,
-                child: const Text(
-                  "long image",
-                  style: TextStyle(color: Colors.white, fontSize: 10.0),
-                ),
+        imageWidget = Container(
+          width: num400,
+          height: num300,
+          child: Stack(
+            children: <Widget>[
+              Positioned(
+                top: 0.0,
+                right: 0.0,
+                left: 0.0,
+                bottom: 0.0,
+                child: imageWidget,
               ),
-            )
-          ],
+              Positioned(
+                bottom: 0.0,
+                right: 0.0,
+                child: Container(
+                  padding: EdgeInsets.all(2.0),
+                  color: Colors.grey,
+                  child: const Text(
+                    "long image",
+                    style: TextStyle(color: Colors.white, fontSize: 10.0),
+                  ),
+                ),
+              )
+            ],
+          ),
         );
       }
       return imageWidget;

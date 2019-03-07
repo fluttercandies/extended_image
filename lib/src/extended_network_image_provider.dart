@@ -35,7 +35,7 @@ class ExtendedNetworkImageProvider
   /// The HTTP headers that will be used with [HttpClient.get] to fetch image from network.
   final Map<String, String> headers;
 
-  LoadState loadState = LoadState.loading;
+  bool loadFailed = false;
 
   @override
   ImageStreamCompleter load(ExtendedNetworkImageProvider key) {
@@ -58,14 +58,16 @@ class ExtendedNetworkImageProvider
 
   Future<ui.Codec> _loadAsync(ExtendedNetworkImageProvider key) async {
     assert(key == this);
-    print("_loadAsync");
-    loadState = LoadState.loading;
     final md5Key = toMd5(key.url);
     ui.Codec reuslt;
     if (cache) {
       try {
         var data = await _loadCache(key, md5Key);
-        if (data != null) reuslt = await ui.instantiateImageCodec(data);
+        if (data != null) {
+          loadFailed = false;
+          reuslt = await ui.instantiateImageCodec(data);
+        }
+        ;
       } catch (e) {
         print(e);
       }
@@ -74,16 +76,17 @@ class ExtendedNetworkImageProvider
     if (reuslt == null) {
       try {
         var data = await _loadNetwork(key);
-        if (data != null) reuslt = await ui.instantiateImageCodec(data);
+        if (data != null) {
+          loadFailed = false;
+          reuslt = await ui.instantiateImageCodec(data);
+        }
       } catch (e) {
         print(e);
       }
     }
 
-    //failed
-    loadState = (reuslt != null ? LoadState.completed : LoadState.failed);
-
     if (reuslt == null) {
+      loadFailed = true;
       reuslt = await ui.instantiateImageCodec(kTransparentImage);
     }
 

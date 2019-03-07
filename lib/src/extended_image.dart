@@ -558,8 +558,14 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   }
 
   void _resolveImage([bool rebuild = false]) {
+    var extendedNetworkImageProvider =
+        widget.image as ExtendedNetworkImageProvider;
+
     if (rebuild) {
       widget.image.evict();
+      if (extendedNetworkImageProvider != null) {
+        extendedNetworkImageProvider.loadFailed = false;
+      }
     }
 
     final ImageStream newStream = widget.image.resolve(
@@ -569,13 +575,12 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
                 : null));
     assert(newStream != null);
 
-    if (widget.image is ExtendedNetworkImageProvider &&
+    if (extendedNetworkImageProvider != null &&
         _imageInfo != null &&
         !rebuild &&
         _imageStream?.key == newStream?.key) {
       setState(() {
-        (widget.image as ExtendedNetworkImageProvider).loadState =
-            LoadState.completed;
+        _loadState = LoadState.completed;
       });
     }
 
@@ -588,12 +593,9 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
       if (imageInfo != null) {
         ExtendedNetworkImageProvider extendedNetworkImageProvider =
             widget.image as ExtendedNetworkImageProvider;
-        if (extendedNetworkImageProvider != null) {
-          //if (synchronousCall)
-          _loadState = extendedNetworkImageProvider.loadState;
-          _loadState = LoadState.completed;
-          //else
-          // _loadState = LoadState.completed;
+        if (extendedNetworkImageProvider != null &&
+            extendedNetworkImageProvider.loadFailed) {
+          _loadState = LoadState.failed;
         } else {
           _loadState = LoadState.completed;
         }
@@ -603,21 +605,6 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
 
       //_loadState = LoadState.completed;
       _imageInfo = imageInfo;
-
-//      if (imageInfo != null) {
-//        imageInfo.image.toByteData().then((data) {
-//          setState(() {
-//            if (ListEquality()
-//                .equals(data.buffer.asUint8List(), kTransparentImage)) {
-//              _loadState = LoadState.failed;
-//            } else {
-//              _loadState = LoadState.completed;
-//            }
-//          });
-//        });
-//      } else {
-//        _loadState = LoadState.failed;
-//      }
     });
   }
 
@@ -672,7 +659,6 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
       return current;
     }
 
-    print(_loadState);
     if (current == null) {
       if (widget.enableLoadState) {
         switch (_loadState) {

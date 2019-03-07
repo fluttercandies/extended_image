@@ -86,7 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
     var content = ListView.builder(
       itemBuilder: (_, int index) {
         var page = pages[index];
-        var pageWidget;
+
+        Widget pageWidget;
         return Container(
           margin: EdgeInsets.all(20.0),
           child: GestureDetector(
@@ -98,11 +99,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   (index + 1).toString() +
                       "." +
                       page.type.toString().replaceAll("PageType.", ""),
-                  style: TextStyle(inherit: false),
+                  //style: TextStyle(inherit: false),
                 ),
                 Text(
                   page.description,
-                  style: TextStyle(inherit: false, color: Colors.grey),
+                  style: TextStyle(color: Colors.grey),
                 )
               ],
             ),
@@ -119,6 +120,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   break;
                 case PageType.Crop:
                   pageWidget = ImageCropDemo();
+                  break;
+                default:
                   break;
               }
               Navigator.push(context,
@@ -140,7 +143,24 @@ class _MyHomePageState extends State<MyHomePage> {
         var data = MediaQuery.of(context);
         return MediaQuery(
           data: data.copyWith(textScaleFactor: 1.0),
-          child: w,
+          child: Scaffold(
+            body: w,
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                clearDiskCachedImages().then((bool done) {
+                  showToast(done ? "clear succeed" : "clear failed",
+                      position: ToastPosition(align: Alignment.center));
+                });
+              },
+              child: Text(
+                "clear cache",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  inherit: false,
+                ),
+              ),
+            ),
+          ),
         );
       },
       home: content,
@@ -154,7 +174,12 @@ class Page {
   Page(this.type, this.description);
 }
 
-enum PageType { Image, List, Custom, Crop }
+enum PageType {
+  Image,
+  List,
+  Custom,
+  Crop,
+}
 
 String _imageTestUrl;
 String get imageTestUrl =>
