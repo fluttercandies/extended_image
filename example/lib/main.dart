@@ -3,6 +3,7 @@ import 'package:example/custom_image_demo.dart';
 import 'package:example/crop_image_demo.dart';
 import 'package:example/image_demo.dart';
 import 'package:example/image_list_demo.dart';
+import 'package:example/paint_image_demo.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import "package:oktoast/oktoast.dart";
@@ -68,6 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
     pages
         .add(Page(PageType.Custom, "show image with loading,failed,animation"));
     pages.add(Page(PageType.Crop, "show how to crop image"));
+    pages.add(Page(PageType.Paint, "show how to paint any thing before image"));
 
     ///clear cache image from 7 days before
     clearDiskCachedImages(duration: Duration(days: 7));
@@ -121,6 +123,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 case PageType.Crop:
                   pageWidget = CropImageDemo();
                   break;
+                case PageType.Paint:
+                  pageWidget = PaintImageDemo();
+                  break;
                 default:
                   break;
               }
@@ -147,6 +152,10 @@ class _MyHomePageState extends State<MyHomePage> {
             body: w,
             floatingActionButton: FloatingActionButton(
               onPressed: () {
+                ///clear memory
+                clearMemoryImageCache();
+
+                ///clear local cahced
                 clearDiskCachedImages().then((bool done) {
                   showToast(done ? "clear succeed" : "clear failed",
                       position: ToastPosition(align: Alignment.center));
@@ -179,6 +188,7 @@ enum PageType {
   List,
   Custom,
   Crop,
+  Paint,
 }
 
 String _imageTestUrl;

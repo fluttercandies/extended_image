@@ -1,3 +1,4 @@
+import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui show Image;
 
@@ -24,7 +25,9 @@ class ExtendedRenderImage extends RenderBox {
       TextDirection textDirection,
       bool invertColors = false,
       FilterQuality filterQuality = FilterQuality.low,
-      Rect soucreRect})
+      Rect soucreRect,
+      this.afterPaintImage,
+      this.beforePaintImage})
       : assert(scale != null),
         assert(repeat != null),
         assert(alignment != null),
@@ -47,6 +50,12 @@ class ExtendedRenderImage extends RenderBox {
         _soucreRect = soucreRect {
     _updateColorFilter();
   }
+
+  ///you can paint anything if you want before paint image.
+  final BeforePaintImage beforePaintImage;
+
+  ///you can paint anything if you want after paint image.
+  final AfterPaintImage afterPaintImage;
 
   ///input rect, you can use this to crop image.
   Rect _soucreRect;
@@ -338,7 +347,9 @@ class ExtendedRenderImage extends RenderBox {
         flipHorizontally: _flipHorizontally,
         invertColors: invertColors,
         filterQuality: _filterQuality,
-        customSoucreRect: _soucreRect);
+        customSoucreRect: _soucreRect,
+        beforePaintImage: beforePaintImage,
+        afterPaintImage: afterPaintImage);
   }
 
   @override
@@ -369,20 +380,25 @@ class ExtendedRenderImage extends RenderBox {
   }
 }
 
-void paintExtendedImage(
-    {@required Canvas canvas,
-    @required Rect rect,
-    @required ui.Image image,
-    double scale = 1.0,
-    ColorFilter colorFilter,
-    BoxFit fit,
-    Alignment alignment = Alignment.center,
-    Rect centerSlice,
-    ImageRepeat repeat = ImageRepeat.noRepeat,
-    bool flipHorizontally = false,
-    bool invertColors = false,
-    FilterQuality filterQuality = FilterQuality.low,
-    Rect customSoucreRect}) {
+void paintExtendedImage({
+  @required Canvas canvas,
+  @required Rect rect,
+  @required ui.Image image,
+  double scale = 1.0,
+  ColorFilter colorFilter,
+  BoxFit fit,
+  Alignment alignment = Alignment.center,
+  Rect centerSlice,
+  ImageRepeat repeat = ImageRepeat.noRepeat,
+  bool flipHorizontally = false,
+  bool invertColors = false,
+  FilterQuality filterQuality = FilterQuality.low,
+  Rect customSoucreRect,
+  //you can paint anything if you want before paint image.
+  BeforePaintImage beforePaintImage,
+  //you can paint anything if you want after paint image.
+  AfterPaintImage afterPaintImage,
+}) {
   assert(canvas != null);
   assert(image != null);
   assert(alignment != null);
@@ -442,6 +458,11 @@ void paintExtendedImage(
     canvas.scale(-1.0, 1.0);
     canvas.translate(dx, 0.0);
   }
+
+  if (beforePaintImage != null) {
+    beforePaintImage(canvas: canvas, image: image, rect: destinationRect);
+  }
+
   if (centerSlice == null) {
     final Rect sourceRect = customSoucreRect ??
         alignment.inscribe(sourceSize, Offset.zero & inputSize);
@@ -454,6 +475,11 @@ void paintExtendedImage(
         in _generateImageTileRects(rect, destinationRect, repeat))
       canvas.drawImageNine(image, centerSlice, tileRect, paint);
   }
+
+  if (afterPaintImage != null) {
+    afterPaintImage(canvas: canvas, image: image, rect: destinationRect);
+  }
+
   if (needSave) canvas.restore();
 }
 

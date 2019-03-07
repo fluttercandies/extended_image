@@ -1,21 +1,18 @@
-import 'package:example/common/tu_chong_repository.dart';
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'dart:math';
-
 import 'package:oktoast/oktoast.dart';
+import 'dart:ui' as ui show Image;
 
-import 'common/tu_chong_repository.dart';
-
-class ImageDemo extends StatefulWidget {
+class PaintImageDemo extends StatefulWidget {
   @override
-  _ImageDemoState createState() => _ImageDemoState();
+  _PaintImageDemoState createState() => _PaintImageDemoState();
 }
 
-class _ImageDemoState extends State<ImageDemo> {
+class _PaintImageDemoState extends State<PaintImageDemo> {
   BoxShape boxShape;
+
   @override
   void initState() {
     boxShape = BoxShape.circle;
@@ -88,9 +85,17 @@ class _ImageDemoState extends State<ImageDemo> {
                 height: ScreenUtil.instance.setWidth(400),
                 fit: BoxFit.fill,
                 cache: true,
-                border: Border.all(color: Colors.red, width: 1.0),
-                shape: boxShape,
-                borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                beforePaintImage: (
+                    {@required Canvas canvas,
+                    @required Rect rect,
+                    @required ui.Image image}) {},
+                afterPaintImage: (
+                    {@required Canvas canvas,
+                    @required Rect rect,
+                    @required ui.Image image}) {
+                  canvas.drawLine(rect.topLeft, rect.bottomRight,
+                      Paint()..color = Colors.red);
+                },
               ),
             ),
           )

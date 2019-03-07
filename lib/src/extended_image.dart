@@ -37,6 +37,8 @@ class ExtendedImage extends StatefulWidget {
     this.borderRadius,
     this.clipBehavior: Clip.antiAlias,
     this.enableLoadState: false,
+    this.beforePaintImage,
+    this.afterPaintImage,
     BoxConstraints constraints,
   })  : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
@@ -70,6 +72,8 @@ class ExtendedImage extends StatefulWidget {
       this.borderRadius,
       this.clipBehavior: Clip.antiAlias,
       this.enableLoadState: true,
+      this.beforePaintImage,
+      this.afterPaintImage,
       BoxConstraints constraints})
       : image = ExtendedNetworkImageProvider(url,
             scale: scale, headers: headers, cache: cache),
@@ -120,6 +124,8 @@ class ExtendedImage extends StatefulWidget {
       this.borderRadius,
       this.clipBehavior: Clip.antiAlias,
       this.enableLoadState: false,
+      this.beforePaintImage,
+      this.afterPaintImage,
       BoxConstraints constraints})
       : image = FileImage(file, scale: scale),
         assert(alignment != null),
@@ -281,6 +287,8 @@ class ExtendedImage extends StatefulWidget {
       this.borderRadius,
       this.clipBehavior: Clip.antiAlias,
       this.enableLoadState: false,
+      this.beforePaintImage,
+      this.afterPaintImage,
       BoxConstraints constraints})
       : image = scale != null
             ? ExactAssetImage(name,
@@ -332,6 +340,8 @@ class ExtendedImage extends StatefulWidget {
       this.borderRadius,
       this.clipBehavior: Clip.antiAlias,
       this.enableLoadState: false,
+      this.beforePaintImage,
+      this.afterPaintImage,
       BoxConstraints constraints})
       : image = MemoryImage(bytes, scale: scale),
         assert(alignment != null),
@@ -342,6 +352,16 @@ class ExtendedImage extends StatefulWidget {
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
         super(key: key);
+
+  ///you can paint anything if you want before paint image.
+  ///it's to used in  [ExtendedRawImage]
+  ///and [ExtendedRenderImage]
+  final BeforePaintImage beforePaintImage;
+
+  ///you can paint anything if you want after paint image.
+  ///it's to used in  [ExtendedRawImage]
+  ///and [ExtendedRenderImage]
+  final AfterPaintImage afterPaintImage;
 
   ///whether has loading or failed state
   ///default is false
@@ -692,6 +712,8 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
               matchTextDirection: widget.matchTextDirection,
               invertColors: _invertColors,
               filterQuality: widget.filterQuality,
+              beforePaintImage: widget.beforePaintImage,
+              afterPaintImage: widget.afterPaintImage,
             );
             break;
           case LoadState.failed:
@@ -721,6 +743,8 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
           matchTextDirection: widget.matchTextDirection,
           invertColors: _invertColors,
           filterQuality: widget.filterQuality,
+          beforePaintImage: widget.beforePaintImage,
+          afterPaintImage: widget.afterPaintImage,
         );
       }
     }
