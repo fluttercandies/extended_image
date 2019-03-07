@@ -36,6 +36,7 @@ class ExtendedImage extends StatefulWidget {
     this.shape,
     this.borderRadius,
     this.clipBehavior: Clip.antiAlias,
+    this.enableLoadState: false,
     BoxConstraints constraints,
   })  : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
@@ -68,6 +69,7 @@ class ExtendedImage extends StatefulWidget {
       this.border,
       this.borderRadius,
       this.clipBehavior: Clip.antiAlias,
+      this.enableLoadState: true,
       BoxConstraints constraints})
       : image = ExtendedNetworkImageProvider(url,
             scale: scale, headers: headers, cache: cache),
@@ -117,6 +119,7 @@ class ExtendedImage extends StatefulWidget {
       this.border,
       this.borderRadius,
       this.clipBehavior: Clip.antiAlias,
+      this.enableLoadState: false,
       BoxConstraints constraints})
       : image = FileImage(file, scale: scale),
         assert(alignment != null),
@@ -277,6 +280,7 @@ class ExtendedImage extends StatefulWidget {
       this.border,
       this.borderRadius,
       this.clipBehavior: Clip.antiAlias,
+      this.enableLoadState: false,
       BoxConstraints constraints})
       : image = scale != null
             ? ExactAssetImage(name,
@@ -327,6 +331,7 @@ class ExtendedImage extends StatefulWidget {
       this.border,
       this.borderRadius,
       this.clipBehavior: Clip.antiAlias,
+      this.enableLoadState: false,
       BoxConstraints constraints})
       : image = MemoryImage(bytes, scale: scale),
         assert(alignment != null),
@@ -337,6 +342,12 @@ class ExtendedImage extends StatefulWidget {
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
         super(key: key);
+
+  ///whether has loading or failed state
+  ///default is false
+  ///but network image is true
+  ///better to set it's true when your image is big and take some time to ready
+  final bool enableLoadState;
 
   /// {@macro flutter.clipper.clipBehavior}
   final Clip clipBehavior;
@@ -503,15 +514,22 @@ class ExtendedImage extends StatefulWidget {
   final bool excludeFromSemantics;
 
   @override
-  _extendedImageState createState() => _extendedImageState();
+  _ExtendedImageState createState() => _ExtendedImageState();
 }
 
-class _extendedImageState extends State<ExtendedImage> with ReloadAction {
+class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   LoadState _loadState;
   ImageStream _imageStream;
   ImageInfo _imageInfo;
   bool _isListeningToStream = false;
   bool _invertColors;
+
+  @override
+  void initState() {
+    returnLoadStateChangedWidget = false;
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() {
@@ -539,16 +557,28 @@ class _extendedImageState extends State<ExtendedImage> with ReloadAction {
     super.reassemble();
   }
 
-  void _resolveImage([bool rebuild = true]) {
+  void _resolveImage([bool rebuild = false]) {
     if (rebuild) {
       widget.image.evict();
     }
+
     final ImageStream newStream = widget.image.resolve(
         createLocalImageConfiguration(context,
             size: widget.width != null && widget.height != null
                 ? Size(widget.width, widget.height)
                 : null));
     assert(newStream != null);
+
+    if (widget.image is ExtendedNetworkImageProvider &&
+        _imageInfo != null &&
+        !rebuild &&
+        _imageStream?.key == newStream?.key) {
+      setState(() {
+        (widget.image as ExtendedNetworkImageProvider).loadState =
+            LoadState.completed;
+      });
+    }
+
     _updateSourceStream(newStream, rebuild: rebuild);
   }
 
@@ -559,8 +589,11 @@ class _extendedImageState extends State<ExtendedImage> with ReloadAction {
         ExtendedNetworkImageProvider extendedNetworkImageProvider =
             widget.image as ExtendedNetworkImageProvider;
         if (extendedNetworkImageProvider != null) {
+          //if (synchronousCall)
           _loadState = extendedNetworkImageProvider.loadState;
-          if (_loadState == null) print(extendedNetworkImageProvider.url);
+          _loadState = LoadState.completed;
+          //else
+          // _loadState = LoadState.completed;
         } else {
           _loadState = LoadState.completed;
         }
@@ -591,7 +624,7 @@ class _extendedImageState extends State<ExtendedImage> with ReloadAction {
   // Update _imageStream to newStream, and moves the stream listener
   // registration from the old stream to the new stream (if a listener was
   // registered).
-  void _updateSourceStream(ImageStream newStream, {bool rebuild = true}) {
+  void _updateSourceStream(ImageStream newStream, {bool rebuild = false}) {
     if (_imageStream?.key == newStream?.key) return;
     //print("_updateSourceStream");
     if (_isListeningToStream) _imageStream.removeListener(_handleImageChanged);
@@ -629,54 +662,80 @@ class _extendedImageState extends State<ExtendedImage> with ReloadAction {
   @override
   Widget build(BuildContext context) {
     Widget current;
-    if (widget.loadStateChanged != null)
-      current = widget.loadStateChanged(_loadState, this);
-    //print("Build $_loadState");
+
+    if (widget.loadStateChanged != null) {
+      returnLoadStateChangedWidget = false;
+      current = widget.loadStateChanged(this);
+    }
+
+    if (current != null && returnLoadStateChangedWidget) {
+      return current;
+    }
+
+    print(_loadState);
     if (current == null) {
-      switch (_loadState) {
-        case LoadState.loading:
-          current = Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                _getIndicator(context),
-                SizedBox(
-                  width: 5.0,
-                ),
-                Text("loading...")
-              ],
-            ),
-          );
-          break;
-        case LoadState.completed:
-          current = ExtendedRawImage(
-            image: _imageInfo?.image,
-            width: widget.width,
-            height: widget.height,
-            scale: _imageInfo?.scale ?? 1.0,
-            color: widget.color,
-            colorBlendMode: widget.colorBlendMode,
-            fit: widget.fit,
-            alignment: widget.alignment,
-            repeat: widget.repeat,
-            centerSlice: widget.centerSlice,
-            matchTextDirection: widget.matchTextDirection,
-            invertColors: _invertColors,
-            filterQuality: widget.filterQuality,
-          );
-          break;
-        case LoadState.failed:
-          current = Container(
-            alignment: Alignment.center,
-            child: GestureDetector(
-              onTap: () {
-                reLoadImage();
-              },
-              child: Text("load image falied"),
-            ),
-          );
-          break;
+      if (widget.enableLoadState) {
+        switch (_loadState) {
+          case LoadState.loading:
+            current = Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  _getIndicator(context),
+                  SizedBox(
+                    width: 5.0,
+                  ),
+                  Text("loading...")
+                ],
+              ),
+            );
+            break;
+          case LoadState.completed:
+            current = ExtendedRawImage(
+              image: _imageInfo?.image,
+              width: widget.width,
+              height: widget.height,
+              scale: _imageInfo?.scale ?? 1.0,
+              color: widget.color,
+              colorBlendMode: widget.colorBlendMode,
+              fit: widget.fit,
+              alignment: widget.alignment,
+              repeat: widget.repeat,
+              centerSlice: widget.centerSlice,
+              matchTextDirection: widget.matchTextDirection,
+              invertColors: _invertColors,
+              filterQuality: widget.filterQuality,
+            );
+            break;
+          case LoadState.failed:
+            current = Container(
+              alignment: Alignment.center,
+              child: GestureDetector(
+                onTap: () {
+                  reLoadImage();
+                },
+                child: Text("load image falied"),
+              ),
+            );
+            break;
+        }
+      } else {
+        current = ExtendedRawImage(
+          image: _imageInfo?.image,
+          width: widget.width,
+          height: widget.height,
+          scale: _imageInfo?.scale ?? 1.0,
+          color: widget.color,
+          colorBlendMode: widget.colorBlendMode,
+          fit: widget.fit,
+          alignment: widget.alignment,
+          repeat: widget.repeat,
+          centerSlice: widget.centerSlice,
+          matchTextDirection: widget.matchTextDirection,
+          invertColors: _invertColors,
+          filterQuality: widget.filterQuality,
+        );
       }
     }
 
@@ -748,4 +807,12 @@ class _extendedImageState extends State<ExtendedImage> with ReloadAction {
     // TODO: implement reLoadImage
     _resolveImage(true);
   }
+
+  @override
+  // TODO: implement ExtendedImageInfo
+  ImageInfo get ExtendedImageInfo => _imageInfo;
+
+  @override
+  // TODO: implement ExtendedImageLoadState
+  LoadState get ExtendedImageLoadState => _loadState;
 }

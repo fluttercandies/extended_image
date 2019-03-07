@@ -24,7 +24,7 @@ class ExtendedRenderImage extends RenderBox {
       TextDirection textDirection,
       bool invertColors = false,
       FilterQuality filterQuality = FilterQuality.low,
-      Size inputSize})
+      Rect soucreRect})
       : assert(scale != null),
         assert(repeat != null),
         assert(alignment != null),
@@ -44,12 +44,12 @@ class ExtendedRenderImage extends RenderBox {
         _invertColors = invertColors,
         _textDirection = textDirection,
         _filterQuality = filterQuality,
-        _inputSize = inputSize {
+        _soucreRect = soucreRect {
     _updateColorFilter();
   }
 
-  ///input size, you can use this to crop image.
-  Size _inputSize;
+  ///input rect, you can use this to crop image.
+  Rect _soucreRect;
 
   Alignment _resolvedAlignment;
   bool _flipHorizontally;
@@ -337,7 +337,8 @@ class ExtendedRenderImage extends RenderBox {
         repeat: _repeat,
         flipHorizontally: _flipHorizontally,
         invertColors: invertColors,
-        filterQuality: _filterQuality);
+        filterQuality: _filterQuality,
+        customSoucreRect: _soucreRect);
   }
 
   @override
@@ -381,7 +382,7 @@ void paintExtendedImage(
     bool flipHorizontally = false,
     bool invertColors = false,
     FilterQuality filterQuality = FilterQuality.low,
-    Size customInputSize}) {
+    Rect customSoucreRect}) {
   assert(canvas != null);
   assert(image != null);
   assert(alignment != null);
@@ -442,8 +443,9 @@ void paintExtendedImage(
     canvas.translate(dx, 0.0);
   }
   if (centerSlice == null) {
-    final Rect sourceRect =
+    final Rect sourceRect = customSoucreRect ??
         alignment.inscribe(sourceSize, Offset.zero & inputSize);
+
     for (Rect tileRect
         in _generateImageTileRects(rect, destinationRect, repeat))
       canvas.drawImageRect(image, sourceRect, tileRect, paint);

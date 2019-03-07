@@ -29,7 +29,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
     this.matchTextDirection = false,
     this.invertColors = false,
     this.filterQuality = FilterQuality.low,
-    this.inputSize,
+    this.soucreRect,
   })  : assert(scale != null),
         assert(alignment != null),
         assert(repeat != null),
@@ -148,31 +148,32 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
   ///  * [Paint.invertColors], for the dart:ui implementation.
   final bool invertColors;
 
-  ///input size, you can use this to crop image.
-  final Size inputSize;
+  ///input Rect, you can use this to crop image.
+  ///it work when centerSlice==null
+  final Rect soucreRect;
 
   @override
   ExtendedRenderImage createRenderObject(BuildContext context) {
     assert((!matchTextDirection && alignment is Alignment) ||
         debugCheckHasDirectionality(context));
     return ExtendedRenderImage(
-      image: image,
-      width: width,
-      height: height,
-      scale: scale,
-      color: color,
-      colorBlendMode: colorBlendMode,
-      fit: fit,
-      alignment: alignment,
-      repeat: repeat,
-      centerSlice: centerSlice,
-      matchTextDirection: matchTextDirection,
-      textDirection: matchTextDirection || alignment is! Alignment
-          ? Directionality.of(context)
-          : null,
-      invertColors: invertColors,
-      filterQuality: filterQuality,
-    );
+        image: image,
+        width: width,
+        height: height,
+        scale: scale,
+        color: color,
+        colorBlendMode: colorBlendMode,
+        fit: fit,
+        alignment: alignment,
+        repeat: repeat,
+        centerSlice: centerSlice,
+        matchTextDirection: matchTextDirection,
+        textDirection: matchTextDirection || alignment is! Alignment
+            ? Directionality.of(context)
+            : null,
+        invertColors: invertColors,
+        filterQuality: filterQuality,
+        soucreRect: soucreRect);
   }
 
   @override
