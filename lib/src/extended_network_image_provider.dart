@@ -19,9 +19,23 @@ class ExtendedNetworkImageProvider
   ///
   /// The arguments must not be null.
   ExtendedNetworkImageProvider(this.url,
-      {this.scale = 1.0, this.headers, this.cache: false})
+      {this.scale = 1.0,
+      this.headers,
+      this.cache: false,
+      this.retries = 3,
+      this.timeLimit,
+      this.timeRetry = const Duration(milliseconds: 100)})
       : assert(url != null),
         assert(scale != null);
+
+  ///time Limit to request image
+  final Duration timeLimit;
+
+  ///the time to retry to request
+  final int retries;
+
+  ///the time duration to retry to request
+  final Duration timeRetry;
 
   ///whether cache image to local
   final bool cache;
@@ -124,7 +138,11 @@ class ExtendedNetworkImageProvider
   /// get the image from network.
   Future<Uint8List> _loadNetwork(ExtendedNetworkImageProvider key) async {
     try {
-      Response response = await HttpClientHelper.get(url, headers: headers);
+      Response response = await HttpClientHelper.get(url,
+          headers: headers,
+          timeLimit: key.timeLimit,
+          timeRetry: key.timeRetry,
+          retries: key.retries);
       return response.bodyBytes;
     } catch (e) {}
     return null;
