@@ -3,6 +3,8 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui show instantiateImageCodec, Codec;
 
+import 'package:extended_image/src/extended_image.dart';
+import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/extended_network_image_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -18,7 +20,7 @@ class ExtendedNetworkImageProvider
   /// Creates an object that fetches the image at the given URL.
   ///
   /// The arguments must not be null.
-  const ExtendedNetworkImageProvider(this.url,
+  ExtendedNetworkImageProvider(this.url,
       {this.scale = 1.0, this.headers, this.cache: false})
       : assert(url != null),
         assert(scale != null);
@@ -34,6 +36,8 @@ class ExtendedNetworkImageProvider
 
   /// The HTTP headers that will be used with [HttpClient.get] to fetch image from network.
   final Map<String, String> headers;
+
+  LoadState loadState = LoadState.loading;
 
   @override
   ImageStreamCompleter load(ExtendedNetworkImageProvider key) {
@@ -56,26 +60,35 @@ class ExtendedNetworkImageProvider
 
   Future<ui.Codec> _loadAsync(ExtendedNetworkImageProvider key) async {
     assert(key == this);
-
+    loadState = LoadState.loading;
     final md5Key = toMd5(key.url);
+    ui.Codec reuslt;
     if (cache) {
       try {
         var data = await _loadCache(key, md5Key);
-        if (data != null) return await ui.instantiateImageCodec(data);
+        if (data != null) reuslt = await ui.instantiateImageCodec(data);
       } catch (e) {
         print(e);
       }
     }
 
-    //
-    try {
-      var data = await _loadNetwork(key);
-      if (data != null) return await ui.instantiateImageCodec(data);
-    } catch (e) {
-      print(e);
+    if (reuslt == null) {
+      try {
+        var data = await _loadNetwork(key);
+        if (data != null) reuslt = await ui.instantiateImageCodec(data);
+      } catch (e) {
+        print(e);
+      }
     }
+
     //failed
-    return await ui.instantiateImageCodec(kTransparentImage);
+    loadState = (reuslt != null ? LoadState.completed : LoadState.failed);
+
+    if (reuslt == null) {
+      reuslt = await ui.instantiateImageCodec(kTransparentImage);
+    }
+
+    return reuslt;
   }
 
   ///get the image from cache folder.

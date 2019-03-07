@@ -29,6 +29,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
     this.matchTextDirection = false,
     this.invertColors = false,
     this.filterQuality = FilterQuality.low,
+    this.inputSize,
   })  : assert(scale != null),
         assert(alignment != null),
         assert(repeat != null),
@@ -146,6 +147,9 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
   ///
   ///  * [Paint.invertColors], for the dart:ui implementation.
   final bool invertColors;
+
+  ///input size, you can use this to crop image.
+  final Size inputSize;
 
   @override
   ExtendedRenderImage createRenderObject(BuildContext context) {

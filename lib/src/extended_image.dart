@@ -1,38 +1,48 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:extended_image/src/border_painter.dart';
+import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/extended_network_image_provider.dart';
 import 'package:extended_image/src/extended_raw_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/semantics.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class ExtendedImage extends StatefulWidget {
-  ExtendedImage(
-      {Key key,
-      @required this.image,
-      this.semanticLabel,
-      this.excludeFromSemantics = false,
-      this.width,
-      this.height,
-      this.color,
-      this.colorBlendMode,
-      this.fit,
-      this.alignment = Alignment.center,
-      this.repeat = ImageRepeat.noRepeat,
-      this.centerSlice,
-      this.matchTextDirection = false,
-      this.gaplessPlayback = false,
-      this.filterQuality = FilterQuality.low,
-      this.loadStateChanged,
-      this.border,
-      this.shape,
-      this.borderRadius})
-      : assert(image != null),
+  ExtendedImage({
+    Key key,
+    @required this.image,
+    this.semanticLabel,
+    this.excludeFromSemantics = false,
+    this.width,
+    this.height,
+    this.color,
+    this.colorBlendMode,
+    this.fit,
+    this.alignment = Alignment.center,
+    this.repeat = ImageRepeat.noRepeat,
+    this.centerSlice,
+    this.matchTextDirection = false,
+    this.gaplessPlayback = false,
+    this.filterQuality = FilterQuality.low,
+    this.loadStateChanged,
+    this.border,
+    this.shape,
+    this.borderRadius,
+    this.clipBehavior: Clip.antiAlias,
+    BoxConstraints constraints,
+  })  : assert(image != null),
+        assert(constraints == null || constraints.debugAssertIsValid()),
+        constraints = (width != null || height != null)
+            ? constraints?.tighten(width: width, height: height) ??
+                BoxConstraints.tightFor(width: width, height: height)
+            : constraints,
         super(key: key);
 
   ExtendedImage.network(String url,
@@ -56,10 +66,280 @@ class ExtendedImage extends StatefulWidget {
       this.loadStateChanged,
       this.shape,
       this.border,
-      this.borderRadius})
+      this.borderRadius,
+      this.clipBehavior: Clip.antiAlias,
+      BoxConstraints constraints})
       : image = ExtendedNetworkImageProvider(url,
             scale: scale, headers: headers, cache: cache),
+        assert(constraints == null || constraints.debugAssertIsValid()),
+        constraints = (width != null || height != null)
+            ? constraints?.tighten(width: width, height: height) ??
+                BoxConstraints.tightFor(width: width, height: height)
+            : constraints,
         super(key: key);
+
+  /// Creates a widget that displays an [ImageStream] obtained from a [File].
+  ///
+  /// The [file], [scale], and [repeat] arguments must not be null.
+  ///
+  /// Either the [width] and [height] arguments should be specified, or the
+  /// widget should be placed in a context that sets tight layout constraints.
+  /// Otherwise, the image dimensions will change as the image is loaded, which
+  /// will result in ugly layout changes.
+  ///
+  /// On Android, this may require the
+  /// `android.permission.READ_EXTERNAL_STORAGE` permission.
+  ///
+  /// Use [filterQuality] to change the quality when scaling an image.
+  /// Use the [FilterQuality.low] quality setting to scale the image,
+  /// which corresponds to bilinear interpolation, rather than the default
+  /// [FilterQuality.none] which corresponds to nearest-neighbor.
+  ///
+  /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
+  ExtendedImage.file(File file,
+      {Key key,
+      double scale = 1.0,
+      this.semanticLabel,
+      this.excludeFromSemantics = false,
+      this.width,
+      this.height,
+      this.color,
+      this.colorBlendMode,
+      this.fit,
+      this.alignment = Alignment.center,
+      this.repeat = ImageRepeat.noRepeat,
+      this.centerSlice,
+      this.matchTextDirection = false,
+      this.gaplessPlayback = false,
+      this.filterQuality = FilterQuality.low,
+      this.loadStateChanged,
+      this.shape,
+      this.border,
+      this.borderRadius,
+      this.clipBehavior: Clip.antiAlias,
+      BoxConstraints constraints})
+      : image = FileImage(file, scale: scale),
+        assert(alignment != null),
+        assert(repeat != null),
+        assert(filterQuality != null),
+        assert(matchTextDirection != null),
+        constraints = (width != null || height != null)
+            ? constraints?.tighten(width: width, height: height) ??
+                BoxConstraints.tightFor(width: width, height: height)
+            : constraints,
+        super(key: key);
+
+  /// Creates a widget that displays an [ImageStream] obtained from an asset
+  /// bundle. The key for the image is given by the `name` argument.
+  ///
+  /// The `package` argument must be non-null when displaying an image from a
+  /// package and null otherwise. See the `Assets in packages` section for
+  /// details.
+  ///
+  /// If the `bundle` argument is omitted or null, then the
+  /// [DefaultAssetBundle] will be used.
+  ///
+  /// By default, the pixel-density-aware asset resolution will be attempted. In
+  /// addition:
+  ///
+  /// * If the `scale` argument is provided and is not null, then the exact
+  /// asset specified will be used. To display an image variant with a specific
+  /// density, the exact path must be provided (e.g. `images/2x/cat.png`).
+  ///
+  /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
+  //
+  // TODO(ianh): Implement the following (see ../services/image_resolution.dart):
+  // ///
+  // /// * If [width] and [height] are both specified, and [scale] is not, then
+  // ///   size-aware asset resolution will be attempted also, with the given
+  // ///   dimensions interpreted as logical pixels.
+  // ///
+  // /// * If the images have platform, locale, or directionality variants, the
+  // ///   current platform, locale, and directionality are taken into account
+  // ///   during asset resolution as well.
+  ///
+  /// The [name] and [repeat] arguments must not be null.
+  ///
+  /// Either the [width] and [height] arguments should be specified, or the
+  /// widget should be placed in a context that sets tight layout constraints.
+  /// Otherwise, the image dimensions will change as the image is loaded, which
+  /// will result in ugly layout changes.
+  ///
+  /// Use [filterQuality] to change the quality when scaling an image.
+  /// Use the [FilterQuality.low] quality setting to scale the image,
+  /// which corresponds to bilinear interpolation, rather than the default
+  /// [FilterQuality.none] which corresponds to nearest-neighbor.
+  ///
+  /// {@tool sample}
+  ///
+  /// Suppose that the project's `pubspec.yaml` file contains the following:
+  ///
+  /// ```yaml
+  /// flutter:
+  ///   assets:
+  ///     - images/cat.png
+  ///     - images/2x/cat.png
+  ///     - images/3.5x/cat.png
+  /// ```
+  /// {@end-tool}
+  ///
+  /// On a screen with a device pixel ratio of 2.0, the following widget would
+  /// render the `images/2x/cat.png` file:
+  ///
+  /// ```dart
+  /// Image.asset('images/cat.png')
+  /// ```
+  ///
+  /// This corresponds to the file that is in the project's `images/2x/`
+  /// directory with the name `cat.png` (the paths are relative to the
+  /// `pubspec.yaml` file).
+  ///
+  /// On a device with a 4.0 device pixel ratio, the `images/3.5x/cat.png` asset
+  /// would be used. On a device with a 1.0 device pixel ratio, the
+  /// `images/cat.png` resource would be used.
+  ///
+  /// The `images/cat.png` image can be omitted from disk (though it must still
+  /// be present in the manifest). If it is omitted, then on a device with a 1.0
+  /// device pixel ratio, the `images/2x/cat.png` image would be used instead.
+  ///
+  ///
+  /// ## Assets in packages
+  ///
+  /// To create the widget with an asset from a package, the [package] argument
+  /// must be provided. For instance, suppose a package called `my_icons` has
+  /// `icons/heart.png` .
+  ///
+  /// {@tool sample}
+  /// Then to display the image, use:
+  ///
+  /// ```dart
+  /// Image.asset('icons/heart.png', package: 'my_icons')
+  /// ```
+  /// {@end-tool}
+  ///
+  /// Assets used by the package itself should also be displayed using the
+  /// [package] argument as above.
+  ///
+  /// If the desired asset is specified in the `pubspec.yaml` of the package, it
+  /// is bundled automatically with the app. In particular, assets used by the
+  /// package itself must be specified in its `pubspec.yaml`.
+  ///
+  /// A package can also choose to have assets in its 'lib/' folder that are not
+  /// specified in its `pubspec.yaml`. In this case for those images to be
+  /// bundled, the app has to specify which ones to include. For instance a
+  /// package named `fancy_backgrounds` could have:
+  ///
+  /// ```
+  /// lib/backgrounds/background1.png
+  /// lib/backgrounds/background2.png
+  /// lib/backgrounds/background3.png
+  /// ```
+  ///
+  /// To include, say the first image, the `pubspec.yaml` of the app should
+  /// specify it in the assets section:
+  ///
+  /// ```yaml
+  ///  assets:
+  ///    - packages/fancy_backgrounds/backgrounds/background1.png
+  /// ```
+  ///
+  /// The `lib/` is implied, so it should not be included in the asset path.
+  ///
+  ///
+  /// See also:
+  ///
+  ///  * [AssetImage], which is used to implement the behavior when the scale is
+  ///    omitted.
+  ///  * [ExactAssetImage], which is used to implement the behavior when the
+  ///    scale is present.
+  ///  * <https://flutter.io/assets-and-images/>, an introduction to assets in
+  ///    Flutter.
+  ExtendedImage.asset(String name,
+      {Key key,
+      AssetBundle bundle,
+      this.semanticLabel,
+      this.excludeFromSemantics = false,
+      double scale,
+      this.width,
+      this.height,
+      this.color,
+      this.colorBlendMode,
+      this.fit,
+      this.alignment = Alignment.center,
+      this.repeat = ImageRepeat.noRepeat,
+      this.centerSlice,
+      this.matchTextDirection = false,
+      this.gaplessPlayback = false,
+      String package,
+      this.filterQuality = FilterQuality.low,
+      this.loadStateChanged,
+      this.shape,
+      this.border,
+      this.borderRadius,
+      this.clipBehavior: Clip.antiAlias,
+      BoxConstraints constraints})
+      : image = scale != null
+            ? ExactAssetImage(name,
+                bundle: bundle, scale: scale, package: package)
+            : AssetImage(name, bundle: bundle, package: package),
+        assert(alignment != null),
+        assert(repeat != null),
+        assert(matchTextDirection != null),
+        constraints = (width != null || height != null)
+            ? constraints?.tighten(width: width, height: height) ??
+                BoxConstraints.tightFor(width: width, height: height)
+            : constraints,
+        super(key: key);
+
+  /// Creates a widget that displays an [ImageStream] obtained from a [Uint8List].
+  ///
+  /// The [bytes], [scale], and [repeat] arguments must not be null.
+  ///
+  /// Either the [width] and [height] arguments should be specified, or the
+  /// widget should be placed in a context that sets tight layout constraints.
+  /// Otherwise, the image dimensions will change as the image is loaded, which
+  /// will result in ugly layout changes.
+  ///
+  /// Use [filterQuality] to change the quality when scaling an image.
+  /// Use the [FilterQuality.low] quality setting to scale the image,
+  /// which corresponds to bilinear interpolation, rather than the default
+  /// [FilterQuality.none] which corresponds to nearest-neighbor.
+  ///
+  /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
+  ExtendedImage.memory(Uint8List bytes,
+      {Key key,
+      double scale = 1.0,
+      this.semanticLabel,
+      this.excludeFromSemantics = false,
+      this.width,
+      this.height,
+      this.color,
+      this.colorBlendMode,
+      this.fit,
+      this.alignment = Alignment.center,
+      this.repeat = ImageRepeat.noRepeat,
+      this.centerSlice,
+      this.matchTextDirection = false,
+      this.gaplessPlayback = false,
+      this.filterQuality = FilterQuality.low,
+      this.loadStateChanged,
+      this.shape,
+      this.border,
+      this.borderRadius,
+      this.clipBehavior: Clip.antiAlias,
+      BoxConstraints constraints})
+      : image = MemoryImage(bytes, scale: scale),
+        assert(alignment != null),
+        assert(repeat != null),
+        assert(matchTextDirection != null),
+        constraints = (width != null || height != null)
+            ? constraints?.tighten(width: width, height: height) ??
+                BoxConstraints.tightFor(width: width, height: height)
+            : constraints,
+        super(key: key);
+
+  /// {@macro flutter.clipper.clipBehavior}
+  final Clip clipBehavior;
 
   /// The shape to fill the background [color], [gradient], and [image] into and
   /// to cast as the [boxShadow].
@@ -121,6 +401,8 @@ class ExtendedImage extends StatefulWidget {
   /// Consider using [fit] to adapt the image's rendering to fit the given width
   /// and height if the exact image dimensions are not known in advance.
   final double height;
+
+  final BoxConstraints constraints;
 
   /// If non-null, this color is blended with each image pixel using [colorBlendMode].
   final Color color;
@@ -221,10 +503,10 @@ class ExtendedImage extends StatefulWidget {
   final bool excludeFromSemantics;
 
   @override
-  ExtendedImageState createState() => ExtendedImageState();
+  _extendedImageState createState() => _extendedImageState();
 }
 
-class ExtendedImageState extends State<ExtendedImage> {
+class _extendedImageState extends State<ExtendedImage> with ReloadAction {
   LoadState _loadState;
   ImageStream _imageStream;
   ImageInfo _imageInfo;
@@ -258,28 +540,51 @@ class ExtendedImageState extends State<ExtendedImage> {
   }
 
   void _resolveImage([bool rebuild = true]) {
+    if (rebuild) {
+      widget.image.evict();
+    }
     final ImageStream newStream = widget.image.resolve(
         createLocalImageConfiguration(context,
             size: widget.width != null && widget.height != null
                 ? Size(widget.width, widget.height)
                 : null));
     assert(newStream != null);
-    _updateSourceStream(newStream);
+    _updateSourceStream(newStream, rebuild: rebuild);
   }
 
   void _handleImageChanged(ImageInfo imageInfo, bool synchronousCall) {
+    //print("_handleImageChanged : synchronousCall $synchronousCall");
     setState(() {
       if (imageInfo != null) {
-        imageInfo.image.toByteData().then((data) {
-          if (ListEquality()
-              .equals(data.buffer.asUint8List(), kTransparentImage)) {
-            _loadState = LoadState.failed;
-          } else {
-            _loadState = LoadState.completed;
-          }
-        });
+        ExtendedNetworkImageProvider extendedNetworkImageProvider =
+            widget.image as ExtendedNetworkImageProvider;
+        if (extendedNetworkImageProvider != null) {
+          _loadState = extendedNetworkImageProvider.loadState;
+          if (_loadState == null) print(extendedNetworkImageProvider.url);
+        } else {
+          _loadState = LoadState.completed;
+        }
+      } else {
+        _loadState = LoadState.failed;
       }
+
+      //_loadState = LoadState.completed;
       _imageInfo = imageInfo;
+
+//      if (imageInfo != null) {
+//        imageInfo.image.toByteData().then((data) {
+//          setState(() {
+//            if (ListEquality()
+//                .equals(data.buffer.asUint8List(), kTransparentImage)) {
+//              _loadState = LoadState.failed;
+//            } else {
+//              _loadState = LoadState.completed;
+//            }
+//          });
+//        });
+//      } else {
+//        _loadState = LoadState.failed;
+//      }
     });
   }
 
@@ -288,7 +593,7 @@ class ExtendedImageState extends State<ExtendedImage> {
   // registered).
   void _updateSourceStream(ImageStream newStream, {bool rebuild = true}) {
     if (_imageStream?.key == newStream?.key) return;
-
+    //print("_updateSourceStream");
     if (_isListeningToStream) _imageStream.removeListener(_handleImageChanged);
 
     if (!widget.gaplessPlayback || rebuild) {
@@ -300,10 +605,6 @@ class ExtendedImageState extends State<ExtendedImage> {
 
     _imageStream = newStream;
     if (_isListeningToStream) _imageStream.addListener(_handleImageChanged);
-  }
-
-  resolveImage() {
-    _resolveImage(true);
   }
 
   void _listenToStream() {
@@ -327,17 +628,17 @@ class ExtendedImageState extends State<ExtendedImage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget image;
+    Widget current;
     if (widget.loadStateChanged != null)
-      image = widget.loadStateChanged(_loadState, this);
-
-    if (image == null) {
+      current = widget.loadStateChanged(_loadState, this);
+    //print("Build $_loadState");
+    if (current == null) {
       switch (_loadState) {
         case LoadState.loading:
-          image = Container(
-            width: widget.width,
-            height: widget.height,
+          current = Container(
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 _getIndicator(context),
                 SizedBox(
@@ -349,7 +650,7 @@ class ExtendedImageState extends State<ExtendedImage> {
           );
           break;
         case LoadState.completed:
-          image = ExtendedRawImage(
+          current = ExtendedRawImage(
             image: _imageInfo?.image,
             width: widget.width,
             height: widget.height,
@@ -366,37 +667,59 @@ class ExtendedImageState extends State<ExtendedImage> {
           );
           break;
         case LoadState.failed:
-          image = Container(
-            width: widget.width,
-            height: widget.height,
+          current = Container(
+            alignment: Alignment.center,
             child: GestureDetector(
               onTap: () {
-                resolveImage();
+                reLoadImage();
               },
-              child: Text("loaded falied"),
+              child: Text("load image falied"),
             ),
           );
           break;
       }
     }
 
+    if (widget.shape != null) {
+      switch (widget.shape) {
+        case BoxShape.circle:
+          current = ClipOval(
+            child: current,
+            clipBehavior: widget.clipBehavior,
+          );
+          break;
+        case BoxShape.rectangle:
+          if (widget.borderRadius != null)
+            current = ClipRRect(
+              child: current,
+              borderRadius: widget.borderRadius,
+              clipBehavior: widget.clipBehavior,
+            );
+          break;
+      }
+    }
+
     if (widget.border != null) {
-      image = CustomPaint(
-        painter: BorderPainter(
+      current = CustomPaint(
+        foregroundPainter: BorderPainter(
             borderRadius: widget.borderRadius,
             border: widget.border,
             shape: widget.shape),
-        child: image,
+        child: current,
         size: Size(widget.width, widget.height),
       );
     }
 
-    if (widget.excludeFromSemantics) return image;
+    if (widget.constraints != null) {
+      current = ConstrainedBox(constraints: widget.constraints, child: current);
+    }
+
+    if (widget.excludeFromSemantics) return current;
     return Semantics(
       container: widget.semanticLabel != null,
       image: true,
       label: widget.semanticLabel == null ? '' : widget.semanticLabel,
-      child: image,
+      child: current,
     );
   }
 
@@ -418,16 +741,11 @@ class ExtendedImageState extends State<ExtendedImage> {
     description.add(DiagnosticsProperty<ImageStream>('stream', _imageStream));
     description.add(DiagnosticsProperty<ImageInfo>('pixels', _imageInfo));
   }
-}
 
-enum LoadState {
-  //loading
-  loading,
-  //completed
-  completed,
-  //failed
-  failed
+  //reload image as you wish,(loaded failed)
+  @override
+  void reLoadImage() {
+    // TODO: implement reLoadImage
+    _resolveImage(true);
+  }
 }
-
-typedef LoadStateChanged = Widget Function(
-    LoadState loadState, ExtendedImageState extendedImageState);
