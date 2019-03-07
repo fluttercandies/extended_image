@@ -8,12 +8,12 @@ import 'package:loading_more_list/loading_more_list.dart';
 import 'dart:math';
 import 'dart:ui' as ui show Image;
 
-class ImageCropDemo extends StatefulWidget {
+class CropImageDemo extends StatefulWidget {
   @override
-  _ImageCropDemoState createState() => _ImageCropDemoState();
+  _CropImageDemoState createState() => _CropImageDemoState();
 }
 
-class _ImageCropDemoState extends State<ImageCropDemo>
+class _CropImageDemoState extends State<CropImageDemo>
     with AutomaticKeepAliveClientMixin {
   TuChongRepository listSourceRepository = TuChongRepository();
 

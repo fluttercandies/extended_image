@@ -1,6 +1,6 @@
 import 'package:example/common/tu_chong_repository.dart';
 import 'package:example/custom_image_demo.dart';
-import 'package:example/image_crop_demo.dart';
+import 'package:example/crop_image_demo.dart';
 import 'package:example/image_demo.dart';
 import 'package:example/image_list_demo.dart';
 import 'package:extended_image/extended_image.dart';
@@ -119,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   pageWidget = CustomImageDemo();
                   break;
                 case PageType.Crop:
-                  pageWidget = ImageCropDemo();
+                  pageWidget = CropImageDemo();
                   break;
                 default:
                   break;
