@@ -1,8 +1,5 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui show Image;
-
-import 'package:flutter/src/foundation/diagnostics.dart';
 
 enum LoadState {
   //loading
@@ -27,6 +24,14 @@ abstract class ExtendedImageState {
   ImageInfo get ExtendedImageInfo;
   LoadState get ExtendedImageLoadState;
 
-  ///return LoadStateChanged fucntion widget immediately
+  ///return widget which from LoadStateChanged fucntion  immediately
   bool returnLoadStateChangedWidget;
+}
+
+void clearMemoryImageCache() {
+  PaintingBinding.instance.imageCache.clear();
+}
+
+ImageCache getMemoryImageCache() {
+  return PaintingBinding.instance.imageCache;
 }

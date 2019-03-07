@@ -1,3 +1,4 @@
+import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/extended_render_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -30,11 +31,19 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
     this.invertColors = false,
     this.filterQuality = FilterQuality.low,
     this.soucreRect,
+    this.beforePaintImage,
+    this.afterPaintImage,
   })  : assert(scale != null),
         assert(alignment != null),
         assert(repeat != null),
         assert(matchTextDirection != null),
         super(key: key);
+
+  ///you can paint anything if you want before paint image.
+  final BeforePaintImage beforePaintImage;
+
+  ///you can paint anything if you want after paint image.
+  final AfterPaintImage afterPaintImage;
 
   /// The image to display.
   final ui.Image image;
@@ -173,7 +182,9 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
             : null,
         invertColors: invertColors,
         filterQuality: filterQuality,
-        soucreRect: soucreRect);
+        soucreRect: soucreRect,
+        beforePaintImage: beforePaintImage,
+        afterPaintImage: afterPaintImage);
   }
 
   @override
