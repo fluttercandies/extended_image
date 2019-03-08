@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/semantics.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class ExtendedImage extends StatefulWidget {
   ExtendedImage({

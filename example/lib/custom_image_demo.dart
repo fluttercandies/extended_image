@@ -71,8 +71,8 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                         opacity: _controller,
                         child: ExtendedRawImage(
                           image: state.ExtendedImageInfo?.image,
-//                          width: ScreenUtil.instance.setWidth(600),
-//                          height:ScreenUtil.instance.setWidth(400),
+                          width: ScreenUtil.instance.setWidth(600),
+                          height: ScreenUtil.instance.setWidth(400),
                         ),
                       );
                       break;
