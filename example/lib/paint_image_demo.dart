@@ -147,16 +147,15 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
 
     Rect rect1 = Rect.fromLTWH(wxmin, wymin, wxmax - wxmin, wymax - wymin);
 
-    double xx = ScreenUtil.instance.setWidth(400) / rect1.width;
+    double xx = ScreenUtil.instance.setWidth(400) /
+        (max(rect1.width, rect1.height) * 1.1);
+
+    double top = rect.top + ScreenUtil.instance.setWidth(400) / 2.0;
+    double left = rect.left + ScreenUtil.instance.setWidth(400) / 2.0;
 
     List<Offset> points1 = new List<Offset>();
     points.forEach((point) {
-      points1.add(Offset(
-          rect.left + ScreenUtil.instance.setWidth(400) / 2.0 + point.dx * xx,
-          rect.top +
-              ScreenUtil.instance.setWidth(400) / 2.0 +
-              -point.dy * xx -
-              10.0));
+      points1.add(Offset(left + point.dx * xx, top + -point.dy * xx));
     });
 //    canvas.drawPath(
 //        Path()..addPolygon(points1, true), Paint()..color = Colors.red);
