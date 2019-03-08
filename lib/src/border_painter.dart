@@ -37,18 +37,18 @@ class BorderPainter extends CustomPainter {
     // TODO: implement paint
     final Rect outputRect = Rect.fromLTWH(0.0, 0.0, size.width, size.height);
 
-    Path clipPath;
-    switch (shape) {
-      case BoxShape.circle:
-        clipPath = Path()..addOval(outputRect);
-        break;
-      case BoxShape.rectangle:
-        if (borderRadius != null)
-          clipPath = Path()
-            ..addRRect(
-                borderRadius.resolve(TextDirection.ltr).toRRect(outputRect));
-        break;
-    }
+//    Path clipPath;
+//    switch (shape) {
+//      case BoxShape.circle:
+//        clipPath = Path()..addOval(outputRect);
+//        break;
+//      case BoxShape.rectangle:
+//        if (borderRadius != null)
+//          clipPath = Path()
+//            ..addRRect(
+//                borderRadius.resolve(TextDirection.ltr).toRRect(outputRect));
+//        break;
+//    }
 //    if (clipPath != null) {
 //      canvas.save();
 //      canvas.clipPath(clipPath);
@@ -71,6 +71,10 @@ class BorderPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     // TODO: implement shouldRepaint
-    return true;
+    var old = oldDelegate as BorderPainter;
+
+    return this.borderRadius != old.borderRadius ||
+        this.border != old.border ||
+        this.shape != old.shape;
   }
 }
