@@ -123,7 +123,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
     Rect rect,
     Canvas canvas,
   ) {
-    int num_points = 100;
+    int num_points = 1000;
     List<Offset> points = new List<Offset>();
     double dt = (2 * pi / num_points);
 
@@ -153,7 +153,10 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
     points.forEach((point) {
       points1.add(Offset(
           rect.left + ScreenUtil.instance.setWidth(400) / 2.0 + point.dx * xx,
-          rect.top + ScreenUtil.instance.setWidth(400) / 2.0 + -point.dy * xx));
+          rect.top +
+              ScreenUtil.instance.setWidth(400) / 2.0 +
+              -point.dy * xx -
+              10.0));
     });
 //    canvas.drawPath(
 //        Path()..addPolygon(points1, true), Paint()..color = Colors.red);
