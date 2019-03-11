@@ -72,6 +72,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                       canvas.clipPath(clipheart(rect, canvas));
                     }
                   }
+                  return false;
                 },
                 afterPaintImage: (Canvas canvas, Rect rect, ui.Image image) {
                   if (paintType == PaintType.ClipHeart) {
