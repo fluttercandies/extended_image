@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:collection/collection.dart';
 import 'package:extended_image/src/border_painter.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/extended_network_image_provider.dart';
@@ -577,8 +576,11 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   }
 
   void _resolveImage([bool rebuild = false]) {
-    var extendedNetworkImageProvider =
-        widget.image as ExtendedNetworkImageProvider;
+    ExtendedNetworkImageProvider extendedNetworkImageProvider;
+    if (widget.image is ExtendedNetworkImageProvider) {
+      extendedNetworkImageProvider =
+          widget.image as ExtendedNetworkImageProvider;
+    }
 
     if (rebuild) {
       widget.image.evict();
@@ -610,8 +612,11 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
     //print("_handleImageChanged : synchronousCall $synchronousCall");
     setState(() {
       if (imageInfo != null) {
-        ExtendedNetworkImageProvider extendedNetworkImageProvider =
-            widget.image as ExtendedNetworkImageProvider;
+        ExtendedNetworkImageProvider extendedNetworkImageProvider;
+        if (widget.image is ExtendedNetworkImageProvider) {
+          extendedNetworkImageProvider =
+              widget.image as ExtendedNetworkImageProvider;
+        }
         if (extendedNetworkImageProvider != null &&
             extendedNetworkImageProvider.loadFailed) {
           _loadState = LoadState.failed;
@@ -819,9 +824,9 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
 
   @override
   // TODO: implement ExtendedImageInfo
-  ImageInfo get ExtendedImageInfo => _imageInfo;
+  ImageInfo get extendedImageInfo => _imageInfo;
 
   @override
   // TODO: implement ExtendedImageLoadState
-  LoadState get ExtendedImageLoadState => _loadState;
+  LoadState get extendedImageLoadState => _loadState;
 }

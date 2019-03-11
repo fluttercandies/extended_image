@@ -26,8 +26,8 @@ class ExtendedRenderImage extends RenderBox {
       bool invertColors = false,
       FilterQuality filterQuality = FilterQuality.low,
       Rect soucreRect,
-      this.afterPaintImage,
-      this.beforePaintImage})
+      AfterPaintImage afterPaintImage,
+      BeforePaintImage beforePaintImage})
       : assert(scale != null),
         assert(repeat != null),
         assert(alignment != null),
@@ -47,18 +47,38 @@ class ExtendedRenderImage extends RenderBox {
         _invertColors = invertColors,
         _textDirection = textDirection,
         _filterQuality = filterQuality,
-        _soucreRect = soucreRect {
+        _soucreRect = soucreRect,
+        _beforePaintImage = beforePaintImage,
+        _afterPaintImage = afterPaintImage {
     _updateColorFilter();
   }
 
   ///you can paint anything if you want before paint image.
-  final BeforePaintImage beforePaintImage;
+  BeforePaintImage _beforePaintImage;
+  BeforePaintImage get beforePaintImage => _beforePaintImage;
+  set beforePaintImage(BeforePaintImage value) {
+    if (value == _beforePaintImage) return;
+    _beforePaintImage = value;
+    markNeedsPaint();
+  }
 
   ///you can paint anything if you want after paint image.
-  final AfterPaintImage afterPaintImage;
+  AfterPaintImage _afterPaintImage;
+  AfterPaintImage get afterPaintImage => _afterPaintImage;
+  set afterPaintImage(AfterPaintImage value) {
+    if (value == _afterPaintImage) return;
+    _afterPaintImage = value;
+    markNeedsPaint();
+  }
 
   ///input rect, you can use this to crop image.
   Rect _soucreRect;
+  Rect get soucreRect => _soucreRect;
+  set soucreRect(Rect value) {
+    if (value == _soucreRect) return;
+    _soucreRect = value;
+    markNeedsPaint();
+  }
 
   Alignment _resolvedAlignment;
   bool _flipHorizontally;
@@ -449,6 +469,12 @@ void paintExtendedImage({
   final double dy = halfHeightDelta + alignment.y * halfHeightDelta;
   final Offset destinationPosition = rect.topLeft.translate(dx, dy);
   final Rect destinationRect = destinationPosition & destinationSize;
+
+  if (beforePaintImage != null) {
+    var handle = beforePaintImage(canvas, destinationRect, image);
+    if (handle) return;
+  }
+
   final bool needSave = repeat != ImageRepeat.noRepeat || flipHorizontally;
   if (needSave) canvas.save();
   if (repeat != ImageRepeat.noRepeat) canvas.clipRect(rect);
@@ -457,10 +483,6 @@ void paintExtendedImage({
     canvas.translate(-dx, 0.0);
     canvas.scale(-1.0, 1.0);
     canvas.translate(dx, 0.0);
-  }
-
-  if (beforePaintImage != null) {
-    beforePaintImage(canvas: canvas, image: image, rect: destinationRect);
   }
 
   if (centerSlice == null) {
@@ -476,11 +498,11 @@ void paintExtendedImage({
       canvas.drawImageNine(image, centerSlice, tileRect, paint);
   }
 
-  if (afterPaintImage != null) {
-    afterPaintImage(canvas: canvas, image: image, rect: destinationRect);
-  }
-
   if (needSave) canvas.restore();
+
+  if (afterPaintImage != null) {
+    afterPaintImage(canvas, destinationRect, image);
+  }
 }
 
 Iterable<Rect> _generateImageTileRects(

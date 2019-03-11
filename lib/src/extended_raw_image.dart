@@ -206,7 +206,10 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
           ? Directionality.of(context)
           : null
       ..invertColors = invertColors
-      ..filterQuality = filterQuality;
+      ..filterQuality = filterQuality
+      ..afterPaintImage = afterPaintImage
+      ..beforePaintImage = beforePaintImage
+      ..soucreRect = soucreRect;
   }
 
   @override

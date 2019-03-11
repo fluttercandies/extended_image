@@ -11,31 +11,23 @@ const String CacheImageFolderName = "cacheimage";
 
 String toMd5(String str) => md5.convert(utf8.encode(str)).toString();
 
-///crop image
-//ui.Image getCroppedImage(ui.Image image, Rect src, Rect dst) {
-//  var pictureRecorder = new ui.PictureRecorder();
-//  Canvas canvas = new Canvas(pictureRecorder);
-//  canvas.drawImageRect(image, src, dst, Paint());
-//  return pictureRecorder
-//      .endRecording()
-//      .toImage(dst.width.floor(), dst.height.floor());
-//}
-
 /// Clear the disk cache directory then return if it succeed.
 ///  <param name="duration">timespan to compute whether file has expired or not</param>
 Future<bool> clearDiskCachedImages({Duration duration}) async {
   try {
     Directory _cacheImagesDirectory = Directory(
         join((await getTemporaryDirectory()).path, CacheImageFolderName));
-    if (duration == null) {
-      _cacheImagesDirectory.deleteSync(recursive: true);
-    } else {
-      var now = DateTime.now();
-      for (var file in _cacheImagesDirectory.listSync()) {
-        FileStat fs = file.statSync();
-        if (now.subtract(duration).isAfter(fs.changed)) {
-          print("remove expired cached image");
-          file.deleteSync(recursive: true);
+    if (_cacheImagesDirectory.existsSync()) {
+      if (duration == null) {
+        _cacheImagesDirectory.deleteSync(recursive: true);
+      } else {
+        var now = DateTime.now();
+        for (var file in _cacheImagesDirectory.listSync()) {
+          FileStat fs = file.statSync();
+          if (now.subtract(duration).isAfter(fs.changed)) {
+            //print("remove expired cached image");
+            file.deleteSync(recursive: true);
+          }
         }
       }
     }
