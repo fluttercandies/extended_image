@@ -22,6 +22,8 @@ dependencies:
   oktoast: ^2.1.4
   flutter_screenutil: ^0.5.1
   flutter_swiper: ^1.1.4
+  pull_to_refresh_notification: ^0.1.8
+  intl: ^0.15.7
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2

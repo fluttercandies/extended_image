@@ -57,7 +57,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                 fit: BoxFit.fill,
                 cache: true,
                 loadStateChanged: (ExtendedImageState state) {
-                  switch (state.ExtendedImageLoadState) {
+                  switch (state.extendedImageLoadState) {
                     case LoadState.loading:
                       _controller.reset();
                       return Image.asset(
@@ -70,7 +70,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                       return FadeTransition(
                         opacity: _controller,
                         child: ExtendedRawImage(
-                          image: state.ExtendedImageInfo?.image,
+                          image: state.extendedImageInfo?.image,
                           width: ScreenUtil.instance.setWidth(600),
                           height: ScreenUtil.instance.setWidth(400),
                         ),

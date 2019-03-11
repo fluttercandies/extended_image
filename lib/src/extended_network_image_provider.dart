@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui show instantiateImageCodec, Codec;
-import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/extended_network_image_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -81,7 +80,6 @@ class ExtendedNetworkImageProvider
           loadFailed = false;
           reuslt = await ui.instantiateImageCodec(data);
         }
-        ;
       } catch (e) {
         print(e);
       }

@@ -13,11 +13,10 @@ class PaintImageDemo extends StatefulWidget {
 }
 
 class _PaintImageDemoState extends State<PaintImageDemo> {
-  BoxShape boxShape;
-
+  PaintType paintType;
   @override
   void initState() {
-    boxShape = BoxShape.circle;
+    paintType = PaintType.ClipHeart;
     // TODO: implement initState
     super.initState();
   }
@@ -29,15 +28,19 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("ImageDemo"),
+            title: Text("PaintImageDemo"),
+          ),
+          Text(
+            "you can paint anything before or after Image paint",
+            style: TextStyle(color: Colors.grey),
           ),
           Row(
             children: <Widget>[
               RaisedButton(
-                child: Text("BoxShape.circle"),
+                child: Text("ClipHeart"),
                 onPressed: () {
                   setState(() {
-                    boxShape = BoxShape.circle;
+                    paintType = PaintType.ClipHeart;
                   });
                 },
               ),
@@ -45,35 +48,10 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                 child: Container(),
               ),
               RaisedButton(
-                child: Text("BoxShape.rectangle"),
+                child: Text("PaintHeart"),
                 onPressed: () {
                   setState(() {
-                    boxShape = BoxShape.rectangle;
-                  });
-                },
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              RaisedButton(
-                child: Text("clear all cache"),
-                onPressed: () {
-                  clearDiskCachedImages().then((bool done) {
-                    showToast(done ? "clear succeed" : "clear failed",
-                        position: ToastPosition(align: Alignment.topCenter));
-                  });
-                },
-              ),
-              Expanded(
-                child: Container(),
-              ),
-              RaisedButton(
-                child: Text("save network image to photo"),
-                onPressed: () {
-                  saveNetworkImageToPhoto(url).then((bool done) {
-                    showToast(done ? "save succeed" : "save failed",
-                        position: ToastPosition(align: Alignment.topCenter));
+                    paintType = PaintType.PaintHeart;
                   });
                 },
               ),
@@ -87,29 +65,40 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                 height: ScreenUtil.instance.setWidth(400),
                 fit: BoxFit.fill,
                 cache: true,
-                beforePaintImage: (
-                    {@required Canvas canvas,
-                    @required Rect rect,
-                    @required ui.Image image}) {
-                  canvas.save();
-//                  canvas.translate(
-//                      rect.left + ScreenUtil.instance.setWidth(400) / 2.0,
-//                      rect.top + ScreenUtil.instance.setWidth(400) / 2.0);
-//                  ;
-                  // clipheart(rect, canvas);
-                  canvas.clipPath(clipheart(rect, canvas));
-                  // canvas.clipPath(Path()..addOval(rect));
+                beforePaintImage: (Canvas canvas, Rect rect, ui.Image image) {
+                  if (paintType == PaintType.ClipHeart) {
+                    if (!rect.isEmpty) {
+                      canvas.save();
+                      canvas.clipPath(clipheart(rect, canvas));
+                    }
+                  }
                 },
-                afterPaintImage: (
-                    {@required Canvas canvas,
-                    @required Rect rect,
-                    @required ui.Image image}) {
-//                  canvas.drawLine(rect.topLeft, rect.bottomRight,
-//                      Paint()..color = Colors.red);
+                afterPaintImage: (Canvas canvas, Rect rect, ui.Image image) {
+                  if (paintType == PaintType.ClipHeart) {
+                    if (!rect.isEmpty) canvas.restore();
+                  } else if (paintType == PaintType.PaintHeart) {
+                    canvas.drawPath(
+                        clipheart(rect, canvas),
+                        Paint()
+                          ..colorFilter = ColorFilter.mode(
+                              Color(0x55ea5504), BlendMode.srcIn)
+                          ..isAntiAlias = false
+                          ..filterQuality = FilterQuality.low);
 
-                  //clipPath.close();
-
-                  canvas.restore();
+//                    canvas.drawImageRect(
+//                        image,
+//                        Rect.fromLTWH(0.0, y, imageWidth, imageHeight - y),
+//                        Rect.fromLTWH(
+//                            rect.left,
+//                            rect.top + y / imageHeight * size.height,
+//                            size.width,
+//                            (imageHeight - y) / imageHeight * size.height),
+//                        Paint()
+//                          ..colorFilter = ColorFilter.mode(
+//                              Color(0x22ea5504), BlendMode.srcIn)
+//                          ..isAntiAlias = false
+//                          ..filterQuality = FilterQuality.low);
+                  }
                 },
               ),
             ),
@@ -173,3 +162,5 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
     return (13 * cos(t) - 5 * cos(2 * t) - 2 * cos(3 * t) - cos(4 * t));
   }
 }
+
+enum PaintType { ClipHeart, PaintHeart }
