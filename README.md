@@ -4,7 +4,7 @@
 
 extended official image with load state,crop,save,clip,paint etc.
 
-[Chinese bolg](https://juejin.im/user/5bdc1a32518825170b101080)
+[Chinese bolg](https://juejin.im/post/5c867112f265da2dd427a340)
 
 extended image is the same as official image.
 
@@ -101,7 +101,7 @@ saveNetworkImageToPhoto(String url, {bool useCache: true})
 ![](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/image.gif)
 
 
-# Custom load state/ Crop image
+# Custom load state
     /// custom load state widget if you want
     final LoadStateChanged loadStateChanged;
     
@@ -109,8 +109,8 @@ saveNetworkImageToPhoto(String url, {bool useCache: true})
   it's not just for network image, if your image need long to load,
   you can define your loading widget or crop your image at that moment.
   see [custom image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/custom_image_demo.dart)
-  and [crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/crop_image_demo.dart)
-        
+
+
  ```dart
   ExtendedImage.network(
                   url,
@@ -170,6 +170,21 @@ saveNetworkImageToPhoto(String url, {bool useCache: true})
 ```
 
 ![](https://github.com/fluttercandies/Flutter_Candies/tree/master/gif/extended_image/custom.gif)
+
+#  Crop image
+ you can crop image with ExtendedRawImage, soureRect is which you want to show image rect.
+ [crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/crop_image_demo.dart)
+
+ ```dart
+ExtendedRawImage(
+        image: image,
+        width: num400,
+        height: num300,
+        fit: BoxFit.fill,
+        soucreRect: Rect.fromLTWH(
+            (image.width - width) / 2.0, 0.0, width, image.height.toDouble()),
+      )
+ ```
 
 ![](https://github.com/fluttercandies/Flutter_Candies/tree/master/gif/extended_image/crop.gif)
 
