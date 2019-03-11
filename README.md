@@ -77,10 +77,7 @@ ExtendedImage.network(
               ),
 ```
 
-# Clear disk cached 
-# Clear memory cached
-# Get memory cached
-# Save network image to photo
+# Clear and Save
 
 Clear disk cached , you can set duration to clear expired images or clear all of them.
 ```dart
