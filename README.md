@@ -209,6 +209,7 @@ and [push to refresh header which is used in crop image demo](https://github.com
                        canvas.clipPath(clipheart(rect, canvas));
                      }
                    }
+                   return false;
                  },
                  afterPaintImage: (Canvas canvas, Rect rect, ui.Image image) {
                    if (paintType == PaintType.ClipHeart) {
