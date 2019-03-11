@@ -13,25 +13,28 @@ enum LoadState {
 typedef LoadStateChanged = Widget Function(ExtendedImageState state);
 
 ///[rect] is render size
-typedef BeforePaintImage = void Function(
-    {@required Canvas canvas, @required Rect rect, @required ui.Image image});
+///if return true, it will not paint original image,
+typedef BeforePaintImage = bool Function(
+    Canvas canvas, Rect rect, ui.Image image);
 
 typedef AfterPaintImage = void Function(
-    {@required Canvas canvas, @required Rect rect, @required ui.Image image});
+    Canvas canvas, Rect rect, ui.Image image);
 
 abstract class ExtendedImageState {
   void reLoadImage();
-  ImageInfo get ExtendedImageInfo;
-  LoadState get ExtendedImageLoadState;
+  ImageInfo get extendedImageInfo;
+  LoadState get extendedImageLoadState;
 
   ///return widget which from LoadStateChanged fucntion  immediately
   bool returnLoadStateChangedWidget;
 }
 
+///clear all of image in memory
 void clearMemoryImageCache() {
   PaintingBinding.instance.imageCache.clear();
 }
 
+/// get ImageCache
 ImageCache getMemoryImageCache() {
   return PaintingBinding.instance.imageCache;
 }
