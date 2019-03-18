@@ -27,6 +27,8 @@ abstract class ExtendedImageState {
 
   ///return widget which from LoadStateChanged fucntion  immediately
   bool returnLoadStateChangedWidget;
+
+  ImageProvider get imageProvider;
 }
 
 ///clear all of image in memory

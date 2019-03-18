@@ -829,4 +829,8 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   @override
   // TODO: implement ExtendedImageLoadState
   LoadState get extendedImageLoadState => _loadState;
+
+  @override
+  // TODO: implement imageProvider
+  ImageProvider get imageProvider => widget.image;
 }
