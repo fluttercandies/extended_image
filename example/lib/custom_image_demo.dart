@@ -78,6 +78,8 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                       break;
                     case LoadState.failed:
                       _controller.reset();
+                      //remove memory cached
+                      state.imageProvider.evict();
                       return GestureDetector(
                         child: Stack(
                           fit: StackFit.expand,
