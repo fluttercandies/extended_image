@@ -1,3 +1,7 @@
+## [0.1.6]
+
+* add getNetworkImageData method
+
 ## [0.1.5]
 
 * change toMd5 to keyToMd5
