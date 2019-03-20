@@ -78,7 +78,7 @@ class ExtendedNetworkImageProvider
         var data = await _loadCache(key, md5Key);
         if (data != null) {
           loadFailed = false;
-          reuslt = await ui.instantiateImageCodec(data);
+          reuslt = await instantiateImageCodec(data);
         }
       } catch (e) {
         print(e);
@@ -90,7 +90,7 @@ class ExtendedNetworkImageProvider
         var data = await _loadNetwork(key);
         if (data != null) {
           loadFailed = false;
-          reuslt = await ui.instantiateImageCodec(data);
+          reuslt = await instantiateImageCodec(data);
         }
       } catch (e) {
         print(e);
@@ -158,6 +158,12 @@ class ExtendedNetworkImageProvider
 
   @override
   String toString() => '$runtimeType("$url", scale: $scale)';
+
+  ///override this method, so that you can handle data,
+  ///for example compress
+  Future<ui.Codec> instantiateImageCodec(Uint8List data) async {
+    return await ui.instantiateImageCodec(data);
+  }
 }
 
 ///save netwrok image to photo
