@@ -160,27 +160,24 @@ class ExtendedNetworkImageProvider
   String toString() => '$runtimeType("$url", scale: $scale)';
 }
 
+///save netwrok image to photo
 Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
+  var data = await getNetworkImageData(url, useCache: useCache);
+  var filePath = await ImagePickerSaver.saveFile(fileData: data);
+  return filePath != null && filePath != "";
+}
+
+///get network image data from cached
+Future<Uint8List> getNetworkImageData(String url, {bool useCache: true}) async {
   ExtendedNetworkImageProvider imageProvider =
       new ExtendedNetworkImageProvider(url);
   String uId = keyToMd5(url);
 
-  bool done = false;
   if (useCache) {
     try {
-      var result = await imageProvider._loadCache(imageProvider, uId);
-      var filePath = await ImagePickerSaver.saveFile(fileData: result);
-      done = filePath != null && filePath != "";
-    } catch (e) {
-      //debugPrint(e.toString());
-    }
+      return await imageProvider._loadCache(imageProvider, uId);
+    } catch (e) {}
   }
 
-  if (!done) {
-    var result = await imageProvider._loadNetwork(imageProvider);
-    var filePath = await ImagePickerSaver.saveFile(fileData: result);
-    done = filePath != null && filePath != "";
-  }
-
-  return done;
+  return await imageProvider._loadNetwork(imageProvider);
 }
