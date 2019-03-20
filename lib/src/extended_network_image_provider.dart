@@ -71,7 +71,7 @@ class ExtendedNetworkImageProvider
 
   Future<ui.Codec> _loadAsync(ExtendedNetworkImageProvider key) async {
     assert(key == this);
-    final md5Key = toMd5(key.url);
+    final md5Key = keyToMd5(key.url);
     ui.Codec reuslt;
     if (cache) {
       try {
@@ -163,7 +163,7 @@ class ExtendedNetworkImageProvider
 Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
   ExtendedNetworkImageProvider imageProvider =
       new ExtendedNetworkImageProvider(url);
-  String uId = toMd5(url);
+  String uId = keyToMd5(url);
 
   bool done = false;
   if (useCache) {

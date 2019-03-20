@@ -9,7 +9,7 @@ import 'package:path_provider/path_provider.dart';
 
 const String CacheImageFolderName = "cacheimage";
 
-String toMd5(String str) => md5.convert(utf8.encode(str)).toString();
+String keyToMd5(String key) => md5.convert(utf8.encode(key)).toString();
 
 /// Clear the disk cache directory then return if it succeed.
 ///  <param name="duration">timespan to compute whether file has expired or not</param>
