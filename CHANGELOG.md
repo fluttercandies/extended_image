@@ -1,3 +1,7 @@
+## [0.1.7]
+
+* public instantiateImageCodec method so that you can handle image data by override this in ExtendedNetworkImageProvider
+
 ## [0.1.6]
 
 * add getNetworkImageData method
