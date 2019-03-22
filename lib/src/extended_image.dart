@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:extended_image/src/border_painter.dart';
+import 'package:extended_image/src/extended_image_gesture.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/extended_network_image_provider.dart';
 import 'package:extended_image/src/extended_raw_image.dart';
@@ -37,6 +38,8 @@ class ExtendedImage extends StatefulWidget {
     this.enableLoadState: false,
     this.beforePaintImage,
     this.afterPaintImage,
+    this.mode: ExtendedImageMode.None,
+    this.gestureConfig,
     BoxConstraints constraints,
   })  : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
@@ -72,6 +75,8 @@ class ExtendedImage extends StatefulWidget {
       this.enableLoadState: true,
       this.beforePaintImage,
       this.afterPaintImage,
+      this.mode: ExtendedImageMode.None,
+      this.gestureConfig,
       BoxConstraints constraints})
       : image = ExtendedNetworkImageProvider(url,
             scale: scale, headers: headers, cache: cache),
@@ -124,6 +129,8 @@ class ExtendedImage extends StatefulWidget {
       this.enableLoadState: false,
       this.beforePaintImage,
       this.afterPaintImage,
+      this.mode: ExtendedImageMode.None,
+      this.gestureConfig,
       BoxConstraints constraints})
       : image = FileImage(file, scale: scale),
         assert(alignment != null),
@@ -287,6 +294,8 @@ class ExtendedImage extends StatefulWidget {
       this.enableLoadState: false,
       this.beforePaintImage,
       this.afterPaintImage,
+      this.mode: ExtendedImageMode.None,
+      this.gestureConfig,
       BoxConstraints constraints})
       : image = scale != null
             ? ExactAssetImage(name,
@@ -340,6 +349,8 @@ class ExtendedImage extends StatefulWidget {
       this.enableLoadState: false,
       this.beforePaintImage,
       this.afterPaintImage,
+      this.mode: ExtendedImageMode.None,
+      this.gestureConfig,
       BoxConstraints constraints})
       : image = MemoryImage(bytes, scale: scale),
         assert(alignment != null),
@@ -350,6 +361,10 @@ class ExtendedImage extends StatefulWidget {
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
         super(key: key);
+
+  final ExtendedImageMode mode;
+
+  final GestureConfig gestureConfig;
 
   ///you can paint anything if you want before paint image.
   ///it's to used in  [ExtendedRawImage]
@@ -702,23 +717,11 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
             );
             break;
           case LoadState.completed:
-            current = ExtendedRawImage(
-              image: _imageInfo?.image,
-              width: widget.width,
-              height: widget.height,
-              scale: _imageInfo?.scale ?? 1.0,
-              color: widget.color,
-              colorBlendMode: widget.colorBlendMode,
-              fit: widget.fit,
-              alignment: widget.alignment,
-              repeat: widget.repeat,
-              centerSlice: widget.centerSlice,
-              matchTextDirection: widget.matchTextDirection,
-              invertColors: _invertColors,
-              filterQuality: widget.filterQuality,
-              beforePaintImage: widget.beforePaintImage,
-              afterPaintImage: widget.afterPaintImage,
-            );
+            if (widget.mode == ExtendedImageMode.Gesture) {
+              current = ExtendedImageGesture(widget, this);
+            } else {
+              current = _buildExtendedRawImage();
+            }
             break;
           case LoadState.failed:
             current = Container(
@@ -733,23 +736,12 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
             break;
         }
       } else {
-        current = ExtendedRawImage(
-          image: _imageInfo?.image,
-          width: widget.width,
-          height: widget.height,
-          scale: _imageInfo?.scale ?? 1.0,
-          color: widget.color,
-          colorBlendMode: widget.colorBlendMode,
-          fit: widget.fit,
-          alignment: widget.alignment,
-          repeat: widget.repeat,
-          centerSlice: widget.centerSlice,
-          matchTextDirection: widget.matchTextDirection,
-          invertColors: _invertColors,
-          filterQuality: widget.filterQuality,
-          beforePaintImage: widget.beforePaintImage,
-          afterPaintImage: widget.afterPaintImage,
-        );
+        if (_loadState == LoadState.completed &&
+            widget.mode == ExtendedImageMode.Gesture) {
+          current = ExtendedImageGesture(widget, this);
+        } else {
+          current = _buildExtendedRawImage();
+        }
       }
     }
 
@@ -808,6 +800,26 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
           );
   }
 
+  Widget _buildExtendedRawImage() {
+    return ExtendedRawImage(
+      image: _imageInfo?.image,
+      width: widget.width,
+      height: widget.height,
+      scale: _imageInfo?.scale ?? 1.0,
+      color: widget.color,
+      colorBlendMode: widget.colorBlendMode,
+      fit: widget.fit,
+      alignment: widget.alignment,
+      repeat: widget.repeat,
+      centerSlice: widget.centerSlice,
+      matchTextDirection: widget.matchTextDirection,
+      invertColors: _invertColors,
+      filterQuality: widget.filterQuality,
+      beforePaintImage: widget.beforePaintImage,
+      afterPaintImage: widget.afterPaintImage,
+    );
+  }
+
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
@@ -833,4 +845,12 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   @override
   // TODO: implement imageProvider
   ImageProvider get imageProvider => widget.image;
+
+  @override
+  // TODO: implement invertColors
+  bool get invertColors => _invertColors;
+
+  @override
+  // TODO: implement imageStreamKey
+  Object get imageStreamKey => _imageStream?.key;
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:example/common/pic_swiper.dart';
 import 'package:example/common/push_to_refresh_header.dart';
 import 'package:example/common/tu_chong_repository.dart';

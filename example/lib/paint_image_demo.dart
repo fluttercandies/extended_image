@@ -65,7 +65,8 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                 height: ScreenUtil.instance.setWidth(400),
                 fit: BoxFit.fill,
                 cache: true,
-                beforePaintImage: (Canvas canvas, Rect rect, ui.Image image) {
+                beforePaintImage:
+                    (Canvas canvas, Rect rect, ui.Image image, Paint paint) {
                   if (paintType == PaintType.ClipHeart) {
                     if (!rect.isEmpty) {
                       canvas.save();
@@ -74,7 +75,8 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                   }
                   return false;
                 },
-                afterPaintImage: (Canvas canvas, Rect rect, ui.Image image) {
+                afterPaintImage:
+                    (Canvas canvas, Rect rect, ui.Image image, Paint paint) {
                   if (paintType == PaintType.ClipHeart) {
                     if (!rect.isEmpty) canvas.restore();
                   } else if (paintType == PaintType.PaintHeart) {

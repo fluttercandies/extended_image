@@ -100,7 +100,7 @@ class RefreshImage extends StatelessWidget {
       "assets/flutterCandies_grey.png",
       width: imageSize,
       height: imageSize,
-      afterPaintImage: (Canvas canvas, Rect rect, ui.Image image) {
+      afterPaintImage: (Canvas canvas, Rect rect, ui.Image image, Paint paint) {
         final double imageHeight = image.height.toDouble();
         final double imageWidth = image.width.toDouble();
         final Size size = rect.size;
