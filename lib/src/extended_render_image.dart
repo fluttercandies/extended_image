@@ -10,25 +10,26 @@ class ExtendedRenderImage extends RenderBox {
   /// The [scale], [alignment], [repeat], [matchTextDirection] and [filterQuality] arguments
   /// must not be null. The [textDirection] argument must not be null if
   /// [alignment] will need resolving or if [matchTextDirection] is true.
-  ExtendedRenderImage(
-      {ui.Image image,
-      double width,
-      double height,
-      double scale = 1.0,
-      Color color,
-      BlendMode colorBlendMode,
-      BoxFit fit,
-      AlignmentGeometry alignment = Alignment.center,
-      ImageRepeat repeat = ImageRepeat.noRepeat,
-      Rect centerSlice,
-      bool matchTextDirection = false,
-      TextDirection textDirection,
-      bool invertColors = false,
-      FilterQuality filterQuality = FilterQuality.low,
-      Rect soucreRect,
-      AfterPaintImage afterPaintImage,
-      BeforePaintImage beforePaintImage})
-      : assert(scale != null),
+  ExtendedRenderImage({
+    ui.Image image,
+    double width,
+    double height,
+    double scale = 1.0,
+    Color color,
+    BlendMode colorBlendMode,
+    BoxFit fit,
+    AlignmentGeometry alignment = Alignment.center,
+    ImageRepeat repeat = ImageRepeat.noRepeat,
+    Rect centerSlice,
+    bool matchTextDirection = false,
+    TextDirection textDirection,
+    bool invertColors = false,
+    FilterQuality filterQuality = FilterQuality.low,
+    Rect soucreRect,
+    AfterPaintImage afterPaintImage,
+    BeforePaintImage beforePaintImage,
+    GestureDetails gestureDetails,
+  })  : assert(scale != null),
         assert(repeat != null),
         assert(alignment != null),
         assert(filterQuality != null),
@@ -49,8 +50,16 @@ class ExtendedRenderImage extends RenderBox {
         _filterQuality = filterQuality,
         _soucreRect = soucreRect,
         _beforePaintImage = beforePaintImage,
-        _afterPaintImage = afterPaintImage {
+        _afterPaintImage = afterPaintImage,
+        _gestureDetails = gestureDetails {
     _updateColorFilter();
+  }
+  GestureDetails _gestureDetails;
+  GestureDetails get gestureDetails => _gestureDetails;
+  set gestureDetails(GestureDetails value) {
+    if (value == _gestureDetails) return;
+    _gestureDetails = value;
+    markNeedsPaint();
   }
 
   ///you can paint anything if you want before paint image.
@@ -369,7 +378,8 @@ class ExtendedRenderImage extends RenderBox {
         filterQuality: _filterQuality,
         customSoucreRect: _soucreRect,
         beforePaintImage: beforePaintImage,
-        afterPaintImage: afterPaintImage);
+        afterPaintImage: afterPaintImage,
+        gestureDetails: gestureDetails);
   }
 
   @override
@@ -418,6 +428,7 @@ void paintExtendedImage({
   BeforePaintImage beforePaintImage,
   //you can paint anything if you want after paint image.
   AfterPaintImage afterPaintImage,
+  GestureDetails gestureDetails,
 }) {
   assert(canvas != null);
   assert(image != null);
@@ -468,10 +479,35 @@ void paintExtendedImage({
       (flipHorizontally ? -alignment.x : alignment.x) * halfWidthDelta;
   final double dy = halfHeightDelta + alignment.y * halfHeightDelta;
   final Offset destinationPosition = rect.topLeft.translate(dx, dy);
-  final Rect destinationRect = destinationPosition & destinationSize;
+  Rect destinationRect = destinationPosition & destinationSize;
+
+  if (gestureDetails != null) {
+    final Offset center = destinationRect.size.center(destinationRect.topLeft) *
+            gestureDetails.scale +
+        gestureDetails.offset;
+
+    final double width = destinationRect.width * gestureDetails.scale;
+    final double height = destinationRect.height * gestureDetails.scale;
+
+    destinationRect = Rect.fromLTWH(
+        center.dx - width / 2.0, center.dy - height / 2.0, width, height);
+
+    gestureDetails.previousRect = destinationRect;
+
+    ///outside
+    if (destinationRect.top < rect.top ||
+        destinationRect.left < rect.left ||
+        destinationRect.right > rect.right ||
+        destinationRect.bottom > rect.bottom) {
+      canvas.clipRect(rect);
+      print("out size");
+    } else {
+      print("小于");
+    }
+  }
 
   if (beforePaintImage != null) {
-    var handle = beforePaintImage(canvas, destinationRect, image);
+    var handle = beforePaintImage(canvas, destinationRect, image, paint);
     if (handle) return;
   }
 
@@ -500,8 +536,16 @@ void paintExtendedImage({
 
   if (needSave) canvas.restore();
 
+  if (gestureDetails != null &&
+      (destinationRect.top < rect.top ||
+          destinationRect.left < rect.left ||
+          destinationRect.right > rect.right ||
+          destinationRect.bottom > rect.bottom)) {
+    canvas.restore();
+  }
+
   if (afterPaintImage != null) {
-    afterPaintImage(canvas, destinationRect, image);
+    afterPaintImage(canvas, destinationRect, image, paint);
   }
 }
 
