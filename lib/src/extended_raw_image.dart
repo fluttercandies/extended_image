@@ -33,11 +33,14 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
     this.soucreRect,
     this.beforePaintImage,
     this.afterPaintImage,
+    this.gestureDetails,
   })  : assert(scale != null),
         assert(alignment != null),
         assert(repeat != null),
         assert(matchTextDirection != null),
         super(key: key);
+
+  final GestureDetails gestureDetails;
 
   ///you can paint anything if you want before paint image.
   final BeforePaintImage beforePaintImage;
@@ -184,7 +187,8 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
         filterQuality: filterQuality,
         soucreRect: soucreRect,
         beforePaintImage: beforePaintImage,
-        afterPaintImage: afterPaintImage);
+        afterPaintImage: afterPaintImage,
+        gestureDetails: gestureDetails);
   }
 
   @override
@@ -209,7 +213,8 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
       ..filterQuality = filterQuality
       ..afterPaintImage = afterPaintImage
       ..beforePaintImage = beforePaintImage
-      ..soucreRect = soucreRect;
+      ..soucreRect = soucreRect
+      ..gestureDetails = gestureDetails;
   }
 
   @override

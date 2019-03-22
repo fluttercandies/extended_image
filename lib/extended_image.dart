@@ -7,3 +7,4 @@ export 'src/extended_image.dart';
 export 'src/extended_raw_image.dart';
 export 'src/extended_render_image.dart';
 export 'src/extended_image_utils.dart';
+export 'src/extended_image_gesture.dart';
