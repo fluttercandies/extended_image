@@ -39,7 +39,7 @@ class ExtendedImage extends StatefulWidget {
     this.beforePaintImage,
     this.afterPaintImage,
     this.mode: ExtendedImageMode.None,
-    this.gestureConfig,
+    this.imageGestureHandler,
     BoxConstraints constraints,
   })  : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
@@ -76,7 +76,7 @@ class ExtendedImage extends StatefulWidget {
       this.beforePaintImage,
       this.afterPaintImage,
       this.mode: ExtendedImageMode.None,
-      this.gestureConfig,
+      this.imageGestureHandler,
       BoxConstraints constraints})
       : image = ExtendedNetworkImageProvider(url,
             scale: scale, headers: headers, cache: cache),
@@ -130,7 +130,7 @@ class ExtendedImage extends StatefulWidget {
       this.beforePaintImage,
       this.afterPaintImage,
       this.mode: ExtendedImageMode.None,
-      this.gestureConfig,
+      this.imageGestureHandler,
       BoxConstraints constraints})
       : image = FileImage(file, scale: scale),
         assert(alignment != null),
@@ -295,7 +295,7 @@ class ExtendedImage extends StatefulWidget {
       this.beforePaintImage,
       this.afterPaintImage,
       this.mode: ExtendedImageMode.None,
-      this.gestureConfig,
+      this.imageGestureHandler,
       BoxConstraints constraints})
       : image = scale != null
             ? ExactAssetImage(name,
@@ -350,7 +350,7 @@ class ExtendedImage extends StatefulWidget {
       this.beforePaintImage,
       this.afterPaintImage,
       this.mode: ExtendedImageMode.None,
-      this.gestureConfig,
+      this.imageGestureHandler,
       BoxConstraints constraints})
       : image = MemoryImage(bytes, scale: scale),
         assert(alignment != null),
@@ -364,7 +364,7 @@ class ExtendedImage extends StatefulWidget {
 
   final ExtendedImageMode mode;
 
-  final GestureConfig gestureConfig;
+  final ImageGestureHandler imageGestureHandler;
 
   ///you can paint anything if you want before paint image.
   ///it's to used in  [ExtendedRawImage]

@@ -481,28 +481,20 @@ void paintExtendedImage({
   final Offset destinationPosition = rect.topLeft.translate(dx, dy);
   Rect destinationRect = destinationPosition & destinationSize;
 
+  bool gestureClip = false;
   if (gestureDetails != null) {
-    final Offset center = destinationRect.size.center(destinationRect.topLeft) *
-            gestureDetails.scale +
-        gestureDetails.offset;
+    var temp = destinationRect;
+    destinationRect = hanldeGesture(gestureDetails, rect, destinationRect);
 
-    final double width = destinationRect.width * gestureDetails.scale;
-    final double height = destinationRect.height * gestureDetails.scale;
-
-    destinationRect = Rect.fromLTWH(
-        center.dx - width / 2.0, center.dy - height / 2.0, width, height);
-
-    gestureDetails.previousRect = destinationRect;
+//    gestureDetails.destinationRect = destinationRect;
+//    gestureDetails.rect = rect;
+    gestureClip = outRect(rect, destinationRect);
 
     ///outside
-    if (destinationRect.top < rect.top ||
-        destinationRect.left < rect.left ||
-        destinationRect.right > rect.right ||
-        destinationRect.bottom > rect.bottom) {
+    if (gestureClip) {
+      canvas.save();
       canvas.clipRect(rect);
-      print("out size");
-    } else {
-      print("小于");
+      //print("out size");
     }
   }
 
@@ -536,11 +528,7 @@ void paintExtendedImage({
 
   if (needSave) canvas.restore();
 
-  if (gestureDetails != null &&
-      (destinationRect.top < rect.top ||
-          destinationRect.left < rect.left ||
-          destinationRect.right > rect.right ||
-          destinationRect.bottom > rect.bottom)) {
+  if (gestureClip) {
     canvas.restore();
   }
 
