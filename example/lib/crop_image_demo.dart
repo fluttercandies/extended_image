@@ -236,7 +236,7 @@ class CropImage extends StatelessWidget {
                     index,
                     listSourceRepository
                         .map<PicSwiperItem>(
-                            (f) => PicSwiperItem(f.imageUrl, des: item.title))
+                            (f) => PicSwiperItem(f.imageUrl, des: f.title))
                         .toList(),
                   );
                 }));

@@ -46,37 +46,53 @@ ImageCache getMemoryImageCache() {
 }
 
 class GestureDetails {
-  Offset _offset;
+  ///scale center delta
+  final Offset offset;
 
-  ///top-left
-  Offset get offset => _offset;
+  final double scale;
 
-  double _scale;
-  double get scale => _scale;
+//  ///layout rect
+//  Rect rect;
+//
+//  ///raw rect for image.
+//  Rect destinationRect;
 
-  Rect previousRect;
+  ///
+  final Offset delta;
 
-  Rect rect;
-  GestureDetails(this._offset, this._scale);
-
-  void test() {}
-  @override
-  String toString() {
-    // TODO: implement toString
-    return "offset:$_offset,scale:$_scale";
-  }
+  GestureDetails({this.offset, this.scale, this.delta});
 }
 
-class GestureConfig {
+class ImageGestureHandler {
   final double minScale;
   final double maxScale;
   final double speed;
   final bool cacheGesture;
-  GestureConfig(
-      {this.minScale: 0.3,
+  ImageGestureHandler(
+      {this.minScale: 0.9,
       this.maxScale: 5.0,
       this.speed: 1.0,
       this.cacheGesture: false});
+}
+
+Rect hanldeGesture(
+    GestureDetails gestureDetails, Rect layoutRect, Rect destinationRect) {
+  final Offset center = destinationRect.size.center(destinationRect.topLeft) *
+          gestureDetails.scale +
+      gestureDetails.offset;
+
+  final double width = destinationRect.width * gestureDetails.scale;
+  final double height = destinationRect.height * gestureDetails.scale;
+
+  return Rect.fromLTWH(
+      center.dx - width / 2.0, center.dy - height / 2.0, width, height);
+}
+
+bool outRect(Rect rect, Rect destinationRect) {
+  return destinationRect.top < rect.top ||
+      destinationRect.left < rect.left ||
+      destinationRect.right > rect.right ||
+      destinationRect.bottom > rect.bottom;
 }
 
 enum ExtendedImageMode {
