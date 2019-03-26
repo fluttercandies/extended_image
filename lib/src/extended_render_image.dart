@@ -483,18 +483,13 @@ void paintExtendedImage({
 
   bool gestureClip = false;
   if (gestureDetails != null) {
-    var temp = destinationRect;
     destinationRect = hanldeGesture(gestureDetails, rect, destinationRect);
-
-//    gestureDetails.destinationRect = destinationRect;
-//    gestureDetails.rect = rect;
     gestureClip = outRect(rect, destinationRect);
 
     ///outside
     if (gestureClip) {
       canvas.save();
       canvas.clipRect(rect);
-      //print("out size");
     }
   }
 
