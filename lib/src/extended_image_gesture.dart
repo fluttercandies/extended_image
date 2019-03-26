@@ -9,123 +9,144 @@ import 'dart:ui' as ui show Image;
 /// zoom image
 class ExtendedImageGesture extends StatefulWidget {
   final ExtendedImage extendedImage;
+  final PageView pageView;
   final ExtendedImageState extendedImageState;
-  ExtendedImageGesture(this.extendedImage, this.extendedImageState);
+  ExtendedImageGesture(
+      this.extendedImage, this.extendedImageState, this.pageView);
   @override
   _ExtendedImageGestureState createState() => _ExtendedImageGestureState();
 }
 
 class _ExtendedImageGestureState extends State<ExtendedImageGesture> {
-  Offset _startingFocalPoint;
+  ///details for gesture
+  GestureDetails _gestureDetails;
+  Offset _normalizedOffset;
+  double _startingScale;
+  Offset _startingOffset;
 
-  Offset _previousOffset;
-  Offset _offset = Offset.zero;
-  GestureDetails _previousGestureDetails;
-
-  double _previousScale;
-  double _scale = 1.0;
-
-  ImageGestureHandler _gestureHandler;
+  ImageGestureConfig _gestureConfig;
   @override
   void initState() {
     // TODO: implement initState
-    _gestureHandler =
-        widget.extendedImage.imageGestureHandler ?? ImageGestureHandler();
+    _gestureConfig =
+        widget.extendedImage.imageGestureConfig ?? ImageGestureConfig();
 
-    if (_gestureHandler.cacheGesture) {
+    if (_gestureConfig.cacheGesture) {
       var cache =
           _gestureDetailsCache[widget.extendedImageState.imageStreamKey];
       if (cache != null) {
-        _scale = cache.scale;
-        _offset = cache.offset;
+        _gestureDetails = cache;
       }
     }
-
+    _gestureDetails ??= GestureDetails(
+      scale: 1.0,
+      offset: Offset.zero,
+    );
     super.initState();
   }
 
-  void _handleScaleStart(ScaleStartDetails details) {
-    //print(details);
-    //print("_handleScaleStart");
-    //setState(() {
-    _startingFocalPoint = details.focalPoint;
-    _previousOffset = _offset;
-    _previousScale = _scale;
-    //_offset = details.focalPoint;
-    // });
+  Offset _clampOffset(Offset offset, double scale) {
+    //final Size size = context.size;
+    print(offset);
+    return offset;
+    if (scale > 1.0) {
+      return offset;
+//      final Offset minOffset =
+//          Offset(size.width, size.height) * (1.0 - _gestureDetails.scale);
+//      return Offset(offset.dx.clamp(minOffset.dx, 0.0),
+//          offset.dy.clamp(minOffset.dy, 0.0));
+    } else {
+      return Offset.zero;
+    }
   }
 
+  void _handleScaleStart(ScaleStartDetails details) {
+    _normalizedOffset =
+        (details.focalPoint - _gestureDetails.offset) / _gestureDetails.scale;
+    _startingScale = _gestureDetails.scale;
+    _startingOffset = details.focalPoint;
+  }
+
+  Offset _offset = Offset.zero;
   void _handleScaleUpdate(ScaleUpdateDetails details) {
+    double scale = (_startingScale * details.scale * _gestureConfig.speed)
+        .clamp(_gestureConfig.minScale, _gestureConfig.maxScale);
+    //scale = _roundAfter(scale, 3);
     setState(() {
-      _scale = (_previousScale * details.scale * _gestureHandler.speed)
-          .clamp(_gestureHandler.minScale, _gestureHandler.maxScale);
-      _scale = _roundAfter(_scale, 3);
+      GestureDetails temp = _gestureDetails;
+      var offset =
+          _clampOffset(details.focalPoint - _normalizedOffset * scale, scale);
 
-      //if (details.scale != 1.0) {
-      final Offset normalizedOffset =
-          (_startingFocalPoint - _previousOffset) / _previousScale;
+      _gestureDetails = GestureDetails(
+          offset: offset,
+          scale: scale,
+          delta: offset - temp.offset,
+          computeBoundary: details.scale == 1.0 && scale > 1.0)
+        ..boundary = _gestureDetails.boundary;
+    });
+  }
 
-      Offset _temp = _offset;
+  void _handleHorizontalDragUpdate(DragUpdateDetails details) {
+    var delta = details.delta;
+    if (delta.dx == 0.0) return;
 
-      _offset = details.focalPoint - normalizedOffset * _scale;
+    if (widget.pageView != null && delta.dx != 0.0) {
+      bool movePageView = (delta.dx < 0 && _gestureDetails.boundary.right) ||
+          (delta.dx > 0 && _gestureDetails.boundary.left);
 
-      _previousGestureDetails = GestureDetails(
-          offset: _offset, scale: _scale, delta: _offset - _temp);
-//      if (details.scale == 1.0) {
-//        if (_scale > 1.0) {
-//          _offset = details.focalPoint - normalizedOffset * _scale;
-//        }
-//      } else {
-//        // Ensure that item under the focal point stays in the same place despite zooming
-//        //use _startingFocalPoint so that
-//        _offset = _startingFocalPoint - normalizedOffset * _scale;
-//      }
+      if (movePageView) {
+        widget.pageView.controller.position.moveTo(
+            widget.pageView.controller.offset -
+                delta.dx * _gestureConfig.speed);
+        return;
+      }
+    }
 
-//      if (_scale == _gestureHandler.minScale) {
-//        _offset = Offset.zero;
-//      }
+    setState(() {
+      _gestureDetails = GestureDetails(
+          offset: _clampOffset(
+            _gestureDetails.offset + details.delta * _gestureConfig.speed,
+            _gestureDetails.scale,
+          ),
+          scale: _gestureDetails.scale,
+          delta: details.delta * _gestureConfig.speed,
+          computeBoundary: _gestureDetails.scale > 1.0)
+        ..boundary = _gestureDetails.boundary;
+    });
+  }
 
-      ///move
-//      if (details.scale == 1.0 && _previousGestureDetails != null) {
-//        var offsetMove = _offset - _previousGestureDetails.offset;
-//
-//        Rect temp = hanldeGesture(
-//            GestureDetails(_offset, _scale),
-//            _previousGestureDetails.rect,
-//            _previousGestureDetails.destinationRect);
-//
-//        //move on horizontal
-//        if (offsetMove.dx != 0.0) {
-//          //move left to right
-//          if (offsetMove.dx > 0) {
-//            if (temp.left > _previousGestureDetails.rect.left) {
-//              _offset = Offset(
-//                  _offset.dx - (temp.left - _previousGestureDetails.rect.left),
-//                  _offset.dy);
-//            }
-//          } else {
-//            if (temp.right < _previousGestureDetails.rect.right) {
-//              _offset = Offset(
-//                  _offset.dx +
-//                      (_previousGestureDetails.rect.right - temp.right),
-//                  _offset.dy);
-//            }
-//          }
-//        }
-//
-//        //move on vertical
-//        if (offsetMove.dy != 0.0) {}
-//      }
+  void _handleVerticalDragUpdate(DragUpdateDetails details) {
+    var delta = details.delta;
+    if (delta.dy == 0.0) return;
 
-      //offset = details.focalPoint;
-      //print("_handleScaleUpdate$_offset");
+    if (widget.pageView != null) {
+      bool movePageView = (delta.dy < 0 && _gestureDetails.boundary.bottom) ||
+          (delta.dy > 0 && _gestureDetails.boundary.top);
+
+      if (movePageView) {
+        widget.pageView.controller.position.moveTo(
+            widget.pageView.controller.offset -
+                delta.dy * _gestureConfig.speed);
+        return;
+      }
+    }
+
+    setState(() {
+      _gestureDetails = GestureDetails(
+          offset: _clampOffset(
+            _gestureDetails.offset + details.delta * _gestureConfig.speed,
+            _gestureDetails.scale,
+          ),
+          scale: _gestureDetails.scale,
+          delta: details.delta * _gestureConfig.speed,
+          computeBoundary: _gestureDetails.scale > 1.0)
+        ..boundary = _gestureDetails.boundary;
     });
   }
 
   void _handleScaleReset() {
     setState(() {
-      _scale = 1.0;
-      _offset = Offset.zero;
+      _gestureDetails = GestureDetails(offset: Offset.zero, scale: 1.0);
     });
   }
 
@@ -133,6 +154,20 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture> {
   double _roundAfter(double number, int position) {
     double shift = pow(10, position).toDouble();
     return (number * shift).roundToDouble() / shift;
+  }
+
+  bool get listenVerticalDragUpdate {
+    return (_gestureDetails.scale > 1.0 &&
+        widget.extendedImage.imageGestureConfig.inPageView ==
+            InPageView.vertical &&
+        widget.pageView != null);
+  }
+
+  bool get listenHorizontalDragUpdate {
+    return (_gestureDetails.scale > 1.0 &&
+        widget.extendedImage.imageGestureConfig.inPageView ==
+            InPageView.horizontal &&
+        widget.pageView != null);
   }
 
   @override
@@ -143,16 +178,9 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture> {
 
   @override
   Widget build(BuildContext context) {
-//    final Offset center = size.center(Offset.zero) * zoom + offset;
-//    final double radius = size.width / 2.0 * zoom;
-
-    var newGestureDetails = GestureDetails(offset: _offset, scale: _scale);
-
-    _previousGestureDetails = newGestureDetails;
-
-    if (_gestureHandler.cacheGesture) {
+    if (_gestureConfig.cacheGesture) {
       _gestureDetailsCache[widget.extendedImageState.imageStreamKey] =
-          _previousGestureDetails;
+          _gestureDetails;
     }
 
     Widget image = ExtendedRawImage(
@@ -171,71 +199,19 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture> {
       filterQuality: widget.extendedImage.filterQuality,
       beforePaintImage: widget.extendedImage.beforePaintImage,
       afterPaintImage: widget.extendedImage.afterPaintImage,
-      gestureDetails: _previousGestureDetails,
+      gestureDetails: _gestureDetails,
     );
 
     image = GestureDetector(
       onScaleStart: _handleScaleStart,
       onScaleUpdate: _handleScaleUpdate,
       onDoubleTap: _handleScaleReset,
-      onHorizontalDragUpdate: _scale <= 1.0
-          ? null
-          : (DragUpdateDetails detail) {
-              setState(() {
-                //print(_previousGestureDetails.offset - _offset);
-                _offset = _offset + detail.delta;
-                _previousGestureDetails = GestureDetails(
-                    offset: _offset, scale: _scale, delta: detail.delta);
-              });
-
-//              if (_previousGestureDetails != null) {
-//                var delta = detail.delta;
-//
-//                Rect temp = hanldeGesture(
-//                    GestureDetails(offset: _offset, scale: _scale),
-//                    _previousGestureDetails.rect,
-//                    _previousGestureDetails.destinationRect);
-//
-//                //move on horizontal
-//                if (delta.dx != 0.0) {
-//                  //move left to right
-//                  if (delta.dx > 0) {
-//                    if (temp.left > _previousGestureDetails.rect.left) {
-////                      _offset = Offset(
-////                          _offset.dx -
-////                              (temp.left - _previousGestureDetails.rect.left),
-////                          _offset.dy);
-////                      _previousGestureDetails = GestureDetails(
-////                          destinationRect: Rect.fromLTWH(
-////                              0.0,
-////                              _previousGestureDetails.destinationRect.top,
-////                              _previousGestureDetails.destinationRect.width,
-////                              _previousGestureDetails.destinationRect.height));
-//                    }
-//                  } else {
-//                    if (temp.right < _previousGestureDetails.rect.right) {
-////                      _offset = Offset(
-////                          _offset.dx +
-////                              (_previousGestureDetails.rect.right - temp.right),
-////                          _offset.dy);
-////                      _previousGestureDetails = GestureDetails(
-////                          destinationRect: Rect.fromLTWH(
-////                              0.0,
-////                              _previousGestureDetails.destinationRect.top,
-////                              _previousGestureDetails.destinationRect.width,
-////                              _previousGestureDetails.destinationRect.height));
-//                    }
-//                  }
-//                }
-//              }
-            },
+      onHorizontalDragUpdate:
+          listenHorizontalDragUpdate ? _handleHorizontalDragUpdate : null,
+      onVerticalDragUpdate:
+          listenVerticalDragUpdate ? _handleVerticalDragUpdate : null,
       child: image,
     );
-
-//    image = Listener(
-//      child: image,
-//    );
-
     return image;
   }
 }
