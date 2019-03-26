@@ -39,7 +39,7 @@ class ExtendedImage extends StatefulWidget {
     this.beforePaintImage,
     this.afterPaintImage,
     this.mode: ExtendedImageMode.None,
-    this.imageGestureHandler,
+    this.imageGestureConfig,
     BoxConstraints constraints,
   })  : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
@@ -76,7 +76,7 @@ class ExtendedImage extends StatefulWidget {
       this.beforePaintImage,
       this.afterPaintImage,
       this.mode: ExtendedImageMode.None,
-      this.imageGestureHandler,
+      this.imageGestureConfig,
       BoxConstraints constraints})
       : image = ExtendedNetworkImageProvider(url,
             scale: scale, headers: headers, cache: cache),
@@ -130,7 +130,7 @@ class ExtendedImage extends StatefulWidget {
       this.beforePaintImage,
       this.afterPaintImage,
       this.mode: ExtendedImageMode.None,
-      this.imageGestureHandler,
+      this.imageGestureConfig,
       BoxConstraints constraints})
       : image = FileImage(file, scale: scale),
         assert(alignment != null),
@@ -295,7 +295,7 @@ class ExtendedImage extends StatefulWidget {
       this.beforePaintImage,
       this.afterPaintImage,
       this.mode: ExtendedImageMode.None,
-      this.imageGestureHandler,
+      this.imageGestureConfig,
       BoxConstraints constraints})
       : image = scale != null
             ? ExactAssetImage(name,
@@ -350,7 +350,7 @@ class ExtendedImage extends StatefulWidget {
       this.beforePaintImage,
       this.afterPaintImage,
       this.mode: ExtendedImageMode.None,
-      this.imageGestureHandler,
+      this.imageGestureConfig,
       BoxConstraints constraints})
       : image = MemoryImage(bytes, scale: scale),
         assert(alignment != null),
@@ -364,7 +364,7 @@ class ExtendedImage extends StatefulWidget {
 
   final ExtendedImageMode mode;
 
-  final ImageGestureHandler imageGestureHandler;
+  final ImageGestureConfig imageGestureConfig;
 
   ///you can paint anything if you want before paint image.
   ///it's to used in  [ExtendedRawImage]
@@ -687,6 +687,13 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
 
   @override
   Widget build(BuildContext context) {
+    PageView pageView;
+    if (widget.mode == ExtendedImageMode.Gesture &&
+        widget.imageGestureConfig != null &&
+        widget.imageGestureConfig.inPageView != InPageView.none) {
+      pageView = context.ancestorWidgetOfExactType(typeOf<PageView>());
+    }
+
     Widget current;
 
     if (widget.loadStateChanged != null) {
@@ -718,7 +725,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
             break;
           case LoadState.completed:
             if (widget.mode == ExtendedImageMode.Gesture) {
-              current = ExtendedImageGesture(widget, this);
+              current = ExtendedImageGesture(widget, this, pageView);
             } else {
               current = _buildExtendedRawImage();
             }
@@ -738,7 +745,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
       } else {
         if (_loadState == LoadState.completed &&
             widget.mode == ExtendedImageMode.Gesture) {
-          current = ExtendedImageGesture(widget, this);
+          current = ExtendedImageGesture(widget, this, pageView);
         } else {
           current = _buildExtendedRawImage();
         }
