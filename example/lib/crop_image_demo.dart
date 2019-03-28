@@ -52,6 +52,7 @@ class _CropImageDemoState extends State<CropImageDemo>
               onRefresh: onRefresh,
               child: LoadingMoreCustomScrollView(
                 showGlowLeading: false,
+                physics: ClampingScrollPhysics(),
                 slivers: <Widget>[
                   SliverToBoxAdapter(
                     child: PullToRefreshContainer((info) {

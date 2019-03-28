@@ -13,6 +13,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/semantics.dart';
 
+const PageScrollPhysics _kPagePhysics = PageScrollPhysics();
+
 class ExtendedImage extends StatefulWidget {
   ExtendedImage({
     Key key,
@@ -688,10 +690,16 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   @override
   Widget build(BuildContext context) {
     PageView pageView;
+    ScrollPhysics physics;
     if (widget.mode == ExtendedImageMode.Gesture &&
         widget.imageGestureConfig != null &&
         widget.imageGestureConfig.inPageView != InPageView.none) {
       pageView = context.ancestorWidgetOfExactType(typeOf<PageView>());
+      if (pageView != null) {
+        physics = pageView.pageSnapping
+            ? _kPagePhysics.applyTo(pageView.physics)
+            : pageView.physics;
+      }
     }
 
     Widget current;
@@ -725,7 +733,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
             break;
           case LoadState.completed:
             if (widget.mode == ExtendedImageMode.Gesture) {
-              current = ExtendedImageGesture(widget, this, pageView);
+              current = ExtendedImageGesture(widget, this, pageView, physics);
             } else {
               current = _buildExtendedRawImage();
             }
@@ -745,7 +753,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
       } else {
         if (_loadState == LoadState.completed &&
             widget.mode == ExtendedImageMode.Gesture) {
-          current = ExtendedImageGesture(widget, this, pageView);
+          current = ExtendedImageGesture(widget, this, pageView, physics);
         } else {
           current = _buildExtendedRawImage();
         }

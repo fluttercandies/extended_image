@@ -483,14 +483,12 @@ void paintExtendedImage({
 
   bool gestureClip = false;
   if (gestureDetails != null) {
-    destinationRect = hanldeGesture(gestureDetails, rect, destinationRect);
-    gestureClip = outRect(rect, destinationRect);
+    destinationRect =
+        gestureDetails.calculateFinalDestinationRect(rect, destinationRect);
 
     ///outside
-    if (gestureClip) {
-      canvas.save();
-      canvas.clipRect(rect);
-    }
+    canvas.save();
+    canvas.clipRect(rect);
   }
 
   if (beforePaintImage != null) {
@@ -523,7 +521,7 @@ void paintExtendedImage({
 
   if (needSave) canvas.restore();
 
-  if (gestureClip) {
+  if (gestureDetails != null) {
     canvas.restore();
   }
 
