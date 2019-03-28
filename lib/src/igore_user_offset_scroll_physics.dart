@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 
-class ImageViewScrollPhysics extends PageScrollPhysics {
+///igore user offset
+///scroll will handle by image gesture
+///do this to avoid gesture conflict in pageview
+class IgoreUserOffsetScrollPhysics extends PageScrollPhysics {
+  const IgoreUserOffsetScrollPhysics({ScrollPhysics parent})
+      : super(parent: parent);
+
+  ///igore user offset
   @override
   bool shouldAcceptUserOffset(ScrollMetrics position) {
     return false;
@@ -11,7 +18,7 @@ class ImageViewScrollPhysics extends PageScrollPhysics {
   @override
   PageScrollPhysics applyTo(ScrollPhysics ancestor) {
     // TODO: implement applyTo
-    return ImageViewScrollPhysics();
+    return IgoreUserOffsetScrollPhysics(parent: ancestor);
     //return super.applyTo(ancestor);
   }
 }

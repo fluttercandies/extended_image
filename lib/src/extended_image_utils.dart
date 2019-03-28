@@ -53,7 +53,7 @@ class GestureDetails {
 
 //  final PageView pageView;
 //  ///layout rect
-  Rect rect;
+
 //
 //  ///raw rect for image.
 //  Rect destinationRect;
@@ -71,23 +71,14 @@ class GestureDetails {
 //    return false;
 //  }
 
-  bool _zooming = false;
+  // bool _zooming = false;
 
   GestureDetails({this.offset, this.scale, GestureDetails gestureDetails}) {
-    if (scale <= 1.0) {
-      offset = Offset.zero;
-    }
-
     if (gestureDetails != null) {
       _computeVerticalBoundary = gestureDetails._computeVerticalBoundary;
       _computeHorizontalBoundary = gestureDetails._computeHorizontalBoundary;
       _center = gestureDetails._center;
       boundary = gestureDetails.boundary;
-      //keep offset when zoom in/out
-//      if (scale > 1 && scale != gestureDetails.scale) {
-//        offset = gestureDetails.offset;
-//      }
-      _zooming = scale != gestureDetails.scale;
     }
   }
 
@@ -108,57 +99,56 @@ class GestureDetails {
   Rect calculateFinalDestinationRect(Rect layoutRect, Rect destinationRect) {
     Offset center = _getCenter(destinationRect);
 
-    if (_zooming && _center != null) {
-      center = _center;
-    }
+    ///if (_zooming && _center != null) {}
+//    Offset delta = Offset.zero;
+//
+//    if (this._center != null) {
+//      delta = center - this._center;
+//    }
+
+//    if ((!_computeHorizontalBoundary || !_computeVerticalBoundary) &&
+//        _center != null) {
+//      center = _center;
+//    }
 
     Rect result = _getDestinationRect(destinationRect, center);
 
-    Offset delta = Offset.zero;
+    if (_computeHorizontalBoundary) {
+      //move right
+      if (result.left >= layoutRect.left) {
+        result = Rect.fromLTWH(0.0, result.top, result.width, result.height);
 
-    if (this._center != null) {
-      delta = center - this._center;
-    }
-
-    boundary = Boundary();
-    if (delta != Offset.zero) {
-      if (_computeHorizontalBoundary) {
-        //move right
-        if (delta.dx > 0 && result.left >= layoutRect.left) {
-          result = Rect.fromLTWH(0.0, result.top, result.width, result.height);
-
-          offset = result.center - destinationRect.center * scale;
-          boundary.left = true;
-        }
-
-        ///move left
-        if (delta.dx < 0 && result.right <= layoutRect.right) {
-          result = Rect.fromLTWH(layoutRect.right - result.width, result.top,
-              result.width, result.height);
-
-          offset = result.center - destinationRect.center * scale;
-          boundary.right = true;
-        }
+        offset = result.center - destinationRect.center * scale;
+        boundary.left = true;
       }
 
-      if (_computeVerticalBoundary) {
-        //move down
-        if (delta.dy < 0 && result.bottom <= layoutRect.bottom) {
-          result = Rect.fromLTWH(result.left, layoutRect.bottom - result.height,
-              result.width, result.height);
+      ///move left
+      if (result.right <= layoutRect.right) {
+        result = Rect.fromLTWH(layoutRect.right - result.width, result.top,
+            result.width, result.height);
 
-          offset = result.center - destinationRect.center * scale;
-          boundary.bottom = true;
-        }
+        offset = result.center - destinationRect.center * scale;
+        boundary.right = true;
+      }
+    }
 
-        //move up
-        if (delta.dy > 0 && result.top >= layoutRect.top) {
-          result = Rect.fromLTWH(
-              result.left, layoutRect.top, result.width, result.height);
+    if (_computeVerticalBoundary) {
+      //move down
+      if (result.bottom <= layoutRect.bottom) {
+        result = Rect.fromLTWH(result.left, layoutRect.bottom - result.height,
+            result.width, result.height);
 
-          offset = result.center - destinationRect.center * scale;
-          boundary.top = true;
-        }
+        offset = result.center - destinationRect.center * scale;
+        boundary.bottom = true;
+      }
+
+      //move up
+      if (result.top >= layoutRect.top) {
+        result = Rect.fromLTWH(
+            result.left, layoutRect.top, result.width, result.height);
+
+        offset = result.center - destinationRect.center * scale;
+        boundary.top = true;
       }
     }
 
@@ -169,7 +159,7 @@ class GestureDetails {
         result.top <= layoutRect.top && result.bottom >= layoutRect.bottom;
 
     //print("$_computeHorizontalBoundary");
-    print(boundary);
+    //print(boundary);
     this._center = _getCenter(destinationRect);
 
     return result;
@@ -183,7 +173,7 @@ class ImageGestureConfig {
   final bool cacheGesture;
   final InPageView inPageView;
   ImageGestureConfig(
-      {this.minScale: 1.0,
+      {this.minScale: 0.8,
       this.maxScale: 5.0,
       this.speed: 1.0,
       this.cacheGesture: false,

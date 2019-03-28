@@ -113,20 +113,6 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     _controller.dispose();
   }
 
-  Offset _clampOffset(Offset offset, double scale) {
-    //final Size size = context.size;
-    //return offset;
-    if (scale > 1.0) {
-      return offset;
-//      final Offset minOffset =
-//          Offset(size.width, size.height) * (1.0 - _gestureDetails.scale);
-//      return Offset(offset.dx.clamp(minOffset.dx, 0.0),
-//          offset.dy.clamp(minOffset.dy, 0.0));
-    } else {
-      return Offset.zero;
-    }
-  }
-
   void _handleScaleStart(ScaleStartDetails details) {
     _controller.stop();
     _normalizedOffset =
@@ -134,19 +120,50 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     _startingScale = _gestureDetails.scale;
   }
 
+  Offset zeroOffset;
   void _handleScaleUpdate(ScaleUpdateDetails details) {
+    // print(details);
     double scale = (_startingScale * details.scale * _gestureConfig.speed)
         .clamp(_gestureConfig.minScale, _gestureConfig.maxScale);
 
+    //no more zoom
+    if (details.scale != 1.0 &&
+            (_gestureDetails.scale == _gestureConfig.minScale &&
+                scale <= _gestureDetails.scale) ||
+        (_gestureDetails.scale == _gestureConfig.maxScale &&
+            scale >= _gestureDetails.scale)) {
+      return;
+    }
+
     //scale = _roundAfter(scale, 3);
     var offset = (details.focalPoint - _normalizedOffset * scale);
-    setState(() {
-      _gestureDetails = GestureDetails(
-        offset: offset,
-        scale: scale,
-        gestureDetails: _gestureDetails,
-      );
-    });
+
+    if (scale <= 1.0) {
+      zeroOffset = null;
+      offset = Offset.zero;
+    } else {
+      if (zeroOffset == null && _gestureDetails.scale <= 1.0)
+        zeroOffset = offset;
+      //print(zeroOffset);
+      ///zoom from zero so that the zoom will not strange
+      if (zeroOffset != null) offset = offset - zeroOffset;
+    }
+
+    ///offset = _elementwiseMax(offset, Offset.zero);
+//    //Nor to far right
+//    double borderScale = 1.0 - 1.0 / scale;
+//    offset =
+//        _elementwiseMin(offset, _asOffset(_gestureDetails.size * borderScale));
+
+    if (offset != _gestureDetails.offset || scale != _gestureDetails.scale) {
+      setState(() {
+        _gestureDetails = GestureDetails(
+          offset: offset,
+          scale: scale,
+          gestureDetails: _gestureDetails,
+        );
+      });
+    }
   }
 
   Drag _drag;
