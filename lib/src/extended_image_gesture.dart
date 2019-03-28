@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:extended_image/src/extended_image.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/extended_raw_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui show Image;
 
@@ -10,21 +11,27 @@ import 'dart:ui' as ui show Image;
 class ExtendedImageGesture extends StatefulWidget {
   final ExtendedImage extendedImage;
   final PageView pageView;
+  final ScrollPhysics physics;
   final ExtendedImageState extendedImageState;
   ExtendedImageGesture(
-      this.extendedImage, this.extendedImageState, this.pageView);
+      this.extendedImage, this.extendedImageState, this.pageView, this.physics);
   @override
   _ExtendedImageGestureState createState() => _ExtendedImageGestureState();
 }
 
-class _ExtendedImageGestureState extends State<ExtendedImageGesture> {
+class _ExtendedImageGestureState extends State<ExtendedImageGesture>
+    with SingleTickerProviderStateMixin {
   ///details for gesture
   GestureDetails _gestureDetails;
   Offset _normalizedOffset;
   double _startingScale;
-  Offset _startingOffset;
+  AnimationController _controller;
+  Animation<Offset> _animation;
 
   ImageGestureConfig _gestureConfig;
+  ScrollPosition get position => widget.pageView?.controller.position;
+  Map<Type, GestureRecognizerFactory> _gestureRecognizers =
+      const <Type, GestureRecognizerFactory>{};
   @override
   void initState() {
     // TODO: implement initState
@@ -42,13 +49,73 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture> {
       scale: 1.0,
       offset: Offset.zero,
     );
+    _controller = AnimationController(vsync: this);
+//    _controller.addListener(() {
+//      setState(() {
+//        _gestureDetails = GestureDetails(
+//            offset: _animation.value,
+//            scale: _gestureDetails.scale,
+//            gestureDetails: _gestureDetails);
+//      });
+//    });
+    if (widget.pageView != null) {
+      switch (widget.pageView.scrollDirection) {
+        case Axis.vertical:
+          _gestureRecognizers = <Type, GestureRecognizerFactory>{
+            VerticalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<
+                VerticalDragGestureRecognizer>(
+              () => VerticalDragGestureRecognizer(),
+              (VerticalDragGestureRecognizer instance) {
+                instance
+                  ..onDown = _handleDragDown
+                  ..onStart = _handleDragStart
+                  ..onUpdate = _handleDragUpdate
+                  ..onEnd = _handleDragEnd
+                  ..onCancel = _handleDragCancel
+                  ..minFlingDistance = widget.physics?.minFlingDistance
+                  ..minFlingVelocity = widget.physics?.minFlingVelocity
+                  ..maxFlingVelocity = widget.physics?.maxFlingVelocity;
+              },
+            ),
+          };
+          break;
+        case Axis.horizontal:
+          _gestureRecognizers = <Type, GestureRecognizerFactory>{
+            HorizontalDragGestureRecognizer:
+                GestureRecognizerFactoryWithHandlers<
+                    HorizontalDragGestureRecognizer>(
+              () => HorizontalDragGestureRecognizer(),
+              (HorizontalDragGestureRecognizer instance) {
+                instance
+                  ..onDown = _handleDragDown
+                  ..onStart = _handleDragStart
+                  ..onUpdate = _handleDragUpdate
+                  ..onEnd = _handleDragEnd
+                  ..onCancel = _handleDragCancel
+                  ..minFlingDistance = widget.physics?.minFlingDistance
+                  ..minFlingVelocity = widget.physics?.minFlingVelocity
+                  ..maxFlingVelocity = widget.physics?.maxFlingVelocity;
+              },
+            ),
+          };
+          break;
+      }
+    } else {
+      _gestureRecognizers = const <Type, GestureRecognizerFactory>{};
+    }
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 
   Offset _clampOffset(Offset offset, double scale) {
     //final Size size = context.size;
-    print(offset);
-    return offset;
+    //return offset;
     if (scale > 1.0) {
       return offset;
 //      final Offset minOffset =
@@ -61,87 +128,119 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture> {
   }
 
   void _handleScaleStart(ScaleStartDetails details) {
+    _controller.stop();
     _normalizedOffset =
         (details.focalPoint - _gestureDetails.offset) / _gestureDetails.scale;
     _startingScale = _gestureDetails.scale;
-    _startingOffset = details.focalPoint;
   }
 
-  Offset _offset = Offset.zero;
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     double scale = (_startingScale * details.scale * _gestureConfig.speed)
         .clamp(_gestureConfig.minScale, _gestureConfig.maxScale);
+
     //scale = _roundAfter(scale, 3);
+    var offset = (details.focalPoint - _normalizedOffset * scale);
     setState(() {
-      GestureDetails temp = _gestureDetails;
-      var offset =
-          _clampOffset(details.focalPoint - _normalizedOffset * scale, scale);
-
       _gestureDetails = GestureDetails(
-          offset: offset,
-          scale: scale,
-          delta: offset - temp.offset,
-          computeBoundary: details.scale == 1.0 && scale > 1.0)
-        ..boundary = _gestureDetails.boundary;
+        offset: offset,
+        scale: scale,
+        gestureDetails: _gestureDetails,
+      );
     });
   }
 
-  void _handleHorizontalDragUpdate(DragUpdateDetails details) {
-    var delta = details.delta;
-    if (delta.dx == 0.0) return;
+  Drag _drag;
+  ScrollHoldController _hold;
 
-    if (widget.pageView != null && delta.dx != 0.0) {
-      bool movePageView = (delta.dx < 0 && _gestureDetails.boundary.right) ||
-          (delta.dx > 0 && _gestureDetails.boundary.left);
-
-      if (movePageView) {
-        widget.pageView.controller.position.moveTo(
-            widget.pageView.controller.offset -
-                delta.dx * _gestureConfig.speed);
-        return;
-      }
-    }
-
-    setState(() {
-      _gestureDetails = GestureDetails(
-          offset: _clampOffset(
-            _gestureDetails.offset + details.delta * _gestureConfig.speed,
-            _gestureDetails.scale,
-          ),
-          scale: _gestureDetails.scale,
-          delta: details.delta * _gestureConfig.speed,
-          computeBoundary: _gestureDetails.scale > 1.0)
-        ..boundary = _gestureDetails.boundary;
-    });
+  void _handleDragDown(DragDownDetails details) {
+    _controller.stop();
+    assert(_drag == null);
+    assert(_hold == null);
+    _hold = position.hold(_disposeHold);
   }
 
-  void _handleVerticalDragUpdate(DragUpdateDetails details) {
+  void _handleDragStart(DragStartDetails details) {
+    // It's possible for _hold to become null between _handleDragDown and
+    // _handleDragStart, for example if some user code calls jumpTo or otherwise
+    // triggers a new activity to begin.
+    assert(_drag == null);
+    _drag = position.drag(details, _disposeDrag);
+    assert(_drag != null);
+    assert(_hold == null);
+  }
+
+  void _handleDragUpdate(DragUpdateDetails details) {
+    // _drag might be null if the drag activity ended and called _disposeDrag.
+    assert(_hold == null || _drag == null);
     var delta = details.delta;
-    if (delta.dy == 0.0) return;
 
-    if (widget.pageView != null) {
-      bool movePageView = (delta.dy < 0 && _gestureDetails.boundary.bottom) ||
-          (delta.dy > 0 && _gestureDetails.boundary.top);
+    bool movePage = (delta.dx < 0 && _gestureDetails.boundary.right) ||
+        (delta.dx > 0 && _gestureDetails.boundary.left) ||
+        (delta.dy < 0 && _gestureDetails.boundary.bottom) ||
+        (delta.dy > 0 && _gestureDetails.boundary.top) ||
+        _gestureDetails.scale <= 1.0;
 
-      if (movePageView) {
-        widget.pageView.controller.position.moveTo(
-            widget.pageView.controller.offset -
-                delta.dy * _gestureConfig.speed);
-        return;
-      }
+    if (movePage) {
+      print(_gestureDetails.boundary);
+      _drag?.update(details);
+    } else {
+      setState(() {
+        _gestureDetails = GestureDetails(
+            offset: _gestureDetails.offset + details.delta,
+            scale: _gestureDetails.scale,
+            gestureDetails: _gestureDetails
+            //computeBoundary: _gestureDetails.scale > 1.0
+            );
+      });
     }
+  }
 
-    setState(() {
-      _gestureDetails = GestureDetails(
-          offset: _clampOffset(
-            _gestureDetails.offset + details.delta * _gestureConfig.speed,
-            _gestureDetails.scale,
-          ),
-          scale: _gestureDetails.scale,
-          delta: details.delta * _gestureConfig.speed,
-          computeBoundary: _gestureDetails.scale > 1.0)
-        ..boundary = _gestureDetails.boundary;
-    });
+  void _handleDragEnd(DragEndDetails details) {
+    // _drag might be null if the drag activity ended and called _disposeDrag.
+    assert(_hold == null || _drag == null);
+
+    var temp = details;
+    if (_gestureDetails.scale > 1.0) {
+//      final double magnitude = details.velocity.pixelsPerSecond.distance;
+//      //if (magnitude < _kMinFlingVelocity) return;
+//      //final Offset direction = details.velocity.pixelsPerSecond / magnitude;
+//
+//      var primaryVelocity = details.primaryVelocity;
+//      var end = _gestureDetails.offset;
+//      if (details.velocity.pixelsPerSecond.dx == primaryVelocity) {
+//        end = Offset(primaryVelocity, 0.0);
+//      } else {
+//        end = Offset(0.0, primaryVelocity);
+//      }
+
+      temp = DragEndDetails(primaryVelocity: 0.0);
+//      _animation = _controller.drive(Tween<Offset>(
+//          begin: _gestureDetails.offset, end: _gestureDetails.offset + end));
+//      _controller
+//        ..value = 0.0
+//        ..fling(velocity: magnitude / 1000.0);
+    }
+    _drag?.end(temp);
+
+    assert(_drag == null);
+  }
+
+  void _handleDragCancel() {
+    // _hold might be null if the drag started.
+    // _drag might be null if the drag activity ended and called _disposeDrag.
+    assert(_hold == null || _drag == null);
+    _hold?.cancel();
+    _drag?.cancel();
+    assert(_hold == null);
+    assert(_drag == null);
+  }
+
+  void _disposeHold() {
+    _hold = null;
+  }
+
+  void _disposeDrag() {
+    _drag = null;
   }
 
   void _handleScaleReset() {
@@ -156,25 +255,17 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture> {
     return (number * shift).roundToDouble() / shift;
   }
 
-  bool get listenVerticalDragUpdate {
-    return (_gestureDetails.scale > 1.0 &&
-        widget.extendedImage.imageGestureConfig.inPageView ==
-            InPageView.vertical &&
-        widget.pageView != null);
-  }
-
-  bool get listenHorizontalDragUpdate {
-    return (_gestureDetails.scale > 1.0 &&
-        widget.extendedImage.imageGestureConfig.inPageView ==
-            InPageView.horizontal &&
-        widget.pageView != null);
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
+//  bool get listenVerticalDragUpdate {
+//    return (widget.extendedImage.imageGestureConfig.inPageView ==
+//            InPageView.vertical &&
+//        widget.pageView != null);
+//  }
+//
+//  bool get listenHorizontalDragUpdate {
+//    return (widget.extendedImage.imageGestureConfig.inPageView ==
+//            InPageView.horizontal &&
+//        widget.pageView != null);
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -205,13 +296,23 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture> {
     image = GestureDetector(
       onScaleStart: _handleScaleStart,
       onScaleUpdate: _handleScaleUpdate,
+      //onScaleEnd: _handleScaleEnd,
       onDoubleTap: _handleScaleReset,
-      onHorizontalDragUpdate:
-          listenHorizontalDragUpdate ? _handleHorizontalDragUpdate : null,
-      onVerticalDragUpdate:
-          listenVerticalDragUpdate ? _handleVerticalDragUpdate : null,
+//      onHorizontalDragUpdate:
+//          listenHorizontalDragUpdate ? _handleHorizontalDragUpdate : null,
+//      onVerticalDragUpdate:
+//          listenVerticalDragUpdate ? _handleVerticalDragUpdate : null,
       child: image,
     );
+
+    if (widget.pageView != null) {
+      image = RawGestureDetector(
+        gestures: _gestureRecognizers,
+        behavior: HitTestBehavior.opaque,
+        child: image,
+      );
+    }
+
     return image;
   }
 }
@@ -222,3 +323,5 @@ Map<Object, GestureDetails> _gestureDetailsCache =
 void clearGestureDetailsCache() {
   _gestureDetailsCache.clear();
 }
+
+typedef Rebuild = GestureDetails Function();
