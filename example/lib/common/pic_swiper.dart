@@ -99,7 +99,7 @@ class _PicSwiperState extends State<PicSwiper> {
                 initialPage: currentIndex,
               ),
               scrollDirection: Axis.horizontal,
-              physics: ImageViewScrollPhysics(),
+              physics: IgoreUserOffsetScrollPhysics(),
             ),
             Positioned(
               bottom: 0.0,
