@@ -75,8 +75,8 @@ class GestureDetails {
 //    }
 //    return false;
 //  }
-
-  // bool _zooming = false;
+  Rect _rect;
+  bool _zooming = false;
 
   GestureDetails({this.offset, this.scale, GestureDetails gestureDetails}) {
     if (gestureDetails != null) {
@@ -84,6 +84,20 @@ class GestureDetails {
       _computeHorizontalBoundary = gestureDetails._computeHorizontalBoundary;
       _center = gestureDetails._center;
       //boundary = gestureDetails.boundary;
+      _zooming = scale != gestureDetails.scale;
+      _rect = gestureDetails._rect;
+
+      if (!_zooming && scale > 1.0) {
+        if (!computeHorizontalBoundary) {
+          offset = Offset(gestureDetails.offset.dx, offset.dy);
+        }
+
+        if (!computeVerticalBoundary) {
+          offset = Offset(offset.dx, gestureDetails.offset.dy);
+        }
+      }
+
+      //print("$offset----$scale");
     }
   }
 
@@ -177,7 +191,7 @@ class GestureDetails {
     //print("$_computeHorizontalBoundary");
     //print(boundary);
     this._center = _getCenter(destinationRect);
-
+    _rect = result;
     return result;
   }
 }

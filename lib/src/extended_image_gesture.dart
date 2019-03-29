@@ -25,6 +25,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   GestureDetails _gestureDetails;
   Offset _normalizedOffset;
   double _startingScale;
+  Offset _startingOffset;
   AnimationController _controller;
   Animation<Offset> _animation;
 
@@ -118,12 +119,12 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     _normalizedOffset =
         (details.focalPoint - _gestureDetails.offset) / _gestureDetails.scale;
     _startingScale = _gestureDetails.scale;
+    _startingOffset = details.focalPoint;
     zeroOffset = null;
   }
 
   Offset zeroOffset;
   void _handleScaleUpdate(ScaleUpdateDetails details) {
-    // print(details);
     double scale = (_startingScale * details.scale * _gestureConfig.speed)
         .clamp(_gestureConfig.minScale, _gestureConfig.maxScale);
 
@@ -137,24 +138,29 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     }
 
     //scale = _roundAfter(scale, 3);
-    var offset = (details.focalPoint - _normalizedOffset * scale);
+    var offset =
+        ((details.scale == 1.0 ? details.focalPoint : _startingOffset) -
+            _normalizedOffset * scale);
+    //print(offset.direction);
 
     if (scale <= 1.0) {
       zeroOffset = null;
       offset = Offset.zero;
     } else {
-      if (zeroOffset == null && _gestureDetails.scale <= 1.0)
+      if (zeroOffset == null && _gestureDetails.scale < 1.0)
         zeroOffset = offset;
+//      else
+//        {
+//        zeroOffset = null;
+//      }
       //print(zeroOffset);
+
       ///zoom from zero so that the zoom will not strange
       if (zeroOffset != null) offset = offset - zeroOffset;
     }
+    print(offset);
 
-    ///offset = _elementwiseMax(offset, Offset.zero);
-//    //Nor to far right
-//    double borderScale = 1.0 - 1.0 / scale;
-//    offset =
-//        _elementwiseMin(offset, _asOffset(_gestureDetails.size * borderScale));
+    //offset = Offset(offset.dx, offset.dy / scale);
 
     if (offset != _gestureDetails.offset || scale != _gestureDetails.scale) {
       setState(() {
