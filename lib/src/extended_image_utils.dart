@@ -60,8 +60,13 @@ class GestureDetails {
 
   bool _computeHorizontalBoundary = false;
   bool _computeVerticalBoundary = false;
+  bool get computeVerticalBoundary => _computeVerticalBoundary;
+  bool get computeHorizontalBoundary => _computeHorizontalBoundary;
+
   Offset _center;
-  Boundary boundary = Boundary();
+
+  Boundary _boundary = Boundary();
+  Boundary get boundary => _boundary;
 
 //  bool get reachHorizontalBoundary {
 //    if (delta != null && delta.dx != 0.0) {
@@ -78,7 +83,7 @@ class GestureDetails {
       _computeVerticalBoundary = gestureDetails._computeVerticalBoundary;
       _computeHorizontalBoundary = gestureDetails._computeHorizontalBoundary;
       _center = gestureDetails._center;
-      boundary = gestureDetails.boundary;
+      //boundary = gestureDetails.boundary;
     }
   }
 
@@ -111,6 +116,17 @@ class GestureDetails {
 //      center = _center;
 //    }
 
+//    if (_center != null) {
+//      print("$_center----$center");
+////      if (!_computeVerticalBoundary) {
+////        center = Offset(center.dx, _center.dy);
+////      }
+////
+////      if (!_computeHorizontalBoundary) {
+////        center = Offset(_center.dx, center.dy);
+////      }
+//    }
+
     Rect result = _getDestinationRect(destinationRect, center);
 
     if (_computeHorizontalBoundary) {
@@ -119,7 +135,7 @@ class GestureDetails {
         result = Rect.fromLTWH(0.0, result.top, result.width, result.height);
 
         offset = result.center - destinationRect.center * scale;
-        boundary.left = true;
+        _boundary.left = true;
       }
 
       ///move left
@@ -128,7 +144,7 @@ class GestureDetails {
             result.width, result.height);
 
         offset = result.center - destinationRect.center * scale;
-        boundary.right = true;
+        _boundary.right = true;
       }
     }
 
@@ -139,7 +155,7 @@ class GestureDetails {
             result.width, result.height);
 
         offset = result.center - destinationRect.center * scale;
-        boundary.bottom = true;
+        _boundary.bottom = true;
       }
 
       //move up
@@ -148,7 +164,7 @@ class GestureDetails {
             result.left, layoutRect.top, result.width, result.height);
 
         offset = result.center - destinationRect.center * scale;
-        boundary.top = true;
+        _boundary.top = true;
       }
     }
 
