@@ -71,7 +71,7 @@ class _PicSwiperState extends State<PicSwiper> {
                 var item = widget.pics[index].picUrl;
                 Widget image = ExtendedImage.network(
                   item,
-                  fit: BoxFit.fill,
+                  fit: BoxFit.contain,
                   //enableLoadState: false,
                   mode: ExtendedImageMode.Gesture,
                   imageGestureConfig:
@@ -99,7 +99,7 @@ class _PicSwiperState extends State<PicSwiper> {
                 initialPage: currentIndex,
               ),
               scrollDirection: Axis.horizontal,
-              physics: IgoreUserOffsetScrollPhysics(),
+              physics: NeverScrollableScrollPhysics(),
             ),
             Positioned(
               bottom: 0.0,
