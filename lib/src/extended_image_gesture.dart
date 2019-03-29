@@ -50,14 +50,14 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       offset: Offset.zero,
     );
     _controller = AnimationController(vsync: this);
-//    _controller.addListener(() {
-//      setState(() {
-//        _gestureDetails = GestureDetails(
-//            offset: _animation.value,
-//            scale: _gestureDetails.scale,
-//            gestureDetails: _gestureDetails);
-//      });
-//    });
+    _controller.addListener(() {
+      setState(() {
+        _gestureDetails = GestureDetails(
+            offset: _animation.value,
+            scale: _gestureDetails.scale,
+            gestureDetails: _gestureDetails);
+      });
+    });
     if (widget.pageView != null) {
       switch (widget.pageView.scrollDirection) {
         case Axis.vertical:
@@ -118,6 +118,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     _normalizedOffset =
         (details.focalPoint - _gestureDetails.offset) / _gestureDetails.scale;
     _startingScale = _gestureDetails.scale;
+    zeroOffset = null;
   }
 
   Offset zeroOffset;
@@ -128,10 +129,10 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
     //no more zoom
     if (details.scale != 1.0 &&
-            (_gestureDetails.scale == _gestureConfig.minScale &&
+        ((_gestureDetails.scale == _gestureConfig.minScale &&
                 scale <= _gestureDetails.scale) ||
-        (_gestureDetails.scale == _gestureConfig.maxScale &&
-            scale >= _gestureDetails.scale)) {
+            (_gestureDetails.scale == _gestureConfig.maxScale &&
+                scale >= _gestureDetails.scale))) {
       return;
     }
 
@@ -198,7 +199,6 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
         _gestureDetails.scale <= 1.0;
 
     if (movePage) {
-      print(_gestureDetails.boundary);
       _drag?.update(details);
     } else {
       setState(() {
@@ -217,12 +217,13 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     assert(_hold == null || _drag == null);
 
     var temp = details;
-    if (_gestureDetails.scale > 1.0) {
-//      final double magnitude = details.velocity.pixelsPerSecond.distance;
-//      //if (magnitude < _kMinFlingVelocity) return;
-//      //final Offset direction = details.velocity.pixelsPerSecond / magnitude;
-//
-//      var primaryVelocity = details.primaryVelocity;
+    if (_gestureDetails.computeHorizontalBoundary ||
+        _gestureDetails.computeVerticalBoundary) {
+      //final double magnitude = details.velocity.pixelsPerSecond.distance;
+      //if (magnitude < _kMinFlingVelocity) return;
+      //final Offset direction = details.velocity.pixelsPerSecond / magnitude;
+
+//      var primaryVelocity = details.primaryVelocity / 100.0;
 //      var end = _gestureDetails.offset;
 //      if (details.velocity.pixelsPerSecond.dx == primaryVelocity) {
 //        end = Offset(primaryVelocity, 0.0);
@@ -262,6 +263,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
   void _handleScaleReset() {
     setState(() {
+      zeroOffset = null;
       _gestureDetails = GestureDetails(offset: Offset.zero, scale: 1.0);
     });
   }
