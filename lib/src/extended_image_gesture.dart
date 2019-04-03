@@ -11,8 +11,6 @@ import 'package:flutter/material.dart';
 /// zoom image
 class ExtendedImageGesture extends StatefulWidget {
   final ExtendedImage extendedImage;
-//  final PageView pageView;
-//  final ScrollPhysics physics;
   final ExtendedImageState extendedImageState;
   final ExtendedImageGesturePageViewState extendedImagePageViewState;
   ExtendedImageGesture(this.extendedImage, this.extendedImageState,
@@ -30,17 +28,12 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   Offset _startingOffset;
   GestureInertiaAnimation _gestureInertiaAnimation;
 
-  ImageGestureConfig _gestureConfig;
+  GestureConfig _gestureConfig;
   @override
   void initState() {
     // TODO: implement initState
-    _gestureConfig = widget.extendedImage.imageGestureConfig;
-
-    if (_gestureConfig == null && widget.extendedImagePageViewState != null) {
-      _gestureConfig =
-          widget.extendedImagePageViewState.widget.imageGestureConfig;
-    }
-    _gestureConfig ??= ImageGestureConfig();
+    _gestureConfig =
+        widget.extendedImage.gestureConfig ?? GestureConfig();
 
     if (_gestureConfig.cacheGesture) {
       var cache =
@@ -142,10 +135,6 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
           _gestureDetails;
     }
 
-    if (_gestureDetails.totalScale == 1.0) {
-      int i = 1;
-    }
-
     Widget image = ExtendedRawImage(
       image: widget.extendedImageState.extendedImageInfo?.image,
       width: widget.extendedImage.width,
@@ -201,7 +190,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
   @override
   // TODO: implement imageGestureConfig
-  ImageGestureConfig get imageGestureConfig => _gestureConfig;
+  GestureConfig get imageGestureConfig => _gestureConfig;
 }
 
 Map<Object, GestureDetails> _gestureDetailsCache =
