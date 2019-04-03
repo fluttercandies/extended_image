@@ -74,8 +74,8 @@ class _PicSwiperState extends State<PicSwiper> {
                   fit: BoxFit.contain,
                   //enableLoadState: false,
                   mode: ExtendedImageMode.Gesture,
-                  imageGestureConfig:
-                      ImageGestureConfig(inPageView: InPageView.horizontal),
+//                  imageGestureConfig:
+//                      ImageGestureConfig(inPageView: InPageView.horizontal),
                 );
                 image = Container(
                   child: image,
@@ -99,6 +99,10 @@ class _PicSwiperState extends State<PicSwiper> {
                 initialPage: currentIndex,
               ),
               scrollDirection: Axis.horizontal,
+              imageGestureConfig: ImageGestureConfig(
+                inPageView: InPageView.horizontal,
+                initialScale: 0.8,
+              ),
               //physics: IgoreUserOffsetScrollPhysics(),
             ),
             Positioned(

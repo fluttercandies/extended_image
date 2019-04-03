@@ -365,8 +365,10 @@ class ExtendedImage extends StatefulWidget {
             : constraints,
         super(key: key);
 
+  /// image mode (none,gestrue)
   final ExtendedImageMode mode;
 
+  /// config for image gesture
   final ImageGestureConfig imageGestureConfig;
 
   ///you can paint anything if you want before paint image.
@@ -690,27 +692,8 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
 
   @override
   Widget build(BuildContext context) {
-//    PageView pageView;
-//    ScrollPhysics physics;
-    ExtendedImageGesturePageViewState extendedImagePageViewState;
-    if (widget.mode == ExtendedImageMode.Gesture &&
-        widget.imageGestureConfig != null &&
-        widget.imageGestureConfig.inPageView != InPageView.none) {
-      //pageView = context.ancestorWidgetOfExactType(typeOf<PageView>());
-      extendedImagePageViewState = context.ancestorStateOfType(
-          TypeMatcher<ExtendedImageGesturePageViewState>());
-
-//      if (pageView != null) {
-//        physics = ScrollConfiguration.of(context).getScrollPhysics(context);
-//        var pageViwePhysics = pageView.pageSnapping
-//            ? _kPagePhysics.applyTo(pageView.physics)
-//            : pageView.physics;
-//
-//        if (pageViwePhysics != null) {
-//          physics = physics.applyTo(pageViwePhysics);
-//        }
-//      }
-    }
+    ExtendedImageGesturePageViewState extendedImagePageViewState = context
+        .ancestorStateOfType(TypeMatcher<ExtendedImageGesturePageViewState>());
 
     Widget current;
 

@@ -212,12 +212,14 @@ class ImageGestureConfig {
   final bool cacheGesture;
   final InPageView inPageView;
   final double inertialSpeed;
+  final double initialScale;
   ImageGestureConfig(
       {this.minScale: 0.8,
       this.maxScale: 5.0,
       this.speed: 1.0,
       this.cacheGesture: false,
       this.inertialSpeed: 100.0,
+      this.initialScale: 1.0,
       this.inPageView: InPageView.none});
 }
 
