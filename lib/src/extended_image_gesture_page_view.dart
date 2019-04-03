@@ -20,6 +20,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     //this.physics,
     this.pageSnapping = true,
     this.onPageChanged,
+    this.imageGestureConfig,
     List<Widget> children = const <Widget>[],
   })  : controller = controller ?? _defaultPageController,
         childrenDelegate = SliverChildListDelegate(children),
@@ -46,6 +47,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     //this.physics,
     this.pageSnapping = true,
     this.onPageChanged,
+    this.imageGestureConfig,
     @required IndexedWidgetBuilder itemBuilder,
     int itemCount,
   })  : controller = controller ?? _defaultPageController,
@@ -64,6 +66,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     //this.physics,
     this.pageSnapping = true,
     this.onPageChanged,
+    this.imageGestureConfig,
     @required this.childrenDelegate,
   })  : assert(childrenDelegate != null),
         controller = controller ?? _defaultPageController,
@@ -117,6 +120,9 @@ class ExtendedImageGesturePageView extends StatefulWidget {
   /// [childrenDelegate] that wraps the given [List] and [IndexedWidgetBuilder],
   /// respectively.
   final SliverChildDelegate childrenDelegate;
+
+  /// config for image gesture
+  final ImageGestureConfig imageGestureConfig;
   @override
   ExtendedImageGesturePageViewState createState() =>
       ExtendedImageGesturePageViewState();
