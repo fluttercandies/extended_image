@@ -4,7 +4,7 @@ import 'dart:ui' as ui show Image;
 
 ///
 ///  extended_image_typedef.dart
-///  create by eastmoney on 2019/4/3
+///  create by zmtzawqlp on 2019/4/3
 ///
 
 typedef LoadStateChanged = Widget Function(ExtendedImageState state);
@@ -16,8 +16,6 @@ typedef BeforePaintImage = bool Function(
 
 typedef AfterPaintImage = void Function(
     Canvas canvas, Rect rect, ui.Image image, Paint paint);
-
-typedef Rebuild = GestureDetails Function();
 
 typedef PageViewDragUpdate = void Function(DragUpdateDetails details);
 
