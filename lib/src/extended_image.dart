@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:extended_image/src/border_painter.dart';
 import 'package:extended_image/src/extended_image_gesture.dart';
 import 'package:extended_image/src/extended_image_gesture_utils.dart';
-import 'package:extended_image/src/extended_image_page_view.dart';
+import 'package:extended_image/src/extended_image_gesture_page_view.dart';
 import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/extended_network_image_provider.dart';
@@ -15,8 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/semantics.dart';
-
-const PageScrollPhysics _kPagePhysics = PageScrollPhysics();
 
 class ExtendedImage extends StatefulWidget {
   ExtendedImage({
@@ -694,13 +692,13 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   Widget build(BuildContext context) {
 //    PageView pageView;
 //    ScrollPhysics physics;
-    ExtendedImagePageViewState extendedImagePageViewState;
+    ExtendedImageGesturePageViewState extendedImagePageViewState;
     if (widget.mode == ExtendedImageMode.Gesture &&
         widget.imageGestureConfig != null &&
         widget.imageGestureConfig.inPageView != InPageView.none) {
       //pageView = context.ancestorWidgetOfExactType(typeOf<PageView>());
-      extendedImagePageViewState = context
-          .ancestorStateOfType(TypeMatcher<ExtendedImagePageViewState>());
+      extendedImagePageViewState = context.ancestorStateOfType(
+          TypeMatcher<ExtendedImageGesturePageViewState>());
 
 //      if (pageView != null) {
 //        physics = ScrollConfiguration.of(context).getScrollPhysics(context);

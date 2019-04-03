@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:flutter/material.dart';
 
 ///
@@ -47,78 +50,58 @@ enum InPageView {
 abstract class ExtendedImageGestureState {
   GestureDetails get gestureDetails;
   set gestureDetails(GestureDetails value);
+
+  ImageGestureConfig get imageGestureConfig;
 }
 
 class GestureDetails {
   ///scale center delta
   Offset offset;
 
-  final double scale;
+  ///total scale of image
+  final double totalScale;
 
-//  final PageView pageView;
-//  ///layout rect
-
-//
-//  ///raw rect for image.
-//  Rect destinationRect;
-
-  bool _computeHorizontalBoundary = false;
   bool _computeVerticalBoundary = false;
   bool get computeVerticalBoundary => _computeVerticalBoundary;
-  bool get computeHorizontalBoundary => _computeHorizontalBoundary;
 
-  Offset _center;
+  ///whether
+  bool _computeHorizontalBoundary = false;
+  bool get computeHorizontalBoundary => _computeHorizontalBoundary;
 
   Boundary _boundary = Boundary();
   Boundary get boundary => _boundary;
 
-//  bool get reachHorizontalBoundary {
-//    if (delta != null && delta.dx != 0.0) {
-//      return (delta.dx < 0 && boundary == Boundary.Right) ||
-//          (delta.dx > 0 && boundary == Boundary.Left);
-//    }
-//    return false;
-//  }
-  Rect _rect;
-  bool _zooming = false;
+  GestureState _gestureState = GestureState.move;
+  GestureState get gestureState => _gestureState;
 
-  GestureDetails({this.offset, this.scale, GestureDetails gestureDetails}) {
+  GestureDetails(
+      {this.offset, this.totalScale, GestureDetails gestureDetails}) {
     if (gestureDetails != null) {
       _computeVerticalBoundary = gestureDetails._computeVerticalBoundary;
       _computeHorizontalBoundary = gestureDetails._computeHorizontalBoundary;
-      _center = gestureDetails._center;
-      //boundary = gestureDetails.boundary;
-      _zooming = scale != gestureDetails.scale;
-      _rect = gestureDetails._rect;
 
-      if (!_zooming && scale > 1.0) {
-        if (!computeHorizontalBoundary) {
-          offset = Offset(gestureDetails.offset.dx, offset.dy);
-        }
-
-        if (!computeVerticalBoundary) {
-          offset = Offset(offset.dx, gestureDetails.offset.dy);
-        }
+      if (totalScale == gestureDetails.totalScale) {
+        _gestureState = GestureState.move;
+      } else {
+        _gestureState = GestureState.zoom;
       }
-
-      //print("$offset----$scale");
     }
   }
 
   Offset _getCenter(Rect destinationRect) {
     //return destinationRect.center * scale + offset;
-    if (scale > 1.0) {
+    if (totalScale > 1.0) {
       if (_computeHorizontalBoundary && _computeVerticalBoundary) {
-        return destinationRect.center * scale + offset;
+        return destinationRect.center * totalScale + offset;
       } else if (_computeHorizontalBoundary) {
         //only scale Horizontal
-        return Offset(
-                destinationRect.center.dx * scale, destinationRect.center.dy) +
+        return Offset(destinationRect.center.dx * totalScale,
+                destinationRect.center.dy) +
             Offset(offset.dx, 0.0);
       } else if (_computeVerticalBoundary) {
         //only scale Vertical
-        return Offset(
-                destinationRect.center.dx, destinationRect.center.dy * scale) +
+        return Offset(destinationRect.center.dx,
+                destinationRect.center.dy * totalScale) +
             Offset(0.0, offset.dy);
       } else {
         return destinationRect.center;
@@ -128,9 +111,31 @@ class GestureDetails {
     }
   }
 
+  Offset _getFixedOffset(Rect destinationRect, Offset center) {
+    if (totalScale > 1.0) {
+      if (_computeHorizontalBoundary && _computeVerticalBoundary) {
+        return center - destinationRect.center * totalScale;
+      } else if (_computeHorizontalBoundary) {
+        //only scale Horizontal
+        return center -
+            Offset(destinationRect.center.dx * totalScale,
+                destinationRect.center.dy);
+      } else if (_computeVerticalBoundary) {
+        //only scale Vertical
+        return center -
+            Offset(destinationRect.center.dx,
+                destinationRect.center.dy * totalScale);
+      } else {
+        return center - destinationRect.center;
+      }
+    } else {
+      return center - destinationRect.center;
+    }
+  }
+
   Rect _getDestinationRect(Rect destinationRect, Offset center) {
-    final double width = destinationRect.width * scale;
-    final double height = destinationRect.height * scale;
+    final double width = destinationRect.width * totalScale;
+    final double height = destinationRect.height * totalScale;
 
     return Rect.fromLTWH(
         center.dx - width / 2.0, center.dy - height / 2.0, width, height);
@@ -138,30 +143,6 @@ class GestureDetails {
 
   Rect calculateFinalDestinationRect(Rect layoutRect, Rect destinationRect) {
     Offset center = _getCenter(destinationRect);
-
-    ///if (_zooming && _center != null) {}
-//    Offset delta = Offset.zero;
-//
-//    if (this._center != null) {
-//      delta = center - this._center;
-//    }
-
-//    if ((!_computeHorizontalBoundary || !_computeVerticalBoundary) &&
-//        _center != null) {
-//      center = _center;
-//    }
-
-//    if (_center != null) {
-//      print("$_center----$center");
-////      if (!_computeVerticalBoundary) {
-////        center = Offset(center.dx, _center.dy);
-////      }
-////
-////      if (!_computeHorizontalBoundary) {
-////        center = Offset(_center.dx, center.dy);
-////      }
-//    }
-
     Rect result = _getDestinationRect(destinationRect, center);
 
     if (_computeHorizontalBoundary) {
@@ -169,7 +150,8 @@ class GestureDetails {
       if (result.left >= layoutRect.left) {
         result = Rect.fromLTWH(0.0, result.top, result.width, result.height);
 
-        offset = result.center - destinationRect.center * scale;
+        ///fix offset
+        offset = _getFixedOffset(destinationRect, result.center);
         _boundary.left = true;
       }
 
@@ -178,7 +160,8 @@ class GestureDetails {
         result = Rect.fromLTWH(layoutRect.right - result.width, result.top,
             result.width, result.height);
 
-        offset = result.center - destinationRect.center * scale;
+        ///fix offset
+        offset = _getFixedOffset(destinationRect, result.center);
         _boundary.right = true;
       }
     }
@@ -189,7 +172,8 @@ class GestureDetails {
         result = Rect.fromLTWH(result.left, layoutRect.bottom - result.height,
             result.width, result.height);
 
-        offset = result.center - destinationRect.center * scale;
+        ///fix offset
+        offset = _getFixedOffset(destinationRect, result.center);
         _boundary.bottom = true;
       }
 
@@ -198,7 +182,8 @@ class GestureDetails {
         result = Rect.fromLTWH(
             result.left, layoutRect.top, result.width, result.height);
 
-        offset = result.center - destinationRect.center * scale;
+        ///fix offset
+        offset = _getFixedOffset(destinationRect, result.center);
         _boundary.top = true;
       }
     }
@@ -208,12 +193,15 @@ class GestureDetails {
 
     _computeVerticalBoundary =
         result.top <= layoutRect.top && result.bottom >= layoutRect.bottom;
-
-    //print("$_computeHorizontalBoundary");
-    //print(boundary);
-    this._center = _getCenter(destinationRect);
-    _rect = result;
     return result;
+  }
+
+  bool movePage(Offset delta) {
+    return (delta.dx < 0 && boundary.right) ||
+        (delta.dx > 0 && boundary.left) ||
+        (delta.dy < 0 && boundary.bottom) ||
+        (delta.dy > 0 && boundary.top) ||
+        totalScale <= 1.0;
   }
 }
 
@@ -223,12 +211,57 @@ class ImageGestureConfig {
   final double speed;
   final bool cacheGesture;
   final InPageView inPageView;
+  final double inertialSpeed;
   ImageGestureConfig(
       {this.minScale: 0.8,
       this.maxScale: 5.0,
       this.speed: 1.0,
       this.cacheGesture: false,
+      this.inertialSpeed: 100.0,
       this.inPageView: InPageView.none});
+}
+
+//Round the scale to three points after comma to prevent shaking
+double roundAfter(double number, int position) {
+  double shift = pow(10, position).toDouble();
+  return (number * shift).roundToDouble() / shift;
+}
+
+enum GestureState {
+  zoom,
+  move,
+}
+
+const double minMagnitude = 400.0;
+const double velocity = minMagnitude / 1000.0;
+
+class GestureInertiaAnimation {
+  AnimationController _controller;
+  Animation<Offset> _animation;
+
+  GestureInertiaAnimation(
+      TickerProvider vsync, GestureOffsetAnimationCallBack callback) {
+    _controller = AnimationController(vsync: vsync);
+    _controller.addListener(() {
+      //print(_animation.value);
+      callback?.call(_animation.value);
+    });
+  }
+
+  void animation(Offset begin, Offset end) {
+    _animation = _controller.drive(Tween<Offset>(begin: begin, end: end));
+    _controller
+      ..value = 0.0
+      ..fling(velocity: velocity);
+  }
+
+  void dispose() {
+    _controller.dispose();
+  }
+
+  void stop() {
+    _controller.stop();
+  }
 }
 
 ///gesture

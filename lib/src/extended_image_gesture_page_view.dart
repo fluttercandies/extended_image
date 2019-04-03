@@ -10,8 +10,9 @@ final PageController _defaultPageController = PageController();
 //const PageScrollPhysics _kPagePhysics = PageScrollPhysics();
 const ScrollPhysics _defaultScrollPhysics = NeverScrollableScrollPhysics();
 
-class ExtendedImagePageView extends StatefulWidget {
-  ExtendedImagePageView({
+///page view to support gesture for image
+class ExtendedImageGesturePageView extends StatefulWidget {
+  ExtendedImageGesturePageView({
     Key key,
     this.scrollDirection = Axis.horizontal,
     this.reverse = false,
@@ -37,7 +38,7 @@ class ExtendedImagePageView extends StatefulWidget {
   ///
   /// [itemBuilder] will be called only with indices greater than or equal to
   /// zero and less than [itemCount].
-  ExtendedImagePageView.builder({
+  ExtendedImageGesturePageView.builder({
     Key key,
     this.scrollDirection = Axis.horizontal,
     this.reverse = false,
@@ -55,7 +56,7 @@ class ExtendedImagePageView extends StatefulWidget {
 
   /// Creates a scrollable list that works page by page with a custom child
   /// model.
-  ExtendedImagePageView.custom({
+  ExtendedImageGesturePageView.custom({
     Key key,
     this.scrollDirection = Axis.horizontal,
     this.reverse = false,
@@ -117,29 +118,35 @@ class ExtendedImagePageView extends StatefulWidget {
   /// respectively.
   final SliverChildDelegate childrenDelegate;
   @override
-  ExtendedImagePageViewState createState() => ExtendedImagePageViewState();
+  ExtendedImageGesturePageViewState createState() =>
+      ExtendedImageGesturePageViewState();
 }
 
-class ExtendedImagePageViewState extends State<ExtendedImagePageView> {
+class ExtendedImageGesturePageViewState
+    extends State<ExtendedImageGesturePageView>
+    with SingleTickerProviderStateMixin {
   Map<Type, GestureRecognizerFactory> _gestureRecognizers =
       const <Type, GestureRecognizerFactory>{};
-
+  GestureInertiaAnimation _gestureInertiaAnimation;
   ScrollPosition get position => pageController.position;
   PageController get pageController => widget.controller;
 
-  ExtendedImageGestureState _extendedImageGestureState;
-  ExtendedImageGestureState get extendedImageGestureState =>
-      _extendedImageGestureState;
-  @override
-  void set extendedImageGestureState(ExtendedImageGestureState value) {
-    // TODO: implement gestureDetails
-    _extendedImageGestureState = value;
-  }
-
+  ExtendedImageGestureState extendedImageGestureState;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _gestureInertiaAnimation = GestureInertiaAnimation(this, (Offset value) {
+      var gestureDetails = extendedImageGestureState?.gestureDetails;
+      if (gestureDetails != null) {
+        extendedImageGestureState?.gestureDetails = GestureDetails(
+            offset: value,
+            totalScale: gestureDetails.totalScale,
+            gestureDetails: gestureDetails
+            //computeBoundary: _gestureDetails.scale > 1.0
+            );
+      }
+    });
     switch (widget.scrollDirection) {
       case Axis.vertical:
         _gestureRecognizers = <Type, GestureRecognizerFactory>{
@@ -183,6 +190,13 @@ class ExtendedImagePageViewState extends State<ExtendedImagePageView> {
   }
 
   @override
+  void dispose() {
+    _gestureInertiaAnimation.dispose();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
 //    var finallyPhysics = NeverScrollableScrollPhysics();
 //    if (widget.physics != null) {
@@ -214,7 +228,7 @@ class ExtendedImagePageViewState extends State<ExtendedImagePageView> {
 
   void _handleDragDown(DragDownDetails details) {
     //print(details);
-    //_controller.stop();
+    _gestureInertiaAnimation.stop();
     assert(_drag == null);
     assert(_hold == null);
     _hold = position.hold(_disposeHold);
@@ -238,23 +252,13 @@ class ExtendedImagePageViewState extends State<ExtendedImagePageView> {
     var gestureDetails = extendedImageGestureState?.gestureDetails;
 
     if (gestureDetails != null) {
-      bool movePage = (delta.dx < 0 && gestureDetails.boundary.right) ||
-          (delta.dx > 0 && gestureDetails.boundary.left) ||
-          (delta.dy < 0 && gestureDetails.boundary.bottom) ||
-          (delta.dy > 0 && gestureDetails.boundary.top) ||
-          gestureDetails.scale <= 1.0;
-
-      if (movePage) {
+      if (gestureDetails.movePage(delta)) {
         _drag?.update(details);
       } else {
-        setState(() {
-          extendedImageGestureState?.gestureDetails = GestureDetails(
-              offset: gestureDetails.offset + details.delta,
-              scale: gestureDetails.scale,
-              gestureDetails: gestureDetails
-              //computeBoundary: _gestureDetails.scale > 1.0
-              );
-        });
+        extendedImageGestureState?.gestureDetails = GestureDetails(
+            offset: gestureDetails.offset + details.delta,
+            totalScale: gestureDetails.totalScale,
+            gestureDetails: gestureDetails);
       }
     } else {
       _drag?.update(details);
@@ -262,39 +266,39 @@ class ExtendedImagePageViewState extends State<ExtendedImagePageView> {
   }
 
   void _handleDragEnd(DragEndDetails details) {
-    //return;
-    ///print(details);
     // _drag might be null if the drag activity ended and called _disposeDrag.
     assert(_hold == null || _drag == null);
 
     var temp = details;
-    var gestureDetails = extendedImageGestureState?.gestureDetails;
 
-    if (gestureDetails.computeHorizontalBoundary ||
-        gestureDetails.computeVerticalBoundary) {
-      temp = DragEndDetails(primaryVelocity: 0.0);
+    if (extendedImageGestureState != null) {
+      var gestureDetails = extendedImageGestureState.gestureDetails;
+
+      if (gestureDetails != null && gestureDetails.computeHorizontalBoundary ||
+          gestureDetails.computeVerticalBoundary) {
+        temp = DragEndDetails(primaryVelocity: 0.0);
+
+        // get magnitude from gesture velocity
+        final double magnitude = details.velocity.pixelsPerSecond.distance;
+
+        // do a significant magnitude
+        if (magnitude >= minMagnitude) {
+          Offset direction = details.velocity.pixelsPerSecond /
+              magnitude *
+              (extendedImageGestureState.imageGestureConfig.inertialSpeed);
+
+          if (widget.scrollDirection == Axis.horizontal) {
+            direction = Offset(direction.dx, 0.0);
+          } else {
+            direction = Offset(0.0, direction.dy);
+          }
+
+          _gestureInertiaAnimation.animation(
+              gestureDetails.offset, gestureDetails.offset + direction);
+        }
+      }
     }
-//    if (_gestureDetails.computeHorizontalBoundary ||
-//        _gestureDetails.computeVerticalBoundary) {
-//      //final double magnitude = details.velocity.pixelsPerSecond.distance;
-//      //if (magnitude < _kMinFlingVelocity) return;
-//      //final Offset direction = details.velocity.pixelsPerSecond / magnitude;
-//
-////      var primaryVelocity = details.primaryVelocity / 100.0;
-////      var end = _gestureDetails.offset;
-////      if (details.velocity.pixelsPerSecond.dx == primaryVelocity) {
-////        end = Offset(primaryVelocity, 0.0);
-////      } else {
-////        end = Offset(0.0, primaryVelocity);
-////      }
-//
-//      temp = DragEndDetails(primaryVelocity: 0.0);
-////      _animation = _controller.drive(Tween<Offset>(
-////          begin: _gestureDetails.offset, end: _gestureDetails.offset + end));
-////      _controller
-////        ..value = 0.0
-////        ..fling(velocity: magnitude / 1000.0);
-//    }
+
     _drag?.end(temp);
 
     assert(_drag == null);
