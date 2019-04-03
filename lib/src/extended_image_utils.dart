@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui show Image;
 
 enum LoadState {
   //loading
@@ -9,16 +8,6 @@ enum LoadState {
   //failed
   failed
 }
-
-typedef LoadStateChanged = Widget Function(ExtendedImageState state);
-
-///[rect] is render size
-///if return true, it will not paint original image,
-typedef BeforePaintImage = bool Function(
-    Canvas canvas, Rect rect, ui.Image image, Paint paint);
-
-typedef AfterPaintImage = void Function(
-    Canvas canvas, Rect rect, ui.Image image, Paint paint);
 
 abstract class ExtendedImageState {
   void reLoadImage();
@@ -217,6 +206,12 @@ enum ExtendedImageMode {
   Gesture,
 }
 
+enum ZoomState {
+  None,
+  ZoomIn,
+  ZoomOut,
+}
+
 ///gesture
 
 ///whether gesture rect is out size
@@ -269,6 +264,12 @@ enum InPageView {
 
   ///image is in vertical pageview
   vertical
+}
+
+abstract class ExtendedImageGestureState {
+  GestureDetails get gestureDetails;
+  set gestureDetails(GestureDetails value);
+  void rebuild();
 }
 
 ///gesture

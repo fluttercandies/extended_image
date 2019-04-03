@@ -8,4 +8,5 @@ export 'src/extended_raw_image.dart';
 export 'src/extended_render_image.dart';
 export 'src/extended_image_utils.dart';
 export 'src/extended_image_gesture.dart';
-export 'src/igore_user_offset_scroll_physics.dart';
+export 'src/extended_image_page_view.dart';
+export 'src/extended_image_typedef.dart';

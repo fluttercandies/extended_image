@@ -3,6 +3,8 @@ import 'dart:typed_data';
 
 import 'package:extended_image/src/border_painter.dart';
 import 'package:extended_image/src/extended_image_gesture.dart';
+import 'package:extended_image/src/extended_image_page_view.dart';
+import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/extended_network_image_provider.dart';
 import 'package:extended_image/src/extended_raw_image.dart';
@@ -689,17 +691,26 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
 
   @override
   Widget build(BuildContext context) {
-    PageView pageView;
-    ScrollPhysics physics;
+//    PageView pageView;
+//    ScrollPhysics physics;
+    ExtendedImagePageViewState extendedImagePageViewState;
     if (widget.mode == ExtendedImageMode.Gesture &&
         widget.imageGestureConfig != null &&
         widget.imageGestureConfig.inPageView != InPageView.none) {
-      pageView = context.ancestorWidgetOfExactType(typeOf<PageView>());
-      if (pageView != null) {
-        physics = pageView.pageSnapping
-            ? _kPagePhysics.applyTo(pageView.physics)
-            : pageView.physics;
-      }
+      //pageView = context.ancestorWidgetOfExactType(typeOf<PageView>());
+      extendedImagePageViewState = context
+          .ancestorStateOfType(TypeMatcher<ExtendedImagePageViewState>());
+
+//      if (pageView != null) {
+//        physics = ScrollConfiguration.of(context).getScrollPhysics(context);
+//        var pageViwePhysics = pageView.pageSnapping
+//            ? _kPagePhysics.applyTo(pageView.physics)
+//            : pageView.physics;
+//
+//        if (pageViwePhysics != null) {
+//          physics = physics.applyTo(pageViwePhysics);
+//        }
+//      }
     }
 
     Widget current;
@@ -733,7 +744,8 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
             break;
           case LoadState.completed:
             if (widget.mode == ExtendedImageMode.Gesture) {
-              current = ExtendedImageGesture(widget, this, pageView, physics);
+              current = ExtendedImageGesture(
+                  widget, this, extendedImagePageViewState);
             } else {
               current = _buildExtendedRawImage();
             }
@@ -753,7 +765,8 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
       } else {
         if (_loadState == LoadState.completed &&
             widget.mode == ExtendedImageMode.Gesture) {
-          current = ExtendedImageGesture(widget, this, pageView, physics);
+          current =
+              ExtendedImageGesture(widget, this, extendedImagePageViewState);
         } else {
           current = _buildExtendedRawImage();
         }
