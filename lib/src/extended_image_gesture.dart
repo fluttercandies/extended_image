@@ -34,8 +34,13 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   @override
   void initState() {
     // TODO: implement initState
-    _gestureConfig =
-        widget.extendedImage.imageGestureConfig ?? ImageGestureConfig();
+    _gestureConfig = widget.extendedImage.imageGestureConfig;
+
+    if (_gestureConfig == null && widget.extendedImagePageViewState != null) {
+      _gestureConfig =
+          widget.extendedImagePageViewState.widget.imageGestureConfig;
+    }
+    _gestureConfig ??= ImageGestureConfig();
 
     if (_gestureConfig.cacheGesture) {
       var cache =
@@ -45,9 +50,10 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       }
     }
     _gestureDetails ??= GestureDetails(
-      totalScale: 1.0,
+      totalScale: _gestureConfig.initialScale,
       offset: Offset.zero,
     );
+
     _gestureInertiaAnimation = GestureInertiaAnimation(this, (Offset value) {
       setState(() {
         _gestureDetails = GestureDetails(
@@ -59,6 +65,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
     super.initState();
   }
+
 
   @override
   void dispose() {
@@ -122,7 +129,10 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
   void _handleScaleReset() {
     setState(() {
-      _gestureDetails = GestureDetails(offset: Offset.zero, totalScale: 1.0);
+      _gestureDetails = GestureDetails(
+        offset: Offset.zero,
+        totalScale: _gestureConfig.initialScale,
+      );
     });
   }
 
@@ -131,6 +141,10 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     if (_gestureConfig.cacheGesture) {
       _gestureDetailsCache[widget.extendedImageState.imageStreamKey] =
           _gestureDetails;
+    }
+
+    if (_gestureDetails.totalScale == 1.0) {
+      int i = 1;
     }
 
     Widget image = ExtendedRawImage(
