@@ -66,7 +66,6 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     super.initState();
   }
 
-
   @override
   void dispose() {
     super.dispose();
