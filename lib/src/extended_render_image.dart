@@ -1,6 +1,5 @@
 import 'package:extended_image/src/extended_image_gesture_utils.dart';
 import 'package:extended_image/src/extended_image_typedef.dart';
-import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui show Image;
 
@@ -488,9 +487,13 @@ void paintExtendedImage({
     destinationRect =
         gestureDetails.calculateFinalDestinationRect(rect, destinationRect);
 
-    ///outside
-    canvas.save();
-    canvas.clipRect(rect);
+    ///outside and need clip
+    gestureClip = outRect(rect, destinationRect);
+
+    if (gestureClip) {
+      canvas.save();
+      canvas.clipRect(rect);
+    }
   }
 
   if (beforePaintImage != null) {
@@ -523,7 +526,7 @@ void paintExtendedImage({
 
   if (needSave) canvas.restore();
 
-  if (gestureDetails != null) {
+  if (gestureDetails != null && gestureClip) {
     canvas.restore();
   }
 

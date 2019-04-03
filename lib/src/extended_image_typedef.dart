@@ -17,6 +17,4 @@ typedef BeforePaintImage = bool Function(
 typedef AfterPaintImage = void Function(
     Canvas canvas, Rect rect, ui.Image image, Paint paint);
 
-typedef PageViewDragUpdate = void Function(DragUpdateDetails details);
-
-typedef PageViewDragEnd = void Function(DragEndDetails details);
+typedef GestureOffsetAnimationCallBack = void Function(Offset offset);
