@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:extended_image/src/extended_image.dart';
+import 'package:extended_image/src/extended_image_gesture_utils.dart';
 import 'package:extended_image/src/extended_image_page_view.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/extended_raw_image.dart';
@@ -75,15 +76,13 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
         (details.focalPoint - _gestureDetails.offset) / _gestureDetails.scale;
     _startingScale = _gestureDetails.scale;
     _startingOffset = details.focalPoint;
-    zeroOffset = null;
   }
 
-  Offset zeroOffset;
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     //print(details);
     double scale = (_startingScale * details.scale * _gestureConfig.speed)
         .clamp(_gestureConfig.minScale, _gestureConfig.maxScale);
-
+    scale = _roundAfter(scale, 3);
     //no more zoom
     if (details.scale != 1.0 &&
         ((_gestureDetails.scale == _gestureConfig.minScale &&
@@ -101,21 +100,21 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     //print(offset.direction);
     //var offset = (details.focalPoint - _normalizedOffset * scale);
 
-    if (scale <= 1.0) {
-      zeroOffset = null;
-      offset = Offset.zero;
-    } else {
-      if (zeroOffset == null && _gestureDetails.scale < 1.0)
-        zeroOffset = offset;
-//      else
-//        {
-//        zeroOffset = null;
-//      }
-      //print(zeroOffset);
-
-      ///zoom from zero so that the zoom will not strange
-      if (zeroOffset != null) offset = offset - zeroOffset;
-    }
+//    if (scale <= 1.0) {
+//      zeroOffset = null;
+//      offset = Offset.zero;
+//    } else {
+//      if (zeroOffset == null && _gestureDetails.scale < 1.0)
+//        zeroOffset = offset;
+////      else
+////        {
+////        zeroOffset = null;
+////      }
+//      //print(zeroOffset);
+//
+//      ///zoom from zero so that the zoom will not strange
+//      if (zeroOffset != null) offset = offset - zeroOffset;
+//    }
 
     //offset = Offset(offset.dx, offset.dy / scale);
 
@@ -132,7 +131,6 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
   void _handleScaleReset() {
     setState(() {
-      zeroOffset = null;
       _gestureDetails = GestureDetails(offset: Offset.zero, scale: 1.0);
     });
   }
@@ -174,28 +172,18 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       onScaleUpdate: _handleScaleUpdate,
       //onScaleEnd: _handleScaleEnd,
       onDoubleTap: _handleScaleReset,
-//      onHorizontalDragUpdate:
-//          listenHorizontalDragUpdate ? _handleHorizontalDragUpdate : null,
-//      onVerticalDragUpdate:
-//          listenVerticalDragUpdate ? _handleVerticalDragUpdate : null,
       child: image,
     );
 
-//    if (widget.pageView != null) {
-//      image = RawGestureDetector(
-//        gestures: _gestureRecognizers,
-//        behavior: HitTestBehavior.opaque,
-//        child: image,
-//      );
-//    }
-    image = Listener(
-      child: image,
-      onPointerDown: (_) {
-        //print(widget.extendedImageState.imageStreamKey);
-        widget.extendedImagePageViewState?.extendedImageGestureState = this;
-      },
-    );
-
+    if (_gestureConfig.inPageView != InPageView.none) {
+      image = Listener(
+        child: image,
+        onPointerDown: (_) {
+          //print(widget.extendedImageState.imageStreamKey);
+          widget.extendedImagePageViewState?.extendedImageGestureState = this;
+        },
+      );
+    }
     return image;
   }
 
@@ -205,16 +193,9 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   @override
   void set gestureDetails(GestureDetails value) {
     // TODO: implement gestureDetails
-
     setState(() {
       _gestureDetails = value;
     });
-  }
-
-  @override
-  void rebuild() {
-    // TODO: implement rebuild
-    setState(() {});
   }
 }
 
