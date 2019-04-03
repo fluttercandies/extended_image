@@ -1,3 +1,4 @@
+import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui show Image;

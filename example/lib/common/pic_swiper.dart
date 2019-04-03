@@ -66,7 +66,7 @@ class _PicSwiperState extends State<PicSwiper> {
             child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
-            PageView.builder(
+            ExtendedImagePageView.builder(
               itemBuilder: (BuildContext context, int index) {
                 var item = widget.pics[index].picUrl;
                 Widget image = ExtendedImage.network(
@@ -99,7 +99,7 @@ class _PicSwiperState extends State<PicSwiper> {
                 initialPage: currentIndex,
               ),
               scrollDirection: Axis.horizontal,
-              physics: NeverScrollableScrollPhysics(),
+              //physics: IgoreUserOffsetScrollPhysics(),
             ),
             Positioned(
               bottom: 0.0,
