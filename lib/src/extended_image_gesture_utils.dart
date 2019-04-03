@@ -51,7 +51,7 @@ abstract class ExtendedImageGestureState {
   GestureDetails get gestureDetails;
   set gestureDetails(GestureDetails value);
 
-  ImageGestureConfig get imageGestureConfig;
+  GestureConfig get imageGestureConfig;
 }
 
 class GestureDetails {
@@ -149,9 +149,6 @@ class GestureDetails {
       //move right
       if (result.left >= layoutRect.left) {
         result = Rect.fromLTWH(0.0, result.top, result.width, result.height);
-
-        ///fix offset
-        offset = _getFixedOffset(destinationRect, result.center);
         _boundary.left = true;
       }
 
@@ -159,9 +156,6 @@ class GestureDetails {
       if (result.right <= layoutRect.right) {
         result = Rect.fromLTWH(layoutRect.right - result.width, result.top,
             result.width, result.height);
-
-        ///fix offset
-        offset = _getFixedOffset(destinationRect, result.center);
         _boundary.right = true;
       }
     }
@@ -171,9 +165,6 @@ class GestureDetails {
       if (result.bottom <= layoutRect.bottom) {
         result = Rect.fromLTWH(result.left, layoutRect.bottom - result.height,
             result.width, result.height);
-
-        ///fix offset
-        offset = _getFixedOffset(destinationRect, result.center);
         _boundary.bottom = true;
       }
 
@@ -181,13 +172,12 @@ class GestureDetails {
       if (result.top >= layoutRect.top) {
         result = Rect.fromLTWH(
             result.left, layoutRect.top, result.width, result.height);
-
-        ///fix offset
-        offset = _getFixedOffset(destinationRect, result.center);
         _boundary.top = true;
       }
     }
 
+    ///fix offset
+    offset = _getFixedOffset(destinationRect, result.center);
     _computeHorizontalBoundary =
         result.left <= layoutRect.left && result.right >= layoutRect.right;
 
@@ -205,15 +195,19 @@ class GestureDetails {
   }
 }
 
-class ImageGestureConfig {
+class GestureConfig {
   final double minScale;
   final double maxScale;
   final double speed;
   final bool cacheGesture;
   final InPageView inPageView;
+
+  /// final double magnitude = details.velocity.pixelsPerSecond.distance;
+  ///final Offset direction = details.velocity.pixelsPerSecond / magnitude * _gestureConfig.inertialSpeed;
   final double inertialSpeed;
+
   final double initialScale;
-  ImageGestureConfig(
+  GestureConfig(
       {this.minScale: 0.8,
       this.maxScale: 5.0,
       this.speed: 1.0,

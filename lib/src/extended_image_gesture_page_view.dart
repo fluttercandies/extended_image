@@ -20,7 +20,6 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     //this.physics,
     this.pageSnapping = true,
     this.onPageChanged,
-    this.imageGestureConfig,
     List<Widget> children = const <Widget>[],
   })  : controller = controller ?? _defaultPageController,
         childrenDelegate = SliverChildListDelegate(children),
@@ -47,7 +46,6 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     //this.physics,
     this.pageSnapping = true,
     this.onPageChanged,
-    this.imageGestureConfig,
     @required IndexedWidgetBuilder itemBuilder,
     int itemCount,
   })  : controller = controller ?? _defaultPageController,
@@ -66,7 +64,6 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     //this.physics,
     this.pageSnapping = true,
     this.onPageChanged,
-    this.imageGestureConfig,
     @required this.childrenDelegate,
   })  : assert(childrenDelegate != null),
         controller = controller ?? _defaultPageController,
@@ -121,8 +118,6 @@ class ExtendedImageGesturePageView extends StatefulWidget {
   /// respectively.
   final SliverChildDelegate childrenDelegate;
 
-  /// config for image gesture
-  final ImageGestureConfig imageGestureConfig;
   @override
   ExtendedImageGesturePageViewState createState() =>
       ExtendedImageGesturePageViewState();
@@ -148,9 +143,7 @@ class ExtendedImageGesturePageViewState
         extendedImageGestureState?.gestureDetails = GestureDetails(
             offset: value,
             totalScale: gestureDetails.totalScale,
-            gestureDetails: gestureDetails
-            //computeBoundary: _gestureDetails.scale > 1.0
-            );
+            gestureDetails: gestureDetails);
       }
     });
     switch (widget.scrollDirection) {
@@ -282,6 +275,7 @@ class ExtendedImageGesturePageViewState
 
       if (gestureDetails != null && gestureDetails.computeHorizontalBoundary ||
           gestureDetails.computeVerticalBoundary) {
+        //stop
         temp = DragEndDetails(primaryVelocity: 0.0);
 
         // get magnitude from gesture velocity
