@@ -10,3 +10,4 @@ export 'src/extended_image_utils.dart';
 export 'src/extended_image_gesture.dart';
 export 'src/extended_image_page_view.dart';
 export 'src/extended_image_typedef.dart';
+export 'src/extended_image_gesture_utils.dart';

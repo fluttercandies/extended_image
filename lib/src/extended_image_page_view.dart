@@ -127,7 +127,14 @@ class ExtendedImagePageViewState extends State<ExtendedImagePageView> {
   ScrollPosition get position => pageController.position;
   PageController get pageController => widget.controller;
 
-  ExtendedImageGestureState extendedImageGestureState;
+  ExtendedImageGestureState _extendedImageGestureState;
+  ExtendedImageGestureState get extendedImageGestureState =>
+      _extendedImageGestureState;
+  @override
+  void set extendedImageGestureState(ExtendedImageGestureState value) {
+    // TODO: implement gestureDetails
+    _extendedImageGestureState = value;
+  }
 
   @override
   void initState() {
