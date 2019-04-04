@@ -29,6 +29,7 @@ class _PicSwiperState extends State<PicSwiper> {
   @override
   void dispose() {
     rebuild.close();
+    //clearGestureDetailsCache();
     // TODO: implement dispose
     super.dispose();
   }
