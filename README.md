@@ -82,7 +82,7 @@ ExtendedImage.network(
 
 ![](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/zoom.gif)
 
-# photo view like wechat
+# photo view like WeChat
 
 ExtendedImageGesturePageView is made for zoom/pan image in page view.
 
