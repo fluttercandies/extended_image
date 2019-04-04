@@ -23,6 +23,7 @@ dependencies:
   flutter_screenutil: ^0.5.1
   flutter_swiper: ^1.1.4
   pull_to_refresh_notification: ^0.1.8
+  image_picker_saver: ^0.1.0
   intl: ^0.15.7
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

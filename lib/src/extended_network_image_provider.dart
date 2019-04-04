@@ -167,11 +167,11 @@ class ExtendedNetworkImageProvider
 }
 
 ///save netwrok image to photo
-Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
-  var data = await getNetworkImageData(url, useCache: useCache);
-  var filePath = await ImagePickerSaver.saveFile(fileData: data);
-  return filePath != null && filePath != "";
-}
+//Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
+//  var data = await getNetworkImageData(url, useCache: useCache);
+//  var filePath = await ImagePickerSaver.saveFile(fileData: data);
+//  return filePath != null && filePath != "";
+//}
 
 ///get network image data from cached
 Future<Uint8List> getNetworkImageData(String url, {bool useCache: true}) async {

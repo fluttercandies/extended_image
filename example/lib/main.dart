@@ -6,6 +6,7 @@ import 'package:example/image_list_demo.dart';
 import 'package:example/paint_image_demo.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker_saver/image_picker_saver.dart';
 import "package:oktoast/oktoast.dart";
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -194,3 +195,10 @@ enum PageType {
 String _imageTestUrl;
 String get imageTestUrl =>
     _imageTestUrl ?? "https://photo.tuchong.com/4870004/f/298584322.jpg";
+
+///save netwrok image to photo
+Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
+  var data = await getNetworkImageData(url, useCache: useCache);
+  var filePath = await ImagePickerSaver.saveFile(fileData: data);
+  return filePath != null && filePath != "";
+}
