@@ -199,7 +199,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       child: image,
     );
 
-    if (_gestureConfig.inPageView != InPageView.none) {
+    if (_gestureConfig.inPageView) {
       image = Listener(
         child: image,
         onPointerDown: (_) {
@@ -232,6 +232,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 Map<Object, GestureDetails> _gestureDetailsCache =
     Map<Object, GestureDetails>();
 
+///clear the gesture details
 void clearGestureDetailsCache() {
   _gestureDetailsCache.clear();
 }
