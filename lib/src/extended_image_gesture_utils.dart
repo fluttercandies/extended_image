@@ -71,25 +71,42 @@ class GestureDetails {
   Boundary _boundary = Boundary();
   Boundary get boundary => _boundary;
 
-  GestureState _gestureState = GestureState.move;
+  GestureState _gestureState = GestureState.pan;
   GestureState get gestureState => _gestureState;
 
+  //true: user zoom/pan
+  //false: animation
+  final bool userOffset;
+
+  //pre
+  Offset _center;
+
   GestureDetails(
-      {this.offset, this.totalScale, GestureDetails gestureDetails}) {
+      {this.offset,
+      this.totalScale,
+      GestureDetails gestureDetails,
+      bool zooming: false,
+      this.userOffset: true}) {
     if (gestureDetails != null) {
       _computeVerticalBoundary = gestureDetails._computeVerticalBoundary;
       _computeHorizontalBoundary = gestureDetails._computeHorizontalBoundary;
+      _center = gestureDetails._center;
 
-      if (totalScale == gestureDetails.totalScale) {
-        _gestureState = GestureState.move;
-      } else {
-        _gestureState = GestureState.zoom;
-      }
+      ///zoom end will call twice
+      /// zoom end
+      /// zoom start
+      /// zoom update
+      /// zoom end
     }
+
+    _gestureState = zooming ? GestureState.zoom : GestureState.pan;
   }
 
   Offset _getCenter(Rect destinationRect) {
-    //return destinationRect.center * scale + offset;
+    if (!userOffset && _center != null) {
+      return _center;
+    }
+
     if (totalScale > 1.0) {
       if (_computeHorizontalBoundary && _computeVerticalBoundary) {
         return destinationRect.center * totalScale + offset;
@@ -144,7 +161,6 @@ class GestureDetails {
   Rect calculateFinalDestinationRect(Rect layoutRect, Rect destinationRect) {
     Offset center = _getCenter(destinationRect);
     Rect result = _getDestinationRect(destinationRect, center);
-
     if (_computeHorizontalBoundary) {
       //move right
       if (result.left >= layoutRect.left) {
@@ -176,13 +192,16 @@ class GestureDetails {
       }
     }
 
-    ///fix offset
-    offset = _getFixedOffset(destinationRect, result.center);
     _computeHorizontalBoundary =
         result.left <= layoutRect.left && result.right >= layoutRect.right;
 
     _computeVerticalBoundary =
         result.top <= layoutRect.top && result.bottom >= layoutRect.bottom;
+
+    ///fix offset
+    offset = _getFixedOffset(destinationRect, result.center);
+    _center = result.center;
+    //offset = Offset(roundAfter(offset.dx, 4), roundAfter(offset.dy, 4));
     return result;
   }
 
@@ -196,67 +215,129 @@ class GestureDetails {
 }
 
 class GestureConfig {
+  //the min scale for zooming then animation back to minScale when scale end
+  final double animationMinScale;
+  //min scale
   final double minScale;
+
+  //the max scale for zooming then animation back to maxScale when scale end
+  final double animationMaxScale;
+  //max scale
   final double maxScale;
+
+  //speed for zoom/pan
   final double speed;
+
+  ///save Gesture state (for example in page view, so that the state will not change when scroll back),
+  ///remember clearGestureDetailsCache  at right time
   final bool cacheGesture;
+
+  ///whether in page view
   final InPageView inPageView;
 
   /// final double magnitude = details.velocity.pixelsPerSecond.distance;
   ///final Offset direction = details.velocity.pixelsPerSecond / magnitude * _gestureConfig.inertialSpeed;
   final double inertialSpeed;
 
+  //initial scale of image
   final double initialScale;
   GestureConfig(
-      {this.minScale: 0.8,
-      this.maxScale: 5.0,
-      this.speed: 1.0,
-      this.cacheGesture: false,
-      this.inertialSpeed: 100.0,
-      this.initialScale: 1.0,
-      this.inPageView: InPageView.none});
+      {double minScale,
+      double maxScale,
+      double speed,
+      bool cacheGesture,
+      double inertialSpeed,
+      double initialScale,
+      InPageView inPageView,
+      double animationMinScale,
+      double animationMaxScale})
+      : minScale = minScale ??= 0.8,
+        maxScale = maxScale ??= 5.0,
+        speed = speed ?? 1.0,
+        cacheGesture = cacheGesture ?? false,
+        inertialSpeed = inertialSpeed ?? 100.0,
+        initialScale = initialScale ?? 1.0,
+        inPageView = inPageView ?? InPageView.none,
+        animationMinScale = animationMinScale ?? minScale * 0.8,
+        animationMaxScale = animationMaxScale ?? maxScale * 1.2,
+        assert(minScale <= maxScale),
+        assert(animationMinScale <= animationMaxScale),
+        assert(animationMinScale <= minScale),
+        assert(animationMaxScale >= maxScale),
+        assert(minScale <= initialScale && initialScale <= maxScale),
+        assert(speed > 0),
+        assert(inertialSpeed > 0);
 }
 
-//Round the scale to three points after comma to prevent shaking
 double roundAfter(double number, int position) {
   double shift = pow(10, position).toDouble();
   return (number * shift).roundToDouble() / shift;
 }
 
 enum GestureState {
+  ///zoom in/ zoom out
   zoom,
-  move,
+
+  /// horizontal and vertical move
+  pan,
 }
 
 const double minMagnitude = 400.0;
 const double velocity = minMagnitude / 1000.0;
 
-class GestureInertiaAnimation {
-  AnimationController _controller;
-  Animation<Offset> _animation;
+class GestureAnimation {
+  AnimationController _offsetController;
+  Animation<Offset> _offsetAnimation;
 
-  GestureInertiaAnimation(
-      TickerProvider vsync, GestureOffsetAnimationCallBack callback) {
-    _controller = AnimationController(vsync: vsync);
-    _controller.addListener(() {
-      //print(_animation.value);
-      callback?.call(_animation.value);
-    });
+  AnimationController _scaleController;
+  Animation<double> _scaletAnimation;
+
+  GestureAnimation(TickerProvider vsync,
+      {GestureOffsetAnimationCallBack offsetCallBack,
+      GestureScaleAnimationCallBack scaleCallBack}) {
+    if (offsetCallBack != null) {
+      _offsetController = AnimationController(vsync: vsync);
+      _offsetController.addListener(() {
+        //print(_animation.value);
+        offsetCallBack(_offsetAnimation.value);
+      });
+    }
+
+    if (scaleCallBack != null) {
+      _scaleController = AnimationController(vsync: vsync);
+      _scaleController.addListener(() {
+        scaleCallBack(_scaletAnimation.value);
+      });
+    }
   }
 
-  void animation(Offset begin, Offset end) {
-    _animation = _controller.drive(Tween<Offset>(begin: begin, end: end));
-    _controller
+  void animationOffset(Offset begin, Offset end) {
+    _offsetAnimation =
+        _offsetController.drive(Tween<Offset>(begin: begin, end: end));
+    _offsetController
+      ..value = 0.0
+      ..fling(velocity: velocity);
+  }
+
+  void animationScale(double begin, double end, double velocity) {
+    _scaletAnimation =
+        _scaleController.drive(Tween<double>(begin: begin, end: end));
+    _scaleController
       ..value = 0.0
       ..fling(velocity: velocity);
   }
 
   void dispose() {
-    _controller.dispose();
+    _offsetController?.dispose();
+    _scaleController?.dispose();
   }
 
   void stop() {
-    _controller.stop();
+    _offsetController?.stop();
+//    if (_scaletAnimation != null) {
+//      _scaleController.value = 1.0;
+//    }
+    _scaleController?.stop();
   }
 }
 

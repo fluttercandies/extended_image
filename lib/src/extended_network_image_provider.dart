@@ -9,7 +9,6 @@ import 'package:http/http.dart';
 import 'package:http_client_helper/http_client_helper.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:image_picker_saver/image_picker_saver.dart';
 import 'package:transparent_image/transparent_image.dart';
 
 class ExtendedNetworkImageProvider
