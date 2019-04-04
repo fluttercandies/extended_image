@@ -1,3 +1,7 @@
+## [0.1.9]
+
+* add zoom/pan image function, view image in page view like wechat(support zoom in and scroll next or previous image)
+
 ## [0.1.8]
 
 * remove image_picker_saver from extended_image.
