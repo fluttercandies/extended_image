@@ -737,7 +737,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
               current = ExtendedImageGesture(
                   widget,
                   this,
-                  widget.gestureConfig.inPageView != InPageView.none
+                  widget.gestureConfig.inPageView
                       ? context.ancestorStateOfType(
                           TypeMatcher<ExtendedImageGesturePageViewState>())
                       : null);
@@ -763,7 +763,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
           current = ExtendedImageGesture(
               widget,
               this,
-              widget.gestureConfig.inPageView != InPageView.none
+              widget.gestureConfig.inPageView
                   ? context.ancestorStateOfType(
                       TypeMatcher<ExtendedImageGesturePageViewState>())
                   : null);

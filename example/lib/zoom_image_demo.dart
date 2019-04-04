@@ -24,7 +24,7 @@ class ZoomImageDemo extends StatelessWidget {
               speed: 1.0,
               inertialSpeed: 100.0,
               initialScale: 1.0,
-              inPageView: InPageView.none),
+              inPageView: false),
         ),
       )
     ]));

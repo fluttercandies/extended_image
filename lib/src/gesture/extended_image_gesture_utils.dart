@@ -36,16 +36,16 @@ class Boundary {
   }
 }
 
-enum InPageView {
-  ///image is not in pageview
-  none,
-
-  ///image is in horizontal pageview
-  horizontal,
-
-  ///image is in vertical pageview
-  vertical
-}
+//enum InPageView {
+//  ///image is not in pageview
+//  none,
+//
+//  ///image is in horizontal pageview
+//  horizontal,
+//
+//  ///image is in vertical pageview
+//  vertical
+//}
 
 abstract class ExtendedImageGestureState {
   GestureDetails get gestureDetails;
@@ -233,7 +233,7 @@ class GestureConfig {
   final bool cacheGesture;
 
   ///whether in page view
-  final InPageView inPageView;
+  final bool inPageView;
 
   /// final double magnitude = details.velocity.pixelsPerSecond.distance;
   ///final Offset direction = details.velocity.pixelsPerSecond / magnitude * _gestureConfig.inertialSpeed;
@@ -248,7 +248,7 @@ class GestureConfig {
       bool cacheGesture,
       double inertialSpeed,
       double initialScale,
-      InPageView inPageView,
+      bool inPageView,
       double animationMinScale,
       double animationMaxScale})
       : minScale = minScale ??= 0.8,
@@ -257,7 +257,7 @@ class GestureConfig {
         cacheGesture = cacheGesture ?? false,
         inertialSpeed = inertialSpeed ??= 100.0,
         initialScale = initialScale ??= 1.0,
-        inPageView = inPageView ?? InPageView.none,
+        inPageView = inPageView ?? false,
         animationMinScale = animationMinScale ??= minScale * 0.8,
         animationMaxScale = animationMaxScale ??= maxScale * 1.2,
         assert(minScale <= maxScale),

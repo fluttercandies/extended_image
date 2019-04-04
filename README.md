@@ -2,13 +2,11 @@
 
 [![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image)
 
-extended official image with load state,crop,save,clip,paint etc.
+extended official image with loading/failed state,cache network,zoom/pan,photo view,crop,save,clip,paint custom.
 
 [Chinese bolg](https://juejin.im/post/5c867112f265da2dd427a340)
 
-extended image is the same as official image.
-
-# Cache network image
+# cache network image
 You can use [ExtendedNetworkImageProvider](https://github.com/fluttercandies/extended_image/blob/master/lib/src/extended_network_image_provider.dart)
 
 ```dart
@@ -60,7 +58,83 @@ ExtendedImage.network(
               ),
 ```
 
-# Circle/BorderRadius/Border
+# zoom/pan image
+ set mode=ExtendedImageMode.Gesture to enable zoom/pan image
+ and set config with GestureConfig
+
+```dart
+ExtendedImage.network(
+          imageTestUrl,
+          fit: BoxFit.contain,
+          //enableLoadState: false,
+          mode: ExtendedImageMode.Gesture,
+          gestureConfig: GestureConfig(
+              minScale: 0.9,
+              animationMinScale: 0.7,
+              maxScale: 3.0,
+              animationMaxScale: 3.5,
+              speed: 1.0,
+              inertialSpeed: 100.0,
+              initialScale: 1.0,
+              inPageView: false),
+        )
+```
+
+![](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/zoom.gif)
+
+# photo view like wechat
+
+ExtendedImageGesturePageView is made for zoom/pan image in page view.
+
+remember set inPageView true for GestureConfig
+
+you can cache gesture state in page view,so that gesture state will not change when page is changed.
+
+remember call clearGestureDetailsCache() method at the right time.(for example,page view page is disposed)
+
+```dart
+           ExtendedImageGesturePageView.builder(
+              itemBuilder: (BuildContext context, int index) {
+                var item = widget.pics[index].picUrl;
+                Widget image = ExtendedImage.network(
+                  item,
+                  fit: BoxFit.contain,
+                  mode: ExtendedImageMode.Gesture,
+                  gestureConfig: GestureConfig(
+                      inPageView: true, initialScale: 1.0,
+                      //you can cache gesture state even though page view page change.
+                      //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
+                      cacheGesture: false
+                  ),
+                );
+                image = Container(
+                  child: image,
+                  padding: EdgeInsets.all(5.0),
+                );
+                if (index == currentIndex) {
+                  return Hero(
+                    tag: item + index.toString(),
+                    child: image,
+                  );
+                } else {
+                  return image;
+                }
+              },
+              itemCount: widget.pics.length,
+              onPageChanged: (int index) {
+                currentIndex = index;
+                rebuild.add(index);
+              },
+              controller: PageController(
+                initialPage: currentIndex,
+              ),
+              scrollDirection: Axis.horizontal,
+            ),
+```
+
+![](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/photo_view.gif)
+
+# circle/borderRadius/border
 
 Circle/BorderRadius/Border are easy to be used.
 
@@ -77,7 +151,7 @@ ExtendedImage.network(
               ),
 ```
 
-# Clear and Save
+# clear and save
 
 Clear disk cached , you can set duration to clear expired images or clear all of them.
 ```dart
@@ -107,7 +181,7 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 ![](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/image.gif)
 
 
-# Custom load state
+# custom load state
     /// custom load state widget if you want
     final LoadStateChanged loadStateChanged;
     
@@ -177,7 +251,7 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 
 ![](https://github.com/fluttercandies/Flutter_Candies/tree/master/gif/extended_image/custom.gif)
 
-#  Crop image
+#  crop image
  you can crop image with ExtendedRawImage, soureRect is which you want to show image rect.
  [crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/crop_image_demo.dart)
 
