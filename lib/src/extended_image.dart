@@ -586,10 +586,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   @override
   void didUpdateWidget(ExtendedImage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.image != oldWidget.image) {
-      _resolveImage();
-    }
-    ;
+    if (widget.image != oldWidget.image) _resolveImage();
   }
 
   @override

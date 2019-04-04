@@ -6,8 +6,7 @@ import 'package:extended_image/src/extended_raw_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-///https://github.com/flutter/flutter/blob/master/examples/layers/widgets/gestures.dart
-
+/// scale idea from https://github.com/flutter/flutter/blob/master/examples/layers/widgets/gestures.dart
 /// zoom image
 class ExtendedImageGesture extends StatefulWidget {
   final ExtendedImage extendedImage;
@@ -20,20 +19,19 @@ class ExtendedImageGesture extends StatefulWidget {
 }
 
 class _ExtendedImageGestureState extends State<ExtendedImageGesture>
-    with SingleTickerProviderStateMixin, ExtendedImageGestureState {
+    with TickerProviderStateMixin, ExtendedImageGestureState {
   ///details for gesture
   GestureDetails _gestureDetails;
   Offset _normalizedOffset;
   double _startingScale;
   Offset _startingOffset;
-  GestureInertiaAnimation _gestureInertiaAnimation;
+  GestureAnimation _gestureAnimation;
 
   GestureConfig _gestureConfig;
   @override
   void initState() {
     // TODO: implement initState
-    _gestureConfig =
-        widget.extendedImage.gestureConfig ?? GestureConfig();
+    _gestureConfig = widget.extendedImage.gestureConfig ?? GestureConfig();
 
     if (_gestureConfig.cacheGesture) {
       var cache =
@@ -47,12 +45,21 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       offset: Offset.zero,
     );
 
-    _gestureInertiaAnimation = GestureInertiaAnimation(this, (Offset value) {
+    _gestureAnimation = GestureAnimation(this, offsetCallBack: (Offset value) {
       setState(() {
         _gestureDetails = GestureDetails(
             offset: value,
             totalScale: _gestureDetails.totalScale,
             gestureDetails: _gestureDetails);
+      });
+    }, scaleCallBack: (double scale) {
+      setState(() {
+        _gestureDetails = GestureDetails(
+            offset: _gestureDetails.offset,
+            totalScale: scale,
+            gestureDetails: _gestureDetails,
+            zooming: true,
+            userOffset: false);
       });
     });
 
@@ -62,11 +69,11 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   @override
   void dispose() {
     super.dispose();
-    _gestureInertiaAnimation.dispose();
+    _gestureAnimation.dispose();
   }
 
   void _handleScaleStart(ScaleStartDetails details) {
-    _gestureInertiaAnimation.stop();
+    _gestureAnimation.stop();
     _normalizedOffset = (details.focalPoint - _gestureDetails.offset) /
         _gestureDetails.totalScale;
     _startingScale = _gestureDetails.totalScale;
@@ -74,14 +81,18 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   void _handleScaleUpdate(ScaleUpdateDetails details) {
-    double scale = (_startingScale * details.scale * _gestureConfig.speed)
-        .clamp(_gestureConfig.minScale, _gestureConfig.maxScale);
-    scale = roundAfter(scale, 3);
+    double scale = _clampScale(
+        (_startingScale * details.scale * _gestureConfig.speed),
+        _gestureConfig.animationMinScale,
+        _gestureConfig.animationMaxScale);
+
+    //Round the scale to three points after comma to prevent shaking
+    //scale = roundAfter(scale, 3);
     //no more zoom
     if (details.scale != 1.0 &&
-        ((_gestureDetails.totalScale == _gestureConfig.minScale &&
+        ((_gestureDetails.totalScale == _gestureConfig.animationMinScale &&
                 scale <= _gestureDetails.totalScale) ||
-            (_gestureDetails.totalScale == _gestureConfig.maxScale &&
+            (_gestureDetails.totalScale == _gestureConfig.animationMaxScale &&
                 scale >= _gestureDetails.totalScale))) {
       return;
     }
@@ -94,16 +105,48 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
         scale != _gestureDetails.totalScale) {
       setState(() {
         _gestureDetails = GestureDetails(
-          offset: offset,
-          totalScale: scale,
-          gestureDetails: _gestureDetails,
-        );
+            offset: offset,
+            totalScale: scale,
+            gestureDetails: _gestureDetails,
+            zooming: details.scale != 1.0);
       });
     }
   }
 
   void _handleScaleEnd(ScaleEndDetails details) {
-    if (_gestureDetails.gestureState == GestureState.move) {
+    //animate back to maxScale if gesture exceeded the maxScale specified
+    if (_gestureDetails.totalScale > _gestureConfig.maxScale) {
+      final double scaleComebackRatio =
+          _gestureConfig.maxScale / _gestureDetails.totalScale;
+
+      final double velocity =
+          (_gestureDetails.totalScale - _gestureConfig.maxScale) /
+              _gestureConfig.maxScale;
+
+      _gestureAnimation.animationScale(
+          _gestureDetails.totalScale, _gestureConfig.maxScale, velocity);
+//      _gestureAnimation.animationOffset(
+//          _gestureDetails.offset, _gestureDetails.offset * scaleComebackRatio);
+      return;
+    }
+
+    //animate back to minScale if gesture fell smaller than the minScale specified
+    if (_gestureDetails.totalScale < _gestureConfig.minScale) {
+      final double scaleComebackRatio =
+          _gestureConfig.minScale / _gestureDetails.totalScale;
+
+      final double velocity =
+          (_gestureConfig.minScale - _gestureDetails.totalScale) /
+              _gestureConfig.minScale;
+
+      _gestureAnimation.animationScale(
+          _gestureDetails.totalScale, _gestureConfig.minScale, velocity);
+//      _gestureAnimation.animationOffset(
+//          _gestureDetails.offset, _gestureDetails.offset * scaleComebackRatio);
+      return;
+    }
+
+    if (_gestureDetails.gestureState == GestureState.pan) {
       // get magnitude from gesture velocity
       final double magnitude = details.velocity.pixelsPerSecond.distance;
 
@@ -113,7 +156,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
             magnitude *
             _gestureConfig.inertialSpeed;
 
-        _gestureInertiaAnimation.animation(
+        _gestureAnimation.animationOffset(
             _gestureDetails.offset, _gestureDetails.offset + direction);
       }
     }
@@ -126,6 +169,10 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
         totalScale: _gestureConfig.initialScale,
       );
     });
+  }
+
+  double _clampScale(double scale, double min, double max) {
+    return scale.clamp(min, max);
   }
 
   @override
@@ -166,8 +213,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       image = Listener(
         child: image,
         onPointerDown: (_) {
-          _gestureInertiaAnimation.stop();
-          //print(widget.extendedImageState.imageStreamKey);
+          _gestureAnimation.stop();
           widget.extendedImagePageViewState?.extendedImageGestureState = this;
         },
       );

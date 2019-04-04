@@ -128,7 +128,7 @@ class ExtendedImageGesturePageViewState
     with SingleTickerProviderStateMixin {
   Map<Type, GestureRecognizerFactory> _gestureRecognizers =
       const <Type, GestureRecognizerFactory>{};
-  GestureInertiaAnimation _gestureInertiaAnimation;
+  GestureAnimation _gestureAnimation;
   ScrollPosition get position => pageController.position;
   PageController get pageController => widget.controller;
 
@@ -137,7 +137,7 @@ class ExtendedImageGesturePageViewState
   void initState() {
     // TODO: implement initState
     super.initState();
-    _gestureInertiaAnimation = GestureInertiaAnimation(this, (Offset value) {
+    _gestureAnimation = GestureAnimation(this, offsetCallBack: (Offset value) {
       var gestureDetails = extendedImageGestureState?.gestureDetails;
       if (gestureDetails != null) {
         extendedImageGestureState?.gestureDetails = GestureDetails(
@@ -190,7 +190,7 @@ class ExtendedImageGesturePageViewState
 
   @override
   void dispose() {
-    _gestureInertiaAnimation.dispose();
+    _gestureAnimation.dispose();
     // TODO: implement dispose
     super.dispose();
   }
@@ -227,7 +227,7 @@ class ExtendedImageGesturePageViewState
 
   void _handleDragDown(DragDownDetails details) {
     //print(details);
-    _gestureInertiaAnimation.stop();
+    _gestureAnimation.stop();
     assert(_drag == null);
     assert(_hold == null);
     _hold = position.hold(_disposeHold);
@@ -248,16 +248,20 @@ class ExtendedImageGesturePageViewState
     assert(_hold == null || _drag == null);
     var delta = details.delta;
 
-    var gestureDetails = extendedImageGestureState?.gestureDetails;
-
-    if (gestureDetails != null) {
-      if (gestureDetails.movePage(delta)) {
-        _drag?.update(details);
+    if (extendedImageGestureState != null) {
+      var gestureDetails = extendedImageGestureState.gestureDetails;
+      if (gestureDetails != null) {
+        if (gestureDetails.movePage(delta)) {
+          _drag?.update(details);
+        } else {
+          extendedImageGestureState.gestureDetails = GestureDetails(
+              offset: gestureDetails.offset +
+                  delta * extendedImageGestureState.imageGestureConfig.speed,
+              totalScale: gestureDetails.totalScale,
+              gestureDetails: gestureDetails);
+        }
       } else {
-        extendedImageGestureState?.gestureDetails = GestureDetails(
-            offset: gestureDetails.offset + details.delta,
-            totalScale: gestureDetails.totalScale,
-            gestureDetails: gestureDetails);
+        _drag?.update(details);
       }
     } else {
       _drag?.update(details);
@@ -293,7 +297,7 @@ class ExtendedImageGesturePageViewState
             direction = Offset(0.0, direction.dy);
           }
 
-          _gestureInertiaAnimation.animation(
+          _gestureAnimation.animationOffset(
               gestureDetails.offset, gestureDetails.offset + direction);
         }
       }
