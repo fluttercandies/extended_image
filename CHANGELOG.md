@@ -1,6 +1,6 @@
-## [0.1.9]
+## [0.2.0]
 
-* add zoom/pan image function, view image in page view like wechat(support zoom in and scroll next or previous image)
+* support zoom/pan image and view image in page view like wechat(support zoom in and scroll next or previous image)
 
 ## [0.1.8]
 
