@@ -4,7 +4,6 @@ import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:oktoast/oktoast.dart';
 import 'dart:ui' as ui show Image;
 
 class PaintImageDemo extends StatefulWidget {
@@ -124,7 +123,6 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
       // print(oo);
       points.add(oo);
     }
-    ;
     double wxmin = points[0].dx;
     double wxmax = wxmin;
     double wymin = points[0].dy;
@@ -165,22 +163,22 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
     return (13 * cos(t) - 5 * cos(2 * t) - 2 * cos(3 * t) - cos(4 * t));
   }
 
-  Path pathHeart(Rect rect) {
-    final double width = rect.width;
-    final double height = rect.height;
-    Path path = new Path();
-    path.moveTo(width / 2, height / 4);
-    path.cubicTo((width * 6) / 7, height / 9, (width * 13) / 13,
-        (height * 2) / 5, width / 2, (height * 7) / 12);
-    //canvas.drawPath(path, _paint);
-
-    Path path2 = new Path();
-    path2.moveTo(width / 2, height / 4);
-    path2.cubicTo(width / 7, height / 9, width / 21, (height * 2) / 5,
-        width / 2, (height * 7) / 12);
-    //canvas.drawPath(path2, _paint);
-    //path.
-  }
+//  Path pathHeart(Rect rect) {
+//    final double width = rect.width;
+//    final double height = rect.height;
+//    Path path = new Path();
+//    path.moveTo(width / 2, height / 4);
+//    path.cubicTo((width * 6) / 7, height / 9, (width * 13) / 13,
+//        (height * 2) / 5, width / 2, (height * 7) / 12);
+//    //canvas.drawPath(path, _paint);
+//
+//    Path path2 = new Path();
+//    path2.moveTo(width / 2, height / 4);
+//    path2.cubicTo(width / 7, height / 9, width / 21, (height * 2) / 5,
+//        width / 2, (height * 7) / 12);
+//    //canvas.drawPath(path2, _paint);
+//    //path.
+//  }
 }
 
 enum PaintType { ClipHeart, PaintHeart }

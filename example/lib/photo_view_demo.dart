@@ -1,22 +1,24 @@
+///
+///  photo_view_demo.dart
+///  create by eastmoney on 2019/4/4
+///
+
 import 'dart:async';
-
 import 'package:example/common/crop_image.dart';
-
 import 'package:example/common/push_to_refresh_header.dart';
 import 'package:example/common/tu_chong_repository.dart';
 import 'package:example/common/tu_chong_source.dart';
 import 'package:flutter/material.dart' hide CircularProgressIndicator;
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 
-class CropImageDemo extends StatefulWidget {
+class PhotoViewDemo extends StatefulWidget {
   @override
-  _CropImageDemoState createState() => _CropImageDemoState();
+  _PhotoViewDemoState createState() => _PhotoViewDemoState();
 }
 
-class _CropImageDemoState extends State<CropImageDemo> {
+class _PhotoViewDemoState extends State<PhotoViewDemo> {
   TuChongRepository listSourceRepository = TuChongRepository();
 
   //if you can't konw image size before build,
@@ -38,7 +40,12 @@ class _CropImageDemoState extends State<CropImageDemo> {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("Crop image after it's ready"),
+            title: Text("photo view demo"),
+          ),
+          Container(
+            padding: EdgeInsets.all(margin),
+            child: Text(
+                "click image to show photo view, support zoom/pan image. horizontal and vertical page view are supported."),
           ),
           Expanded(
             child: PullToRefreshNotification(
@@ -60,7 +67,7 @@ class _CropImageDemoState extends State<CropImageDemo> {
                       itemBuilder: (context, item, index) {
                         String title = item.title;
                         if (title == null || title == "") {
-                          title = "Image${index}";
+                          title = "Image$index";
                         }
 
                         return Column(

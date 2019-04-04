@@ -2,12 +2,8 @@ import 'dart:async';
 
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
-//import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
-import 'dart:math';
 import 'dart:ui';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/rendering.dart';
 

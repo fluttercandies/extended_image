@@ -4,6 +4,8 @@ import 'package:example/crop_image_demo.dart';
 import 'package:example/image_demo.dart';
 import 'package:example/image_list_demo.dart';
 import 'package:example/paint_image_demo.dart';
+import 'package:example/photo_view_demo.dart';
+import 'package:example/zoom_image_demo.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker_saver/image_picker_saver.dart';
@@ -71,6 +73,9 @@ class _MyHomePageState extends State<MyHomePage> {
         .add(Page(PageType.Custom, "show image with loading,failed,animation"));
     pages.add(Page(PageType.Crop, "show how to crop image"));
     pages.add(Page(PageType.Paint, "show how to paint any thing before image"));
+    pages.add(Page(PageType.Zoom, "show how to zoom/pan image"));
+    pages.add(Page(PageType.PhotoView,
+        "show how to zoom/pan image in page view like WeChat"));
 
     ///clear cache image from 7 days before
     clearDiskCachedImages(duration: Duration(days: 7));
@@ -126,6 +131,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   break;
                 case PageType.Paint:
                   pageWidget = PaintImageDemo();
+                  break;
+                case PageType.Zoom:
+                  pageWidget = ZoomImageDemo();
+                  break;
+                case PageType.PhotoView:
+                  pageWidget = PhotoViewDemo();
                   break;
                 default:
                   break;
@@ -184,13 +195,7 @@ class Page {
   Page(this.type, this.description);
 }
 
-enum PageType {
-  Image,
-  List,
-  Custom,
-  Crop,
-  Paint,
-}
+enum PageType { Image, List, Custom, Crop, Paint, Zoom, PhotoView }
 
 String _imageTestUrl;
 String get imageTestUrl =>

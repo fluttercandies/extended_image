@@ -1,13 +1,8 @@
-import 'package:example/common/tu_chong_repository.dart';
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'dart:math';
-
 import 'package:oktoast/oktoast.dart';
-
-import 'common/tu_chong_repository.dart';
 
 class ImageDemo extends StatefulWidget {
   @override
