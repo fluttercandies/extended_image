@@ -72,11 +72,11 @@ class _PicSwiperState extends State<PicSwiper> {
                   fit: BoxFit.contain,
                   mode: ExtendedImageMode.Gesture,
                   gestureConfig: GestureConfig(
-                      inPageView: true, initialScale: 1.0,
+                      inPageView: true,
+                      initialScale: 1.0,
                       //you can cache gesture state even though page view page change.
                       //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
-                      cacheGesture: false
-                  ),
+                      cacheGesture: false),
                 );
                 image = Container(
                   child: image,
