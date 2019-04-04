@@ -94,8 +94,14 @@ Future<bool> clearDiskCachedImages({Duration duration})
  getMemoryImageCache() ;
 ```
  
+ Save with image_picker_saver
 ```dart
-saveNetworkImageToPhoto(String url, {bool useCache: true})
+///save netwrok image to photo
+Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
+  var data = await getNetworkImageData(url, useCache: useCache);
+  var filePath = await ImagePickerSaver.saveFile(fileData: data);
+  return filePath != null && filePath != "";
+}
 ```
 
 ![](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/image.gif)

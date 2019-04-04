@@ -12,7 +12,7 @@ class ZoomImageDemo extends StatelessWidget {
       ),
       Expanded(
         child: ExtendedImage.network(
-          "https://photo.tuchong.com/1842013/f/122948519.jpg",
+          imageTestUrl,
           fit: BoxFit.contain,
           //enableLoadState: false,
           mode: ExtendedImageMode.Gesture,
