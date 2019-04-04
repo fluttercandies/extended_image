@@ -228,20 +228,6 @@ and [push to refresh header which is used in crop image demo](https://github.com
                                Color(0x55ea5504), BlendMode.srcIn)
                            ..isAntiAlias = false
                            ..filterQuality = FilterQuality.low);
- 
- //                    canvas.drawImageRect(
- //                        image,
- //                        Rect.fromLTWH(0.0, y, imageWidth, imageHeight - y),
- //                        Rect.fromLTWH(
- //                            rect.left,
- //                            rect.top + y / imageHeight * size.height,
- //                            size.width,
- //                            (imageHeight - y) / imageHeight * size.height),
- //                        Paint()
- //                          ..colorFilter = ColorFilter.mode(
- //                              Color(0x22ea5504), BlendMode.srcIn)
- //                          ..isAntiAlias = false
- //                          ..filterQuality = FilterQuality.low);
                    }
                  },
                )
