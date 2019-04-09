@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:crypto/crypto.dart';
+import 'package:extended_image/src/network/extended_network_image_provider.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -33,3 +34,6 @@ Future<bool> clearDiskCachedImages({Duration duration}) async {
   }
   return true;
 }
+
+List<ExtendedNetworkImageProvider> userCancelCache =
+    List<ExtendedNetworkImageProvider>();
