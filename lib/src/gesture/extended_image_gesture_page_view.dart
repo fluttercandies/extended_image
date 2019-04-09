@@ -273,12 +273,13 @@ class ExtendedImageGesturePageViewState
     assert(_hold == null || _drag == null);
 
     var temp = details;
-
     if (extendedImageGestureState != null) {
       var gestureDetails = extendedImageGestureState.gestureDetails;
 
-      if (gestureDetails != null && gestureDetails.computeHorizontalBoundary ||
-          gestureDetails.computeVerticalBoundary) {
+      if (gestureDetails != null &&
+          gestureDetails.totalScale > 1.0 &&
+          (gestureDetails.computeHorizontalBoundary ||
+              gestureDetails.computeVerticalBoundary)) {
         //stop
         temp = DragEndDetails(primaryVelocity: 0.0);
 
