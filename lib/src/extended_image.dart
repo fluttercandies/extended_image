@@ -9,6 +9,7 @@ import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/network/extended_network_image_provider.dart';
 import 'package:extended_image/src/image/extended_raw_image.dart';
+import 'package:extended_image/src/network/extended_network_image_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -86,7 +87,7 @@ class ExtendedImage extends StatefulWidget {
       GestureConfig gestureConfig,
       BoxConstraints constraints,
       CancellationToken cancelToken,
-      int retries = 3,
+      int retries = 1,
       Duration timeLimit,
       Duration timeRetry: const Duration(milliseconds: 100)})
       : image = ExtendedNetworkImageProvider(url,
@@ -622,6 +623,11 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
     if (widget.image is ExtendedNetworkImageProvider) {
       extendedNetworkImageProvider =
           widget.image as ExtendedNetworkImageProvider;
+
+      ///clear cancel image
+      if (userCancelCache.remove(extendedNetworkImageProvider)) {
+        widget.image.evict();
+      }
     }
 
     if (rebuild) {
@@ -651,7 +657,6 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   }
 
   void _handleImageChanged(ImageInfo imageInfo, bool synchronousCall) {
-    //print("_handleImageChanged : synchronousCall $synchronousCall");
     setState(() {
       if (imageInfo != null) {
         ExtendedNetworkImageProvider extendedNetworkImageProvider;
@@ -703,21 +708,20 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
     if (!_isListeningToStream) return;
     _imageStream.removeListener(_handleImageChanged);
     _isListeningToStream = false;
+
+    ///cancel network request
+    ExtendedNetworkImageProvider extendedNetworkImageProvider;
+    if (widget.image is ExtendedNetworkImageProvider) {
+      extendedNetworkImageProvider =
+          widget.image as ExtendedNetworkImageProvider;
+      extendedNetworkImageProvider.cancelToken?.cancel();
+    }
   }
 
   @override
   void dispose() {
     assert(_imageStream != null);
     _stopListeningToStream();
-    ExtendedNetworkImageProvider extendedNetworkImageProvider;
-    if (widget.image is ExtendedNetworkImageProvider) {
-      extendedNetworkImageProvider =
-          widget.image as ExtendedNetworkImageProvider;
-
-      extendedNetworkImageProvider.cancelToken?.cancel();
-
-      extendedNetworkImageProvider.evict();
-    }
     super.dispose();
   }
 
