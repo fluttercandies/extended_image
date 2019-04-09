@@ -3,6 +3,7 @@
 * add cancelToken,retries,timeLimit and timeRetry parameters for ExtendedImage.network method
 * add default cancelToken for ExtendedImage.network method
 * fix issue about cancel network image request
+* fix gesture page view scrolls not smooth
 
 ## [0.2.0]
 

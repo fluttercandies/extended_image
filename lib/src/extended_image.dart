@@ -626,6 +626,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
 
       ///clear cancel image
       if (userCancelCache.remove(extendedNetworkImageProvider)) {
+        extendedNetworkImageProvider.loadFailed = false;
         widget.image.evict();
       }
     }
