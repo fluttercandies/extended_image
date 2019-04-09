@@ -22,7 +22,8 @@ class ExtendedNetworkImageProvider
       this.cache: false,
       this.retries = 3,
       this.timeLimit,
-      this.timeRetry = const Duration(milliseconds: 100)})
+      this.timeRetry = const Duration(milliseconds: 100),
+      this.cancelToken})
       : assert(url != null),
         assert(scale != null);
 
@@ -46,6 +47,8 @@ class ExtendedNetworkImageProvider
 
   /// The HTTP headers that will be used with [HttpClient.get] to fetch image from network.
   final Map<String, String> headers;
+
+  final CancellationToken cancelToken;
 
   bool loadFailed = false;
 
@@ -136,11 +139,14 @@ class ExtendedNetworkImageProvider
   Future<Uint8List> _loadNetwork(ExtendedNetworkImageProvider key) async {
     try {
       Response response = await HttpClientHelper.get(url,
-          headers: headers,
+          headers: key.headers,
           timeLimit: key.timeLimit,
           timeRetry: key.timeRetry,
-          retries: key.retries);
+          retries: key.retries,
+          cancelToken: cancelToken);
       return response.bodyBytes;
+    } on OperationCanceledError catch (_) {
+      print("ExtendedNetworkImageProvider--user cancel request");
     } catch (e) {}
     return null;
   }
