@@ -87,7 +87,9 @@ class ExtendedNetworkImageProvider
       }
     }
 
-    if (reuslt == null) {
+    bool hasCanceled = cache && userCancelCache.contains(this);
+
+    if (reuslt == null && !hasCanceled) {
       try {
         var data = await _loadNetwork(key);
         if (data != null) {
@@ -123,7 +125,6 @@ class ExtendedNetworkImageProvider
     else {
       await _cacheImagesDirectory.create();
     }
-
     //load from network
     Uint8List data = await _loadNetwork(key);
     if (data != null) {
@@ -146,7 +147,8 @@ class ExtendedNetworkImageProvider
           cancelToken: cancelToken);
       return response.bodyBytes;
     } on OperationCanceledError catch (_) {
-      print("ExtendedNetworkImageProvider--user cancel request");
+      if (!userCancelCache.contains(this)) userCancelCache.add(this);
+      print("ExtendedNetworkImageProvider--user cancel request--$url");
     } catch (e) {}
     return null;
   }
