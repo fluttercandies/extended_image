@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/semantics.dart';
+import 'package:http_client_helper/http_client_helper.dart';
 
 /// extended image base on official
 class ExtendedImage extends StatefulWidget {
@@ -83,9 +84,19 @@ class ExtendedImage extends StatefulWidget {
       this.afterPaintImage,
       this.mode: ExtendedImageMode.None,
       GestureConfig gestureConfig,
-      BoxConstraints constraints})
+      BoxConstraints constraints,
+      CancellationToken cancelToken,
+      int retries = 3,
+      Duration timeLimit,
+      Duration timeRetry: const Duration(milliseconds: 100)})
       : image = ExtendedNetworkImageProvider(url,
-            scale: scale, headers: headers, cache: cache),
+            scale: scale,
+            headers: headers,
+            cache: cache,
+            cancelToken: cancelToken ?? CancellationToken(),
+            retries: retries,
+            timeRetry: timeRetry,
+            timeLimit: timeLimit),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
@@ -698,6 +709,15 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   void dispose() {
     assert(_imageStream != null);
     _stopListeningToStream();
+    ExtendedNetworkImageProvider extendedNetworkImageProvider;
+    if (widget.image is ExtendedNetworkImageProvider) {
+      extendedNetworkImageProvider =
+          widget.image as ExtendedNetworkImageProvider;
+
+      extendedNetworkImageProvider.cancelToken?.cancel();
+
+      extendedNetworkImageProvider.evict();
+    }
     super.dispose();
   }
 

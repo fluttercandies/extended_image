@@ -11,11 +11,20 @@ class ImageDemo extends StatefulWidget {
 
 class _ImageDemoState extends State<ImageDemo> {
   BoxShape boxShape;
+  //CancellationToken cancellationToken;
   @override
   void initState() {
+    //cancellationToken = CancellationToken();
     boxShape = BoxShape.circle;
     // TODO: implement initState
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    //cancellationToken.cancel();
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -86,6 +95,7 @@ class _ImageDemoState extends State<ImageDemo> {
                 border: Border.all(color: Colors.red, width: 1.0),
                 shape: boxShape,
                 borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                //cancelToken: cancellationToken,
               ),
             ),
           )

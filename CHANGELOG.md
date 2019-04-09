@@ -1,3 +1,7 @@
+## [0.2.1]
+
+* add cancelToken,retries,timeLimit and timeRetry parameters for ExtendedImage.network method
+
 ## [0.2.0]
 
 * support zoom/pan image and view image in page view like wechat(support zoom in and scroll next or previous image)

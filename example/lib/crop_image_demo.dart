@@ -60,7 +60,7 @@ class _CropImageDemoState extends State<CropImageDemo> {
                       itemBuilder: (context, item, index) {
                         String title = item.title;
                         if (title == null || title == "") {
-                          title = "Image${index}";
+                          title = "Image$index";
                         }
 
                         return Column(
