@@ -87,7 +87,7 @@ class ExtendedImage extends StatefulWidget {
       GestureConfig gestureConfig,
       BoxConstraints constraints,
       CancellationToken cancelToken,
-      int retries = 1,
+      int retries = 3,
       Duration timeLimit,
       Duration timeRetry: const Duration(milliseconds: 100)})
       : image = ExtendedNetworkImageProvider(url,
