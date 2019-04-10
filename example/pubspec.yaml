@@ -17,12 +17,11 @@ dependencies:
     sdk: flutter
   extended_image:
     path: ../
-  loading_more_list: ^0.3.0
-  http_client_helper: ^0.1.6
+  loading_more_list: ^0.3.2
+  http_client_helper: ^0.1.9
   oktoast: ^2.1.4
   flutter_screenutil: ^0.5.1
-  flutter_swiper: ^1.1.4
-  pull_to_refresh_notification: ^0.1.8
+  pull_to_refresh_notification: ^0.2.1
   image_picker_saver: ^0.1.0
   intl: ^0.15.7
   # The following adds the Cupertino Icons font to your application.
