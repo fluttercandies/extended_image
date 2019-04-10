@@ -1,3 +1,7 @@
+## [0.2.2]
+
+* update path_provider version from 0.4.1 to 0.5.0+1
+
 ## [0.2.1]
 
 * add cancelToken,retries,timeLimit and timeRetry parameters for ExtendedImage.network method
