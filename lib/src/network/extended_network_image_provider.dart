@@ -148,7 +148,7 @@ class ExtendedNetworkImageProvider
       return response.bodyBytes;
     } on OperationCanceledError catch (_) {
       if (!userCancelCache.contains(this)) userCancelCache.add(this);
-      print("ExtendedNetworkImageProvider--user cancel request--$url");
+      //print("ExtendedNetworkImageProvider--user cancel request--$url");
     } catch (e) {}
     return null;
   }
