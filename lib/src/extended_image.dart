@@ -9,7 +9,7 @@ import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/network/extended_network_image_provider.dart';
 import 'package:extended_image/src/image/extended_raw_image.dart';
-import 'package:extended_image/src/network/extended_network_image_utils.dart';
+//import 'package:extended_image/src/network/extended_network_image_utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +45,8 @@ class ExtendedImage extends StatefulWidget {
     this.beforePaintImage,
     this.afterPaintImage,
     this.mode: ExtendedImageMode.None,
+    this.enableMemoryCache: true,
+    this.clearMemoryCacheIfFailed: true,
     GestureConfig gestureConfig,
     BoxConstraints constraints,
   })  : assert(image != null),
@@ -72,9 +74,6 @@ class ExtendedImage extends StatefulWidget {
       this.matchTextDirection = false,
       this.gaplessPlayback = false,
       this.filterQuality = FilterQuality.low,
-      Map<String, String> headers,
-      bool cache: true,
-      double scale = 1.0,
       this.loadStateChanged,
       this.shape,
       this.border,
@@ -84,17 +83,26 @@ class ExtendedImage extends StatefulWidget {
       this.beforePaintImage,
       this.afterPaintImage,
       this.mode: ExtendedImageMode.None,
+      this.enableMemoryCache: true,
+      this.clearMemoryCacheIfFailed: true,
       GestureConfig gestureConfig,
       BoxConstraints constraints,
       CancellationToken cancelToken,
+//      bool autoCancel: false,
       int retries = 3,
       Duration timeLimit,
+      Map<String, String> headers,
+      bool cache: true,
+      double scale = 1.0,
       Duration timeRetry: const Duration(milliseconds: 100)})
-      : image = ExtendedNetworkImageProvider(url,
+      :
+        //assert(autoCancel != null),
+        image = ExtendedNetworkImageProvider(url,
             scale: scale,
             headers: headers,
             cache: cache,
-            cancelToken: cancelToken ?? CancellationToken(),
+            cancelToken: cancelToken,
+//            autoCancel: autoCancel,
             retries: retries,
             timeRetry: timeRetry,
             timeLimit: timeLimit),
@@ -150,6 +158,8 @@ class ExtendedImage extends StatefulWidget {
       this.beforePaintImage,
       this.afterPaintImage,
       this.mode: ExtendedImageMode.None,
+      this.enableMemoryCache: true,
+      this.clearMemoryCacheIfFailed: true,
       GestureConfig gestureConfig,
       BoxConstraints constraints})
       : image = FileImage(file, scale: scale),
@@ -317,6 +327,8 @@ class ExtendedImage extends StatefulWidget {
       this.beforePaintImage,
       this.afterPaintImage,
       this.mode: ExtendedImageMode.None,
+      this.enableMemoryCache: true,
+      this.clearMemoryCacheIfFailed: true,
       GestureConfig gestureConfig,
       BoxConstraints constraints})
       : image = scale != null
@@ -374,6 +386,8 @@ class ExtendedImage extends StatefulWidget {
       this.beforePaintImage,
       this.afterPaintImage,
       this.mode: ExtendedImageMode.None,
+      this.enableMemoryCache: true,
+      this.clearMemoryCacheIfFailed: true,
       GestureConfig gestureConfig,
       BoxConstraints constraints})
       : image = MemoryImage(bytes, scale: scale),
@@ -387,6 +401,13 @@ class ExtendedImage extends StatefulWidget {
         gestureConfig = gestureConfig ??
             (mode == ExtendedImageMode.Gesture ? GestureConfig() : null),
         super(key: key);
+
+  ///whether cache in PaintingBinding.instance.imageCache
+  final bool enableMemoryCache;
+
+  ///when failed to load image, whether clear memory cache
+  ///if ture, image will reload in next time.
+  final bool clearMemoryCacheIfFailed;
 
   /// image mode (none,gestrue)
   final ExtendedImageMode mode;
@@ -588,6 +609,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   @override
   void initState() {
     returnLoadStateChangedWidget = false;
+    _loadState = LoadState.loading;
     // TODO: implement initState
     super.initState();
   }
@@ -609,7 +631,11 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   @override
   void didUpdateWidget(ExtendedImage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.image != oldWidget.image) _resolveImage();
+
+    if (widget.image != oldWidget.image) {
+      _cacnelNetworkImageRequest(oldWidget.image);
+      _resolveImage();
+    }
   }
 
   @override
@@ -623,19 +649,17 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
     if (widget.image is ExtendedNetworkImageProvider) {
       extendedNetworkImageProvider =
           widget.image as ExtendedNetworkImageProvider;
-
-      ///clear cancel image
-      if (userCancelCache.remove(extendedNetworkImageProvider)) {
-        extendedNetworkImageProvider.loadFailed = false;
-        widget.image.evict();
-      }
+//
+//      var exist = pendingImages.where((x) =>
+//          x == extendedNetworkImageProvider &&
+//          x.cancelToken == extendedNetworkImageProvider.cancelToken);
+//      if (exist.length == 0) {
+//        pendingImages.add(extendedNetworkImageProvider);
+//      }
     }
 
     if (rebuild) {
       widget.image.evict();
-      if (extendedNetworkImageProvider != null) {
-        extendedNetworkImageProvider.loadFailed = false;
-      }
     }
 
     final ImageStream newStream = widget.image.resolve(
@@ -657,27 +681,41 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
     _updateSourceStream(newStream, rebuild: rebuild);
   }
 
+  _loadFailed(dynamic exception, StackTrace stackTrace) {
+    //print("$exception");
+
+//    ImageProvider imageProvider = widget.image;
+//    if (imageProvider is ExtendedNetworkImageProvider) {
+//      pendingImages.remove(imageProvider);
+//    }
+
+    setState(() {
+      _loadState = LoadState.failed;
+    });
+    if (!widget.enableMemoryCache || widget.clearMemoryCacheIfFailed) {
+      widget.image.evict();
+    }
+  }
+
   void _handleImageChanged(ImageInfo imageInfo, bool synchronousCall) {
+//    ImageProvider imageProvider = widget.image;
+//    if (imageProvider is ExtendedNetworkImageProvider) {
+//      pendingImages.remove(imageProvider);
+//    }
+
     setState(() {
       if (imageInfo != null) {
-        ExtendedNetworkImageProvider extendedNetworkImageProvider;
-        if (widget.image is ExtendedNetworkImageProvider) {
-          extendedNetworkImageProvider =
-              widget.image as ExtendedNetworkImageProvider;
-        }
-        if (extendedNetworkImageProvider != null &&
-            extendedNetworkImageProvider.loadFailed) {
-          _loadState = LoadState.failed;
-        } else {
-          _loadState = LoadState.completed;
-        }
+        _loadState = LoadState.completed;
       } else {
         _loadState = LoadState.failed;
       }
-
       //_loadState = LoadState.completed;
       _imageInfo = imageInfo;
     });
+
+    if (!widget.enableMemoryCache) {
+      widget.image.evict();
+    }
   }
 
   // Update _imageStream to newStream, and moves the stream listener
@@ -701,7 +739,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
 
   void _listenToStream() {
     if (_isListeningToStream) return;
-    _imageStream.addListener(_handleImageChanged);
+    _imageStream.addListener(_handleImageChanged, onError: _loadFailed);
     _isListeningToStream = true;
   }
 
@@ -709,20 +747,22 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
     if (!_isListeningToStream) return;
     _imageStream.removeListener(_handleImageChanged);
     _isListeningToStream = false;
+  }
+
+  void _cacnelNetworkImageRequest(ImageProvider provider) {
+    if (provider == null) return;
 
     ///cancel network request
-    ExtendedNetworkImageProvider extendedNetworkImageProvider;
-    if (widget.image is ExtendedNetworkImageProvider) {
-      extendedNetworkImageProvider =
-          widget.image as ExtendedNetworkImageProvider;
-      extendedNetworkImageProvider.cancelToken?.cancel();
-    }
+//    if (provider is ExtendedNetworkImageProvider && provider.autoCancel) {
+//      cancelPendingNetworkImageByProvider(provider);
+//    }
   }
 
   @override
   void dispose() {
     assert(_imageStream != null);
     _stopListeningToStream();
+    _cacnelNetworkImageRequest(widget.image);
     super.dispose();
   }
 
@@ -777,7 +817,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
                 onTap: () {
                   reLoadImage();
                 },
-                child: Text("load image falied"),
+                child: Text("Failed to load image"),
               ),
             );
             break;

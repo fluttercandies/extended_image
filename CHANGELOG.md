@@ -1,3 +1,9 @@
+## [0.2.3]
+
+* add enableMemoryCache parameter, whether cache in PaintingBinding.instance.imageCache
+  add clearMemoryCacheIfFailed parameter, when failed to load image, whether clear memory cache,if ture, image will reload in next time.
+  auto cancel network request is obsolete.
+
 ## [0.2.2]
 
 * update path_provider version from 0.4.1 to 0.5.0+1
