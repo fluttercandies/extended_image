@@ -25,6 +25,7 @@ class _PicSwiperState extends State<PicSwiper> {
 //
 //    return _cancelToken;
 //  }
+  List<double> doubleTapScales = <double>[1.0, 2.0];
 
   int currentIndex;
 
@@ -89,6 +90,19 @@ class _PicSwiperState extends State<PicSwiper> {
                       //you can cache gesture state even though page view page change.
                       //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
                       cacheGesture: true),
+                  onDoubleTap: (ExtendedImageGestureState state) {
+                    if (state.gestureDetails.totalScale == doubleTapScales[0]) {
+                      state.gestureDetails = GestureDetails(
+                        offset: Offset.zero,
+                        totalScale: doubleTapScales[1],
+                      );
+                    } else {
+                      state.gestureDetails = GestureDetails(
+                        offset: Offset.zero,
+                        totalScale: doubleTapScales[0],
+                      );
+                    }
+                  },
                 );
                 image = Container(
                   child: image,

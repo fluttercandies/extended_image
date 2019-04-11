@@ -47,6 +47,7 @@ class ExtendedImage extends StatefulWidget {
     this.mode: ExtendedImageMode.None,
     this.enableMemoryCache: true,
     this.clearMemoryCacheIfFailed: true,
+    this.onDoubleTap,
     GestureConfig gestureConfig,
     BoxConstraints constraints,
   })  : assert(image != null),
@@ -85,6 +86,7 @@ class ExtendedImage extends StatefulWidget {
       this.mode: ExtendedImageMode.None,
       this.enableMemoryCache: true,
       this.clearMemoryCacheIfFailed: true,
+      this.onDoubleTap,
       GestureConfig gestureConfig,
       BoxConstraints constraints,
       CancellationToken cancelToken,
@@ -160,6 +162,7 @@ class ExtendedImage extends StatefulWidget {
       this.mode: ExtendedImageMode.None,
       this.enableMemoryCache: true,
       this.clearMemoryCacheIfFailed: true,
+      this.onDoubleTap,
       GestureConfig gestureConfig,
       BoxConstraints constraints})
       : image = FileImage(file, scale: scale),
@@ -329,6 +332,7 @@ class ExtendedImage extends StatefulWidget {
       this.mode: ExtendedImageMode.None,
       this.enableMemoryCache: true,
       this.clearMemoryCacheIfFailed: true,
+      this.onDoubleTap,
       GestureConfig gestureConfig,
       BoxConstraints constraints})
       : image = scale != null
@@ -388,6 +392,7 @@ class ExtendedImage extends StatefulWidget {
       this.mode: ExtendedImageMode.None,
       this.enableMemoryCache: true,
       this.clearMemoryCacheIfFailed: true,
+      this.onDoubleTap,
       GestureConfig gestureConfig,
       BoxConstraints constraints})
       : image = MemoryImage(bytes, scale: scale),
@@ -401,6 +406,9 @@ class ExtendedImage extends StatefulWidget {
         gestureConfig = gestureConfig ??
             (mode == ExtendedImageMode.Gesture ? GestureConfig() : null),
         super(key: key);
+
+  ///call back of double tap  under ExtendedImageMode.Gesture
+  final DoubleTap onDoubleTap;
 
   ///whether cache in PaintingBinding.instance.imageCache
   final bool enableMemoryCache;

@@ -153,6 +153,11 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   void _handleScaleReset() {
+    if (widget.extendedImage.onDoubleTap != null) {
+      widget.extendedImage.onDoubleTap(this);
+      return;
+    }
+
     setState(() {
       _gestureDetails = GestureDetails(
         offset: Offset.zero,

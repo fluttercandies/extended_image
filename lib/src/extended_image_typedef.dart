@@ -1,4 +1,5 @@
 import 'package:extended_image/src/extended_image_utils.dart';
+import 'package:extended_image/src/gesture/extended_image_gesture_utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui show Image;
 
@@ -22,3 +23,6 @@ typedef GestureOffsetAnimationCallBack = void Function(Offset offset);
 
 /// animation call back for scale
 typedef GestureScaleAnimationCallBack = void Function(double scale);
+
+/// double tap call back
+typedef DoubleTap = void Function(ExtendedImageGestureState state);
