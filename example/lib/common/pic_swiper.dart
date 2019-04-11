@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:http_client_helper/http_client_helper.dart';
 import 'package:oktoast/oktoast.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart' hide Image;
@@ -17,6 +18,14 @@ class PicSwiper extends StatefulWidget {
 
 class _PicSwiperState extends State<PicSwiper> {
   var rebuild = StreamController<int>.broadcast();
+//  CancellationToken _cancelToken;
+//  CancellationToken get cancelToken {
+//    if (_cancelToken == null || _cancelToken.isCanceled)
+//      _cancelToken = CancellationToken();
+//
+//    return _cancelToken;
+//  }
+
   int currentIndex;
 
   @override
@@ -29,7 +38,8 @@ class _PicSwiperState extends State<PicSwiper> {
   @override
   void dispose() {
     rebuild.close();
-    //clearGestureDetailsCache();
+    clearGestureDetailsCache();
+    //cancelToken?.cancel();
     // TODO: implement dispose
     super.dispose();
   }
@@ -70,13 +80,15 @@ class _PicSwiperState extends State<PicSwiper> {
                 Widget image = ExtendedImage.network(
                   item,
                   fit: BoxFit.contain,
+                  //cancelToken: cancelToken,
+                  //autoCancel: false,
                   mode: ExtendedImageMode.Gesture,
                   gestureConfig: GestureConfig(
                       inPageView: true,
                       initialScale: 1.0,
                       //you can cache gesture state even though page view page change.
                       //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
-                      cacheGesture: false),
+                      cacheGesture: true),
                 );
                 image = Container(
                   child: image,

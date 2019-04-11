@@ -9,23 +9,24 @@ import 'package:http/http.dart';
 import 'package:http_client_helper/http_client_helper.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class ExtendedNetworkImageProvider
     extends ImageProvider<ExtendedNetworkImageProvider> {
   /// Creates an object that fetches the image at the given URL.
   ///
   /// The arguments must not be null.
-  ExtendedNetworkImageProvider(this.url,
-      {this.scale = 1.0,
-      this.headers,
-      this.cache: false,
-      this.retries = 3,
-      this.timeLimit,
-      this.timeRetry = const Duration(milliseconds: 100),
-      this.cancelToken})
-      : assert(url != null),
-        assert(scale != null);
+  ExtendedNetworkImageProvider(
+    this.url, {
+    this.scale = 1.0,
+    this.headers,
+    this.cache: false,
+    this.retries = 3,
+    this.timeLimit,
+    this.timeRetry = const Duration(milliseconds: 100),
+    CancellationToken cancelToken,
+  })  : assert(url != null),
+        assert(scale != null),
+        cancelToken = cancelToken ?? CancellationToken();
 
   ///time Limit to request image
   final Duration timeLimit;
@@ -48,9 +49,12 @@ class ExtendedNetworkImageProvider
   /// The HTTP headers that will be used with [HttpClient.get] to fetch image from network.
   final Map<String, String> headers;
 
+  ///token to cancel network request
   final CancellationToken cancelToken;
 
-  bool loadFailed = false;
+//  /// cancel network request by extended image
+//  /// if false, cancel by user
+//  final bool autoCancel;
 
   @override
   ImageStreamCompleter load(ExtendedNetworkImageProvider key) {
@@ -79,21 +83,6 @@ class ExtendedNetworkImageProvider
       try {
         var data = await _loadCache(key, md5Key);
         if (data != null) {
-          loadFailed = false;
-          reuslt = await instantiateImageCodec(data);
-        }
-      } catch (e) {
-        print(e);
-      }
-    }
-
-    bool hasCanceled = cache && userCancelCache.contains(this);
-
-    if (reuslt == null && !hasCanceled) {
-      try {
-        var data = await _loadNetwork(key);
-        if (data != null) {
-          loadFailed = false;
           reuslt = await instantiateImageCodec(data);
         }
       } catch (e) {
@@ -102,8 +91,20 @@ class ExtendedNetworkImageProvider
     }
 
     if (reuslt == null) {
-      loadFailed = true;
-      reuslt = await ui.instantiateImageCodec(kTransparentImage);
+      try {
+        var data = await _loadNetwork(key);
+        if (data != null) {
+          reuslt = await instantiateImageCodec(data);
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
+
+    //Failed to load
+    if (reuslt == null) {
+      //reuslt = await ui.instantiateImageCodec(kTransparentImage);
+      return Future.error(StateError('Failed to load $url.'));
     }
 
     return reuslt;
@@ -144,11 +145,11 @@ class ExtendedNetworkImageProvider
           timeLimit: key.timeLimit,
           timeRetry: key.timeRetry,
           retries: key.retries,
-          cancelToken: cancelToken);
+          cancelToken: key.cancelToken);
       return response.bodyBytes;
     } on OperationCanceledError catch (_) {
-      if (!userCancelCache.contains(this)) userCancelCache.add(this);
-      //print("ExtendedNetworkImageProvider--user cancel request--$url");
+      print('User cancel request $url.');
+      return Future.error(StateError('User cancel request $url.'));
     } catch (e) {}
     return null;
   }

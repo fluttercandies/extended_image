@@ -4,7 +4,7 @@
 
 extended official image with loading/failed state,cache network,zoom/pan,photo view,crop,save,clip,paint custom.
 
-[Chinese bolg](https://juejin.im/post/5c867112f265da2dd427a340)
+[Chinese blog](https://juejin.im/post/5c867112f265da2dd427a340)
 
 # cache network image
 You can use [ExtendedNetworkImageProvider](https://github.com/fluttercandies/extended_image/blob/master/lib/src/extended_network_image_provider.dart)

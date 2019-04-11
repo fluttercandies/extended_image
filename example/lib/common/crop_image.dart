@@ -16,9 +16,9 @@ class CropImage extends StatelessWidget {
   final TuChongItem item;
   final int index;
   final double margin;
-  final bool konwImageSize;
+  final bool knowImageSize;
   final TuChongRepository listSourceRepository;
-  CropImage(this.item, this.index, this.margin, this.konwImageSize,
+  CropImage(this.item, this.index, this.margin, this.knowImageSize,
       this.listSourceRepository);
 
   @override
@@ -30,7 +30,28 @@ class CropImage extends StatelessWidget {
     double height = num300;
     double width = num400;
 
-    if (konwImageSize) {
+//    return GestureDetector(
+//      child: Hero(
+//          tag: item.imageUrl + index.toString(),
+//          child: Image.network(
+//            item.imageUrl,
+//            width: width,
+//            height: height,
+//          )),
+//      onTap: () {
+//        Navigator.push(context, MaterialPageRoute(builder: (_) {
+//          return PicSwiper(
+//            index,
+//            listSourceRepository
+//                .map<PicSwiperItem>(
+//                    (f) => PicSwiperItem(f.imageUrl, des: f.title))
+//                .toList(),
+//          );
+//        }));
+//      },
+//    );
+
+    if (knowImageSize) {
       height = item.imageSize.height;
       width = item.imageSize.width;
       var n = height / width;
@@ -54,9 +75,10 @@ class CropImage extends StatelessWidget {
           //height: 200.0,
           width: width,
           height: height, loadStateChanged: (ExtendedImageState state) {
+        Widget widget;
         switch (state.extendedImageLoadState) {
           case LoadState.loading:
-            return Container(
+            widget = Container(
               color: Colors.grey,
               alignment: Alignment.center,
               child: CircularProgressIndicator(
@@ -65,10 +87,6 @@ class CropImage extends StatelessWidget {
                     AlwaysStoppedAnimation(Theme.of(context).primaryColor),
               ),
             );
-//            return Image.asset(
-//              "assets/loading1.gif",
-//              fit: BoxFit.fill,
-//            );
             break;
           case LoadState.completed:
             //if you can't konw image size before build,
@@ -76,28 +94,15 @@ class CropImage extends StatelessWidget {
             //so maybe your loading widget size will not the same
             //as image actual size, set returnLoadStateChangedWidget=true,so that
             //image will not to be limited by size which you set for ExtendedImage first time.
-            state.returnLoadStateChangedWidget = !konwImageSize;
+            state.returnLoadStateChangedWidget = !knowImageSize;
 
-            return GestureDetector(
-              child: Hero(
-                  tag: item.imageUrl + index.toString(),
-                  child: buildImage(
-                      state.extendedImageInfo.image, num300, num400)),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_) {
-                  return PicSwiper(
-                    index,
-                    listSourceRepository
-                        .map<PicSwiperItem>(
-                            (f) => PicSwiperItem(f.imageUrl, des: f.title))
-                        .toList(),
-                  );
-                }));
-              },
-            );
+            widget = Hero(
+                tag: item.imageUrl + index.toString(),
+                child:
+                    buildImage(state.extendedImageInfo.image, num300, num400));
             break;
           case LoadState.failed:
-            return GestureDetector(
+            widget = GestureDetector(
               child: Stack(
                 fit: StackFit.expand,
                 children: <Widget>[
@@ -122,6 +127,23 @@ class CropImage extends StatelessWidget {
             );
             break;
         }
+
+        widget = GestureDetector(
+          child: widget,
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) {
+              return PicSwiper(
+                index,
+                listSourceRepository
+                    .map<PicSwiperItem>(
+                        (f) => PicSwiperItem(f.imageUrl, des: f.title))
+                    .toList(),
+              );
+            }));
+          },
+        );
+
+        return widget;
       }),
     );
   }
