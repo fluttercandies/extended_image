@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:crypto/crypto.dart';
-import 'package:extended_image/src/network/extended_network_image_provider.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -35,5 +34,49 @@ Future<bool> clearDiskCachedImages({Duration duration}) async {
   return true;
 }
 
-List<ExtendedNetworkImageProvider> userCancelCache =
-    List<ExtendedNetworkImageProvider>();
+//List<ExtendedNetworkImageProvider> pendingImages =
+//    List<ExtendedNetworkImageProvider>();
+
+//void cancelPendingNetworkImageByToken(CancellationToken cancelToken,
+//    {bool takeCareSameUrl: true}) {
+//  if (cancelToken == null) return;
+//
+//  if (!takeCareSameUrl) cancelToken.cancel();
+//
+//  pendingImages
+//      .where((image) => image.cancelToken == cancelToken)
+//      ?.forEach((f) {
+//    cancelPendingNetworkImageByProvider(f, takeCareSameUrl: takeCareSameUrl);
+//  });
+//}
+//
+//void cancelPendingNetworkImageByProvider(ExtendedNetworkImageProvider provider,
+//    {bool takeCareSameUrl: true}) {
+//  if (provider == null) return;
+//
+//  if (!takeCareSameUrl) provider.cancelToken?.cancel();
+//
+//  ///find the same image(url,scale) with different cancel token
+//  var pendingImageList = pendingImages.where((image) =>
+//      image == provider && image.cancelToken != provider.cancelToken);
+//
+//  if (pendingImageList.length > 0) {
+//    pendingImageList.forEach((image) {
+//      ///may it has no cancel token, or the request is not canceled
+//      bool shouldCancel = image.cancelToken?.isCanceled == true;
+//      print(shouldCancel);
+//
+//      ///if any one is not cancel break, this image should not be canceled.
+//      if (!shouldCancel) return;
+//    });
+//  }
+//  provider.cancelToken?.cancel();
+//}
+
+//void cancelPendingNetworkImageByUrl(String url, {bool takeCareSameUrl: true}) {
+//  if (url == null) false;
+//
+//  pendingImages.where((image) => image.url == url).forEach((f) {
+//    cancelPendingNetworkImageByProvider(f, takeCareSameUrl: takeCareSameUrl);
+//  });
+//}
