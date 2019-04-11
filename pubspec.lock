@@ -156,13 +156,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.2.1"
-  transparent_image:
-    dependency: "direct main"
-    description:
-      name: transparent_image
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.1.0"
   typed_data:
     dependency: transitive
     description:
