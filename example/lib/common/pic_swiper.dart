@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:http_client_helper/http_client_helper.dart';
 import 'package:oktoast/oktoast.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart' hide Image;

@@ -641,7 +641,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
     super.didUpdateWidget(oldWidget);
 
     if (widget.image != oldWidget.image) {
-      _cacnelNetworkImageRequest(oldWidget.image);
+      //_cacnelNetworkImageRequest(oldWidget.image);
       _resolveImage();
     }
   }
@@ -653,19 +653,6 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   }
 
   void _resolveImage([bool rebuild = false]) {
-    ExtendedNetworkImageProvider extendedNetworkImageProvider;
-    if (widget.image is ExtendedNetworkImageProvider) {
-      extendedNetworkImageProvider =
-          widget.image as ExtendedNetworkImageProvider;
-//
-//      var exist = pendingImages.where((x) =>
-//          x == extendedNetworkImageProvider &&
-//          x.cancelToken == extendedNetworkImageProvider.cancelToken);
-//      if (exist.length == 0) {
-//        pendingImages.add(extendedNetworkImageProvider);
-//      }
-    }
-
     if (rebuild) {
       widget.image.evict();
     }
@@ -677,7 +664,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
                 : null));
     assert(newStream != null);
 
-    if (extendedNetworkImageProvider != null &&
+    if (widget.image is ExtendedNetworkImageProvider &&
         _imageInfo != null &&
         !rebuild &&
         _imageStream?.key == newStream?.key) {
@@ -757,20 +744,20 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
     _isListeningToStream = false;
   }
 
-  void _cacnelNetworkImageRequest(ImageProvider provider) {
-    if (provider == null) return;
-
-    ///cancel network request
-//    if (provider is ExtendedNetworkImageProvider && provider.autoCancel) {
-//      cancelPendingNetworkImageByProvider(provider);
-//    }
-  }
+//  void _cacnelNetworkImageRequest(ImageProvider provider) {
+//    if (provider == null) return;
+//
+//    ///cancel network request
+////    if (provider is ExtendedNetworkImageProvider && provider.autoCancel) {
+////      cancelPendingNetworkImageByProvider(provider);
+////    }
+//  }
 
   @override
   void dispose() {
     assert(_imageStream != null);
     _stopListeningToStream();
-    _cacnelNetworkImageRequest(widget.image);
+    //_cacnelNetworkImageRequest(widget.image);
     super.dispose();
   }
 

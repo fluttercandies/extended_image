@@ -1,4 +1,4 @@
-## [0.2.4]
+## [0.2.5]
 
 * add onDoubleTap parameter to custom double tap behavior under ExtendedImageMode.Gesture
 
