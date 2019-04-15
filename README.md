@@ -269,7 +269,7 @@ ExtendedRawImage(
 ![](https://github.com/fluttercandies/Flutter_Candies/tree/master/gif/extended_image/crop.gif)
 
 
-# paint any thing if you want when image is ready
+# paint any thing you want when image is ready
 
 provide BeforePaintImage and AfterPaintImage, you will have the chance to paint thing you want.
 see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/paint_image_demo.dart)
