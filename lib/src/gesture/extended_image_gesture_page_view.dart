@@ -251,7 +251,9 @@ class ExtendedImageGesturePageViewState
     if (extendedImageGestureState != null) {
       var gestureDetails = extendedImageGestureState.gestureDetails;
       if (gestureDetails != null) {
-        if (gestureDetails.movePage(delta)) {
+        final int currentPage = pageController.page.round();
+        if (gestureDetails.movePage(delta) ||
+            (pageController.page != currentPage)) {
           _drag?.update(details);
         } else {
           extendedImageGestureState.gestureDetails = GestureDetails(

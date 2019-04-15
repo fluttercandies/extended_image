@@ -1,3 +1,7 @@
+## [0.2.6]
+
+* fix issue that wrong behavior of page view scroll when image is zoom in.
+
 ## [0.2.5]
 
 * add onDoubleTap parameter to custom double tap behavior under ExtendedImageMode.Gesture
