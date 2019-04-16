@@ -206,11 +206,17 @@ class GestureDetails {
   }
 
   bool movePage(Offset delta) {
-    return (delta.dx < 0 && boundary.right) ||
-        (delta.dx > 0 && boundary.left) ||
-        (delta.dy < 0 && boundary.bottom) ||
-        (delta.dy > 0 && boundary.top) ||
-        totalScale <= 1.0;
+    bool canMoveHorizontal = delta.dx != 0 &&
+        ((delta.dx < 0 && boundary.right) ||
+            (delta.dx > 0 && boundary.left) ||
+            !_computeHorizontalBoundary);
+
+    bool canMoveVertical = delta.dy != 0 &&
+        ((delta.dy < 0 && boundary.bottom) ||
+            (delta.dy > 0 && boundary.top) ||
+            !_computeVerticalBoundary);
+
+    return canMoveHorizontal || canMoveVertical || totalScale <= 1.0;
   }
 }
 

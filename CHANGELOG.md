@@ -1,3 +1,7 @@
+## [0.2.7]
+
+* fix issue that wrong behavior of page view scroll when image has big width or big height.
+
 ## [0.2.6]
 
 * fix issue that wrong behavior of page view scroll when image is zoom in.
