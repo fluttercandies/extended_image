@@ -90,7 +90,7 @@ class CropImage extends StatelessWidget {
             break;
           case LoadState.completed:
             //if you can't konw image size before build,
-            //you have to handle copy when image is loaded.
+            //you have to handle crop when image is loaded.
             //so maybe your loading widget size will not the same
             //as image actual size, set returnLoadStateChangedWidget=true,so that
             //image will not to be limited by size which you set for ExtendedImage first time.
