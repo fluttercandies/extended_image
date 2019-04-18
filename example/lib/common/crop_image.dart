@@ -30,27 +30,6 @@ class CropImage extends StatelessWidget {
     double height = num300;
     double width = num400;
 
-//    return GestureDetector(
-//      child: Hero(
-//          tag: item.imageUrl + index.toString(),
-//          child: Image.network(
-//            item.imageUrl,
-//            width: width,
-//            height: height,
-//          )),
-//      onTap: () {
-//        Navigator.push(context, MaterialPageRoute(builder: (_) {
-//          return PicSwiper(
-//            index,
-//            listSourceRepository
-//                .map<PicSwiperItem>(
-//                    (f) => PicSwiperItem(f.imageUrl, des: f.title))
-//                .toList(),
-//          );
-//        }));
-//      },
-//    );
-
     if (knowImageSize) {
       height = item.imageSize.height;
       width = item.imageSize.width;
