@@ -277,8 +277,12 @@ class ExtendedImageGesturePageViewState
     var temp = details;
     if (extendedImageGestureState != null) {
       var gestureDetails = extendedImageGestureState.gestureDetails;
+      final int currentPage = pageController.page.round();
+      bool movePage = (pageController.page != currentPage);
 
-      if (gestureDetails != null &&
+      /// stop when zoom in, so that it will not move to next/previous page
+      if (!movePage &&
+          gestureDetails != null &&
           gestureDetails.totalScale > 1.0 &&
           (gestureDetails.computeHorizontalBoundary ||
               gestureDetails.computeVerticalBoundary)) {
