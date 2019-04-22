@@ -88,7 +88,7 @@ class _PicSwiperState extends State<PicSwiper> {
                       initialScale: 1.0,
                       //you can cache gesture state even though page view page change.
                       //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
-                      cacheGesture: true),
+                      cacheGesture: false),
                   onDoubleTap: (ExtendedImageGestureState state) {
                     if (state.gestureDetails.totalScale == doubleTapScales[0]) {
                       state.gestureDetails = GestureDetails(
