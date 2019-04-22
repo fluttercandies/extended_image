@@ -1,3 +1,7 @@
+## [0.2.8]
+
+* add inertia scroll when image is zoom in and it's moving page.
+
 ## [0.2.7]
 
 * fix issue that wrong behavior of page view scroll when image has big width or big height.
