@@ -19,7 +19,7 @@ class CropImageDemo extends StatefulWidget {
 class _CropImageDemoState extends State<CropImageDemo> {
   TuChongRepository listSourceRepository = TuChongRepository();
 
-  //if you can't konw image size before build,
+  //if you don't konw image size before build,
   //you have to handle copy when image is loaded.
   bool konwImageSize = true;
   DateTime dateTimeNow = DateTime.now();

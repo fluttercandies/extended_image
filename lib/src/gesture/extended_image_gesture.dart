@@ -25,6 +25,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   Offset _normalizedOffset;
   double _startingScale;
   Offset _startingOffset;
+  Offset _pointerDownPosition;
   GestureAnimation _gestureAnimation;
 
   GestureConfig _gestureConfig;
@@ -152,7 +153,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     }
   }
 
-  void _handleScaleReset() {
+  void _handleDoubleTap() {
     if (widget.extendedImage.onDoubleTap != null) {
       widget.extendedImage.onDoubleTap(this);
       return;
@@ -164,6 +165,14 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
         totalScale: _gestureConfig.initialScale,
       );
     });
+  }
+
+  void _handlePointerDown(PointerDownEvent pointerDownEvent) {
+    _pointerDownPosition = pointerDownEvent.position;
+
+    _gestureAnimation.stop();
+
+    widget.extendedImagePageViewState?.extendedImageGestureState = this;
   }
 
   double _clampScale(double scale, double min, double max) {
@@ -200,19 +209,16 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       onScaleStart: _handleScaleStart,
       onScaleUpdate: _handleScaleUpdate,
       onScaleEnd: _handleScaleEnd,
-      onDoubleTap: _handleScaleReset,
+      onDoubleTap: _handleDoubleTap,
       child: image,
     );
 
-    if (_gestureConfig.inPageView) {
-      image = Listener(
-        child: image,
-        onPointerDown: (_) {
-          _gestureAnimation.stop();
-          widget.extendedImagePageViewState?.extendedImageGestureState = this;
-        },
-      );
-    }
+//    if (_gestureConfig.inPageView) {
+    image = Listener(
+      child: image,
+      onPointerDown: _handlePointerDown,
+    );
+    // }
     return image;
   }
 
@@ -232,6 +238,20 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   @override
   // TODO: implement imageGestureConfig
   GestureConfig get imageGestureConfig => _gestureConfig;
+
+  @override
+  void handleDoubleTap({double scale, Offset doubleTapPosition}) {
+    doubleTapPosition ??= _pointerDownPosition;
+    scale ??= _gestureConfig.initialScale;
+    // TODO: implement onDoubleTap
+    _handleScaleStart(ScaleStartDetails(focalPoint: doubleTapPosition));
+    _handleScaleUpdate(ScaleUpdateDetails(
+        focalPoint: doubleTapPosition, scale: scale / _startingScale));
+  }
+
+  @override
+  // TODO: implement pointerDownPosition
+  Offset get pointerDownPosition => _pointerDownPosition;
 }
 
 Map<Object, GestureDetails> _gestureDetailsCache =

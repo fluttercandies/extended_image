@@ -1,3 +1,7 @@
+## [0.2.9]
+
+* add handleDoubleTap method to support zoom image base on double tap position.
+
 ## [0.2.8]
 
 * add inertia scroll when image is zoom in and it's moving page.

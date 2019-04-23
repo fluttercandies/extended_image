@@ -86,20 +86,23 @@ class _PicSwiperState extends State<PicSwiper> {
                   gestureConfig: GestureConfig(
                       inPageView: true,
                       initialScale: 1.0,
+                      maxScale: 5.0,
+                      animationMaxScale: 5.0,
                       //you can cache gesture state even though page view page change.
                       //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
                       cacheGesture: false),
                   onDoubleTap: (ExtendedImageGestureState state) {
+                    ///you can use define pointerDownPosition as you can,
+                    ///default value is double tap pointer down postion.
+                    var pointerDownPosition = state.pointerDownPosition;
                     if (state.gestureDetails.totalScale == doubleTapScales[0]) {
-                      state.gestureDetails = GestureDetails(
-                        offset: Offset.zero,
-                        totalScale: doubleTapScales[1],
-                      );
+                      state.handleDoubleTap(
+                          scale: doubleTapScales[1],
+                          doubleTapPosition: pointerDownPosition);
                     } else {
-                      state.gestureDetails = GestureDetails(
-                        offset: Offset.zero,
-                        totalScale: doubleTapScales[0],
-                      );
+                      state.handleDoubleTap(
+                          scale: doubleTapScales[0],
+                          doubleTapPosition: pointerDownPosition);
                     }
                   },
                 );
