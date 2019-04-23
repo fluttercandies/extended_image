@@ -52,6 +52,10 @@ abstract class ExtendedImageGestureState {
   set gestureDetails(GestureDetails value);
 
   GestureConfig get imageGestureConfig;
+
+  Offset get pointerDownPosition;
+
+  void handleDoubleTap({double scale, Offset doubleTapPosition});
 }
 
 class GestureDetails {
@@ -81,6 +85,9 @@ class GestureDetails {
   //pre
   Offset _center;
 
+  Rect layoutRect;
+  Rect destinationRect;
+
   GestureDetails(
       {this.offset,
       this.totalScale,
@@ -91,6 +98,8 @@ class GestureDetails {
       _computeVerticalBoundary = gestureDetails._computeVerticalBoundary;
       _computeHorizontalBoundary = gestureDetails._computeHorizontalBoundary;
       _center = gestureDetails._center;
+      layoutRect = gestureDetails.layoutRect;
+      destinationRect = gestureDetails.destinationRect;
 
       ///zoom end will call twice
       /// zoom end
@@ -159,6 +168,14 @@ class GestureDetails {
   }
 
   Rect calculateFinalDestinationRect(Rect layoutRect, Rect destinationRect) {
+    var temp = offset;
+    _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
+    offset = temp;
+    return _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
+  }
+
+  Rect _innerCalculateFinalDestinationRect(
+      Rect layoutRect, Rect destinationRect) {
     Offset center = _getCenter(destinationRect);
     Rect result = _getDestinationRect(destinationRect, center);
     if (_computeHorizontalBoundary) {
@@ -218,6 +235,16 @@ class GestureDetails {
 
     return canMoveHorizontal || canMoveVertical || totalScale <= 1.0;
   }
+
+  @override
+  bool operator ==(dynamic other) {
+    if (other.runtimeType != runtimeType) return false;
+    final GestureDetails typedOther = other;
+    return totalScale == typedOther.totalScale && offset == typedOther.offset;
+  }
+
+  @override
+  int get hashCode => hashValues(totalScale, offset);
 }
 
 class GestureConfig {
