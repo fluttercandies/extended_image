@@ -1,3 +1,8 @@
+## [0.3.0]
+
+* fix issue that AnimationController.stop() called after AnimationController.dispose().
+* show how to build a double tap scale animation.
+
 ## [0.2.9]
 
 * add handleDoubleTap method to support zoom image base on double tap position.
