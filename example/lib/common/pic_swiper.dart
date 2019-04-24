@@ -15,8 +15,12 @@ class PicSwiper extends StatefulWidget {
   _PicSwiperState createState() => _PicSwiperState();
 }
 
-class _PicSwiperState extends State<PicSwiper> {
+class _PicSwiperState extends State<PicSwiper>
+    with SingleTickerProviderStateMixin {
   var rebuild = StreamController<int>.broadcast();
+  AnimationController _animationController;
+  Animation<double> _animation;
+  Function animationListener;
 //  CancellationToken _cancelToken;
 //  CancellationToken get cancelToken {
 //    if (_cancelToken == null || _cancelToken.isCanceled)
@@ -31,6 +35,8 @@ class _PicSwiperState extends State<PicSwiper> {
   @override
   void initState() {
     currentIndex = widget.index;
+    _animationController = AnimationController(
+        duration: const Duration(milliseconds: 150), vsync: this);
     // TODO: implement initState
     super.initState();
   }
@@ -38,6 +44,7 @@ class _PicSwiperState extends State<PicSwiper> {
   @override
   void dispose() {
     rebuild.close();
+    _animationController?.dispose();
     clearGestureDetailsCache();
     //cancelToken?.cancel();
     // TODO: implement dispose
@@ -95,15 +102,32 @@ class _PicSwiperState extends State<PicSwiper> {
                     ///you can use define pointerDownPosition as you can,
                     ///default value is double tap pointer down postion.
                     var pointerDownPosition = state.pointerDownPosition;
-                    if (state.gestureDetails.totalScale == doubleTapScales[0]) {
-                      state.handleDoubleTap(
-                          scale: doubleTapScales[1],
-                          doubleTapPosition: pointerDownPosition);
+                    double begin = state.gestureDetails.totalScale;
+                    double end;
+                    _animationController.stop();
+
+                    _animationController.reset();
+
+                    if (begin == doubleTapScales[0]) {
+                      end = doubleTapScales[1];
                     } else {
-                      state.handleDoubleTap(
-                          scale: doubleTapScales[0],
-                          doubleTapPosition: pointerDownPosition);
+                      end = doubleTapScales[0];
                     }
+                    //remove old
+                    _animation?.removeListener(animationListener);
+
+                    animationListener = () {
+                      //print(_animation.value);
+                      state.handleDoubleTap(
+                          scale: _animation.value,
+                          doubleTapPosition: pointerDownPosition);
+                    };
+                    _animation = _animationController
+                        .drive(Tween<double>(begin: begin, end: end));
+
+                    _animation.addListener(animationListener);
+
+                    _animationController.forward();
                   },
                 );
                 image = Container(

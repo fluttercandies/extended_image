@@ -345,6 +345,7 @@ class GestureAnimation {
   }
 
   void animationOffset(Offset begin, Offset end) {
+    if (_offsetController == null) return;
     _offsetAnimation =
         _offsetController.drive(Tween<Offset>(begin: begin, end: end));
     _offsetController
@@ -353,6 +354,7 @@ class GestureAnimation {
   }
 
   void animationScale(double begin, double end, double velocity) {
+    if (_scaleController == null) return;
     _scaletAnimation =
         _scaleController.drive(Tween<double>(begin: begin, end: end));
     _scaleController
@@ -362,14 +364,14 @@ class GestureAnimation {
 
   void dispose() {
     _offsetController?.dispose();
+    _offsetController = null;
+
     _scaleController?.dispose();
+    _scaleController = null;
   }
 
   void stop() {
     _offsetController?.stop();
-//    if (_scaletAnimation != null) {
-//      _scaleController.value = 1.0;
-//    }
     _scaleController?.stop();
   }
 }

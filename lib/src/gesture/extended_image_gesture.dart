@@ -47,21 +47,25 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     );
 
     _gestureAnimation = GestureAnimation(this, offsetCallBack: (Offset value) {
-      setState(() {
-        _gestureDetails = GestureDetails(
-            offset: value,
-            totalScale: _gestureDetails.totalScale,
-            gestureDetails: _gestureDetails);
-      });
+      if (mounted) {
+        setState(() {
+          _gestureDetails = GestureDetails(
+              offset: value,
+              totalScale: _gestureDetails.totalScale,
+              gestureDetails: _gestureDetails);
+        });
+      }
     }, scaleCallBack: (double scale) {
-      setState(() {
-        _gestureDetails = GestureDetails(
-            offset: _gestureDetails.offset,
-            totalScale: scale,
-            gestureDetails: _gestureDetails,
-            zooming: true,
-            userOffset: false);
-      });
+      if (mounted) {
+        setState(() {
+          _gestureDetails = GestureDetails(
+              offset: _gestureDetails.offset,
+              totalScale: scale,
+              gestureDetails: _gestureDetails,
+              zooming: true,
+              userOffset: false);
+        });
+      }
     });
 
     super.initState();
@@ -102,8 +106,9 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
         ((details.scale == 1.0 ? details.focalPoint : _startingOffset) -
             _normalizedOffset * scale);
 
-    if (offset != _gestureDetails.offset ||
-        scale != _gestureDetails.totalScale) {
+    if (mounted &&
+        (offset != _gestureDetails.offset ||
+            scale != _gestureDetails.totalScale)) {
       setState(() {
         _gestureDetails = GestureDetails(
             offset: offset,
@@ -158,6 +163,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       widget.extendedImage.onDoubleTap(this);
       return;
     }
+
+    if (!mounted) return;
 
     setState(() {
       _gestureDetails = GestureDetails(
