@@ -104,8 +104,14 @@ class _PicSwiperState extends State<PicSwiper>
                     var pointerDownPosition = state.pointerDownPosition;
                     double begin = state.gestureDetails.totalScale;
                     double end;
+
+                    //remove old
+                    _animation?.removeListener(animationListener);
+
+                    //stop pre
                     _animationController.stop();
 
+                    //reset to use
                     _animationController.reset();
 
                     if (begin == doubleTapScales[0]) {
@@ -113,8 +119,6 @@ class _PicSwiperState extends State<PicSwiper>
                     } else {
                       end = doubleTapScales[0];
                     }
-                    //remove old
-                    _animation?.removeListener(animationListener);
 
                     animationListener = () {
                       //print(_animation.value);

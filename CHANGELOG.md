@@ -1,4 +1,4 @@
-## [0.3.0]
+## [0.3.1]
 
 * fix issue that AnimationController.stop() called after AnimationController.dispose().
 * show how to build a double tap scale animation.
