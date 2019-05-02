@@ -28,16 +28,16 @@ class ExtendedNetworkImageProvider
         assert(scale != null),
         cancelToken = cancelToken ?? CancellationToken();
 
-  ///time Limit to request image
+  ///time limit to request image
   final Duration timeLimit;
 
-  ///the time to retry to request
+  ///the number of times to retry the request
   final int retries;
 
-  ///the time duration to retry to request
+  ///the time duration in which to retry to request
   final Duration timeRetry;
 
-  ///whether cache image to local
+  ///whether to cache image to local
   final bool cache;
 
   /// The URL from which the image will be fetched.
@@ -78,23 +78,23 @@ class ExtendedNetworkImageProvider
   Future<ui.Codec> _loadAsync(ExtendedNetworkImageProvider key) async {
     assert(key == this);
     final md5Key = keyToMd5(key.url);
-    ui.Codec reuslt;
+    ui.Codec result;
     if (cache) {
       try {
         var data = await _loadCache(key, md5Key);
         if (data != null) {
-          reuslt = await instantiateImageCodec(data);
+          result = await instantiateImageCodec(data);
         }
       } catch (e) {
         print(e);
       }
     }
 
-    if (reuslt == null) {
+    if (result == null) {
       try {
         var data = await _loadNetwork(key);
         if (data != null) {
-          reuslt = await instantiateImageCodec(data);
+          result = await instantiateImageCodec(data);
         }
       } catch (e) {
         print(e);
@@ -102,12 +102,12 @@ class ExtendedNetworkImageProvider
     }
 
     //Failed to load
-    if (reuslt == null) {
+    if (result == null) {
       //reuslt = await ui.instantiateImageCodec(kTransparentImage);
       return Future.error(StateError('Failed to load $url.'));
     }
 
-    return reuslt;
+    return result;
   }
 
   ///get the image from cache folder.
