@@ -1,6 +1,6 @@
 name: extended_image
 description: extended official image with loading/failed state,cache network,zoom/pan,photo view,crop,save,clip,paint custom.
-version: 0.3.1
+version: 0.3.2
 author: zmtzapxh <zmtzapxhlp@live.com>
 homepage: https://github.com/fluttercandies/extended_image
 
@@ -10,11 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  path_provider: ^0.5.0+1
-  http_client_helper: ^0.1.9
-  crypto: ^2.0.6
-#  image_picker_saver: ^0.1.0
-#  transparent_image: ^0.1.0
+  extended_image_library: ^0.1.0
 
 dev_dependencies:
   flutter_test:
