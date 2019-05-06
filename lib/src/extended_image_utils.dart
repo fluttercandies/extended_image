@@ -24,16 +24,6 @@ abstract class ExtendedImageState {
   Object get imageStreamKey;
 }
 
-///clear all of image in memory
-void clearMemoryImageCache() {
-  PaintingBinding.instance.imageCache.clear();
-}
-
-/// get ImageCache
-ImageCache getMemoryImageCache() {
-  return PaintingBinding.instance.imageCache;
-}
-
 enum ExtendedImageMode {
   //just show image
   None,

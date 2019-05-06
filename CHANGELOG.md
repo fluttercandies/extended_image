@@ -1,3 +1,7 @@
+## [0.3.2]
+
+* import extended_image_library for network cache
+
 ## [0.3.1]
 
 * fix issue that AnimationController.stop() called after AnimationController.dispose().

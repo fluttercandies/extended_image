@@ -2,7 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image)
 
-extended official image with loading/failed state,cache network,zoom/pan,photo view,crop,save,clip,paint custom.
+extended official image to support placeholder(loading)/ failed state, cache network,zoom/pan,photo view,crop,save,clip,paint custom etc.
 
 [Chinese blog](https://juejin.im/post/5c867112f265da2dd427a340)
 
