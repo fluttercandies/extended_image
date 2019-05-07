@@ -10,36 +10,42 @@ extended official image to support placeholder(loading)/ failed state, cache net
 You can use [ExtendedNetworkImageProvider](https://github.com/fluttercandies/extended_image/blob/master/lib/src/extended_network_image_provider.dart)
 
 ```dart
- ExtendedNetworkImageProvider(this.url,
-      {this.scale = 1.0,
-      this.headers,
-      this.cache: false,
-      this.retries = 3,
-      this.timeLimit,
-      this.timeRetry = const Duration(milliseconds: 100)})
-      : assert(url != null),
-        assert(scale != null);
-
-  ///time Limit to request image
-  final Duration timeLimit;
-
-  ///the time to retry to request
-  final int retries;
-
-  ///the time duration to retry to request
-  final Duration timeRetry;
-
-  ///whether cache image to local
-  final bool cache;
-
-  /// The URL from which the image will be fetched.
-  final String url;
-
-  /// The scale to place in the [ImageInfo] object of the image.
-  final double scale;
-
-  /// The HTTP headers that will be used with [HttpClient.get] to fetch image from network.
-  final Map<String, String> headers;  
+  ExtendedNetworkImageProvider(
+     this.url, {
+     this.scale = 1.0,
+     this.headers,
+     this.cache: false,
+     this.retries = 3,
+     this.timeLimit,
+     this.timeRetry = const Duration(milliseconds: 100),
+     CancellationToken cancelToken,
+   })  : assert(url != null),
+         assert(scale != null),
+         cancelToken = cancelToken ?? CancellationToken();
+ 
+   ///time Limit to request image
+   final Duration timeLimit;
+ 
+   ///the time to retry to request
+   final int retries;
+ 
+   ///the time duration to retry to request
+   final Duration timeRetry;
+ 
+   ///whether cache image to local
+   final bool cache;
+ 
+   /// The URL from which the image will be fetched.
+   final String url;
+ 
+   /// The scale to place in the [ImageInfo] object of the image.
+   final double scale;
+ 
+   /// The HTTP headers that will be used with [HttpClient.get] to fetch image from network.
+   final Map<String, String> headers;
+ 
+   ///token to cancel network request
+   final CancellationToken cancelToken;
 ```
 
 More: timeRetry/retries/timeLimit are used for request parameter
