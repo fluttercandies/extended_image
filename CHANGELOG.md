@@ -1,3 +1,7 @@
+## [0.3.3]
+
+* disabled informationCollector to keep backwards compatibility for now (ExtendedNetworkImageProvider)
+
 ## [0.3.2]
 
 * import extended_image_library for network cache
