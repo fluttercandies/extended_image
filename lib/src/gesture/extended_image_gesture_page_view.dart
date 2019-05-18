@@ -17,13 +17,15 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     this.scrollDirection = Axis.horizontal,
     this.reverse = false,
     PageController controller,
-    //this.physics,
+    ScrollPhysics physics,
     this.pageSnapping = true,
     this.onPageChanged,
     List<Widget> children = const <Widget>[],
   })  : controller = controller ?? _defaultPageController,
         childrenDelegate = SliverChildListDelegate(children),
-        physics = _defaultScrollPhysics,
+        physics = physics != null
+            ? _defaultScrollPhysics.applyTo(physics)
+            : _defaultScrollPhysics,
         super(key: key);
 
   /// Creates a scrollable list that works page by page using widgets that are
@@ -43,7 +45,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     this.scrollDirection = Axis.horizontal,
     this.reverse = false,
     PageController controller,
-    //this.physics,
+    ScrollPhysics physics,
     this.pageSnapping = true,
     this.onPageChanged,
     @required IndexedWidgetBuilder itemBuilder,
@@ -51,7 +53,9 @@ class ExtendedImageGesturePageView extends StatefulWidget {
   })  : controller = controller ?? _defaultPageController,
         childrenDelegate =
             SliverChildBuilderDelegate(itemBuilder, childCount: itemCount),
-        physics = _defaultScrollPhysics,
+        physics = physics != null
+            ? _defaultScrollPhysics.applyTo(physics)
+            : _defaultScrollPhysics,
         super(key: key);
 
   /// Creates a scrollable list that works page by page with a custom child
