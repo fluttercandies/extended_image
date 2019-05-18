@@ -1,3 +1,7 @@
+## [0.3.4]
+
+* add physics parameter for ExtendedImageGesturePageView
+
 ## [0.3.3]
 
 * disabled informationCollector to keep backwards compatibility for now (ExtendedNetworkImageProvider)
