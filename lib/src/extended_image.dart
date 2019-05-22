@@ -728,7 +728,8 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
     }
 
     _imageStream = newStream;
-    if (_isListeningToStream) _imageStream.addListener(_handleImageChanged);
+    if (_isListeningToStream)
+      _imageStream.addListener(_handleImageChanged, onError: _loadFailed);
   }
 
   void _listenToStream() {

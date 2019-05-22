@@ -1,3 +1,7 @@
+## [0.3.5]
+
+* handle loadfailed when re-addListener
+
 ## [0.3.4]
 
 * add physics parameter for ExtendedImageGesturePageView
