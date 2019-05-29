@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:example/common/tu_chong_source.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:like_button/like_button.dart';
 
 class ItemBuilder {
   static Widget itemBuilder(BuildContext context, TuChongItem item, int index) {
@@ -42,18 +45,34 @@ class ItemBuilder {
                       )
                     ],
                   ),
-                  Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.favorite,
-                        color: Colors.deepOrange,
-                      ),
-                      Text(
-                        item.favorites.toString(),
-                        style: TextStyle(color: Colors.white),
-                      )
-                    ],
-                  )
+                  LikeButton(
+                    size: 20.0,
+                    isLiked: item.is_favorite,
+                    likeCount: item.favorites,
+                    countBuilder: (int count, bool isLiked, String text) {
+                      var color = isLiked ? Colors.pinkAccent : Colors.grey;
+                      Widget result;
+                      if (count == 0) {
+                        result = Text(
+                          "love",
+                          style: TextStyle(color: color),
+                        );
+                      } else
+                        result = Text(
+                          count >= 1000
+                              ? (count / 1000.0).toStringAsFixed(1) + "k"
+                              : text,
+                          style: TextStyle(color: color),
+                        );
+                      return result;
+                    },
+                    likeCountAnimationType: item.favorites < 1000
+                        ? LikeCountAnimationType.part
+                        : LikeCountAnimationType.none,
+                    onTap: (bool isLiked) {
+                      return onLikeButtonTap(isLiked, item);
+                    },
+                  ),
                 ],
               ),
             ),
@@ -61,5 +80,20 @@ class ItemBuilder {
         ],
       ),
     );
+  }
+
+  static Future<bool> onLikeButtonTap(bool isLiked, TuChongItem item) {
+    ///send your request here
+    ///
+    final Completer<bool> completer = new Completer<bool>();
+    Timer(const Duration(milliseconds: 200), () {
+      item.is_favorite = !item.is_favorite;
+      item.favorites =
+          item.is_favorite ? item.favorites + 1 : item.favorites - 1;
+
+      // if your request is failed,return null,
+      completer.complete(item.is_favorite);
+    });
+    return completer.future;
   }
 }

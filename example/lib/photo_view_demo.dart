@@ -10,6 +10,7 @@ import 'package:example/common/tu_chong_repository.dart';
 import 'package:example/common/tu_chong_source.dart';
 import 'package:flutter/material.dart' hide CircularProgressIndicator;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:like_button/like_button.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 
@@ -122,18 +123,40 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                       )
                                     ],
                                   ),
-                                  Row(
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.favorite,
-                                        color: Colors.deepOrange,
-                                      ),
-                                      Text(
-                                        item.favorites.toString(),
-                                        style: TextStyle(color: Colors.white),
-                                      )
-                                    ],
-                                  )
+                                  LikeButton(
+                                    size: 20.0,
+                                    isLiked: item.is_favorite,
+                                    likeCount: item.favorites,
+                                    countBuilder:
+                                        (int count, bool isLiked, String text) {
+                                      var color = isLiked
+                                          ? Colors.pinkAccent
+                                          : Colors.grey;
+                                      Widget result;
+                                      if (count == 0) {
+                                        result = Text(
+                                          "love",
+                                          style: TextStyle(color: color),
+                                        );
+                                      } else
+                                        result = Text(
+                                          count >= 1000
+                                              ? (count / 1000.0)
+                                                      .toStringAsFixed(1) +
+                                                  "k"
+                                              : text,
+                                          style: TextStyle(color: color),
+                                        );
+                                      return result;
+                                    },
+                                    likeCountAnimationType:
+                                        item.favorites < 1000
+                                            ? LikeCountAnimationType.part
+                                            : LikeCountAnimationType.none,
+                                    onTap: (bool isLiked) {
+                                      return onLikeButtonTap(isLiked, item);
+                                    },
+                                  ),
                                 ],
                               ),
                             )
@@ -150,6 +173,21 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
         ],
       ),
     );
+  }
+
+  Future<bool> onLikeButtonTap(bool isLiked, TuChongItem item) {
+    ///send your request here
+    ///
+    final Completer<bool> completer = new Completer<bool>();
+    Timer(const Duration(milliseconds: 200), () {
+      item.is_favorite = !item.is_favorite;
+      item.favorites =
+          item.is_favorite ? item.favorites + 1 : item.favorites - 1;
+
+      // if your request is failed,return null,
+      completer.complete(item.is_favorite);
+    });
+    return completer.future;
   }
 
   Future<bool> onRefresh() {

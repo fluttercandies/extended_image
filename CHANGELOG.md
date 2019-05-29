@@ -1,3 +1,7 @@
+## [0.3.7]
+
+* update path_provider 1.1.0
+
 ## [0.3.6]
 
 * handle loadfailed when re-addListener
