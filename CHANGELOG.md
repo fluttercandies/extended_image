@@ -1,4 +1,4 @@
-## [0.3.7]
+## [0.3.8]
 
 * update path_provider 1.1.0
 
