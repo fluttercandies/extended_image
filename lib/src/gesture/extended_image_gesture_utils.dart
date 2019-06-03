@@ -317,6 +317,7 @@ enum GestureState {
 
 const double minMagnitude = 400.0;
 const double velocity = minMagnitude / 1000.0;
+const double minGesturePageDelta = 5.0;
 
 class GestureAnimation {
   AnimationController _offsetController;
@@ -376,4 +377,57 @@ class GestureAnimation {
   }
 }
 
-///gesture
+///ExtendedImageGesturePage
+
+Color defaultGesturePageBackgroundBuilder(
+    {Offset offset,
+    Size pageSize,
+    Color color,
+    PageGestureAxis pageGestureAxis}) {
+  double opacity = 0.0;
+  if (pageGestureAxis == PageGestureAxis.both) {
+    opacity = offset.distance /
+        (Offset(pageSize.width, pageSize.height).distance / 2.0);
+  } else if (pageGestureAxis == PageGestureAxis.horizontal) {
+    opacity = offset.dx.abs() / (pageSize.width / 2.0);
+  } else if (pageGestureAxis == PageGestureAxis.vertical) {
+    opacity = offset.dy.abs() / (pageSize.height / 2.0);
+  }
+
+  return color.withOpacity(min(1.0, max(1.0 - opacity, 0.0)));
+}
+
+bool defaultPageGestureEndHandler(
+    {Offset offset, Size pageSize, PageGestureAxis pageGestureAxis}) {
+  if (pageGestureAxis == PageGestureAxis.both) {
+    return offset.distance >
+        Offset(pageSize.width, pageSize.height).distance / 3.5;
+  } else if (pageGestureAxis == PageGestureAxis.horizontal) {
+    return offset.dx.abs() > pageSize.width / 3.5;
+  } else if (pageGestureAxis == PageGestureAxis.vertical) {
+    return offset.dy.abs() > pageSize.height / 3.5;
+  }
+  return true;
+}
+
+double defaultPageGestureScaleHandler(
+    {Offset offset, Size pageSize, PageGestureAxis pageGestureAxis}) {
+  double scale = 0.0;
+  if (pageGestureAxis == PageGestureAxis.both) {
+    scale = offset.distance / Offset(pageSize.width, pageSize.height).distance;
+  } else if (pageGestureAxis == PageGestureAxis.horizontal) {
+    scale = offset.dx.abs() / (pageSize.width / 2.0);
+  } else if (pageGestureAxis == PageGestureAxis.vertical) {
+    scale = offset.dy.abs() / (pageSize.height / 2.0);
+  }
+
+  return max(1.0 - scale, 0.8);
+}
+
+enum PageGestureAxis {
+  both,
+  horizontal,
+  vertical,
+}
+
+///ExtendedImageGesturePage

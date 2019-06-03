@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:example/common/pic_swiper.dart';
 import 'package:example/common/tu_chong_repository.dart';
@@ -110,15 +111,26 @@ class CropImage extends StatelessWidget {
         widget = GestureDetector(
           child: widget,
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) {
-              return PicSwiper(
+            var page = ExtendedImageGesturePage(
+              child: PicSwiper(
                 index,
                 listSourceRepository
                     .map<PicSwiperItem>(
                         (f) => PicSwiperItem(f.imageUrl, des: f.title))
                     .toList(),
-              );
-            }));
+              ),
+              //pageGestureAxis: PageGestureAxis.horizontal,
+            );
+
+            Navigator.push(
+                context,
+                Platform.isAndroid
+                    ? TransparentMaterialPageRoute(builder: (_) {
+                        return page;
+                      })
+                    : TransparentCupertinoPageRoute(builder: (_) {
+                        return page;
+                      }));
           },
         );
 

@@ -256,15 +256,37 @@ class ExtendedImageGesturePageViewState
       var gestureDetails = extendedImageGestureState.gestureDetails;
       if (gestureDetails != null) {
         final int currentPage = pageController.page.round();
+//        bool pageChanging = false;
+//
+//        if (widget.scrollDirection == Axis.horizontal) {
+//          if (delta.dx != 0.0) {
+//            if (delta.dx < 0) {
+//              pageChanging = pageController.page > currentPage;
+//            } else {
+//              pageChanging = pageController.page < currentPage;
+//            }
+//          }
+//        } else {
+//          if (delta.dy != 0.0) {
+//            if (delta.dy < 0) {
+//              pageChanging = pageController.page < currentPage;
+//            } else {
+//              pageChanging = pageController.page > currentPage;
+//            }
+//          }
+//        }
+
         if (gestureDetails.movePage(delta) ||
-            (pageController.page != currentPage)) {
+            (currentPage != pageController.page)) {
           _drag?.update(details);
         } else {
-          extendedImageGestureState.gestureDetails = GestureDetails(
-              offset: gestureDetails.offset +
-                  delta * extendedImageGestureState.imageGestureConfig.speed,
-              totalScale: gestureDetails.totalScale,
-              gestureDetails: gestureDetails);
+          if (currentPage == pageController.page) {
+            extendedImageGestureState.gestureDetails = GestureDetails(
+                offset: gestureDetails.offset +
+                    delta * extendedImageGestureState.imageGestureConfig.speed,
+                totalScale: gestureDetails.totalScale,
+                gestureDetails: gestureDetails);
+          }
         }
       } else {
         _drag?.update(details);
