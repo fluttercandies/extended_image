@@ -26,3 +26,14 @@ typedef GestureScaleAnimationCallBack = void Function(double scale);
 
 /// double tap call back
 typedef DoubleTap = void Function(ExtendedImageGestureState state);
+
+/// builder of GesturePageBackground
+typedef GesturePageBackgroundBuilder = Color Function(
+    Offset offset, Size pageSize);
+
+///if return true ,pop page
+///else reset page state
+typedef PageGestureEndHandler = bool Function(Offset offset);
+
+///custom scale of page when gesturing the page
+typedef PageGestureScaleHandler = double Function(Offset offset);

@@ -1,3 +1,7 @@
+## [0.3.9]
+
+* support to pull to pop page
+
 ## [0.3.8]
 
 * update path_provider 1.1.0

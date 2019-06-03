@@ -6,14 +6,17 @@ import 'package:extended_image/src/image/extended_raw_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import 'extended_image_gesture_page.dart';
+
 /// scale idea from https://github.com/flutter/flutter/blob/master/examples/layers/widgets/gestures.dart
 /// zoom image
 class ExtendedImageGesture extends StatefulWidget {
   final ExtendedImage extendedImage;
   final ExtendedImageState extendedImageState;
   final ExtendedImageGesturePageViewState extendedImagePageViewState;
+  final ExtendedImageGesturePageState extendedImageGesturePageState;
   ExtendedImageGesture(this.extendedImage, this.extendedImageState,
-      this.extendedImagePageViewState);
+      this.extendedImagePageViewState, this.extendedImageGesturePageState);
   @override
   _ExtendedImageGestureState createState() => _ExtendedImageGestureState();
 }
@@ -27,7 +30,6 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   Offset _startingOffset;
   Offset _pointerDownPosition;
   GestureAnimation _gestureAnimation;
-
   GestureConfig _gestureConfig;
   @override
   void initState() {
@@ -85,7 +87,87 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     _startingOffset = details.focalPoint;
   }
 
+  Offset _updatePageGestureStartingOffset;
   void _handleScaleUpdate(ScaleUpdateDetails details) {
+    ///whether gesture page
+    if (widget.extendedImageGesturePageState != null &&
+        details.scale == 1.0 &&
+        _gestureDetails.userOffset &&
+        _gestureDetails.gestureState == GestureState.pan) {
+      var offsetDelta = (details.focalPoint - _startingOffset);
+      //print(offsetDelta);
+      bool updateGesture = false;
+
+      if (offsetDelta.dx != 0 && offsetDelta.dx.abs() > offsetDelta.dy.abs()) {
+        if (_gestureDetails.computeHorizontalBoundary) {
+          if (offsetDelta.dx > 0) {
+            updateGesture = _gestureDetails.boundary.left;
+          } else {
+            updateGesture = _gestureDetails.boundary.right;
+          }
+        } else {
+          updateGesture = true;
+        }
+      }
+      if (offsetDelta.dy != 0 && offsetDelta.dy.abs() > offsetDelta.dx.abs()) {
+        if (_gestureDetails.computeVerticalBoundary) {
+          if (offsetDelta.dy > 0) {
+            updateGesture = _gestureDetails.boundary.bottom;
+          } else {
+            updateGesture = _gestureDetails.boundary.top;
+          }
+        } else {
+          updateGesture = true;
+        }
+      }
+      var delta = (details.focalPoint - _startingOffset).distance;
+//      if (widget.extendedImageGesturePageState.widget.pageGestureAxis ==
+//          PageGestureAxis.horizontal) {
+//        delta = (details.focalPoint - _startingOffset).dx;
+//      } else if (widget.extendedImageGesturePageState.widget.pageGestureAxis ==
+//          PageGestureAxis.vertical) {
+//        delta = (details.focalPoint - _startingOffset).dy;
+//      }
+
+//      if (widget.extendedImagePageViewState != null) {
+//        if (widget.extendedImagePageViewState.widget.scrollDirection ==
+//            Axis.horizontal) {
+//        } else {}
+//      }
+
+      if (delta > minGesturePageDelta && updateGesture) {
+        _updatePageGestureStartingOffset ??= details.focalPoint;
+        widget.extendedImageGesturePageState.updateGesture(
+            details.focalPoint - _updatePageGestureStartingOffset);
+        if (widget.extendedImageGesturePageState.absorbing) return;
+      }
+
+//      var test = (!_gestureDetails.computeVerticalBoundary &&
+//          _gestureDetails.computeHorizontalBoundary) ||
+//          (_gestureDetails.computeVerticalBoundary &&
+//              !_gestureDetails.computeHorizontalBoundary);
+//
+//
+//      if (delta > minGesturePageDelta &&
+//          ((_gestureDetails.computeHorizontalBoundary &&
+//                  (_gestureDetails.boundary.left ||
+//                      _gestureDetails.boundary.right)) ||
+//              (_gestureDetails.computeVerticalBoundary &&
+//                  (_gestureDetails.boundary.top ||
+//                      _gestureDetails.boundary.bottom)) ||
+//              (!_gestureDetails.computeVerticalBoundary &&
+//                  !_gestureDetails.computeHorizontalBoundary))) {
+//        widget.extendedImageGesturePageState
+//            .updateGesture(details.focalPoint - _startingOffset);
+//        if (widget.extendedImageGesturePageState.absorbing) return;
+//      }
+    }
+
+    if (widget.extendedImageGesturePageState != null &&
+        widget.extendedImageGesturePageState.absorbing) {
+      return;
+    }
+
     double scale = _clampScale(
         (_startingScale * details.scale * _gestureConfig.speed),
         _gestureConfig.animationMinScale,
@@ -120,6 +202,13 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   void _handleScaleEnd(ScaleEndDetails details) {
+    if (widget.extendedImageGesturePageState != null &&
+        widget.extendedImageGesturePageState.absorbing) {
+      _updatePageGestureStartingOffset = null;
+      widget.extendedImageGesturePageState.endGesture();
+      return;
+    }
+
     //animate back to maxScale if gesture exceeded the maxScale specified
     if (_gestureDetails.totalScale > _gestureConfig.maxScale) {
       final double velocity =
@@ -226,6 +315,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       onPointerDown: _handlePointerDown,
     );
     // }
+
     return image;
   }
 

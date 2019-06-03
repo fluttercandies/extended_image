@@ -54,119 +54,93 @@ class _PicSwiperState extends State<PicSwiper>
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: Column(
+        child: Stack(
+      fit: StackFit.expand,
       children: <Widget>[
-        AppBar(
-          actions: <Widget>[
-            GestureDetector(
-              child: Container(
-                padding: EdgeInsets.only(right: 10.0),
-                alignment: Alignment.center,
-                child: Text(
-                  "Save",
-                  style: TextStyle(fontSize: 16.0, color: Colors.white),
-                ),
-              ),
-              onTap: () {
-                saveNetworkImageToPhoto(widget.pics[currentIndex].picUrl)
-                    .then((bool done) {
-                  showToast(done ? "save succeed" : "save failed",
-                      position: ToastPosition(align: Alignment.topCenter));
-                });
-              },
-            )
-          ],
-        ),
-        Expanded(
-            child: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            ExtendedImageGesturePageView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                var item = widget.pics[index].picUrl;
-                Widget image = ExtendedImage.network(
-                  item,
-                  fit: BoxFit.contain,
-                  //cancelToken: cancelToken,
-                  //autoCancel: false,
-                  mode: ExtendedImageMode.Gesture,
-                  gestureConfig: GestureConfig(
-                      inPageView: true,
-                      initialScale: 1.0,
-                      maxScale: 5.0,
-                      animationMaxScale: 5.0,
-                      //you can cache gesture state even though page view page change.
-                      //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
-                      cacheGesture: false),
-                  onDoubleTap: (ExtendedImageGestureState state) {
-                    ///you can use define pointerDownPosition as you can,
-                    ///default value is double tap pointer down postion.
-                    var pointerDownPosition = state.pointerDownPosition;
-                    double begin = state.gestureDetails.totalScale;
-                    double end;
+        ExtendedImageGesturePageView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            var item = widget.pics[index].picUrl;
+            Widget image = ExtendedImage.network(
+              item,
+              fit: BoxFit.contain,
+              //cancelToken: cancelToken,
+              //autoCancel: false,
+              mode: ExtendedImageMode.Gesture,
+              gestureConfig: GestureConfig(
+                  inPageView: true,
+                  initialScale: 1.0,
+                  maxScale: 5.0,
+                  animationMaxScale: 5.0,
+                  //you can cache gesture state even though page view page change.
+                  //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
+                  cacheGesture: false),
+              onDoubleTap: (ExtendedImageGestureState state) {
+                ///you can use define pointerDownPosition as you can,
+                ///default value is double tap pointer down postion.
+                var pointerDownPosition = state.pointerDownPosition;
+                double begin = state.gestureDetails.totalScale;
+                double end;
 
-                    //remove old
-                    _animation?.removeListener(animationListener);
+                //remove old
+                _animation?.removeListener(animationListener);
 
-                    //stop pre
-                    _animationController.stop();
+                //stop pre
+                _animationController.stop();
 
-                    //reset to use
-                    _animationController.reset();
+                //reset to use
+                _animationController.reset();
 
-                    if (begin == doubleTapScales[0]) {
-                      end = doubleTapScales[1];
-                    } else {
-                      end = doubleTapScales[0];
-                    }
-
-                    animationListener = () {
-                      //print(_animation.value);
-                      state.handleDoubleTap(
-                          scale: _animation.value,
-                          doubleTapPosition: pointerDownPosition);
-                    };
-                    _animation = _animationController
-                        .drive(Tween<double>(begin: begin, end: end));
-
-                    _animation.addListener(animationListener);
-
-                    _animationController.forward();
-                  },
-                );
-                image = Container(
-                  child: image,
-                  padding: EdgeInsets.all(5.0),
-                );
-                if (index == currentIndex) {
-                  return Hero(
-                    tag: item + index.toString(),
-                    child: image,
-                  );
+                if (begin == doubleTapScales[0]) {
+                  end = doubleTapScales[1];
                 } else {
-                  return image;
+                  end = doubleTapScales[0];
                 }
+
+                animationListener = () {
+                  //print(_animation.value);
+                  state.handleDoubleTap(
+                      scale: _animation.value,
+                      doubleTapPosition: pointerDownPosition);
+                };
+                _animation = _animationController
+                    .drive(Tween<double>(begin: begin, end: end));
+
+                _animation.addListener(animationListener);
+
+                _animationController.forward();
               },
-              itemCount: widget.pics.length,
-              onPageChanged: (int index) {
-                currentIndex = index;
-                rebuild.add(index);
-              },
-              controller: PageController(
-                initialPage: currentIndex,
-              ),
-              scrollDirection: Axis.horizontal,
-              physics: BouncingScrollPhysics(),
-              //physics: ClampingScrollPhysics(),
-            ),
-            Positioned(
-              bottom: 0.0,
-              left: 0.0,
-              right: 0.0,
-              child: MySwiperPlugin(widget.pics, currentIndex, rebuild),
-            )
-          ],
-        ))
+            );
+            image = Container(
+              child: image,
+              padding: EdgeInsets.all(5.0),
+            );
+            if (index == currentIndex) {
+              return Hero(
+                tag: item + index.toString(),
+                child: image,
+              );
+            } else {
+              return image;
+            }
+          },
+          itemCount: widget.pics.length,
+          onPageChanged: (int index) {
+            currentIndex = index;
+            rebuild.add(index);
+          },
+          controller: PageController(
+            initialPage: currentIndex,
+          ),
+          scrollDirection: Axis.horizontal,
+          physics: BouncingScrollPhysics(),
+          //physics: ClampingScrollPhysics(),
+        ),
+        Positioned(
+          bottom: 0.0,
+          left: 0.0,
+          right: 0.0,
+          child: MySwiperPlugin(widget.pics, currentIndex, rebuild),
+        )
       ],
     ));
   }
@@ -193,22 +167,34 @@ class MySwiperPlugin extends StatelessWidget {
                   width: 10.0,
                 ),
                 Text(
-                  pics[data.data].des ?? "",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Expanded(
-                  child: Container(),
-                ),
-                Text(
                   "${data.data + 1}",
                 ),
                 Text(
                   " / ${pics.length}",
                 ),
-                Container(
-                  width: 10.0,
-                ),
+                Expanded(
+                    child: Text(
+                  pics[data.data].des ?? "",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                )),
+                GestureDetector(
+                  child: Container(
+                    padding: EdgeInsets.only(right: 10.0),
+                    alignment: Alignment.center,
+                    child: Text(
+                      "Save",
+                      style: TextStyle(fontSize: 16.0, color: Colors.blue),
+                    ),
+                  ),
+                  onTap: () {
+                    saveNetworkImageToPhoto(pics[index].picUrl)
+                        .then((bool done) {
+                      showToast(done ? "save succeed" : "save failed",
+                          position: ToastPosition(align: Alignment.topCenter));
+                    });
+                  },
+                )
               ],
             ),
           ),
