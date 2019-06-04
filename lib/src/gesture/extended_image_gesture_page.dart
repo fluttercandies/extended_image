@@ -35,6 +35,8 @@ class ExtendedImageGesturePageState extends State<ExtendedImageGesturePage>
   Animation<double> _bcakScaleAnimation;
   Offset _offset = Offset.zero;
   double _scale = 1.0;
+  bool _poping = false;
+
   @override
   void initState() {
     super.initState();
@@ -45,7 +47,6 @@ class ExtendedImageGesturePageState extends State<ExtendedImageGesturePage>
 
   @override
   void didUpdateWidget(ExtendedImageGesturePage oldWidget) {
-    // TODO: implement didUpdateWidget
     if (oldWidget.resetPageDuration != widget.resetPageDuration) {
       _backAnimationController.stop();
       _backAnimationController.dispose();
@@ -100,7 +101,10 @@ class ExtendedImageGesturePageState extends State<ExtendedImageGesturePage>
               pageGestureAxis: widget.pageGestureAxis);
 
       if (popPage) {
-        _absorbing = false;
+        setState(() {
+          _poping = true;
+          _absorbing = false;
+        });
         Navigator.pop(context);
       } else {
         _backOffsetAnimation = _backAnimationController
@@ -126,7 +130,7 @@ class ExtendedImageGesturePageState extends State<ExtendedImageGesturePage>
             pageGestureAxis: widget.pageGestureAxis);
 
     Widget result = Container(
-      color: pageColor,
+      color: _poping ? Colors.transparent : pageColor,
       child: AnimatedBuilder(
           animation: _backAnimationController,
           builder: (context, b) {
@@ -138,7 +142,6 @@ class ExtendedImageGesturePageState extends State<ExtendedImageGesturePage>
                 scale: _backAnimationController.isAnimating
                     ? _bcakScaleAnimation.value
                     : _scale,
-                //origin: pageSize.center(Offset.zero),
                 child: AbsorbPointer(
                   absorbing: _absorbing,
                   child: widget.child,
