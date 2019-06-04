@@ -139,32 +139,12 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
         _updatePageGestureStartingOffset ??= details.focalPoint;
         widget.extendedImageSlidePageState
             .slide(details.focalPoint - _updatePageGestureStartingOffset);
-        if (widget.extendedImageSlidePageState.absorbing) return;
+        if (widget.extendedImageSlidePageState.ignoring) return;
       }
-
-//      var test = (!_gestureDetails.computeVerticalBoundary &&
-//          _gestureDetails.computeHorizontalBoundary) ||
-//          (_gestureDetails.computeVerticalBoundary &&
-//              !_gestureDetails.computeHorizontalBoundary);
-//
-//
-//      if (delta > minGesturePageDelta &&
-//          ((_gestureDetails.computeHorizontalBoundary &&
-//                  (_gestureDetails.boundary.left ||
-//                      _gestureDetails.boundary.right)) ||
-//              (_gestureDetails.computeVerticalBoundary &&
-//                  (_gestureDetails.boundary.top ||
-//                      _gestureDetails.boundary.bottom)) ||
-//              (!_gestureDetails.computeVerticalBoundary &&
-//                  !_gestureDetails.computeHorizontalBoundary))) {
-//        widget.extendedImageGesturePageState
-//            .updateGesture(details.focalPoint - _startingOffset);
-//        if (widget.extendedImageGesturePageState.absorbing) return;
-//      }
     }
 
     if (widget.extendedImageSlidePageState != null &&
-        widget.extendedImageSlidePageState.absorbing) {
+        widget.extendedImageSlidePageState.ignoring) {
       return;
     }
 
@@ -203,7 +183,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
   void _handleScaleEnd(ScaleEndDetails details) {
     if (widget.extendedImageSlidePageState != null &&
-        widget.extendedImageSlidePageState.absorbing) {
+        widget.extendedImageSlidePageState.ignoring) {
       _updatePageGestureStartingOffset = null;
       widget.extendedImageSlidePageState.endSlide();
       return;
