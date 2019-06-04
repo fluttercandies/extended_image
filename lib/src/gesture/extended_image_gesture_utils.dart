@@ -379,52 +379,47 @@ class GestureAnimation {
 
 ///ExtendedImageGesturePage
 
-Color defaultGesturePageBackgroundBuilder(
-    {Offset offset,
-    Size pageSize,
-    Color color,
-    PageGestureAxis pageGestureAxis}) {
+Color defaultSlidePageBackgroundHandler(
+    {Offset offset, Size pageSize, Color color, SlideAxis pageGestureAxis}) {
   double opacity = 0.0;
-  if (pageGestureAxis == PageGestureAxis.both) {
+  if (pageGestureAxis == SlideAxis.both) {
     opacity = offset.distance /
         (Offset(pageSize.width, pageSize.height).distance / 2.0);
-  } else if (pageGestureAxis == PageGestureAxis.horizontal) {
+  } else if (pageGestureAxis == SlideAxis.horizontal) {
     opacity = offset.dx.abs() / (pageSize.width / 2.0);
-  } else if (pageGestureAxis == PageGestureAxis.vertical) {
+  } else if (pageGestureAxis == SlideAxis.vertical) {
     opacity = offset.dy.abs() / (pageSize.height / 2.0);
   }
-
   return color.withOpacity(min(1.0, max(1.0 - opacity, 0.0)));
 }
 
-bool defaultPageGestureEndHandler(
-    {Offset offset, Size pageSize, PageGestureAxis pageGestureAxis}) {
-  if (pageGestureAxis == PageGestureAxis.both) {
+bool defaultSlideEndHandler(
+    {Offset offset, Size pageSize, SlideAxis pageGestureAxis}) {
+  if (pageGestureAxis == SlideAxis.both) {
     return offset.distance >
         Offset(pageSize.width, pageSize.height).distance / 3.5;
-  } else if (pageGestureAxis == PageGestureAxis.horizontal) {
+  } else if (pageGestureAxis == SlideAxis.horizontal) {
     return offset.dx.abs() > pageSize.width / 3.5;
-  } else if (pageGestureAxis == PageGestureAxis.vertical) {
+  } else if (pageGestureAxis == SlideAxis.vertical) {
     return offset.dy.abs() > pageSize.height / 3.5;
   }
   return true;
 }
 
-double defaultPageGestureScaleHandler(
-    {Offset offset, Size pageSize, PageGestureAxis pageGestureAxis}) {
+double defaultSlideScaleHandler(
+    {Offset offset, Size pageSize, SlideAxis pageGestureAxis}) {
   double scale = 0.0;
-  if (pageGestureAxis == PageGestureAxis.both) {
+  if (pageGestureAxis == SlideAxis.both) {
     scale = offset.distance / Offset(pageSize.width, pageSize.height).distance;
-  } else if (pageGestureAxis == PageGestureAxis.horizontal) {
+  } else if (pageGestureAxis == SlideAxis.horizontal) {
     scale = offset.dx.abs() / (pageSize.width / 2.0);
-  } else if (pageGestureAxis == PageGestureAxis.vertical) {
+  } else if (pageGestureAxis == SlideAxis.vertical) {
     scale = offset.dy.abs() / (pageSize.height / 2.0);
   }
-
   return max(1.0 - scale, 0.8);
 }
 
-enum PageGestureAxis {
+enum SlideAxis {
   both,
   horizontal,
   vertical,

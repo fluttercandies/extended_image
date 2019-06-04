@@ -17,7 +17,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/semantics.dart';
 import 'package:http_client_helper/http_client_helper.dart';
 
-import 'gesture/extended_image_gesture_page.dart';
+import 'gesture/extended_image_slide_page.dart';
 
 /// extended image base on official
 class ExtendedImage extends StatefulWidget {
@@ -804,7 +804,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
                           TypeMatcher<ExtendedImageGesturePageViewState>())
                       : null,
                   context.ancestorStateOfType(
-                      TypeMatcher<ExtendedImageGesturePageState>()));
+                      TypeMatcher<ExtendedImageSlidePageState>()));
             } else {
               current = _buildExtendedRawImage();
             }
@@ -832,7 +832,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
                       TypeMatcher<ExtendedImageGesturePageViewState>())
                   : null,
               context.ancestorStateOfType(
-                  TypeMatcher<ExtendedImageGesturePageState>()));
+                  TypeMatcher<ExtendedImageSlidePageState>()));
         } else {
           current = _buildExtendedRawImage();
         }

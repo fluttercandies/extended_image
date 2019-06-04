@@ -111,7 +111,7 @@ class CropImage extends StatelessWidget {
         widget = GestureDetector(
           child: widget,
           onTap: () {
-            var page = ExtendedImageGesturePage(
+            var page = ExtendedImageSlidePage(
               child: PicSwiper(
                 index,
                 listSourceRepository
