@@ -25,7 +25,7 @@ extended official image to support placeholder(loading)/ failed state, cache net
 
 - [Crop](#Crop)
 
-- [Paint](#Painter)
+- [Paint](#Paint)
 
 - [Other APIs](#Other APIs)
 
@@ -105,6 +105,7 @@ enum LoadState {
 ```
 
 ExtendedImageState(LoadStateChanged call back)
+
 | parameter/method | description | default |
 | ------ | ------ | ------ |
 | extendedImageInfo | image info| - |
@@ -194,6 +195,7 @@ abstract class ExtendedImageState {
 ## Zoom Pan
 
 ExtendedImage
+
 | parameter | description | default |
 | ------ | ------ | ------ |
 | mode | image mode (none,gestrue) | none |
@@ -201,6 +203,7 @@ ExtendedImage
 | onDoubleTap | call back of double tap  under ExtendedImageMode.Gesture| - |
 
 GestureConfig 
+
 | parameter | description | default |
 | ------ | ------ | ------ |
 | minScale | min scale | 0.8 |
@@ -278,6 +281,7 @@ ExtendedImageGesturePageView is the same as PageView and it's made for show  zoo
 if you have cache the gesture, remember call clearGestureDetailsCache() method at the right time.(for example,page view page is disposed)
 
 GestureConfig 
+
 | parameter | description | default |
 | ------ | ------ | ------ |
 | cacheGesture | save Gesture state (for example in page view, so that the state will not change when scroll back),remember clearGestureDetailsCache  at right time | false |
@@ -342,7 +346,8 @@ Extended Image support to slide out page, like webchat,掘金.
               //pageGestureAxis: PageGestureAxis.horizontal,
             );
 ```
-ExtendedImageGesturePage 
+ExtendedImageSlidePage 
+
 | parameter | description | default |
 | ------ | ------ | ------ |
 | child | The [child] contained by the ExtendedImageGesturePage. | - |
@@ -414,6 +419,7 @@ you should push page with TransparentMaterialPageRoute/TransparentCupertinoPageR
 ## Border BorderRadius Shape
 
 ExtendedImage
+
 | parameter | description | default |
 | ------ | ------ | ------ |
 | border |  BoxShape.circle and BoxShape.rectangle,If this is [BoxShape.circle] then [borderRadius] is ignored. | - |
@@ -467,7 +473,6 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 
 ![](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/image.gif)
 
-
 ## Crop 
 
 get your raw image by [Load State](#Load State), and crop image by setting soureRect.
@@ -501,7 +506,7 @@ ExtendedImage
 
 
  ```dart
- ExtendedImage.network(
+        ExtendedImage.network(
                  url,
                  width: ScreenUtil.instance.setWidth(400),
                  height: ScreenUtil.instance.setWidth(400),
