@@ -84,6 +84,7 @@ ExtendedImage.network(
 
 Extended Image provide 3 states(loading,completed,failed), you can define your state widget with
 loadStateChanged call back.
+
 [loadStateChanged] is not only for network, if your image need long time to load,
 you can set enableLoadState(default value is ture for network and others are false) to ture
 
@@ -487,6 +488,7 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 ## Crop
 
 get your raw image by [Load State](#Load State), and crop image by setting soureRect.
+
 [ExtendedRawImage](https://github.com/fluttercandies/extended_image/blob/master/lib/src/image/extended_raw_image.dart)
 soureRect is which you want to show image rect.
 
