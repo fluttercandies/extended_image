@@ -21,6 +21,18 @@ const int _kMaxDroppedSwipePageForwardAnimationTime = 800; // Milliseconds.
 // user releases a page mid swipe.
 const int _kMaxPageBackAnimationTime = 300; // Milliseconds.
 
+// Offset from offscreen to the right to fully on screen.
+final Animatable<Offset> _kRightMiddleTween = Tween<Offset>(
+  begin: const Offset(1.0, 0.0),
+  end: Offset.zero,
+);
+
+// Offset from fully on screen to 1/3 offscreen to the left.
+final Animatable<Offset> _kMiddleLeftTween = Tween<Offset>(
+  begin: Offset.zero,
+  end: const Offset(-1.0 / 3.0, 0.0),
+);
+
 class TransparentMaterialPageRoute<T> extends PageRoute<T> {
   /// Construct a MaterialPageRoute whose contents are defined by [builder].
   ///
@@ -60,7 +72,8 @@ class TransparentMaterialPageRoute<T> extends PageRoute<T> {
   bool canTransitionFrom(TransitionRoute<dynamic> previousRoute) {
     return previousRoute is MaterialPageRoute ||
         previousRoute is CupertinoPageRoute ||
-        previousRoute is TransparentMaterialPageRoute;
+        previousRoute is TransparentMaterialPageRoute ||
+        previousRoute is TransparentCupertinoPageRoute;
   }
 
   @override
@@ -69,6 +82,8 @@ class TransparentMaterialPageRoute<T> extends PageRoute<T> {
     return (nextRoute is MaterialPageRoute && !nextRoute.fullscreenDialog) ||
         (nextRoute is CupertinoPageRoute && !nextRoute.fullscreenDialog) ||
         (nextRoute is TransparentMaterialPageRoute &&
+            !nextRoute.fullscreenDialog) ||
+        (nextRoute is TransparentCupertinoPageRoute &&
             !nextRoute.fullscreenDialog);
   }
 
@@ -187,13 +202,16 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
 
   @override
   bool canTransitionFrom(TransitionRoute<dynamic> previousRoute) {
-    return previousRoute is CupertinoPageRoute;
+    return previousRoute is CupertinoPageRoute ||
+        previousRoute is TransparentCupertinoPageRoute;
   }
 
   @override
   bool canTransitionTo(TransitionRoute<dynamic> nextRoute) {
     // Don't perform outgoing animation if the next route is a fullscreen dialog.
-    return nextRoute is CupertinoPageRoute && !nextRoute.fullscreenDialog;
+    return (nextRoute is CupertinoPageRoute && !nextRoute.fullscreenDialog) ||
+        (nextRoute is TransparentCupertinoPageRoute &&
+            !nextRoute.fullscreenDialog);
   }
 
   /// True if an iOS-style back swipe pop gesture is currently underway for [route].
@@ -564,5 +582,84 @@ class _CupertinoBackGestureController<T> {
     } else {
       navigator.didStopUserGesture();
     }
+  }
+}
+
+class CupertinoPageTransition extends StatelessWidget {
+  /// Creates an iOS-style page transition.
+  ///
+  ///  * `primaryRouteAnimation` is a linear route animation from 0.0 to 1.0
+  ///    when this screen is being pushed.
+  ///  * `secondaryRouteAnimation` is a linear route animation from 0.0 to 1.0
+  ///    when another screen is being pushed on top of this one.
+  ///  * `linearTransition` is whether to perform primary transition linearly.
+  ///    Used to precisely track back gesture drags.
+  CupertinoPageTransition({
+    Key key,
+    @required Animation<double> primaryRouteAnimation,
+    @required Animation<double> secondaryRouteAnimation,
+    @required this.child,
+    @required bool linearTransition,
+  })  : assert(linearTransition != null),
+        _primaryPositionAnimation = (linearTransition
+                ? primaryRouteAnimation
+                : CurvedAnimation(
+                    // The curves below have been rigorously derived from plots of native
+                    // iOS animation frames. Specifically, a video was taken of a page
+                    // transition animation and the distance in each frame that the page
+                    // moved was measured. A best fit bezier curve was the fitted to the
+                    // point set, which is linearToEaseIn. Conversely, easeInToLinear is the
+                    // reflection over the origin of linearToEaseIn.
+                    parent: primaryRouteAnimation,
+                    curve: Curves.linearToEaseOut,
+                    reverseCurve: Curves.easeInToLinear,
+                  ))
+            .drive(_kRightMiddleTween),
+        _secondaryPositionAnimation = (linearTransition
+                ? secondaryRouteAnimation
+                : CurvedAnimation(
+                    parent: secondaryRouteAnimation,
+                    curve: Curves.linearToEaseOut,
+                    reverseCurve: Curves.easeInToLinear,
+                  ))
+            .drive(_kMiddleLeftTween),
+        //  _primaryShadowAnimation =
+        //      (linearTransition
+        //        ? primaryRouteAnimation
+        //        : CurvedAnimation(
+        //            parent: primaryRouteAnimation,
+        //            curve: Curves.linearToEaseOut,
+        //          )
+        //      ).drive(_kGradientShadowTween),
+        super(key: key);
+
+  // When this page is coming in to cover another page.
+  final Animation<Offset> _primaryPositionAnimation;
+  // When this page is becoming covered by another page.
+  final Animation<Offset> _secondaryPositionAnimation;
+  //final Animation<Decoration> _primaryShadowAnimation;
+
+  /// The widget below this widget in the tree.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    assert(debugCheckHasDirectionality(context));
+    final TextDirection textDirection = Directionality.of(context);
+
+    return SlideTransition(
+      position: _secondaryPositionAnimation,
+      textDirection: textDirection,
+      transformHitTests: false,
+      child: SlideTransition(
+          position: _primaryPositionAnimation,
+          textDirection: textDirection,
+          child: child
+          // DecoratedBoxTransition(
+          //   decoration: _primaryShadowAnimation,
+          //   child: child,
+          // ),
+          ),
+    );
   }
 }
