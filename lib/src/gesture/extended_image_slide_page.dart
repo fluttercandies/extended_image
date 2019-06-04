@@ -3,26 +3,39 @@ import 'package:flutter/material.dart';
 import '../extended_image_typedef.dart';
 import 'extended_image_gesture_utils.dart';
 
-class ExtendedImageGesturePage extends StatefulWidget {
+class ExtendedImageSlidePage extends StatefulWidget {
+  ///The [child] contained by the ExtendedImageGesturePage.
   final Widget child;
-  final GesturePageBackgroundBuilder backgroundBuilder;
-  final PageGestureScaleHandler pageGestureScaleHandler;
-  final PageGestureEndHandler pageGestureEndHandler;
-  final PageGestureAxis pageGestureAxis;
+
+  ///builder background when slide page
+  final SlidePageBackgroundHandler slidePageBackgroundHandler;
+
+  ///builder of page background when slide page
+  final SlideScaleHandler slideScaleHandler;
+
+  ///call back of slide end
+  ///decide whether pop page
+  final SlideEndHandler slideEndHandler;
+
+  ///axis of slide
+  ///both,horizontal,vertical
+  final SlideAxis slideAxis;
+
+  ///reset page position when slide end(not pop page)
   final Duration resetPageDuration;
-  ExtendedImageGesturePage(
+
+  ExtendedImageSlidePage(
       {this.child,
-      this.backgroundBuilder,
-      this.pageGestureScaleHandler,
-      this.pageGestureEndHandler,
-      this.pageGestureAxis: PageGestureAxis.both,
+      this.slidePageBackgroundHandler,
+      this.slideScaleHandler,
+      this.slideEndHandler,
+      this.slideAxis: SlideAxis.both,
       this.resetPageDuration: const Duration(milliseconds: 500)});
   @override
-  ExtendedImageGesturePageState createState() =>
-      ExtendedImageGesturePageState();
+  ExtendedImageSlidePageState createState() => ExtendedImageSlidePageState();
 }
 
-class ExtendedImageGesturePageState extends State<ExtendedImageGesturePage>
+class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     with SingleTickerProviderStateMixin {
   bool _absorbing = false;
   bool get absorbing => _absorbing;
@@ -46,7 +59,7 @@ class ExtendedImageGesturePageState extends State<ExtendedImageGesturePage>
   }
 
   @override
-  void didUpdateWidget(ExtendedImageGesturePage oldWidget) {
+  void didUpdateWidget(ExtendedImageSlidePage oldWidget) {
     if (oldWidget.resetPageDuration != widget.resetPageDuration) {
       _backAnimationController.stop();
       _backAnimationController.dispose();
@@ -71,34 +84,34 @@ class ExtendedImageGesturePageState extends State<ExtendedImageGesturePage>
     _backAnimationController.dispose();
   }
 
-  void updateGesture(Offset delta) {
+  void slide(Offset delta) {
     if (_backAnimationController.isAnimating) return;
     if (mounted) {
       setState(() {
         _offset = delta;
-        if (widget.pageGestureAxis == PageGestureAxis.horizontal) {
+        if (widget.slideAxis == SlideAxis.horizontal) {
           _offset = Offset(delta.dx, 0.0);
-        } else if (widget.pageGestureAxis == PageGestureAxis.vertical) {
+        } else if (widget.slideAxis == SlideAxis.vertical) {
           _offset = Offset(0.0, delta.dy);
         }
 
-        _scale = widget.pageGestureScaleHandler?.call(_offset) ??
-            defaultPageGestureScaleHandler(
+        _scale = widget.slideScaleHandler?.call(_offset) ??
+            defaultSlideScaleHandler(
                 offset: _offset,
                 pageSize: pageSize,
-                pageGestureAxis: widget.pageGestureAxis);
+                pageGestureAxis: widget.slideAxis);
         _absorbing = true;
       });
     }
   }
 
-  void endGesture() {
+  void endSlide() {
     if (mounted && _absorbing) {
-      var popPage = widget.pageGestureEndHandler?.call(_offset) ??
-          defaultPageGestureEndHandler(
+      var popPage = widget.slideEndHandler?.call(_offset) ??
+          defaultSlideEndHandler(
               offset: _offset,
               pageSize: _pageSize,
-              pageGestureAxis: widget.pageGestureAxis);
+              pageGestureAxis: widget.slideAxis);
 
       if (popPage) {
         setState(() {
@@ -122,12 +135,13 @@ class ExtendedImageGesturePageState extends State<ExtendedImageGesturePage>
   @override
   Widget build(BuildContext context) {
     _pageSize = MediaQuery.of(context).size;
-    final Color pageColor = widget.backgroundBuilder?.call(_offset, pageSize) ??
-        defaultGesturePageBackgroundBuilder(
-            offset: _offset,
-            pageSize: pageSize,
-            color: Theme.of(context).dialogBackgroundColor,
-            pageGestureAxis: widget.pageGestureAxis);
+    final Color pageColor =
+        widget.slidePageBackgroundHandler?.call(_offset, pageSize) ??
+            defaultSlidePageBackgroundHandler(
+                offset: _offset,
+                pageSize: pageSize,
+                color: Theme.of(context).dialogBackgroundColor,
+                pageGestureAxis: widget.slideAxis);
 
     Widget result = Container(
       color: _poping ? Colors.transparent : pageColor,

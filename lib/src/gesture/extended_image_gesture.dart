@@ -6,7 +6,7 @@ import 'package:extended_image/src/image/extended_raw_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import 'extended_image_gesture_page.dart';
+import 'extended_image_slide_page.dart';
 
 /// scale idea from https://github.com/flutter/flutter/blob/master/examples/layers/widgets/gestures.dart
 /// zoom image
@@ -14,9 +14,9 @@ class ExtendedImageGesture extends StatefulWidget {
   final ExtendedImage extendedImage;
   final ExtendedImageState extendedImageState;
   final ExtendedImageGesturePageViewState extendedImagePageViewState;
-  final ExtendedImageGesturePageState extendedImageGesturePageState;
+  final ExtendedImageSlidePageState extendedImageSlidePageState;
   ExtendedImageGesture(this.extendedImage, this.extendedImageState,
-      this.extendedImagePageViewState, this.extendedImageGesturePageState);
+      this.extendedImagePageViewState, this.extendedImageSlidePageState);
   @override
   _ExtendedImageGestureState createState() => _ExtendedImageGestureState();
 }
@@ -90,7 +90,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   Offset _updatePageGestureStartingOffset;
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     ///whether gesture page
-    if (widget.extendedImageGesturePageState != null &&
+    if (widget.extendedImageSlidePageState != null &&
         details.scale == 1.0 &&
         _gestureDetails.userOffset &&
         _gestureDetails.gestureState == GestureState.pan) {
@@ -137,9 +137,9 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
       if (delta > minGesturePageDelta && updateGesture) {
         _updatePageGestureStartingOffset ??= details.focalPoint;
-        widget.extendedImageGesturePageState.updateGesture(
-            details.focalPoint - _updatePageGestureStartingOffset);
-        if (widget.extendedImageGesturePageState.absorbing) return;
+        widget.extendedImageSlidePageState
+            .slide(details.focalPoint - _updatePageGestureStartingOffset);
+        if (widget.extendedImageSlidePageState.absorbing) return;
       }
 
 //      var test = (!_gestureDetails.computeVerticalBoundary &&
@@ -163,8 +163,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 //      }
     }
 
-    if (widget.extendedImageGesturePageState != null &&
-        widget.extendedImageGesturePageState.absorbing) {
+    if (widget.extendedImageSlidePageState != null &&
+        widget.extendedImageSlidePageState.absorbing) {
       return;
     }
 
@@ -202,10 +202,10 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   void _handleScaleEnd(ScaleEndDetails details) {
-    if (widget.extendedImageGesturePageState != null &&
-        widget.extendedImageGesturePageState.absorbing) {
+    if (widget.extendedImageSlidePageState != null &&
+        widget.extendedImageSlidePageState.absorbing) {
       _updatePageGestureStartingOffset = null;
-      widget.extendedImageGesturePageState.endGesture();
+      widget.extendedImageSlidePageState.endSlide();
       return;
     }
 
