@@ -37,17 +37,17 @@ extended official image to support placeholder(loading)/ failed state, cache net
 you can use ExtendedImage.network as same as official image.
 
 ```dart
-         ExtendedImage.network(
-                url,
-                width: ScreenUtil.instance.setWidth(400),
-                height: ScreenUtil.instance.setWidth(400),
-                fit: BoxFit.fill,
-                cache: true,
-                border: Border.all(color: Colors.red, width: 1.0),
-                shape: boxShape,
-                borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                //cancelToken: cancellationToken,
-              )
+ExtendedImage.network(
+  url,
+  width: ScreenUtil.instance.setWidth(400),
+  height: ScreenUtil.instance.setWidth(400),
+  fit: BoxFit.fill,
+  cache: true,
+  border: Border.all(color: Colors.red, width: 1.0),
+  shape: boxShape,
+  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+  //cancelToken: cancellationToken,
+)
 ```
 
 ### use Extendednetworkimageprovider
@@ -110,15 +110,15 @@ enum LoadState {
 
 ExtendedImageState(LoadStateChanged call back)
 
-| parameter/method | description | default |
-| ------ | ------ | ------ |
-| extendedImageInfo | image info| - |
-| extendedImageLoadState | LoadState(loading,completed,failed) | - |
-| returnLoadStateChangedWidget | if this is ture, return widget which from LoadStateChanged fucntion immediately(width/height/gesture/border/shape etc, will not effect on it) | - |
-| imageProvider | ImageProvider | - |
-| invertColors | invertColors | - |
-| imageStreamKey | key of image | - |
-| reLoadImage() | if image load failed,you can reload image by call it | - |
+| parameter/method             | description                                                                                                                                   | default |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| extendedImageInfo            | image info                                                                                                                                    | -       |
+| extendedImageLoadState       | LoadState(loading,completed,failed)                                                                                                           | -       |
+| returnLoadStateChangedWidget | if this is ture, return widget which from LoadStateChanged fucntion immediately(width/height/gesture/border/shape etc, will not effect on it) | -       |
+| imageProvider                | ImageProvider                                                                                                                                 | -       |
+| invertColors                 | invertColors                                                                                                                                  | -       |
+| imageStreamKey               | key of image                                                                                                                                  | -       |
+| reLoadImage()                | if image load failed,you can reload image by call it                                                                                          | -       |
 
 ```dart
 abstract class ExtendedImageState {
@@ -141,87 +141,86 @@ abstract class ExtendedImageState {
 
 ```dart
 ExtendedImage.network(
-      url,
-      width: ScreenUtil.instance.setWidth(600),
-      height: ScreenUtil.instance.setWidth(400),
-      fit: BoxFit.fill,
-      cache: true,
-      loadStateChanged: (ExtendedImageState state) {
-        switch (state.extendedImageLoadState) {
-          case LoadState.loading:
-            _controller.reset();
-            return Image.asset(
-              "assets/loading.gif",
-              fit: BoxFit.fill,
-            );
-            break;
-          case LoadState.completed:
-            _controller.forward();
-            return FadeTransition(
-              opacity: _controller,
-              child: ExtendedRawImage(
-                image: state.extendedImageInfo?.image,
-                width: ScreenUtil.instance.setWidth(600),
-                height: ScreenUtil.instance.setWidth(400),
+  url,
+  width: ScreenUtil.instance.setWidth(600),
+  height: ScreenUtil.instance.setWidth(400),
+  fit: BoxFit.fill,
+  cache: true,
+  loadStateChanged: (ExtendedImageState state) {
+    switch (state.extendedImageLoadState) {
+      case LoadState.loading:
+        _controller.reset();
+        return Image.asset(
+          "assets/loading.gif",
+          fit: BoxFit.fill,
+        );
+        break;
+      case LoadState.completed:
+        _controller.forward();
+        return FadeTransition(
+          opacity: _controller,
+          child: ExtendedRawImage(
+            image: state.extendedImageInfo?.image,
+            width: ScreenUtil.instance.setWidth(600),
+            height: ScreenUtil.instance.setWidth(400),
+          ),
+        );
+        break;
+      case LoadState.failed:
+        _controller.reset();
+        return GestureDetector(
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              Image.asset(
+                "assets/failed.jpg",
+                fit: BoxFit.fill,
               ),
-            );
-            break;
-          case LoadState.failed:
-            _controller.reset();
-            return GestureDetector(
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  Image.asset(
-                    "assets/failed.jpg",
-                    fit: BoxFit.fill,
-                  ),
-                  Positioned(
-                    bottom: 0.0,
-                    left: 0.0,
-                    right: 0.0,
-                    child: Text(
-                      "load image failed, click to reload",
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-                ],
-              ),
-              onTap: () {
-                state.reLoadImage();
-              },
-            );
-            break;
-        }
-      },
-    )
+              Positioned(
+                bottom: 0.0,
+                left: 0.0,
+                right: 0.0,
+                child: Text(
+                  "load image failed, click to reload",
+                  textAlign: TextAlign.center,
+                ),
+              )
+            ],
+          ),
+          onTap: () {
+            state.reLoadImage();
+          },
+        );
+        break;
+    }
+  },
+)
 ```
 
-![](https://github.com/fluttercandies/Flutter_Candies/tree/master/gif/extended_image/custom.gif)
+![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/custom.gif)
 
 ## Zoom Pan
 
 ExtendedImage
 
-| parameter | description | default |
-| ------ | ------ | ------ |
-| mode | image mode (none,gestrue) | none |
-| gestureConfig | config for image gesture | - |
-| onDoubleTap | call back of double tap under ExtendedImageMode.Gesture| - |
-
+| parameter     | description                                             | default |
+| ------------- | ------------------------------------------------------- | ------- |
+| mode          | image mode (none,gestrue)                               | none    |
+| gestureConfig | config for image gesture                                | -       |
+| onDoubleTap   | call back of double tap under ExtendedImageMode.Gesture | -       |
 
 GestureConfig
 
-| parameter | description | default |
-| ------ | ------ | ------ |
-| minScale | min scale | 0.8 |
-| animationMinScale | the min scale for zooming then animation back to minScale when scale end | minScale _ 0.8 |
-| maxScale | max scale | 5.0 |
-| animationMaxScale | the max scale for zooming then animation back to maxScale when scale end | maxScale _ 1.2 |
-| speed | speed for zoom/pan | 1.0 |
-| inertialSpeed | inerial speed for zoom/pan | 100 |
-| cacheGesture | save Gesture state (for example in page view, so that the state will not change when scroll back),remember clearGestureDetailsCache at right time | false |
-| inPageView | whether in ExtendedImageGesturePageView | false |
+| parameter         | description                                                                                                                                       | default         |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| minScale          | min scale                                                                                                                                         | 0.8             |
+| animationMinScale | the min scale for zooming then animation back to minScale when scale end                                                                          | minScale \_ 0.8 |
+| maxScale          | max scale                                                                                                                                         | 5.0             |
+| animationMaxScale | the max scale for zooming then animation back to maxScale when scale end                                                                          | maxScale \_ 1.2 |
+| speed             | speed for zoom/pan                                                                                                                                | 1.0             |
+| inertialSpeed     | inerial speed for zoom/pan                                                                                                                        | 100             |
+| cacheGesture      | save Gesture state (for example in page view, so that the state will not change when scroll back),remember clearGestureDetailsCache at right time | false           |
+| inPageView        | whether in ExtendedImageGesturePageView                                                                                                           | false           |
 
 ```dart
 ExtendedImage.network(
@@ -246,40 +245,40 @@ ExtendedImage.network(
 
 ```dart
 onDoubleTap: (ExtendedImageGestureState state) {
-    ///you can use define pointerDownPosition as you can,
-    ///default value is double tap pointer down postion.
-    var pointerDownPosition = state.pointerDownPosition;
-    double begin = state.gestureDetails.totalScale;
-    double end;
+  ///you can use define pointerDownPosition as you can,
+  ///default value is double tap pointer down postion.
+  var pointerDownPosition = state.pointerDownPosition;
+  double begin = state.gestureDetails.totalScale;
+  double end;
 
-    //remove old
-    _animation?.removeListener(animationListener);
+  //remove old
+  _animation?.removeListener(animationListener);
 
-    //stop pre
-    _animationController.stop();
+  //stop pre
+  _animationController.stop();
 
-    //reset to use
-    _animationController.reset();
+  //reset to use
+  _animationController.reset();
 
-    if (begin == doubleTapScales[0]) {
-      end = doubleTapScales[1];
-    } else {
-      end = doubleTapScales[0];
-    }
+  if (begin == doubleTapScales[0]) {
+    end = doubleTapScales[1];
+  } else {
+    end = doubleTapScales[0];
+  }
 
-    animationListener = () {
-      //print(_animation.value);
-      state.handleDoubleTap(
-          scale: _animation.value,
-          doubleTapPosition: pointerDownPosition);
-    };
-    _animation = _animationController
-        .drive(Tween<double>(begin: begin, end: end));
+  animationListener = () {
+    //print(_animation.value);
+    state.handleDoubleTap(
+        scale: _animation.value,
+        doubleTapPosition: pointerDownPosition);
+  };
+  _animation = _animationController
+      .drive(Tween<double>(begin: begin, end: end));
 
-    _animation.addListener(animationListener);
+  _animation.addListener(animationListener);
 
-    _animationController.forward();
-  },
+  _animationController.forward();
+},
 ```
 
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/zoom.gif)
@@ -292,10 +291,10 @@ if you have cache the gesture, remember call clearGestureDetailsCache() method a
 
 GestureConfig
 
-| parameter | description | default |
-| ------ | ------ | ------ |
-| cacheGesture | save Gesture state (for example in page view, so that the state will not change when scroll back),remember clearGestureDetailsCache at right time | false |
-| inPageView | whether in ExtendedImageGesturePageView | false |
+| parameter    | description                                                                                                                                       | default |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| cacheGesture | save Gesture state (for example in page view, so that the state will not change when scroll back),remember clearGestureDetailsCache at right time | false   |
+| inPageView   | whether in ExtendedImageGesturePageView                                                                                                           | false   |
 
 ```dart
 ExtendedImageGesturePageView.builder(
@@ -347,27 +346,27 @@ Extended Image support to slide out page as WeChat.
 
 ```dart
 var page = ExtendedImageSlidePage(
-    child: PicSwiper(
-      index,
-      listSourceRepository
-          .map<PicSwiperItem>(
-              (f) => PicSwiperItem(f.imageUrl, des: f.title))
-          .toList(),
-    ),
-    //pageGestureAxis: PageGestureAxis.horizontal,
-  );
+  child: PicSwiper(
+    index,
+    listSourceRepository
+        .map<PicSwiperItem>(
+            (f) => PicSwiperItem(f.imageUrl, des: f.title))
+        .toList(),
+  ),
+  //pageGestureAxis: PageGestureAxis.horizontal,
+);
 ```
 
 ExtendedImageGesturePage
 
-| parameter | description | default |
-| ------ | ------ | ------ |
-| child | The [child] contained by the ExtendedImageGesturePage. | - |
-| slidePageBackgroundHandler | build background when slide page | defaultSlidePageBackgroundHandler |
-| slideScaleHandler | custom scale of page when slide page | defaultSlideScaleHandler |
-| slideEndHandler | call back of slide end,decide whether pop page | defaultSlideEndHandler |
-| slideAxis | axis of slide(both,horizontal,vertical) | both |
-| resetPageDuration | reset page position when slide end(not pop page) | milliseconds: 500 |
+| parameter                  | description                                            | default                           |
+| -------------------------- | ------------------------------------------------------ | --------------------------------- |
+| child                      | The [child] contained by the ExtendedImageGesturePage. | -                                 |
+| slidePageBackgroundHandler | build background when slide page                       | defaultSlidePageBackgroundHandler |
+| slideScaleHandler          | custom scale of page when slide page                   | defaultSlideScaleHandler          |
+| slideEndHandler            | call back of slide end,decide whether pop page         | defaultSlideEndHandler            |
+| slideAxis                  | axis of slide(both,horizontal,vertical)                | both                              |
+| resetPageDuration          | reset page position when slide end(not pop page)       | milliseconds: 500                 |
 
 ```dart
 Color defaultSlidePageBackgroundHandler(
@@ -424,17 +423,17 @@ you should push page with TransparentMaterialPageRoute/TransparentCupertinoPageR
   );
 ```
 
-![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/gesture_page.gif)
+![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/gesture_page.gif)
 
 ## Border BorderRadius Shape
 
 ExtendedImage
 
-| parameter | description | default |
-| ------ | ------ | ------ |
-| border | BoxShape.circle and BoxShape.rectangle,If this is [BoxShape.circle] then [borderRadius] is ignored. | - |
-| borderRadius | If non-null, the corners of this box are rounded by this [BorderRadius].,Applies only to boxes with rectangular shapes; ignored if [shape] is not [BoxShape.rectangle]. | - |
-| shape | BoxShape.circle and BoxShape.rectangle,If this is [BoxShape.circle] then [borderRadius] is ignored. | - |
+| parameter    | description                                                                                                                                                             | default |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| border       | BoxShape.circle and BoxShape.rectangle,If this is [BoxShape.circle] then [borderRadius] is ignored.                                                                     | -       |
+| borderRadius | If non-null, the corners of this box are rounded by this [BorderRadius].,Applies only to boxes with rectangular shapes; ignored if [shape] is not [BoxShape.rectangle]. | -       |
+| shape        | BoxShape.circle and BoxShape.rectangle,If this is [BoxShape.circle] then [borderRadius] is ignored.                                                                     | -       |
 
 ```dart
 ExtendedImage.network(
@@ -484,7 +483,7 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 }
 ```
 
-![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/image.gif)
+![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/image.gif)
 
 ## Crop
 
@@ -506,7 +505,7 @@ ExtendedRawImage(
 
 [crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/crop_image_demo.dart)
 
-![img](https://github.com/fluttercandies/Flutter_Candies/tree/master/gif/extended_image/crop.gif)
+![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/crop.gif)
 
 ## Paint
 
@@ -514,10 +513,10 @@ provide BeforePaintImage and AfterPaintImage, you will have the chance to paint 
 
 ExtendedImage
 
-| parameter | description | default |
-| ------ | ------ | ------ |
-| beforePaintImage | you can paint anything if you want before paint image. | - |
-| afterPaintImage | you can paint anything if you want after paint image.| - |
+| parameter        | description                                            | default |
+| ---------------- | ------------------------------------------------------ | ------- |
+| beforePaintImage | you can paint anything if you want before paint image. | -       |
+| afterPaintImage  | you can paint anything if you want after paint image.  | -       |
 
 ```dart
   ExtendedImage.network(
@@ -554,13 +553,13 @@ ExtendedImage
 see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/paint_image_demo.dart)
 and [push to refresh header which is used in crop image demo](https://github.com/fluttercandies/extended_image/tree/master/example/lib/common/push_to_refresh_header.dart)
 
-![img](https://github.com/fluttercandies/Flutter_Candies/tree/master/gif/extended_image/paint.gif)
+![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/paint.gif)
 
 ## Other APIs
 
 ExtendedImage
 
-| parameter | description | default |
-| ------ | ------ | ------ |
-| enableMemoryCache | whether cache in PaintingBinding.instance.imageCache) | true |
-| clearMemoryCacheIfFailed | when failed to load image, whether clear memory cache.if ture, image will reload in next time. | true |
+| parameter                | description                                                                                    | default |
+| ------------------------ | ---------------------------------------------------------------------------------------------- | ------- |
+| enableMemoryCache        | whether cache in PaintingBinding.instance.imageCache)                                          | true    |
+| clearMemoryCacheIfFailed | when failed to load image, whether clear memory cache.if ture, image will reload in next time. | true    |
