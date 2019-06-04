@@ -1,6 +1,6 @@
-## [0.3.9]
+## [0.4.0]
 
-* support to pull to pop page
+* support to slide out page
 
 ## [0.3.8]
 
