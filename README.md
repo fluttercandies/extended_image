@@ -81,7 +81,9 @@ you can use ExtendedImage.network as same as official image.
 
 Extended Image provide 3 states(loading,completed,failed), you can define your state widget with 
 loadStateChanged call back.
+
 [loadStateChanged] is not only for network, if your image need long time to load,
+
 you can set enableLoadState(default value is ture for network and others are false) to ture
 
 ```dart
@@ -201,6 +203,7 @@ ExtendedImage
 | mode | image mode (none,gestrue) | none |
 | gestureConfig | config for image gesture | - |
 | onDoubleTap | call back of double tap  under ExtendedImageMode.Gesture| - |
+
 
 GestureConfig 
 
@@ -499,6 +502,7 @@ soureRect is which you want to show image rect.
 provide BeforePaintImage and AfterPaintImage, you will have the chance to paint things you want.
 
 ExtendedImage
+
 | parameter | description | default |
 | ------ | ------ | ------ |
 | beforePaintImage |  you can paint anything if you want before paint image.  | - |
@@ -545,6 +549,7 @@ ExtendedImage
 ## Other-APIs
 
 ExtendedImage
+
 | parameter | description | default |
 | ------ | ------ | ------ |
 | enableMemoryCache | whether cache in PaintingBinding.instance.imageCache) | true |
