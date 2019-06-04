@@ -37,8 +37,8 @@ class ExtendedImageSlidePage extends StatefulWidget {
 
 class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     with SingleTickerProviderStateMixin {
-  bool _absorbing = false;
-  bool get absorbing => _absorbing;
+  bool _ignoring = false;
+  bool get ignoring => _ignoring;
 
   Size _pageSize;
   Size get pageSize => _pageSize ?? context.size;
@@ -72,7 +72,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   void _bcakAnimation() {
     if (_backAnimationController.isCompleted) {
       setState(() {
-        _absorbing = false;
+        _ignoring = false;
       });
     }
   }
@@ -100,13 +100,13 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
                 offset: _offset,
                 pageSize: pageSize,
                 pageGestureAxis: widget.slideAxis);
-        _absorbing = true;
+        _ignoring = true;
       });
     }
   }
 
   void endSlide() {
-    if (mounted && _absorbing) {
+    if (mounted && _ignoring) {
       var popPage = widget.slideEndHandler?.call(_offset) ??
           defaultSlideEndHandler(
               offset: _offset,
@@ -116,7 +116,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
       if (popPage) {
         setState(() {
           _poping = true;
-          _absorbing = false;
+          _ignoring = false;
         });
         Navigator.pop(context);
       } else {
@@ -156,10 +156,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
                 scale: _backAnimationController.isAnimating
                     ? _bcakScaleAnimation.value
                     : _scale,
-                child: AbsorbPointer(
-                  absorbing: _absorbing,
-                  child: widget.child,
-                ),
+                child: widget.child,
               ),
             );
           }),
