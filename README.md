@@ -12,8 +12,8 @@ extended official image to support placeholder(loading)/ failed state, cache net
 - [extended_image](#extendedimage)
   - [Table of contents](#table-of-contents)
   - [Cache Network](#cache-network)
-    - [Simple Use](#simple-use)
-    - [Custom ExtendedNetworkImageProvider](#custom-extendednetworkimageprovider)
+    - [simple use](#simple-use)
+    - [use Extendednetworkimageprovider](#use-Extendednetworkimageprovider)
   - [Load State](#load-state)
     - [demo code](#demo-code)
   - [Zoom Pan](#zoom-pan)
@@ -32,7 +32,7 @@ extended official image to support placeholder(loading)/ failed state, cache net
 
 ## Cache Network
 
-### Simple Use
+### simple use
 
 you can use ExtendedImage.network as same as official image.
 
@@ -50,7 +50,7 @@ you can use ExtendedImage.network as same as official image.
               )
 ```
 
-### Custom ExtendedNetworkImageProvider
+### use Extendednetworkimageprovider
 
 [ExtendedNetworkImageProvider](https://github.com/fluttercandies/extended_image/blob/master/lib/src/extended_network_image_provider.dart)
 
@@ -73,10 +73,10 @@ you can use ExtendedImage.network as same as official image.
 | ----------- | ------------------------------------------------------------------------------------- | ------------------- |
 | url         | The URL from which the image will be fetched.                                         | required            |
 | scale       | The scale to place in the [ImageInfo] object of the image.                            | 1.0                 |
-| headers     | The HTTP headers that will be used with [HttpClient.get] to fetch image from network. |                     |
+| headers     | The HTTP headers that will be used with [HttpClient.get] to fetch image from network. | -                     |
 | cache       | whether cache image to local                                                          | false               |
 | retries     | the time to retry to request                                                          | 3                   |
-| timeLimit   | time limit to request image                                                           |                     |
+| timeLimit   | time limit to request image                                                           | -                     |
 | timeRetry   | the time duration to retry to request                                                 | milliseconds: 100   |
 | cancelToken | token to cancel network request                                                       | CancellationToken() |
 
@@ -85,7 +85,7 @@ you can use ExtendedImage.network as same as official image.
 Extended Image provide 3 states(loading,completed,failed), you can define your state widget with
 loadStateChanged call back.
 
-[loadStateChanged] is not only for network, if your image need long time to load,
+loadStateChanged is not only for network, if your image need long time to load,
 you can set enableLoadState(default value is ture for network and others are false) to ture
 
 ```dart
@@ -341,7 +341,7 @@ ExtendedImageGesturePageView.builder(
 
 ## Slide Out Page
 
-Extended Image support to slide out page, like webchat,掘金.
+Extended Image support to slide out page as WeChat.
 
 ### include your page in ExtendedImageSlidePage
 
