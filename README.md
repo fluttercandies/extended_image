@@ -9,27 +9,27 @@ extended official image to support placeholder(loading)/ failed state, cache net
 
 ## Table of contents
 
-- [Cache Network](#Cache Network)
+- [Cache Network](#Cache-Network)
 
-- [Load State](#Load State)
+- [Load State](#Load-State)
 
-- [Zoom Pan](#Zoom Pan)
+- [Zoom Pan](#Zoom-Pan)
 
-- [Photo View](#Photo View)
+- [Photo View](#Photo-View)
 
-- [Slide Out Page](#Slide Out Page)
+- [Slide Out Page](#Slide-Out-Page)
 
-- [Border BorderRadius Shape](#Border BorderRadius Shape)
+- [Border BorderRadius Shape](#Border-BorderRadius-Shape)
 
-- [Clear Save](#Clear Save)
+- [Clear Save](#Clear-Save)
 
 - [Crop](#Crop)
 
 - [Paint](#Paint)
 
-- [Other APIs](#Other APIs)
+- [Other APIs](#Other-APIs)
 
-## Cache Network
+## Cache-Network
 
 ### Simple Use
 you can use ExtendedImage.network as same as official image.
@@ -77,7 +77,7 @@ you can use ExtendedImage.network as same as official image.
 | cancelToken | token to cancel network request | CancellationToken() |
 
 
-## Load State
+## Load-State
 
 Extended Image provide 3 states(loading,completed,failed), you can define your state widget with 
 loadStateChanged call back.
@@ -192,7 +192,7 @@ abstract class ExtendedImageState {
 ```
 ![](https://github.com/fluttercandies/Flutter_Candies/tree/master/gif/extended_image/custom.gif)
 
-## Zoom Pan
+## Zoom-Pan
 
 ExtendedImage
 
@@ -274,7 +274,7 @@ GestureConfig
 
 ![](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/zoom.gif)
 
-## Photo View
+## Photo-View
 
 ExtendedImageGesturePageView is the same as PageView and it's made for show  zoom/pan image.
 
@@ -329,7 +329,7 @@ GestureConfig
 
 ![](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/photo_view.gif)
 
-## Slide Out Page
+## Slide-Out-Page
 
 Extended Image support to slide out page, like webchat,掘金.
 
@@ -416,7 +416,7 @@ you should push page with TransparentMaterialPageRoute/TransparentCupertinoPageR
 ![](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/gesture_page.gif)
 
 
-## Border BorderRadius Shape
+## Border-BorderRadius-Shape
 
 ExtendedImage
 
@@ -439,7 +439,7 @@ ExtendedImage.network(
               ),
 ```
 
-## Clear Save
+## Clear-Save
 
 ### clear
 to clear disk cached , call clearDiskCachedImages method.
@@ -542,7 +542,7 @@ ExtendedImage
  ![](https://github.com/fluttercandies/Flutter_Candies/tree/master/gif/extended_image/paint.gif)
 
 
-## Other APIs
+## Other-APIs
 
 ExtendedImage
 | parameter | description | default |
