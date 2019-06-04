@@ -84,6 +84,7 @@ you can use ExtendedImage.network as same as official image.
 
 Extended Image provide 3 states(loading,completed,failed), you can define your state widget with
 loadStateChanged call back.
+
 [loadStateChanged] is not only for network, if your image need long time to load,
 you can set enableLoadState(default value is ture for network and others are false) to ture
 
@@ -108,6 +109,7 @@ enum LoadState {
 ```
 
 ExtendedImageState(LoadStateChanged call back)
+
 | parameter/method | description | default |
 | ------ | ------ | ------ |
 | extendedImageInfo | image info| - |
@@ -200,13 +202,16 @@ ExtendedImage.network(
 ## Zoom Pan
 
 ExtendedImage
+
 | parameter | description | default |
 | ------ | ------ | ------ |
 | mode | image mode (none,gestrue) | none |
 | gestureConfig | config for image gesture | - |
 | onDoubleTap | call back of double tap under ExtendedImageMode.Gesture| - |
 
+
 GestureConfig
+
 | parameter | description | default |
 | ------ | ------ | ------ |
 | minScale | min scale | 0.8 |
@@ -286,6 +291,7 @@ ExtendedImageGesturePageView is the same as PageView and it's made for show zoom
 if you have cache the gesture, remember call clearGestureDetailsCache() method at the right time.(for example,page view page is disposed)
 
 GestureConfig
+
 | parameter | description | default |
 | ------ | ------ | ------ |
 | cacheGesture | save Gesture state (for example in page view, so that the state will not change when scroll back),remember clearGestureDetailsCache at right time | false |
@@ -353,6 +359,7 @@ var page = ExtendedImageSlidePage(
 ```
 
 ExtendedImageGesturePage
+
 | parameter | description | default |
 | ------ | ------ | ------ |
 | child | The [child] contained by the ExtendedImageGesturePage. | - |
@@ -422,6 +429,7 @@ you should push page with TransparentMaterialPageRoute/TransparentCupertinoPageR
 ## Border BorderRadius Shape
 
 ExtendedImage
+
 | parameter | description | default |
 | ------ | ------ | ------ |
 | border | BoxShape.circle and BoxShape.rectangle,If this is [BoxShape.circle] then [borderRadius] is ignored. | - |
@@ -481,6 +489,7 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 ## Crop
 
 get your raw image by [Load State](#Load State), and crop image by setting soureRect.
+
 [ExtendedRawImage](https://github.com/fluttercandies/extended_image/blob/master/lib/src/image/extended_raw_image.dart)
 soureRect is which you want to show image rect.
 
@@ -504,6 +513,7 @@ ExtendedRawImage(
 provide BeforePaintImage and AfterPaintImage, you will have the chance to paint things you want.
 
 ExtendedImage
+
 | parameter | description | default |
 | ------ | ------ | ------ |
 | beforePaintImage | you can paint anything if you want before paint image. | - |
@@ -549,6 +559,7 @@ and [push to refresh header which is used in crop image demo](https://github.com
 ## Other APIs
 
 ExtendedImage
+
 | parameter | description | default |
 | ------ | ------ | ------ |
 | enableMemoryCache | whether cache in PaintingBinding.instance.imageCache) | true |
