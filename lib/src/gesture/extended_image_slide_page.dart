@@ -3,6 +3,17 @@ import 'package:flutter/material.dart';
 import '../extended_image_typedef.dart';
 import 'extended_image_gesture_utils.dart';
 
+enum SlideAxis {
+  both,
+  horizontal,
+  vertical,
+}
+
+enum SlideType {
+  wholePage,
+  onlyImage,
+}
+
 class ExtendedImageSlidePage extends StatefulWidget {
   ///The [child] contained by the ExtendedImageGesturePage.
   final Widget child;
@@ -24,13 +35,17 @@ class ExtendedImageSlidePage extends StatefulWidget {
   ///reset page position when slide end(not pop page)
   final Duration resetPageDuration;
 
+  /// slide whole page or only image
+  final SlideType slideType;
+
   ExtendedImageSlidePage(
       {this.child,
       this.slidePageBackgroundHandler,
       this.slideScaleHandler,
       this.slideEndHandler,
       this.slideAxis: SlideAxis.both,
-      this.resetPageDuration: const Duration(milliseconds: 500)});
+      this.resetPageDuration: const Duration(milliseconds: 500),
+      this.slideType: SlideType.onlyImage});
   @override
   ExtendedImageSlidePageState createState() => ExtendedImageSlidePageState();
 }
@@ -44,10 +59,18 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   Size get pageSize => _pageSize ?? context.size;
 
   AnimationController _backAnimationController;
+  AnimationController get backAnimationController => _backAnimationController;
   Animation<Offset> _backOffsetAnimation;
-  Animation<double> _bcakScaleAnimation;
+  Animation<Offset> get backOffsetAnimation => _backOffsetAnimation;
+  Animation<double> _backScaleAnimation;
+  Animation<double> get backScaleAnimation => _backScaleAnimation;
   Offset _offset = Offset.zero;
+  Offset get offset => _backAnimationController.isAnimating
+      ? _backOffsetAnimation.value
+      : _offset;
   double _scale = 1.0;
+  double get scale =>
+      _backAnimationController.isAnimating ? backScaleAnimation.value : _scale;
   bool _poping = false;
 
   @override
@@ -55,7 +78,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     super.initState();
     _backAnimationController =
         AnimationController(vsync: this, duration: widget.resetPageDuration);
-    _backAnimationController.addListener(_bcakAnimation);
+    _backAnimationController.addListener(_backAnimation);
   }
 
   @override
@@ -69,39 +92,48 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     super.didUpdateWidget(oldWidget);
   }
 
-  void _bcakAnimation() {
-    if (_backAnimationController.isCompleted) {
+  ExtendedImageGestureState _extendedImageGestureState;
+  void _backAnimation() {
+    if (mounted) {
       setState(() {
-        _ignoring = false;
+        if (_backAnimationController.isCompleted) _ignoring = false;
       });
+    }
+    if (widget.slideType == SlideType.onlyImage) {
+      _extendedImageGestureState?.slide();
     }
   }
 
   @override
   void dispose() {
     super.dispose();
-    _backAnimationController.removeListener(_bcakAnimation);
+    _backAnimationController.removeListener(_backAnimation);
     _backAnimationController.dispose();
   }
 
-  void slide(Offset delta) {
+  void slide(Offset delta,
+      {ExtendedImageGestureState extendedImageGestureState}) {
     if (_backAnimationController.isAnimating) return;
-    if (mounted) {
-      setState(() {
-        _offset = delta;
-        if (widget.slideAxis == SlideAxis.horizontal) {
-          _offset = Offset(delta.dx, 0.0);
-        } else if (widget.slideAxis == SlideAxis.vertical) {
-          _offset = Offset(0.0, delta.dy);
-        }
+    _offset = delta;
+    if (widget.slideAxis == SlideAxis.horizontal) {
+      _offset = Offset(delta.dx, 0.0);
+    } else if (widget.slideAxis == SlideAxis.vertical) {
+      _offset = Offset(0.0, delta.dy);
+    }
 
-        _scale = widget.slideScaleHandler?.call(_offset) ??
-            defaultSlideScaleHandler(
-                offset: _offset,
-                pageSize: pageSize,
-                pageGestureAxis: widget.slideAxis);
-        _ignoring = true;
-      });
+    _scale = widget.slideScaleHandler?.call(_offset) ??
+        defaultSlideScaleHandler(
+            offset: _offset,
+            pageSize: pageSize,
+            pageGestureAxis: widget.slideAxis);
+    _ignoring = true;
+    if (widget.slideType == SlideType.onlyImage) {
+      _extendedImageGestureState = extendedImageGestureState;
+      extendedImageGestureState.slide();
+    }
+
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -122,7 +154,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
       } else {
         _backOffsetAnimation = _backAnimationController
             .drive(Tween<Offset>(begin: _offset, end: Offset.zero));
-        _bcakScaleAnimation = _backAnimationController
+        _backScaleAnimation = _backAnimationController
             .drive(Tween<double>(begin: _scale, end: 1.0));
         _offset = Offset.zero;
         _scale = 1.0;
@@ -136,30 +168,32 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   Widget build(BuildContext context) {
     _pageSize = MediaQuery.of(context).size;
     final Color pageColor =
-        widget.slidePageBackgroundHandler?.call(_offset, pageSize) ??
+        widget.slidePageBackgroundHandler?.call(offset, pageSize) ??
             defaultSlidePageBackgroundHandler(
-                offset: _offset,
+                offset: offset,
                 pageSize: pageSize,
                 color: Theme.of(context).dialogBackgroundColor,
                 pageGestureAxis: widget.slideAxis);
 
-    Widget result = Container(
+    Widget result = widget.child;
+    if (widget.slideType == SlideType.wholePage) {
+      result = Transform.translate(
+        offset: offset,
+        child: Transform.scale(
+          scale: scale,
+          child: result,
+        ),
+      );
+    }
+
+    result = Container(
       color: _poping ? Colors.transparent : pageColor,
-      child: AnimatedBuilder(
-          animation: _backAnimationController,
-          builder: (context, b) {
-            return Transform.translate(
-              offset: _backAnimationController.isAnimating
-                  ? _backOffsetAnimation.value
-                  : _offset,
-              child: Transform.scale(
-                scale: _backAnimationController.isAnimating
-                    ? _bcakScaleAnimation.value
-                    : _scale,
-                child: widget.child,
-              ),
-            );
-          }),
+      child: result,
+    );
+
+    result = IgnorePointer(
+      ignoring: _ignoring,
+      child: result,
     );
 
     return result;

@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:flutter/material.dart';
 
+import 'extended_image_slide_page.dart';
+
 ///
 ///  extended_image_gesture_utils.dart
 ///  create by zmtzawqlp on 2019/4/3
@@ -56,6 +58,8 @@ abstract class ExtendedImageGestureState {
   Offset get pointerDownPosition;
 
   void handleDoubleTap({double scale, Offset doubleTapPosition});
+
+  void slide();
 }
 
 class GestureDetails {
@@ -417,12 +421,6 @@ double defaultSlideScaleHandler(
     scale = offset.dy.abs() / (pageSize.height / 2.0);
   }
   return max(1.0 - scale, 0.8);
-}
-
-enum SlideAxis {
-  both,
-  horizontal,
-  vertical,
 }
 
 ///ExtendedImageGesturePage
