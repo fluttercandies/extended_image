@@ -1,3 +1,7 @@
+## [0.4.1]
+
+* add SlideType to support slide only image or whole page[ExtendedImageSlidePage]
+
 ## [0.4.0]
 
 * support to slide out page

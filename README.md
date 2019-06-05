@@ -21,7 +21,8 @@ extended official image which support placeholder(loading)/ failed state,cache n
   - [Photo View](#photo-view)
   - [Slide Out Page](#slide-out-page)
     - [include your page in ExtendedImageSlidePage](#include-your-page-in-extendedimageslidepage)
-    - [push with transparent page](#push-with-transparent-page)
+    - [make sure your page background is transparent](#make-sure-your-page-background-is-transparent)   
+    - [push with transparent page route](#push-with-transparent-page-route)
   - [Border BorderRadius Shape](#border-borderradius-shape)
   - [Clear Save](#clear-save)
     - [clear](#clear)
@@ -87,6 +88,8 @@ loadStateChanged call back.
 
 loadStateChanged is not only for network, if your image need long time to load,
 you can set enableLoadState(default value is ture for network and others are false) to ture
+
+![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/custom.gif)
 
 ```dart
 /// custom load state widget if you want
@@ -197,9 +200,9 @@ ExtendedImage.network(
 )
 ```
 
-![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/custom.gif)
-
 ## Zoom Pan
+
+![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/zoom.gif)
 
 ExtendedImage
 
@@ -281,13 +284,13 @@ onDoubleTap: (ExtendedImageGestureState state) {
 },
 ```
 
-![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/zoom.gif)
-
 ## Photo View
 
 ExtendedImageGesturePageView is the same as PageView and it's made for show zoom/pan image.
 
 if you have cache the gesture, remember call clearGestureDetailsCache() method at the right time.(for example,page view page is disposed)
+
+![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/photo_view.gif)
 
 GestureConfig
 
@@ -336,24 +339,26 @@ ExtendedImageGesturePageView.builder(
 ),
 ```
 
-![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/photo_view.gif)
 
 ## Slide Out Page
 
 Extended Image support to slide out page as WeChat.
 
+![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/slide.gif)
+
 ### include your page in ExtendedImageSlidePage
 
 ```dart
-var page = ExtendedImageSlidePage(
-  child: PicSwiper(
-    index,
-    listSourceRepository
-        .map<PicSwiperItem>(
-            (f) => PicSwiperItem(f.imageUrl, des: f.title))
-        .toList(),
-  ),
-  //pageGestureAxis: PageGestureAxis.horizontal,
+ var page = ExtendedImageSlidePage(
+      child: PicSwiper(
+          index,
+          listSourceRepository
+          .map<PicSwiperItem>(
+          (f) => PicSwiperItem(f.imageUrl, des: f.title))
+          .toList(),
+       ),
+      slideAxis: SlideAxis.both,
+      slideType: SlideType.onlyImage,
 );
 ```
 
@@ -365,8 +370,10 @@ ExtendedImageGesturePage
 | slidePageBackgroundHandler | build background when slide page                       | defaultSlidePageBackgroundHandler |
 | slideScaleHandler          | custom scale of page when slide page                   | defaultSlideScaleHandler          |
 | slideEndHandler            | call back of slide end,decide whether pop page         | defaultSlideEndHandler            |
-| slideAxis                  | axis of slide(both,horizontal,vertical)                | both                              |
+| slideAxis                  | axis of slide(both,horizontal,vertical)                | SlideAxis.both                              |
 | resetPageDuration          | reset page position when slide end(not pop page)       | milliseconds: 500                 |
+| slideType                  |  slide whole page or only image                        | SlideType.onlyImage   
+
 
 ```dart
 Color defaultSlidePageBackgroundHandler(
@@ -410,7 +417,12 @@ double defaultSlideScaleHandler(
 }
 ```
 
-### push with transparent page
+### make sure your page background is transparent
+
+if you use ExtendedImageSlidePage and slideType =SlideType.onlyImage,
+make sure your page background is transparent
+
+### push with transparent page route
 
 you should push page with TransparentMaterialPageRoute/TransparentCupertinoPageRoute
 
@@ -422,8 +434,7 @@ you should push page with TransparentMaterialPageRoute/TransparentCupertinoPageR
         : TransparentCupertinoPageRoute(builder: (_) => page),
   );
 ```
-
-![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/gesture_page.gif)
+[crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/photo_view_demo.dart)
 
 ## Border BorderRadius Shape
 
@@ -447,6 +458,8 @@ ExtendedImage.network(
   borderRadius: BorderRadius.all(Radius.circular(30.0)),
 ),
 ```
+
+![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/image.gif)
 
 ## Clear Save
 
@@ -483,14 +496,14 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 }
 ```
 
-![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/image.gif)
-
 ## Crop
 
 get your raw image by [Load State](#Load State), and crop image by setting soureRect.
 
 [ExtendedRawImage](https://github.com/fluttercandies/extended_image/blob/master/lib/src/image/extended_raw_image.dart)
 soureRect is which you want to show image rect.
+
+![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/crop.gif)
 
 ```dart
 ExtendedRawImage(
@@ -505,11 +518,12 @@ ExtendedRawImage(
 
 [crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/crop_image_demo.dart)
 
-![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/crop.gif)
 
 ## Paint
 
-provide BeforePaintImage and AfterPaintImage, you will have the chance to paint things you want.
+provide BeforePaintImage and AfterPaintImage callback, you will have the chance to paint things you want.
+
+![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/paint.gif)
 
 ExtendedImage
 
@@ -552,8 +566,6 @@ ExtendedImage
 
 see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/paint_image_demo.dart)
 and [push to refresh header which is used in crop image demo](https://github.com/fluttercandies/extended_image/tree/master/example/lib/common/push_to_refresh_header.dart)
-
-![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/paint.gif)
 
 ## Other APIs
 

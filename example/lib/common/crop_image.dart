@@ -119,7 +119,8 @@ class CropImage extends StatelessWidget {
                         (f) => PicSwiperItem(f.imageUrl, des: f.title))
                     .toList(),
               ),
-              //pageGestureAxis: PageGestureAxis.horizontal,
+              slideAxis: SlideAxis.both,
+              slideType: SlideType.onlyImage,
             );
 
             Navigator.push(

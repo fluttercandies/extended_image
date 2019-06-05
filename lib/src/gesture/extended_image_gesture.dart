@@ -137,8 +137,9 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
       if (delta > minGesturePageDelta && updateGesture) {
         _updatePageGestureStartingOffset ??= details.focalPoint;
-        widget.extendedImageSlidePageState
-            .slide(details.focalPoint - _updatePageGestureStartingOffset);
+        widget.extendedImageSlidePageState.slide(
+            details.focalPoint - _updatePageGestureStartingOffset,
+            extendedImageGestureState: this);
         if (widget.extendedImageSlidePageState.ignoring) return;
       }
     }
@@ -289,12 +290,23 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       child: image,
     );
 
-//    if (_gestureConfig.inPageView) {
     image = Listener(
       child: image,
       onPointerDown: _handlePointerDown,
     );
-    // }
+
+    if (widget.extendedImageSlidePageState != null &&
+        widget.extendedImageSlidePageState.widget.slideType ==
+            SlideType.onlyImage) {
+      var extendedImageSlidePageState = widget.extendedImageSlidePageState;
+      image = Transform.translate(
+        offset: extendedImageSlidePageState.offset,
+        child: Transform.scale(
+          scale: extendedImageSlidePageState.scale,
+          child: image,
+        ),
+      );
+    }
 
     return image;
   }
@@ -329,6 +341,13 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   @override
   // TODO: implement pointerDownPosition
   Offset get pointerDownPosition => _pointerDownPosition;
+
+  @override
+  void slide() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 }
 
 Map<Object, GestureDetails> _gestureDetailsCache =
