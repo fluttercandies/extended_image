@@ -6,6 +6,8 @@ extended official image which support placeholder(loading)/ failed state,cache n
 
 - [Flutter 什么功能都有的 Image](https://juejin.im/post/5c867112f265da2dd427a340)
 - [Flutter 可以缩放拖拽的图片](https://juejin.im/post/5ca758916fb9a05e1c4d01bb)
+- [Flutter 仿掘金微信图片滑动退出页面效果](https://juejin.im/post/5cf62ab0e51d45776031afb2)
+
 
 ## Table of contents
 
