@@ -2,44 +2,20 @@
 
 [![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image)
 
-English | [简体中文](https://github.com/fluttercandies/extended_image/README_zh_CN.md)
+ [English](https://github.com/fluttercandies/extended_image/README.md) | 简体中文
 
-extended official image which support placeholder(loading)/ failed state,cache network,zoom pan image,photo view,slide out page,crop,save,paint etc.
+`extended_image`基于官方的`Image`扩展而来，支持图片加载中/加载失败状态展示、缓存网络图片、缩放、平移、照片墙、滑动退出、剪裁、保存、自定义绘制等。
 
 - [Flutter 什么功能都有的 Image](https://juejin.im/post/5c867112f265da2dd427a340)
 - [Flutter 可以缩放拖拽的图片](https://juejin.im/post/5ca758916fb9a05e1c4d01bb)
 - [Flutter 仿掘金微信图片滑动退出页面效果](https://juejin.im/post/5cf62ab0e51d45776031afb2)
 
 
-## Table of contents
+## 目录
 
-- [extended_image](#extendedimage)
-  - [Table of contents](#table-of-contents)
-  - [Cache Network](#cache-network)
-    - [simple use](#simple-use)
-    - [use Extendednetworkimageprovider](#use-Extendednetworkimageprovider)
-  - [Load State](#load-state)
-    - [demo code](#demo-code)
-  - [Zoom Pan](#zoom-pan)
-    - [double tap animation](#double-tap-animation)
-  - [Photo View](#photo-view)
-  - [Slide Out Page](#slide-out-page)
-    - [include your page in ExtendedImageSlidePage](#include-your-page-in-extendedimageslidepage)
-    - [make sure your page background is transparent](#make-sure-your-page-background-is-transparent)   
-    - [push with transparent page route](#push-with-transparent-page-route)
-  - [Border BorderRadius Shape](#border-borderradius-shape)
-  - [Clear Save](#clear-save)
-    - [clear](#clear)
-    - [save network](#save-network)
-  - [Crop](#crop)
-  - [Paint](#paint)
-  - [Other APIs](#other-apis)
+[TOC]
 
-## Cache Network
-
-### simple use
-
-you can use ExtendedImage.network as same as official image.
+`ExtendedImage.network` 参考官方的和官方的[Image.network](https://api.flutter.dev/flutter/widgets/Image/Image.network.html) 实现，因此可以像官方一样使用。
 
 ```dart
 ExtendedImage.network(
@@ -55,7 +31,7 @@ ExtendedImage.network(
 )
 ```
 
-### use ExtendedNetworkImageProvider
+### 使用 ExtendedNetworkImageProvider
 
 [ExtendedNetworkImageProvider](https://github.com/fluttercandies/extended_image_library/blob/master/lib/src/extended_network_image_provider.dart)
 
@@ -74,24 +50,24 @@ ExtendedImage.network(
           cancelToken = cancelToken ?? CancellationToken();
 ```
 
-| parameter   | description                                                                           | default             |
+| 参数名  | 描述                                                                         | 默认值          |
 | ----------- | ------------------------------------------------------------------------------------- | ------------------- |
-| url         | The URL from which the image will be fetched.                                         | required            |
-| scale       | The scale to place in the [ImageInfo] object of the image.                            | 1.0                 |
-| headers     | The HTTP headers that will be used with [HttpClient.get] to fetch image from network. | -                     |
-| cache       | whether cache image to local                                                          | false               |
-| retries     | the time to retry to request                                                          | 3                   |
+| url         | 图片地址.                                       | required            |
+| scale       | 放在[ImageInfo] 对象中的图片比例                    | 1.0                 |
+| headers     | \<[HttpHeaders](https://api.flutter.dev/flutter/dart-io/HttpHeaders-class.html)> 使用[HttpClient.get]获取图片的请求头 | -                     |
+| cache       | 是否缓存图片到本地                                               | false               |
+| retries     | 加载失败重试的次数                                                 | 3                   |
 | timeLimit   | time limit to request image                                                           | -                     |
-| timeRetry   | the time duration to retry to request                                                 | milliseconds: 100   |
-| cancelToken | token to cancel network request                                                       | CancellationToken() |
+| timeRetry   | 加载失败重试的时间间隔                                  | milliseconds: 100   |
+| cancelToken | 用于取消请求的token                                                       | CancellationToken() |
 
-## Load State
+## 加载状态
 
-Extended Image provide 3 states(loading,completed,failed), you can define your state widget with
-loadStateChanged call back.
+`Extended Image`提供 三种状态：加载中、完成、失败。你可以使用`loadStateChanged`回调自定义状态微件。
 
-loadStateChanged is not only for network, if your image need long time to load,
-you can set enableLoadState(default value is ture for network and others are false) to ture
+`loadStateChanged`不仅适用于网络加载，更适用于一些语言长时间加载的图片任务，此时你就可以将`loadStateChanged`设置为`true`
+
+`loadStateChanged`默认值只有在加载网络资源时为`true`，其他情况都为`false`.
 
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/custom.gif)
 
@@ -115,17 +91,17 @@ enum LoadState {
   final bool enableLoadState;
 ```
 
-ExtendedImageState(LoadStateChanged call back)
+### ExtendedImageState(LoadStateChanged callback)
 
-| parameter/method             | description                                                                                                                                   | default |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| extendedImageInfo            | image info                                                                                                                                    | -       |
-| extendedImageLoadState       | LoadState(loading,completed,failed)                                                                                                           | -       |
-| returnLoadStateChangedWidget | if this is ture, return widget which from LoadStateChanged fucntion immediately(width/height/gesture/border/shape etc, will not effect on it) | -       |
-| imageProvider                | ImageProvider                                                                                                                                 | -       |
-| invertColors                 | invertColors                                                                                                                                  | -       |
-| imageStreamKey               | key of image                                                                                                                                  | -       |
-| reLoadImage()                | if image load failed,you can reload image by call it                                                                                          | -       |
+| 参数/方法                    | 描述                                                         | 默认值 |
+| ---------------------------- | ------------------------------------------------------------ | ------ |
+| extendedImageInfo            | 图片信息                                                     | -      |
+| extendedImageLoadState       | 加载状态，LoadState(loading,completed,failed)                | -      |
+| returnLoadStateChangedWidget | 如果是`true`，则立即返回一个由`LoadStateChanged`方法构建的微件(width/height/gesture/border/shape 等属性将不生效) | -      |
+| imageProvider                | ImageProvider                                                | -      |
+| invertColors                 | invertColors                                                 | -      |
+| imageStreamKey               | key                                                          | -      |
+| reLoadImage()                | 加载失败时重新加载的回调                                     | -      |
 
 ```dart
 abstract class ExtendedImageState {
@@ -204,30 +180,30 @@ ExtendedImage.network(
 )
 ```
 
-## Zoom Pan
+## 移动和缩放
 
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/zoom.gif)
 
-ExtendedImage
+### ExtendedImage
 
 | parameter     | description                                             | default |
 | ------------- | ------------------------------------------------------- | ------- |
-| mode          | image mode (none,gestrue)                               | none    |
+| mode          | 手势模式 ：`none`不接受手势，`gestrue`接受手势          | none    |
 | gestureConfig | config for image gesture                                | -       |
 | onDoubleTap   | call back of double tap under ExtendedImageMode.Gesture | -       |
 
-GestureConfig
+### GestureConfig
 
-| parameter         | description                                                                                                                                       | default         |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-| minScale          | min scale                                                                                                                                         | 0.8             |
-| animationMinScale | the min scale for zooming then animation back to minScale when scale end                                                                          | minScale \_ 0.8 |
-| maxScale          | max scale                                                                                                                                         | 5.0             |
-| animationMaxScale | the max scale for zooming then animation back to maxScale when scale end                                                                          | maxScale \_ 1.2 |
-| speed             | speed for zoom/pan                                                                                                                                | 1.0             |
-| inertialSpeed     | inerial speed for zoom/pan                                                                                                                        | 100             |
-| cacheGesture      | save Gesture state (for example in page view, so that the state will not change when scroll back),remember clearGestureDetailsCache at right time | false           |
-| inPageView        | whether in ExtendedImageGesturePageView                                                                                                           | false           |
+| parameter         | description                                                  | default         |
+| ----------------- | ------------------------------------------------------------ | --------------- |
+| minScale          | 最小缩放倍数                                                 | 0.8             |
+| animationMinScale | 缩放到最小比例时用于执行回弹动画的缩放比例                   | minScale \_ 0.8 |
+| maxScale          | 最大缩放比例                                                 | 5.0             |
+| animationMaxScale | 缩放到最大比例时用于执行回弹动画的缩放比例                   | maxScale \_ 1.2 |
+| speed             | 缩放/移动的速度(相对于实际缩放大小/移动距离的倍数)           | 1.0             |
+| inertialSpeed     | inerial speed for zoom/pan                                   | 100             |
+| cacheGesture      | 是否保存手势状态，例如在`PageView`中，对于一个缩放过的图片，滑到下一张在回来之后是否保存之前缩放的状态。设置保存状态后要在合适的时机清除这些状态(`clearGestureDetailsCache`) | false           |
+| inPageView        | 是否将图片放在` ExtendedImageGesturePageView`中              | false           |
 
 ```dart
 ExtendedImage.network(
@@ -248,7 +224,7 @@ ExtendedImage.network(
 )
 ```
 
-### double tap animation
+### 双击动画
 
 ```dart
 onDoubleTap: (ExtendedImageGestureState state) {
@@ -288,20 +264,20 @@ onDoubleTap: (ExtendedImageGestureState state) {
 },
 ```
 
-## Photo View
+## 图片墙
 
-ExtendedImageGesturePageView is the same as PageView and it's made for show zoom/pan image.
+`ExtendedImageGesturePageView` 是一个和` PageView `相似的微件，但是增加了移动和缩放的功能。
 
-if you have cache the gesture, remember call clearGestureDetailsCache() method at the right time.(for example,page view page is disposed)
+如果你保存了手势状态，那么一定要记得__清理这些手势状态__ (例如在PageView.dispose中清理)。
 
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/photo_view.gif)
 
-GestureConfig
+`GestureConfig`
 
-| parameter    | description                                                                                                                                       | default |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| cacheGesture | save Gesture state (for example in page view, so that the state will not change when scroll back),remember clearGestureDetailsCache at right time | false   |
-| inPageView   | whether in ExtendedImageGesturePageView                                                                                                           | false   |
+| parameter    | description                                                  | default |
+| ------------ | ------------------------------------------------------------ | ------- |
+| cacheGesture | 是否保存手势状态，例如在`PageView`中，对于一个缩放过的图片，滑到下一张在回来之后是否保存之前缩放的状态。设置保存状态后要在合适的时机清除这些状态(`clearGestureDetailsCache`) | false   |
+| inPageView   | 是否在`ExtendedImageGesturePageView`中使用                   | false   |
 
 ```dart
 ExtendedImageGesturePageView.builder(
@@ -346,11 +322,11 @@ ExtendedImageGesturePageView.builder(
 
 ## Slide Out Page
 
-Extended Image support to slide out page as WeChat.
+`Extended Image`支持仿微信/掘金的图片滑动退出预览
 
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/slide.gif)
 
-### include your page in ExtendedImageSlidePage
+### 将你的页面包在 `ExtendedImageSlidePage`中
 
 ```dart
  var page = ExtendedImageSlidePage(
@@ -366,17 +342,19 @@ Extended Image support to slide out page as WeChat.
 );
 ```
 
-ExtendedImageGesturePage
+__`ExtendedImageGesturePage`__
 
-| parameter                  | description                                            | default                           |
-| -------------------------- | ------------------------------------------------------ | --------------------------------- |
-| child                      | The [child] contained by the ExtendedImageGesturePage. | -                                 |
-| slidePageBackgroundHandler | build background when slide page                       | defaultSlidePageBackgroundHandler |
-| slideScaleHandler          | custom scale of page when slide page                   | defaultSlideScaleHandler          |
-| slideEndHandler            | call back of slide end,decide whether pop page         | defaultSlideEndHandler            |
-| slideAxis                  | axis of slide(both,horizontal,vertical)                | SlideAxis.both                              |
-| resetPageDuration          | reset page position when slide end(not pop page)       | milliseconds: 500                 |
-| slideType                  |  slide whole page or only image                        | SlideType.onlyImage   
+| 参数                       | 描述                                         | 默认值                            |
+| -------------------------- | -------------------------------------------- | --------------------------------- |
+| child                      | 作为`ExtendedImageGesturePage`子微件         | -                                 |
+| slidePageBackgroundHandler | 定义滑动页面外的背景                         | defaultSlidePageBackgroundHandler |
+| slideScaleHandler          | 定义当前滑动页面的缩放比                     | defaultSlideScaleHandler          |
+| slideEndHandler            | 滑动结束（退出页面时触发）的回调            | defaultSlideEndHandler            |
+| slideAxis                  | 滑动方向：both,horizontal,vertical   | SlideAxis.both                    |
+| resetPageDuration          | 滑动结束（但没有触发退出操作）松开手指的回调 | milliseconds: 500                 |
+| slideType                  |  滑动整个页面(wholePage)/只滑动图片(onlyImage)                        | SlideType.onlyImage |
+
+
 
 
 ```dart
@@ -421,14 +399,13 @@ double defaultSlideScaleHandler(
 }
 ```
 
-### make sure your page background is transparent
+### 首先保证你的页面背景透明
 
-if you use ExtendedImageSlidePage and slideType =SlideType.onlyImage,
-make sure your page background is transparent
+如果你使用了`ExtendedImageSlidePage` 并且设置`slideType = SlideType.onlyImage`,那么请务必确认你的页面背景设置为透明。
 
-### push with transparent page route
+### push 一个透明背景的路由
 
-you should push page with TransparentMaterialPageRoute/TransparentCupertinoPageRoute
+使用 `TransparentMaterialPageRoute`/`TransparentCupertinoPageRoute`来push一个新页面
 
 ```dart
   Navigator.push(
@@ -438,17 +415,21 @@ you should push page with TransparentMaterialPageRoute/TransparentCupertinoPageR
         : TransparentCupertinoPageRoute(builder: (_) => page),
   );
 ```
+
+
 [crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/photo_view_demo.dart)
+
+
 
 ## Border BorderRadius Shape
 
-ExtendedImage
+`ExtendedImage`
 
-| parameter    | description                                                                                                                                                             | default |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| border       | BoxShape.circle and BoxShape.rectangle,If this is [BoxShape.circle] then [borderRadius] is ignored.                                                                     | -       |
-| borderRadius | If non-null, the corners of this box are rounded by this [BorderRadius].,Applies only to boxes with rectangular shapes; ignored if [shape] is not [BoxShape.rectangle]. | -       |
-| shape        | BoxShape.circle and BoxShape.rectangle,If this is [BoxShape.circle] then [borderRadius] is ignored.                                                                     | -       |
+| 参数         | 描述                                                         | 默认值 |
+| ------------ | ------------------------------------------------------------ | ------ |
+| border       | `BoxShape.circle` /`BoxShape.rectangle`，如果设置了`BoxShape.circle`，那么`borderRadius`属性将会被忽略。 | -      |
+| borderRadius | 如果不为null，使用`BorderRadius`设置。仅适用于具有`shape = BoxShape.rectangle`; 如果`shape`不是`BoxShape.rectangle`则忽略。 | -      |
+| shape        | `BoxShape.circle` /`BoxShape.rectangle`，如果设置了`BoxShape.circle`，那么`borderRadius`属性将会被忽略。 | -      |
 
 ```dart
 ExtendedImage.network(
@@ -460,16 +441,16 @@ ExtendedImage.network(
   border: Border.all(color: Colors.red, width: 1.0),
   shape: boxShape,
   borderRadius: BorderRadius.all(Radius.circular(30.0)),
-),
+)
 ```
 
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/image.gif)
 
-## Clear Save
+## 清除缓存 / 保存图片
 
-### clear
+### 清除
 
-to clear disk cached , call clearDiskCachedImages method.
+清除磁盘缓存，调用`clearDiskCachedImages`方法即可
 
 ```dart
 // Clear the disk cache directory then return if it succeed.
@@ -477,7 +458,7 @@ to clear disk cached , call clearDiskCachedImages method.
 Future<bool> clearDiskCachedImages({Duration duration})
 ```
 
-to clear memory cache , call clearMemoryImageCache method.
+清除内存缓存，调用`clearMemoryImageCache`即可
 
 ```dart
 ///clear all of image in memory
@@ -487,9 +468,9 @@ to clear memory cache , call clearMemoryImageCache method.
  getMemoryImageCache() ;
 ```
 
-### save network
+### 保存网络图片
 
-call saveNetworkImageToPhoto and save image with image_picker_saver
+调用 `saveNetworkImageToPhoto`方法并使用 `ImagePickerSaver`来保存图片。
 
 ```dart
 ///save netwrok image to photo
@@ -500,12 +481,12 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 }
 ```
 
-## Crop
+## Crop(剪裁)
 
-get your raw image by [Load State](#Load State), and crop image by setting soureRect.
+使用[Load State](#Load State)获得原始图像，然后设置`soureRect`剪裁图片。
 
 [ExtendedRawImage](https://github.com/fluttercandies/extended_image/blob/master/lib/src/image/extended_raw_image.dart)
-soureRect is which you want to show image rect.
+`soureRect`是用来显示图片的区域。
 
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/crop.gif)
 
@@ -523,18 +504,18 @@ ExtendedRawImage(
 [crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/crop_image_demo.dart)
 
 
-## Paint
+## Paint(自定义绘制)
 
-provide BeforePaintImage and AfterPaintImage callback, you will have the chance to paint things you want.
+如果想自定义图片绘制，这里提供了两个回调，`BeforePaintImage` ,  `AfterPaintImage`
 
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/paint.gif)
 
-ExtendedImage
+`ExtendedImage`
 
-| parameter        | description                                            | default |
-| ---------------- | ------------------------------------------------------ | ------- |
-| beforePaintImage | you can paint anything if you want before paint image. | -       |
-| afterPaintImage  | you can paint anything if you want after paint image.  | -       |
+| 参数             | 描述                                                   | 默认值 |
+| ---------------- | ------------------------------------------------------ | ------ |
+| beforePaintImage | you can paint anything if you want before paint image. | -      |
+| afterPaintImage  | 图片渲染完成后，绘制一些你想要的内容                   | -      |
 
 ```dart
   ExtendedImage.network(
@@ -568,14 +549,14 @@ ExtendedImage
   );
 ```
 
-see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/paint_image_demo.dart)
-and [push to refresh header which is used in crop image demo](https://github.com/fluttercandies/extended_image/tree/master/example/lib/common/push_to_refresh_header.dart)
+ [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/paint_image_demo.dart)
+ [使用剪裁图片实现下拉刷新头部的demo](https://github.com/fluttercandies/extended_image/tree/master/example/lib/common/push_to_refresh_header.dart)
 
-## Other APIs
+## 其他 APIs
 
-ExtendedImage
+__`ExtendedImage`__
 
-| parameter                | description                                                                                    | default |
-| ------------------------ | ---------------------------------------------------------------------------------------------- | ------- |
-| enableMemoryCache        | whether cache in PaintingBinding.instance.imageCache)                                          | true    |
-| clearMemoryCacheIfFailed | when failed to load image, whether clear memory cache.if ture, image will reload in next time. | true    |
+| 参数                     | 描述                                                         | 默认值 |
+| ------------------------ | ------------------------------------------------------------ | ------ |
+| enableMemoryCache        | 是否清除内存缓存，`PaintingBinding.instance.imageCache`      | true   |
+| clearMemoryCacheIfFailed | 当无法加载图像时，是否清除内存缓存.如果为 `true`，图像将在下次重新加载。 | true   |
