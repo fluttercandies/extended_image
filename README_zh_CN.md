@@ -69,16 +69,16 @@ ExtendedImage.network(
           cancelToken = cancelToken ?? CancellationToken();
 ```
 
-| 参数名  | 描述                                                                         | 默认值          |
-| ----------- | ------------------------------------------------------------------------------------- | ------------------- |
-| url         | 图片地址.                                       | required            |
-| scale       | 放在[ImageInfo] 对象中的图片比例                    | 1.0                 |
-| headers     | \<[HttpHeaders](https://api.flutter.dev/flutter/dart-io/HttpHeaders-class.html)> 使用[HttpClient.get]获取图片的请求头 | -                     |
-| cache       | 是否缓存图片到本地                                               | false               |
-| retries     | 加载失败重试的次数                                                 | 3                   |
-| timeLimit   | 请求图片的超时时间                                                          | -                     |
-| timeRetry   | 加载失败重试的时间间隔                                  | milliseconds: 100   |
-| cancelToken | 用于取消请求的token                                                       | CancellationToken() |
+| 参数名      | 描述                                                                                                                  | 默认值              |
+| ----------- | --------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| url         | 图片地址.                                                                                                             | required            |
+| scale       | 放在[ImageInfo] 对象中的图片比例                                                                                      | 1.0                 |
+| headers     | \<[HttpHeaders](https://api.flutter.dev/flutter/dart-io/HttpHeaders-class.html)> 使用[HttpClient.get]获取图片的请求头 | -                   |
+| cache       | 是否缓存图片到本地                                                                                                    | false               |
+| retries     | 加载失败重试的次数                                                                                                    | 3                   |
+| timeLimit   | 请求图片的超时时间                                                                                                    | -                   |
+| timeRetry   | 加载失败重试的时间间隔                                                                                                | milliseconds: 100   |
+| cancelToken | 用于取消请求的token                                                                                                   | CancellationToken() |
 
 ##  2. <a name='-1'></a>加载状态
 
@@ -112,15 +112,15 @@ enum LoadState {
 
 ###  2.1. <a name='ExtendedImageStateLoadStateChangedcallback'></a>ExtendedImageState(LoadStateChanged callback)
 
-| 参数/方法                    | 描述                                                         | 默认值 |
-| ---------------------------- | ------------------------------------------------------------ | ------ |
-| extendedImageInfo            | 图片信息                                                     | -      |
-| extendedImageLoadState       | 加载状态，LoadState(loading,completed,failed)                | -      |
+| 参数/方法                    | 描述                                                                                                             | 默认值 |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------ |
+| extendedImageInfo            | 图片信息                                                                                                         | -      |
+| extendedImageLoadState       | 加载状态，LoadState(loading,completed,failed)                                                                    | -      |
 | returnLoadStateChangedWidget | 如果是`true`，则立即返回一个由`LoadStateChanged`方法构建的微件(width/height/gesture/border/shape 等属性将不生效) | -      |
-| imageProvider                | ImageProvider                                                | -      |
-| invertColors                 | invertColors                                                 | -      |
-| imageStreamKey               | key                                                          | -      |
-| reLoadImage()                | 加载失败时重新加载的回调                                     | -      |
+| imageProvider                | ImageProvider                                                                                                    | -      |
+| invertColors                 | invertColors                                                                                                     | -      |
+| imageStreamKey               | key                                                                                                              | -      |
+| reLoadImage()                | 加载失败时重新加载的回调                                                                                         | -      |
 
 ```dart
 abstract class ExtendedImageState {
@@ -205,24 +205,24 @@ ExtendedImage.network(
 
 ###  3.1. <a name='ExtendedImage'></a>ExtendedImage
 
-| parameter     | description                                             | default |
-| ------------- | ------------------------------------------------------- | ------- |
-| mode          | 手势模式 ：`none`不接受手势，`gestrue`接受手势          | none    |
+| parameter     | description                                    | default |
+| ------------- | ---------------------------------------------- | ------- |
+| mode          | 手势模式 ：`none`不接受手势，`gestrue`接受手势 | none    |
 | gestureConfig | 图片手势的配置项                               | -       |
-| onDoubleTap   | 双击回调 `ExtendedImageMode.Gesture` | -       |
+| onDoubleTap   | 双击回调 `ExtendedImageMode.Gesture`           | -       |
 
 ###  3.2. <a name='GestureConfig'></a>GestureConfig
 
-| parameter         | description                                                  | default         |
-| ----------------- | ------------------------------------------------------------ | --------------- |
-| minScale          | 最小缩放倍数                                                 | 0.8             |
-| animationMinScale | 缩放到最小比例时用于执行回弹动画的缩放比例                   | minScale \_ 0.8 |
-| maxScale          | 最大缩放比例                                                 | 5.0             |
-| animationMaxScale | 缩放到最大比例时用于执行回弹动画的缩放比例                   | maxScale \_ 1.2 |
-| speed             | 缩放/移动的速度(相对于实际缩放大小/移动距离的倍数)           | 1.0             |
-| inertialSpeed     | inerial speed for zoom/pan                                   | 100             |
+| parameter         | description                                                                                                                                                                  | default         |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| minScale          | 最小缩放倍数                                                                                                                                                                 | 0.8             |
+| animationMinScale | 缩放到最小比例时用于执行回弹动画的缩放比例                                                                                                                                   | minScale \_ 0.8 |
+| maxScale          | 最大缩放比例                                                                                                                                                                 | 5.0             |
+| animationMaxScale | 缩放到最大比例时用于执行回弹动画的缩放比例                                                                                                                                   | maxScale \_ 1.2 |
+| speed             | 缩放/移动的速度(相对于实际缩放大小/移动距离的倍数)                                                                                                                           | 1.0             |
+| inertialSpeed     | inerial speed for zoom/pan                                                                                                                                                   | 100             |
 | cacheGesture      | 是否保存手势状态，例如在`PageView`中，对于一个缩放过的图片，滑到下一张在回来之后是否保存之前缩放的状态。设置保存状态后要在合适的时机清除这些状态(`clearGestureDetailsCache`) | false           |
-| inPageView        | 是否将图片放在` ExtendedImageGesturePageView`中              | false           |
+| inPageView        | 是否将图片放在` ExtendedImageGesturePageView`中                                                                                                                              | false           |
 
 ```dart
 ExtendedImage.network(
@@ -293,10 +293,10 @@ onDoubleTap: (ExtendedImageGestureState state) {
 
 `GestureConfig`
 
-| parameter    | description                                                  | default |
-| ------------ | ------------------------------------------------------------ | ------- |
+| parameter    | description                                                                                                                                                                  | default |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
 | cacheGesture | 是否保存手势状态，例如在`PageView`中，对于一个缩放过的图片，滑到下一张在回来之后是否保存之前缩放的状态。设置保存状态后要在合适的时机清除这些状态(`clearGestureDetailsCache`) | false   |
-| inPageView   | 是否在`ExtendedImageGesturePageView`中使用                   | false   |
+| inPageView   | 是否在`ExtendedImageGesturePageView`中使用                                                                                                                                   | false   |
 
 ```dart
 ExtendedImageGesturePageView.builder(
@@ -363,15 +363,15 @@ ExtendedImageGesturePageView.builder(
 
 __`ExtendedImageGesturePage`__
 
-| 参数                       | 描述                                         | 默认值                            |
-| -------------------------- | -------------------------------------------- | --------------------------------- |
-| child                      | 作为`ExtendedImageGesturePage`子微件         | -                                 |
-| slidePageBackgroundHandler | 定义滑动页面外的背景                         | defaultSlidePageBackgroundHandler |
-| slideScaleHandler          | 定义当前滑动页面的缩放比                     | defaultSlideScaleHandler          |
-| slideEndHandler            | 滑动结束（退出页面时触发）的回调            | defaultSlideEndHandler            |
-| slideAxis                  | 滑动方向：both,horizontal,vertical   | SlideAxis.both                    |
-| resetPageDuration          | 滑动结束（但没有触发退出操作）松开手指的回调 | milliseconds: 500                 |
-| slideType                  |  滑动整个页面(wholePage)/只滑动图片(onlyImage)                        | SlideType.onlyImage |
+| 参数                       | 描述                                          | 默认值                            |
+| -------------------------- | --------------------------------------------- | --------------------------------- |
+| child                      | 作为`ExtendedImageGesturePage`子微件          | -                                 |
+| slidePageBackgroundHandler | 定义滑动页面外的背景                          | defaultSlidePageBackgroundHandler |
+| slideScaleHandler          | 定义当前滑动页面的缩放比                      | defaultSlideScaleHandler          |
+| slideEndHandler            | 滑动结束（退出页面时触发）的回调              | defaultSlideEndHandler            |
+| slideAxis                  | 滑动方向：both,horizontal,vertical            | SlideAxis.both                    |
+| resetPageDuration          | 滑动结束（但没有触发退出操作）松开手指的回调  | milliseconds: 500                 |
+| slideType                  | 滑动整个页面(wholePage)/只滑动图片(onlyImage) | SlideType.onlyImage               |
 
 
 
@@ -444,11 +444,11 @@ double defaultSlideScaleHandler(
 
 `ExtendedImage`
 
-| 参数         | 描述                                                         | 默认值 |
-| ------------ | ------------------------------------------------------------ | ------ |
-| border       | `BoxShape.circle` /`BoxShape.rectangle`，如果设置了`BoxShape.circle`，那么`borderRadius`属性将会被忽略。 | -      |
+| 参数         | 描述                                                                                                                        | 默认值 |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------- | ------ |
+| border       | `BoxShape.circle` /`BoxShape.rectangle`，如果设置了`BoxShape.circle`，那么`borderRadius`属性将会被忽略。                    | -      |
 | borderRadius | 如果不为null，使用`BorderRadius`设置。仅适用于具有`shape = BoxShape.rectangle`; 如果`shape`不是`BoxShape.rectangle`则忽略。 | -      |
-| shape        | `BoxShape.circle` /`BoxShape.rectangle`，如果设置了`BoxShape.circle`，那么`borderRadius`属性将会被忽略。 | -      |
+| shape        | `BoxShape.circle` /`BoxShape.rectangle`，如果设置了`BoxShape.circle`，那么`borderRadius`属性将会被忽略。                    | -      |
 
 ```dart
 ExtendedImage.network(
@@ -531,10 +531,10 @@ ExtendedRawImage(
 
 `ExtendedImage`
 
-| 参数             | 描述                                                   | 默认值 |
-| ---------------- | ------------------------------------------------------ | ------ |
-| beforePaintImage | 加载图片前，绘制一些你想要的内容 | -      |
-| afterPaintImage  | 图片渲染完成后，绘制一些你想要的内容                   | -      |
+| 参数             | 描述                                 | 默认值 |
+| ---------------- | ------------------------------------ | ------ |
+| beforePaintImage | 加载图片前，绘制一些你想要的内容     | -      |
+| afterPaintImage  | 图片渲染完成后，绘制一些你想要的内容 | -      |
 
 ```dart
   ExtendedImage.network(
@@ -575,7 +575,7 @@ ExtendedRawImage(
 
 __`ExtendedImage`__
 
-| 参数                     | 描述                                                         | 默认值 |
-| ------------------------ | ------------------------------------------------------------ | ------ |
-| enableMemoryCache        | 是否清除内存缓存，`PaintingBinding.instance.imageCache`      | true   |
+| 参数                     | 描述                                                                     | 默认值 |
+| ------------------------ | ------------------------------------------------------------------------ | ------ |
+| enableMemoryCache        | 是否清除内存缓存，`PaintingBinding.instance.imageCache`                  | true   |
 | clearMemoryCacheIfFailed | 当无法加载图像时，是否清除内存缓存.如果为 `true`，图像将在下次重新加载。 | true   |
