@@ -76,7 +76,7 @@ ExtendedImage.network(
 | headers     | \<[HttpHeaders](https://api.flutter.dev/flutter/dart-io/HttpHeaders-class.html)> 使用[HttpClient.get]获取图片的请求头 | -                     |
 | cache       | 是否缓存图片到本地                                               | false               |
 | retries     | 加载失败重试的次数                                                 | 3                   |
-| timeLimit   | time limit to request image                                                           | -                     |
+| timeLimit   | 请求图片的超时时间                                                          | -                     |
 | timeRetry   | 加载失败重试的时间间隔                                  | milliseconds: 100   |
 | cancelToken | 用于取消请求的token                                                       | CancellationToken() |
 
@@ -208,8 +208,8 @@ ExtendedImage.network(
 | parameter     | description                                             | default |
 | ------------- | ------------------------------------------------------- | ------- |
 | mode          | 手势模式 ：`none`不接受手势，`gestrue`接受手势          | none    |
-| gestureConfig | config for image gesture                                | -       |
-| onDoubleTap   | call back of double tap under ExtendedImageMode.Gesture | -       |
+| gestureConfig | 图片手势的配置项                               | -       |
+| onDoubleTap   | 双击回调 `ExtendedImageMode.Gesture` | -       |
 
 ###  3.2. <a name='GestureConfig'></a>GestureConfig
 
@@ -533,7 +533,7 @@ ExtendedRawImage(
 
 | 参数             | 描述                                                   | 默认值 |
 | ---------------- | ------------------------------------------------------ | ------ |
-| beforePaintImage | you can paint anything if you want before paint image. | -      |
+| beforePaintImage | 加载图片前，绘制一些你想要的内容 | -      |
 | afterPaintImage  | 图片渲染完成后，绘制一些你想要的内容                   | -      |
 
 ```dart
