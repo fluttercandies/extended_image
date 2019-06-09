@@ -2,7 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image)
 
-English | [简体中文](https://github.com/fluttercandies/extended_image/README_zh_CN.md)
+English | [简体中文](https://github.com/fluttercandies/extended_image/blob/README_zh_CN.md)
 
 extended official image which support placeholder(loading)/ failed state,cache network,zoom pan image,photo view,slide out page,crop,save,paint etc.
 

@@ -1,6 +1,6 @@
 [![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image)
 
- [English](https://github.com/fluttercandies/extended_image/README.md) | 简体中文
+ [English](https://github.com/fluttercandies/extended_image) | 简体中文
 
 `extended_image`基于官方的`Image`扩展而来，支持图片加载中/加载失败状态展示、缓存网络图片、缩放、平移、照片墙、滑动退出、剪裁、保存、自定义绘制等。
 
