@@ -83,7 +83,7 @@ ExtendedImage.network(
 
 `Extended Image`提供 三种状态：加载中、完成、失败。你可以使用`loadStateChanged`回调自定义状态微件。
 
-`loadStateChanged`不仅适用于网络加载，更适用于一些语言长时间加载的图片任务，此时你就可以将`loadStateChanged`设置为`true`
+`loadStateChanged`不仅适用于网络加载，也适用于一些需要长时间加载的图片任务，此时你就可以将`loadStateChanged`设置为`true`
 
 `loadStateChanged`默认值只有在加载网络资源时为`true`，其他情况都为`false`.
 
