@@ -1,5 +1,3 @@
-[![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image)
-
  [English](https://github.com/fluttercandies/extended_image) | 简体中文
 
 `extended_image`基于官方的`Image`扩展而来，支持图片加载中/加载失败状态展示、缓存网络图片、缩放、平移、照片墙、滑动退出、剪裁、保存、自定义绘制等。
@@ -13,26 +11,27 @@
 
 <!-- vscode-markdown-toc -->
 * 1. [目录](#)
-	* 1.1. [使用 ExtendedNetworkImageProvider](#ExtendedNetworkImageProvider)
-* 2. [加载状态](#-1)
-	* 2.1. [ExtendedImageState(LoadStateChanged callback)](#ExtendedImageStateLoadStateChangedcallback)
-	* 2.2. [demo code](#democode)
-* 3. [移动和缩放](#-1)
-	* 3.1. [ExtendedImage](#ExtendedImage)
-	* 3.2. [GestureConfig](#GestureConfig)
-	* 3.3. [双击动画](#-1)
-* 4. [图片墙](#-1)
-* 5. [Slide Out Page](#SlideOutPage)
-	* 5.1. [将你的页面包在 `ExtendedImageSlidePage`中](#ExtendedImageSlidePage)
-	* 5.2. [首先保证你的页面背景透明](#-1)
-	* 5.3. [push 一个透明背景的路由](#push)
-* 6. [Border BorderRadius Shape](#BorderBorderRadiusShape)
-* 7. [清除缓存 / 保存图片](#-1)
-	* 7.1. [清除](#-1)
-	* 7.2. [保存网络图片](#-1)
-* 8. [Crop(剪裁)](#Crop)
-* 9. [Paint(自定义绘制)](#Paint)
-* 10. [其他 APIs](#APIs)
+* 2. [使用 ExtendedNetworkImageProvider](#ExtendedNetworkImageProvider)
+* 1. [加载状态](#loadState)
+	* 1.1. [ExtendedImageState(LoadStateChanged callback)](#ExtendedImageStateLoadStateChangedcallback)
+	* 1.2. [demo code](#democode)
+* 2. [移动和缩放](#Pan)
+	* 2.1. [ExtendedImage](#ExtendedImage)
+	* 2.2. [GestureConfig](#GestureConfig)
+	* 2.3. [双击动画](#doubleClick)
+* 3. [图片墙](#potoView)
+* 4. [滑动退出](#sileOut)
+	* 4.1. [将你的页面包在 `ExtendedImageSlidePage`中](#ExtendedImageSlidePage)
+	* 4.2. [首先保证你的页面背景透明](#transBC)
+	* 4.3. [push 一个透明背景的路由](#push)
+* 5. [Border BorderRadius Shape](#BorderBorderRadiusShape)
+* 6. [清除缓存 / 保存图片](#clearAndSave)
+	* 6.1. [清除缓存](#clear)
+	* 6.2. [保存网络图片](#save)
+* 7. [Crop(剪裁)](#Crop)
+* 8. [Paint(自定义绘制)](#Paint)
+* 9. [其他 API](#API)
+
 
 `ExtendedImage.network` 参考官方的和官方的[Image.network](https://api.flutter.dev/flutter/widgets/Image/Image.network.html) 实现，因此可以像官方一样使用。
 
@@ -50,7 +49,7 @@ ExtendedImage.network(
 )
 ```
 
-###  1.1. <a name='ExtendedNetworkImageProvider'></a>使用 ExtendedNetworkImageProvider
+###  2. <a name='ExtendedNetworkImageProvider'></a>使用 ExtendedNetworkImageProvider
 
 [ExtendedNetworkImageProvider](https://github.com/fluttercandies/extended_image_library/blob/master/lib/src/extended_network_image_provider.dart)
 
@@ -80,7 +79,7 @@ ExtendedImage.network(
 | timeRetry   | 加载失败重试的时间间隔                                                                                                | milliseconds: 100   |
 | cancelToken | 用于取消请求的token                                                                                                   | CancellationToken() |
 
-##  2. <a name='-1'></a>加载状态
+##  1. <a name='loadState'></a>加载状态
 
 `Extended Image`提供 三种状态：加载中、完成、失败。你可以使用`loadStateChanged`回调自定义状态微件。
 
@@ -110,7 +109,7 @@ enum LoadState {
   final bool enableLoadState;
 ```
 
-###  2.1. <a name='ExtendedImageStateLoadStateChangedcallback'></a>ExtendedImageState(LoadStateChanged callback)
+###  1.1. <a name='ExtendedImageStateLoadStateChangedcallback'></a>ExtendedImageState(LoadStateChanged callback)
 
 | 参数/方法                    | 描述                                                                                                             | 默认值 |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------ |
@@ -139,7 +138,7 @@ abstract class ExtendedImageState {
 }
 ```
 
-###  2.2. <a name='democode'></a>demo code
+###  1.2. <a name='democode'></a>demo code
 
 ```dart
 ExtendedImage.network(
@@ -199,11 +198,11 @@ ExtendedImage.network(
 )
 ```
 
-##  3. <a name='-1'></a>移动和缩放
+##  2. <a name='Pan'></a>移动和缩放
 
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/zoom.gif)
 
-###  3.1. <a name='ExtendedImage'></a>ExtendedImage
+###  2.1. <a name='ExtendedImage'></a>ExtendedImage
 
 | parameter     | description                                    | default |
 | ------------- | ---------------------------------------------- | ------- |
@@ -211,7 +210,7 @@ ExtendedImage.network(
 | gestureConfig | 图片手势的配置项                               | -       |
 | onDoubleTap   | 双击回调 `ExtendedImageMode.Gesture`           | -       |
 
-###  3.2. <a name='GestureConfig'></a>GestureConfig
+###  2.2. <a name='GestureConfig'></a>GestureConfig
 
 | parameter         | description                                                                                                                                                                  | default         |
 | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
@@ -243,7 +242,7 @@ ExtendedImage.network(
 )
 ```
 
-###  3.3. <a name='-1'></a>双击动画
+###  2.3. <a name='doubleClick'></a>双击动画
 
 ```dart
 onDoubleTap: (ExtendedImageGestureState state) {
@@ -283,11 +282,11 @@ onDoubleTap: (ExtendedImageGestureState state) {
 },
 ```
 
-##  4. <a name='-1'></a>图片墙
+##  3. <a name='potoView'></a>图片墙
 
 `ExtendedImageGesturePageView` 是一个和` PageView `相似的微件，但是增加了移动和缩放的功能。
 
-如果你保存了手势状态，那么一定要记得__清理这些手势状态__ (例如在PageView.dispose中清理)。
+如果你保存了手势状态，那么一定要记得 __清理这些手势状态__ (例如在PageView.dispose中清理)。
 
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/photo_view.gif)
 
@@ -339,13 +338,13 @@ ExtendedImageGesturePageView.builder(
 ```
 
 
-##  5. <a name='SlideOutPage'></a>滑动退出
+##  4. <a name='sileOut'></a>滑动退出
 
 `Extended Image`支持仿微信/掘金的图片滑动退出预览
 
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/slide.gif)
 
-###  5.1. <a name='ExtendedImageSlidePage'></a>将你的页面包在 `ExtendedImageSlidePage`中
+###  4.1. <a name='ExtendedImageSlidePage'></a>将你的页面包在 `ExtendedImageSlidePage`中
 
 ```dart
  var page = ExtendedImageSlidePage(
@@ -418,11 +417,11 @@ double defaultSlideScaleHandler(
 }
 ```
 
-###  5.2. <a name='-1'></a>首先保证你的页面背景透明
+###  4.2. <a name='transBC'></a>首先保证你的页面背景透明
 
 如果你使用了`ExtendedImageSlidePage` 并且设置`slideType = SlideType.onlyImage`,那么请务必确认你的页面背景设置为透明。
 
-###  5.3. <a name='push'></a>push 一个透明背景的路由
+###  4.3. <a name='push'></a>push 一个透明背景的路由
 
 使用 `TransparentMaterialPageRoute`/`TransparentCupertinoPageRoute`来push一个新页面
 
@@ -440,7 +439,7 @@ double defaultSlideScaleHandler(
 
 
 
-##  6. <a name='BorderBorderRadiusShape'></a>Border BorderRadius Shape
+##  5. <a name='BorderBorderRadiusShape'></a>Border BorderRadius Shape
 
 `ExtendedImage`
 
@@ -465,9 +464,9 @@ ExtendedImage.network(
 
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/image.gif)
 
-##  7. <a name='-1'></a>清除缓存 / 保存图片
+##  6. <a name='clearAndSave'></a>清除缓存 / 保存图片
 
-###  7.1. <a name='-1'></a>清除
+###  6.1. <a name='clear'></a>清除缓存
 
 清除磁盘缓存，调用`clearDiskCachedImages`方法即可
 
@@ -487,7 +486,7 @@ Future<bool> clearDiskCachedImages({Duration duration})
  getMemoryImageCache() ;
 ```
 
-###  7.2. <a name='-1'></a>保存网络图片
+###  6.2. <a name='save'></a>保存网络图片
 
 调用 `saveNetworkImageToPhoto`方法并使用 `ImagePickerSaver`来保存图片。
 
@@ -500,7 +499,7 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 }
 ```
 
-##  8. <a name='Crop'></a>Crop(剪裁)
+##  7. <a name='Crop'></a>Crop(剪裁)
 
 使用[Load State](#Load State)获得原始图像，然后设置`soureRect`剪裁图片。
 
@@ -523,7 +522,7 @@ ExtendedRawImage(
 [crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/crop_image_demo.dart)
 
 
-##  9. <a name='Paint'></a>Paint(自定义绘制)
+##  8. <a name='Paint'></a>Paint(自定义绘制)
 
 如果想自定义图片绘制，这里提供了两个回调，`BeforePaintImage` ,  `AfterPaintImage`
 
@@ -571,7 +570,7 @@ ExtendedRawImage(
  [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/paint_image_demo.dart)
  [使用剪裁图片实现下拉刷新头部的demo](https://github.com/fluttercandies/extended_image/tree/master/example/lib/common/push_to_refresh_header.dart)
 
-##  10. <a name='APIs'></a>其他 API
+##  9. <a name='API'></a>其他 API
 
 __`ExtendedImage`__
 
