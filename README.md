@@ -2,12 +2,12 @@
 
 [![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image)
 
+English | [简体中文](https://github.com/fluttercandies/extended_image/README_zh_CN.md)
+
 extended official image which support placeholder(loading)/ failed state,cache network,zoom pan image,photo view,slide out page,crop,save,paint etc.
 
 - [Flutter 什么功能都有的 Image](https://juejin.im/post/5c867112f265da2dd427a340)
 - [Flutter 可以缩放拖拽的图片](https://juejin.im/post/5ca758916fb9a05e1c4d01bb)
-- [Flutter 仿掘金微信图片滑动退出页面效果](https://juejin.im/post/5cf62ab0e51d45776031afb2)
-
 
 ## Table of contents
 
@@ -53,9 +53,9 @@ ExtendedImage.network(
 )
 ```
 
-### use Extendednetworkimageprovider
+### use ExtendedNetworkImageProvider
 
-[ExtendedNetworkImageProvider](https://github.com/fluttercandies/extended_image/blob/master/lib/src/extended_network_image_provider.dart)
+[ExtendedNetworkImageProvider](https://github.com/fluttercandies/extended_image_library/blob/master/lib/src/extended_network_image_provider.dart)
 
 ```dart
    ExtendedNetworkImageProvider(
