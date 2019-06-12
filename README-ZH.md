@@ -31,7 +31,7 @@
     - [清除缓存](#%E6%B8%85%E9%99%A4%E7%BC%93%E5%AD%98)
     - [保存网络图片](#%E4%BF%9D%E5%AD%98%E7%BD%91%E7%BB%9C%E5%9B%BE%E7%89%87)
   - [裁剪](#%E8%A3%81%E5%89%AA)
-  - [绘画](#%E7%BB%98%E7%94%BB)
+  - [绘制](#%E7%BB%98%E5%88%B6)
   - [其他 APIs](#%E5%85%B6%E4%BB%96-apis)
 
 ## 缓存网络图片
@@ -523,7 +523,7 @@ ExtendedRawImage(
 
 [crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/crop_image_demo.dart)
 
-## 绘画
+## 绘制
 
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/paint.gif)
 
