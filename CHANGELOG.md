@@ -1,3 +1,7 @@
+## [0.4.2]
+
+* add README-ZH.md
+  
 ## [0.4.1]
 
 * add SlideType to support slide only image or whole page[ExtendedImageSlidePage]
