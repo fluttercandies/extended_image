@@ -2,12 +2,9 @@
 
 [![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image)
 
-extended official image which support placeholder(loading)/ failed state,cache network,zoom pan image,photo view,slide out page,crop,save,paint etc.
+Language: [English](README.md) | [中文简体](README-ZH.md)
 
-- [Flutter 什么功能都有的 Image](https://juejin.im/post/5c867112f265da2dd427a340)
-- [Flutter 可以缩放拖拽的图片](https://juejin.im/post/5ca758916fb9a05e1c4d01bb)
-- [Flutter 仿掘金微信图片滑动退出页面效果](https://juejin.im/post/5cf62ab0e51d45776031afb2)
-
+A powerful extended official image for Dart, which support placeholder(loading)/ failed state,cache network,zoom pan image,photo view,slide out page,crop,save,paint etc.
 
 ## Table of contents
 
@@ -15,7 +12,7 @@ extended official image which support placeholder(loading)/ failed state,cache n
   - [Table of contents](#table-of-contents)
   - [Cache Network](#cache-network)
     - [simple use](#simple-use)
-    - [use Extendednetworkimageprovider](#use-Extendednetworkimageprovider)
+    - [use Extendednetworkimageprovider](#use-extendednetworkimageprovider)
   - [Load State](#load-state)
     - [demo code](#demo-code)
   - [Zoom Pan](#zoom-pan)
@@ -23,7 +20,7 @@ extended official image which support placeholder(loading)/ failed state,cache n
   - [Photo View](#photo-view)
   - [Slide Out Page](#slide-out-page)
     - [include your page in ExtendedImageSlidePage](#include-your-page-in-extendedimageslidepage)
-    - [make sure your page background is transparent](#make-sure-your-page-background-is-transparent)   
+    - [make sure your page background is transparent](#make-sure-your-page-background-is-transparent)
     - [push with transparent page route](#push-with-transparent-page-route)
   - [Border BorderRadius Shape](#border-borderradius-shape)
   - [Clear Save](#clear-save)
@@ -76,10 +73,10 @@ ExtendedImage.network(
 | ----------- | ------------------------------------------------------------------------------------- | ------------------- |
 | url         | The URL from which the image will be fetched.                                         | required            |
 | scale       | The scale to place in the [ImageInfo] object of the image.                            | 1.0                 |
-| headers     | The HTTP headers that will be used with [HttpClient.get] to fetch image from network. | -                     |
+| headers     | The HTTP headers that will be used with [HttpClient.get] to fetch image from network. | -                   |
 | cache       | whether cache image to local                                                          | false               |
 | retries     | the time to retry to request                                                          | 3                   |
-| timeLimit   | time limit to request image                                                           | -                     |
+| timeLimit   | time limit to request image                                                           | -                   |
 | timeRetry   | the time duration to retry to request                                                 | milliseconds: 100   |
 | cancelToken | token to cancel network request                                                       | CancellationToken() |
 
@@ -223,8 +220,8 @@ GestureConfig
 | maxScale          | max scale                                                                                                                                         | 5.0             |
 | animationMaxScale | the max scale for zooming then animation back to maxScale when scale end                                                                          | maxScale \_ 1.2 |
 | speed             | speed for zoom/pan                                                                                                                                | 1.0             |
-| inertialSpeed     | inerial speed for zoom/pan                                                                                                                        | 100             |
-| cacheGesture      | save Gesture state (for example in page view, so that the state will not change when scroll back),remember clearGestureDetailsCache at right time | false           |
+| inertialSpeed     | inertial speed for zoom/pan                                                                                                                        | 100             |
+| cacheGesture      | save Gesture state (for example in ExtendedImageGesturePageView, gesture state will not change when scroll back),remember clearGestureDetailsCache at right time | false           |
 | inPageView        | whether in ExtendedImageGesturePageView                                                                                                           | false           |
 
 ```dart
@@ -298,7 +295,7 @@ GestureConfig
 
 | parameter    | description                                                                                                                                       | default |
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| cacheGesture | save Gesture state (for example in page view, so that the state will not change when scroll back),remember clearGestureDetailsCache at right time | false   |
+| cacheGesture | save Gesture state (for example in ExtendedImageGesturePageView, gesture state will not change when scroll back),remember clearGestureDetailsCache at right time | false   |
 | inPageView   | whether in ExtendedImageGesturePageView                                                                                                           | false   |
 
 ```dart
@@ -372,9 +369,9 @@ ExtendedImageGesturePage
 | slidePageBackgroundHandler | build background when slide page                       | defaultSlidePageBackgroundHandler |
 | slideScaleHandler          | custom scale of page when slide page                   | defaultSlideScaleHandler          |
 | slideEndHandler            | call back of slide end,decide whether pop page         | defaultSlideEndHandler            |
-| slideAxis                  | axis of slide(both,horizontal,vertical)                | SlideAxis.both                              |
+| slideAxis                  | axis of slide(both,horizontal,vertical)                | SlideAxis.both                    |
 | resetPageDuration          | reset page position when slide end(not pop page)       | milliseconds: 500                 |
-| slideType                  |  slide whole page or only image                        | SlideType.onlyImage   
+| slideType                  | slide whole page or only image                         | SlideType.onlyImage               |
 
 
 ```dart
@@ -436,7 +433,7 @@ you should push page with TransparentMaterialPageRoute/TransparentCupertinoPageR
         : TransparentCupertinoPageRoute(builder: (_) => page),
   );
 ```
-[crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/photo_view_demo.dart)
+[Slide Out Page Demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/photo_view_demo.dart)
 
 ## Border BorderRadius Shape
 
@@ -487,7 +484,8 @@ to clear memory cache , call clearMemoryImageCache method.
 
 ### save network
 
-call saveNetworkImageToPhoto and save image with image_picker_saver
+call saveNetworkImageToPhoto and save image with [image_picker_saver](https://github.com/cnhefang/image_picker_saver)
+
 
 ```dart
 ///save netwrok image to photo
