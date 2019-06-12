@@ -11,8 +11,8 @@ A powerful extended official image for Dart, which support placeholder(loading)/
 - [extended_image](#extendedimage)
   - [Table of contents](#table-of-contents)
   - [Cache Network](#cache-network)
-    - [simple use](#simple-use)
-    - [use Extendednetworkimageprovider](#use-extendednetworkimageprovider)
+    - [Simple use](#simple-use)
+    - [Use Extendednetworkimageprovider](#use-extendednetworkimageprovider)
   - [Load State](#load-state)
     - [demo code](#demo-code)
   - [Zoom Pan](#zoom-pan)
@@ -32,9 +32,9 @@ A powerful extended official image for Dart, which support placeholder(loading)/
 
 ## Cache Network
 
-### simple use
+### Simple use
 
-you can use ExtendedImage.network as same as official image.
+You can use `ExtendedImage.network` as Image Widget
 
 ```dart
 ExtendedImage.network(
@@ -50,7 +50,7 @@ ExtendedImage.network(
 )
 ```
 
-### use Extendednetworkimageprovider
+### Use Extendednetworkimageprovider
 
 [ExtendedNetworkImageProvider](https://github.com/fluttercandies/extended_image/blob/master/lib/src/extended_network_image_provider.dart)
 
@@ -213,16 +213,16 @@ ExtendedImage
 
 GestureConfig
 
-| parameter         | description                                                                                                                                       | default         |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-| minScale          | min scale                                                                                                                                         | 0.8             |
-| animationMinScale | the min scale for zooming then animation back to minScale when scale end                                                                          | minScale \_ 0.8 |
-| maxScale          | max scale                                                                                                                                         | 5.0             |
-| animationMaxScale | the max scale for zooming then animation back to maxScale when scale end                                                                          | maxScale \_ 1.2 |
-| speed             | speed for zoom/pan                                                                                                                                | 1.0             |
-| inertialSpeed     | inertial speed for zoom/pan                                                                                                                        | 100             |
+| parameter         | description                                                                                                                                                      | default         |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| minScale          | min scale                                                                                                                                                        | 0.8             |
+| animationMinScale | the min scale for zooming then animation back to minScale when scale end                                                                                         | minScale \_ 0.8 |
+| maxScale          | max scale                                                                                                                                                        | 5.0             |
+| animationMaxScale | the max scale for zooming then animation back to maxScale when scale end                                                                                         | maxScale \_ 1.2 |
+| speed             | speed for zoom/pan                                                                                                                                               | 1.0             |
+| inertialSpeed     | inertial speed for zoom/pan                                                                                                                                      | 100             |
 | cacheGesture      | save Gesture state (for example in ExtendedImageGesturePageView, gesture state will not change when scroll back),remember clearGestureDetailsCache at right time | false           |
-| inPageView        | whether in ExtendedImageGesturePageView                                                                                                           | false           |
+| inPageView        | whether in ExtendedImageGesturePageView                                                                                                                          | false           |
 
 ```dart
 ExtendedImage.network(
@@ -293,10 +293,10 @@ if you have cache the gesture, remember call clearGestureDetailsCache() method a
 
 GestureConfig
 
-| parameter    | description                                                                                                                                       | default |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| parameter    | description                                                                                                                                                      | default |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
 | cacheGesture | save Gesture state (for example in ExtendedImageGesturePageView, gesture state will not change when scroll back),remember clearGestureDetailsCache at right time | false   |
-| inPageView   | whether in ExtendedImageGesturePageView                                                                                                           | false   |
+| inPageView   | whether in ExtendedImageGesturePageView                                                                                                                          | false   |
 
 ```dart
 ExtendedImageGesturePageView.builder(
