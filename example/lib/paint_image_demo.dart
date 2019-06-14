@@ -114,9 +114,9 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
     Rect rect,
     Canvas canvas,
   ) {
-    int num_points = 1000;
+    int numPoints = 1000;
     List<Offset> points = new List<Offset>();
-    double dt = (2 * pi / num_points);
+    double dt = (2 * pi / numPoints);
 
     for (double t = 0; t <= 2 * pi; t += dt) {
       var oo = Offset(X(t), Y(t));
@@ -155,8 +155,8 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
 
   // The curve's parametric equations.
   double X(double t) {
-    double sin_t = sin(t);
-    return (16 * sin_t * sin_t * sin_t);
+    double sinT = sin(t);
+    return (16 * sinT * sinT * sinT);
   }
 
   double Y(double t) {

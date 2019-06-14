@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:extended_image/src/extended_image_border_painter.dart';
 import 'package:extended_image/src/gesture/extended_image_gesture.dart';
-import 'package:extended_image/src/gesture/extended_image_gesture_utils.dart';
 import 'package:extended_image/src/gesture/extended_image_gesture_page_view.dart';
 import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
@@ -631,9 +630,9 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   @override
   void didUpdateWidget(ExtendedImage oldWidget) {
     super.didUpdateWidget(oldWidget);
-
     if (widget.image != oldWidget.image) {
       //_cacnelNetworkImageRequest(oldWidget.image);
+      _loadState = LoadState.loading;
       _resolveImage();
     }
   }
@@ -757,7 +756,6 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   @override
   Widget build(BuildContext context) {
     //_loadState = LoadState.failed;
-
     Widget current;
     var slidePageState =
         context.ancestorStateOfType(TypeMatcher<ExtendedImageSlidePageState>());
@@ -864,8 +862,9 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
       current = ConstrainedBox(constraints: widget.constraints, child: current);
     }
 
-    if (!(_loadState == LoadState.completed &&
-            widget.mode == ExtendedImageMode.Gesture) &&
+    ///add for loading/falied
+    if (_loadState != LoadState.completed &&
+        widget.mode == ExtendedImageMode.Gesture &&
         slidePageState != null) {
       current = ExtendedImageSlidePageHandler(current, slidePageState);
     }

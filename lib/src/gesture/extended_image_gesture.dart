@@ -39,12 +39,6 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     super.initState();
   }
 
-  @override
-  void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
-    super.didChangeDependencies();
-  }
-
   void _initGestureConfig() {
     _gestureAnimation?.stop();
     _gestureAnimation?.dispose();
