@@ -94,7 +94,7 @@ class GestureDetails {
   Rect preDestinationRect;
 
   ///slide page offset
-  Offset slidePageOffset = null;
+  Offset slidePageOffset;
 
   GestureDetails(
       {this.offset,
