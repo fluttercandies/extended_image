@@ -205,11 +205,11 @@ ExtendedImage.network(
 
 ExtendedImage
 
-| parameter     | description                                             | default |
-| ------------- | ------------------------------------------------------- | ------- |
-| mode          | image mode (none,gestrue)                               | none    |
-| gestureConfig | config for image gesture                                | -       |
-| onDoubleTap   | call back of double tap under ExtendedImageMode.Gesture | -       |
+| parameter                | description                                                                     | default |
+| ------------------------ | ------------------------------------------------------------------------------- | ------- |
+| mode                     | image mode (none,gestrue)                                                       | none    |
+| initGestureConfigHandler | init GestureConfig when image is ready，for example, base on image width/height | -       |
+| onDoubleTap              | call back of double tap under ExtendedImageMode.Gesture                         | -       |
 
 GestureConfig
 

@@ -16,15 +16,17 @@ class ZoomImageDemo extends StatelessWidget {
           fit: BoxFit.contain,
           //enableLoadState: false,
           mode: ExtendedImageMode.Gesture,
-          gestureConfig: GestureConfig(
-              minScale: 0.9,
-              animationMinScale: 0.7,
-              maxScale: 3.0,
-              animationMaxScale: 3.5,
-              speed: 1.0,
-              inertialSpeed: 100.0,
-              initialScale: 1.0,
-              inPageView: false),
+          initGestureConfigHandler: (state) {
+            return GestureConfig(
+                minScale: 0.9,
+                animationMinScale: 0.7,
+                maxScale: 3.0,
+                animationMaxScale: 3.5,
+                speed: 1.0,
+                inertialSpeed: 100.0,
+                initialScale: 1.0,
+                inPageView: false);
+          },
         ),
       )
     ]));

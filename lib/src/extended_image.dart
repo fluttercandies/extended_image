@@ -18,6 +18,7 @@ import 'package:flutter/semantics.dart';
 import 'package:http_client_helper/http_client_helper.dart';
 
 import 'gesture/extended_image_slide_page.dart';
+import 'gesture/extended_image_slide_page_handler.dart';
 
 /// extended image base on official
 class ExtendedImage extends StatefulWidget {
@@ -49,7 +50,7 @@ class ExtendedImage extends StatefulWidget {
     this.enableMemoryCache: true,
     this.clearMemoryCacheIfFailed: true,
     this.onDoubleTap,
-    GestureConfig gestureConfig,
+    this.initGestureConfigHandler,
     BoxConstraints constraints,
   })  : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
@@ -57,8 +58,6 @@ class ExtendedImage extends StatefulWidget {
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
-        gestureConfig = gestureConfig ??
-            (mode == ExtendedImageMode.Gesture ? GestureConfig() : null),
         super(key: key);
 
   ExtendedImage.network(String url,
@@ -88,7 +87,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableMemoryCache: true,
       this.clearMemoryCacheIfFailed: true,
       this.onDoubleTap,
-      GestureConfig gestureConfig,
+      this.initGestureConfigHandler,
       BoxConstraints constraints,
       CancellationToken cancelToken,
 //      bool autoCancel: false,
@@ -114,8 +113,6 @@ class ExtendedImage extends StatefulWidget {
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
-        gestureConfig = gestureConfig ??
-            (mode == ExtendedImageMode.Gesture ? GestureConfig() : null),
         super(key: key);
 
   /// Creates a widget that displays an [ImageStream] obtained from a [File].
@@ -164,7 +161,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableMemoryCache: true,
       this.clearMemoryCacheIfFailed: true,
       this.onDoubleTap,
-      GestureConfig gestureConfig,
+      this.initGestureConfigHandler,
       BoxConstraints constraints})
       : image = FileImage(file, scale: scale),
         assert(alignment != null),
@@ -175,8 +172,6 @@ class ExtendedImage extends StatefulWidget {
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
-        gestureConfig = gestureConfig ??
-            (mode == ExtendedImageMode.Gesture ? GestureConfig() : null),
         super(key: key);
 
   /// Creates a widget that displays an [ImageStream] obtained from an asset
@@ -334,7 +329,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableMemoryCache: true,
       this.clearMemoryCacheIfFailed: true,
       this.onDoubleTap,
-      GestureConfig gestureConfig,
+      this.initGestureConfigHandler,
       BoxConstraints constraints})
       : image = scale != null
             ? ExactAssetImage(name,
@@ -347,8 +342,6 @@ class ExtendedImage extends StatefulWidget {
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
-        gestureConfig = gestureConfig ??
-            (mode == ExtendedImageMode.Gesture ? GestureConfig() : null),
         super(key: key);
 
   /// Creates a widget that displays an [ImageStream] obtained from a [Uint8List].
@@ -394,7 +387,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableMemoryCache: true,
       this.clearMemoryCacheIfFailed: true,
       this.onDoubleTap,
-      GestureConfig gestureConfig,
+      this.initGestureConfigHandler,
       BoxConstraints constraints})
       : image = MemoryImage(bytes, scale: scale),
         assert(alignment != null),
@@ -404,9 +397,10 @@ class ExtendedImage extends StatefulWidget {
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
-        gestureConfig = gestureConfig ??
-            (mode == ExtendedImageMode.Gesture ? GestureConfig() : null),
         super(key: key);
+
+  ///init GestureConfig when image is ready.
+  final InitGestureConfigHandler initGestureConfigHandler;
 
   ///call back of double tap  under ExtendedImageMode.Gesture
   final DoubleTap onDoubleTap;
@@ -420,9 +414,6 @@ class ExtendedImage extends StatefulWidget {
 
   /// image mode (none,gestrue)
   final ExtendedImageMode mode;
-
-  /// config for image gesture
-  final GestureConfig gestureConfig;
 
   ///you can paint anything if you want before paint image.
   ///it's to used in  [ExtendedRawImage]
@@ -765,15 +756,17 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
 
   @override
   Widget build(BuildContext context) {
+    //_loadState = LoadState.failed;
+
     Widget current;
-
+    var slidePageState =
+        context.ancestorStateOfType(TypeMatcher<ExtendedImageSlidePageState>());
+    returnLoadStateChangedWidget = false;
     if (widget.loadStateChanged != null) {
-      returnLoadStateChangedWidget = false;
       current = widget.loadStateChanged(this);
-    }
-
-    if (current != null && returnLoadStateChangedWidget) {
-      return current;
+      if (current != null && returnLoadStateChangedWidget) {
+        return current;
+      }
     }
 
     if (current == null) {
@@ -781,6 +774,10 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
         switch (_loadState) {
           case LoadState.loading:
             current = Container(
+//              margin: EdgeInsets.all(100.0),
+//              color: Colors.red,
+//              width: 60.0,
+//              height: 60.0,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -799,12 +796,9 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
               current = ExtendedImageGesture(
                   widget,
                   this,
-                  widget.gestureConfig.inPageView
-                      ? context.ancestorStateOfType(
-                          TypeMatcher<ExtendedImageGesturePageViewState>())
-                      : null,
                   context.ancestorStateOfType(
-                      TypeMatcher<ExtendedImageSlidePageState>()));
+                      TypeMatcher<ExtendedImageGesturePageViewState>()),
+                  slidePageState);
             } else {
               current = _buildExtendedRawImage();
             }
@@ -827,12 +821,9 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
           current = ExtendedImageGesture(
               widget,
               this,
-              widget.gestureConfig.inPageView
-                  ? context.ancestorStateOfType(
-                      TypeMatcher<ExtendedImageGesturePageViewState>())
-                  : null,
               context.ancestorStateOfType(
-                  TypeMatcher<ExtendedImageSlidePageState>()));
+                  TypeMatcher<ExtendedImageGesturePageViewState>()),
+              slidePageState);
         } else {
           current = _buildExtendedRawImage();
         }
@@ -871,6 +862,12 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
 
     if (widget.constraints != null) {
       current = ConstrainedBox(constraints: widget.constraints, child: current);
+    }
+
+    if (!(_loadState == LoadState.completed &&
+            widget.mode == ExtendedImageMode.Gesture) &&
+        slidePageState != null) {
+      current = ExtendedImageSlidePageHandler(current, slidePageState);
     }
 
     if (widget.excludeFromSemantics) return current;
