@@ -39,6 +39,12 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     super.initState();
   }
 
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
+  }
+
   void _initGestureConfig() {
     _gestureAnimation?.stop();
     _gestureAnimation?.dispose();
@@ -370,9 +376,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   void slide() {
     if (mounted) {
       setState(() {
-        _gestureDetails?.isSliding = true;
-//        _gestureDetails.offset = _updateSlidePageImageStartingOffset +
-//            widget.extendedImageSlidePageState.offset;
+        _gestureDetails.slidePageOffset =
+            widget.extendedImageSlidePageState?.offset;
       });
     }
   }

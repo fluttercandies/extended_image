@@ -67,10 +67,6 @@ class _PicSwiperState extends State<PicSwiper>
             ExtendedImageGesturePageView.builder(
               itemBuilder: (BuildContext context, int index) {
                 var item = widget.pics[index].picUrl;
-                item =
-                    "https://gbres.dfcfw.com/Files/picture/20190419/E8A506FEC5728D4ADD5A74AA1B86F14A_w1243h160.jpg";
-                item =
-                    "https://z1.dfcfw.com/2019/1/2/20190102163807677609656.jpg";
                 Widget image = ExtendedImage.network(
                   item,
                   fit: BoxFit.contain,
@@ -132,10 +128,7 @@ class _PicSwiperState extends State<PicSwiper>
                     _animationController.forward();
                   },
                 );
-                image = Container(
-                  child: image,
-                  padding: EdgeInsets.all(5.0),
-                );
+
                 if (index == currentIndex) {
                   return Hero(
                     tag: item + index.toString(),
