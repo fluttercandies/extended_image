@@ -1,11 +1,13 @@
 ## [0.4.3]
 
 * Breaking Change:
-  1.Parameter [gestureConfig] is obsolete. [initGestureConfigHandler] is used to setting GestureConfig now.
+  Parameter [gestureConfig] is obsolete. [initGestureConfigHandler] is used to setting GestureConfig now.
+
 * Issues:
-  1.fix issue about slide page.
+  Fix issue about slide page.
+  
 * Features: 
-  1.Support to slide page at loading/failed state
+  Support to slide page at loading/failed state
 
 ## [0.4.2]
 
