@@ -93,8 +93,7 @@ class GestureDetails {
   Rect destinationRect;
   Rect preDestinationRect;
 
-  ///slide page
-  bool isSliding = false;
+  ///slide page offset
   Offset slidePageOffset = null;
 
   GestureDetails(
@@ -180,6 +179,7 @@ class GestureDetails {
   Rect calculateFinalDestinationRect(Rect layoutRect, Rect destinationRect) {
 //    Rect rect1 = isSliding ? this.layoutRect : layoutRect;
 //    Rect rect2 = isSliding ? this.destinationRect : destinationRect;
+
     var temp = offset;
     _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
     offset = temp;
@@ -234,7 +234,8 @@ class GestureDetails {
 
     ///fix offset
     ///fix offset when it's not slide page
-    if (!isSliding) {
+    //if (!isSliding)
+    {
       offset = _getFixedOffset(destinationRect, result.center);
       _center = result.center;
     }
