@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../extended_image_typedef.dart';
 import 'extended_image_gesture_utils.dart';
+import 'extended_image_slide_page_handler.dart';
 
 enum SlideAxis {
   both,
@@ -93,6 +94,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   }
 
   ExtendedImageGestureState _extendedImageGestureState;
+  ExtendedImageSlidePageHandlerState _extendedImageSlidePageHandlerState;
   void _backAnimation() {
     if (mounted) {
       setState(() {
@@ -101,6 +103,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     }
     if (widget.slideType == SlideType.onlyImage) {
       _extendedImageGestureState?.slide();
+      _extendedImageSlidePageHandlerState?.slide();
     }
   }
 
@@ -111,14 +114,15 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     _backAnimationController.dispose();
   }
 
-  void slide(Offset delta,
-      {ExtendedImageGestureState extendedImageGestureState}) {
+  void slide(Offset value,
+      {ExtendedImageGestureState extendedImageGestureState,
+      ExtendedImageSlidePageHandlerState extendedImageSlidePageHandlerState}) {
     if (_backAnimationController.isAnimating) return;
-    _offset = delta;
+    _offset = value;
     if (widget.slideAxis == SlideAxis.horizontal) {
-      _offset = Offset(delta.dx, 0.0);
+      _offset = Offset(value.dx, 0.0);
     } else if (widget.slideAxis == SlideAxis.vertical) {
-      _offset = Offset(0.0, delta.dy);
+      _offset = Offset(0.0, value.dy);
     }
 
     _scale = widget.slideScaleHandler?.call(_offset) ??
@@ -129,7 +133,9 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     _ignoring = true;
     if (widget.slideType == SlideType.onlyImage) {
       _extendedImageGestureState = extendedImageGestureState;
-      extendedImageGestureState.slide();
+      _extendedImageGestureState?.slide();
+      _extendedImageSlidePageHandlerState = extendedImageSlidePageHandlerState;
+      _extendedImageSlidePageHandlerState?.slide();
     }
 
     if (mounted) {

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
@@ -53,6 +54,7 @@ class _PicSwiperState extends State<PicSwiper>
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Material(
 
         /// if you use ExtendedImageSlidePage and slideType =SlideType.onlyImage,
@@ -68,17 +70,28 @@ class _PicSwiperState extends State<PicSwiper>
                 Widget image = ExtendedImage.network(
                   item,
                   fit: BoxFit.contain,
-                  //cancelToken: cancelToken,
-                  //autoCancel: false,
                   mode: ExtendedImageMode.Gesture,
-                  gestureConfig: GestureConfig(
-                      inPageView: true,
-                      initialScale: 1.0,
-                      maxScale: 5.0,
-                      animationMaxScale: 5.0,
-                      //you can cache gesture state even though page view page change.
-                      //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
-                      cacheGesture: false),
+                  initGestureConfigHandler: (state) {
+                    double initialScale = 1.0;
+
+                    if (state.extendedImageInfo != null &&
+                        state.extendedImageInfo.image != null) {
+                      initialScale = _initalScale(
+                          size: size,
+                          initialScale: initialScale,
+                          imageSize: Size(
+                              state.extendedImageInfo.image.width.toDouble(),
+                              state.extendedImageInfo.image.height.toDouble()));
+                    }
+                    return GestureConfig(
+                        inPageView: true,
+                        initialScale: initialScale,
+                        maxScale: max(initialScale, 5.0),
+                        animationMaxScale: max(initialScale, 5.0),
+                        //you can cache gesture state even though page view page change.
+                        //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
+                        cacheGesture: false);
+                  },
                   onDoubleTap: (ExtendedImageGestureState state) {
                     ///you can use define pointerDownPosition as you can,
                     ///default value is double tap pointer down postion.
@@ -115,10 +128,7 @@ class _PicSwiperState extends State<PicSwiper>
                     _animationController.forward();
                   },
                 );
-                image = Container(
-                  child: image,
-                  padding: EdgeInsets.all(5.0),
-                );
+
                 if (index == currentIndex) {
                   return Hero(
                     tag: item + index.toString(),
@@ -148,6 +158,26 @@ class _PicSwiperState extends State<PicSwiper>
             )
           ],
         ));
+  }
+
+  double _initalScale({Size imageSize, Size size, double initialScale}) {
+    var n1 = imageSize.height / imageSize.width;
+    var n2 = size.height / size.width;
+    if (n1 > n2) {
+      final FittedSizes fittedSizes =
+          applyBoxFit(BoxFit.contain, imageSize, size);
+      //final Size sourceSize = fittedSizes.source;
+      Size destinationSize = fittedSizes.destination;
+      return size.width / destinationSize.width;
+    } else if (n1 / n2 < 1 / 4) {
+      final FittedSizes fittedSizes =
+          applyBoxFit(BoxFit.contain, imageSize, size);
+      //final Size sourceSize = fittedSizes.source;
+      Size destinationSize = fittedSizes.destination;
+      return size.height / destinationSize.height;
+    }
+
+    return initialScale;
   }
 }
 

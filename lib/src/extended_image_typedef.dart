@@ -37,3 +37,7 @@ typedef SlideEndHandler = bool Function(Offset offset);
 
 ///custom scale of page when slide page
 typedef SlideScaleHandler = double Function(Offset offset);
+
+///init GestureConfig when image is ready.
+typedef InitGestureConfigHandler = GestureConfig Function(
+    ExtendedImageState state);

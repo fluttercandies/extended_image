@@ -5,7 +5,7 @@ import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/image/extended_raw_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/rendering.dart';
 import 'extended_image_slide_page.dart';
 
 /// scale idea from https://github.com/flutter/flutter/blob/master/examples/layers/widgets/gestures.dart
@@ -34,7 +34,18 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   @override
   void initState() {
     // TODO: implement initState
-    _gestureConfig = widget.extendedImage.gestureConfig;
+    _initGestureConfig();
+
+    super.initState();
+  }
+
+  void _initGestureConfig() {
+    _gestureAnimation?.stop();
+    _gestureAnimation?.dispose();
+
+    _gestureConfig = widget.extendedImage.initGestureConfigHandler
+            ?.call(widget.extendedImageState) ??
+        GestureConfig();
 
     if (_gestureConfig.cacheGesture) {
       var cache =
@@ -69,8 +80,13 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
         });
       }
     });
+  }
 
-    super.initState();
+  @override
+  void didUpdateWidget(ExtendedImageGesture oldWidget) {
+    // TODO: implement didUpdateWidget
+    _initGestureConfig();
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -87,7 +103,9 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     _startingOffset = details.focalPoint;
   }
 
-  Offset _updatePageGestureStartingOffset;
+  Offset _updateSlidePageStartingOffset;
+  Offset _updateSlidePageImageStartingOffset;
+
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     ///whether gesture page
     if (widget.extendedImageSlidePageState != null &&
@@ -97,29 +115,35 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       var offsetDelta = (details.focalPoint - _startingOffset);
       //print(offsetDelta);
       bool updateGesture = false;
+      if (!widget.extendedImageSlidePageState.ignoring) {
+        if (offsetDelta.dx != 0 &&
+            offsetDelta.dx.abs() > offsetDelta.dy.abs()) {
+          if (_gestureDetails.computeHorizontalBoundary) {
+            if (offsetDelta.dx > 0) {
+              updateGesture = _gestureDetails.boundary.left;
+            } else {
+              updateGesture = _gestureDetails.boundary.right;
+            }
+          } else {
+            updateGesture = true;
+          }
+        }
+        if (offsetDelta.dy != 0 &&
+            offsetDelta.dy.abs() > offsetDelta.dx.abs()) {
+          if (_gestureDetails.computeVerticalBoundary) {
+            if (offsetDelta.dy < 0) {
+              updateGesture = _gestureDetails.boundary.bottom;
+            } else {
+              updateGesture = _gestureDetails.boundary.top;
+            }
+          } else {
+            updateGesture = true;
+          }
+        }
+      } else {
+        updateGesture = true;
+      }
 
-      if (offsetDelta.dx != 0 && offsetDelta.dx.abs() > offsetDelta.dy.abs()) {
-        if (_gestureDetails.computeHorizontalBoundary) {
-          if (offsetDelta.dx > 0) {
-            updateGesture = _gestureDetails.boundary.left;
-          } else {
-            updateGesture = _gestureDetails.boundary.right;
-          }
-        } else {
-          updateGesture = true;
-        }
-      }
-      if (offsetDelta.dy != 0 && offsetDelta.dy.abs() > offsetDelta.dx.abs()) {
-        if (_gestureDetails.computeVerticalBoundary) {
-          if (offsetDelta.dy > 0) {
-            updateGesture = _gestureDetails.boundary.bottom;
-          } else {
-            updateGesture = _gestureDetails.boundary.top;
-          }
-        } else {
-          updateGesture = true;
-        }
-      }
       var delta = (details.focalPoint - _startingOffset).distance;
 //      if (widget.extendedImageGesturePageState.widget.pageGestureAxis ==
 //          PageGestureAxis.horizontal) {
@@ -136,11 +160,11 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 //      }
 
       if (delta > minGesturePageDelta && updateGesture) {
-        _updatePageGestureStartingOffset ??= details.focalPoint;
+        _updateSlidePageStartingOffset ??= details.focalPoint;
+        _updateSlidePageImageStartingOffset ??= _gestureDetails.offset;
         widget.extendedImageSlidePageState.slide(
-            details.focalPoint - _updatePageGestureStartingOffset,
+            details.focalPoint - _updateSlidePageStartingOffset,
             extendedImageGestureState: this);
-        if (widget.extendedImageSlidePageState.ignoring) return;
       }
     }
 
@@ -185,11 +209,11 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   void _handleScaleEnd(ScaleEndDetails details) {
     if (widget.extendedImageSlidePageState != null &&
         widget.extendedImageSlidePageState.ignoring) {
-      _updatePageGestureStartingOffset = null;
+      _updateSlidePageStartingOffset = null;
+      // _updateSlidePageImageStartingOffset = null;
       widget.extendedImageSlidePageState.endSlide();
       return;
     }
-
     //animate back to maxScale if gesture exceeded the maxScale specified
     if (_gestureDetails.totalScale > _gestureConfig.maxScale) {
       final double velocity =
@@ -345,7 +369,10 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   @override
   void slide() {
     if (mounted) {
-      setState(() {});
+      setState(() {
+        _gestureDetails.slidePageOffset =
+            widget.extendedImageSlidePageState?.offset;
+      });
     }
   }
 }

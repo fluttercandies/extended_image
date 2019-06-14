@@ -364,9 +364,13 @@ class ExtendedRenderImage extends RenderBox {
     _resolve();
     assert(_resolvedAlignment != null);
     assert(_flipHorizontally != null);
+    Rect rect = offset & size;
+    if (gestureDetails != null && gestureDetails.slidePageOffset != null) {
+      rect = rect.shift(-gestureDetails.slidePageOffset);
+    }
     paintExtendedImage(
         canvas: context.canvas,
-        rect: offset & size,
+        rect: rect,
         image: _image,
         scale: _scale,
         colorFilter: _colorFilter,
@@ -489,6 +493,11 @@ void paintExtendedImage({
 
     ///outside and need clip
     gestureClip = outRect(rect, destinationRect);
+
+    if (gestureDetails.slidePageOffset != null) {
+      destinationRect = destinationRect.shift(gestureDetails.slidePageOffset);
+      rect = rect.shift(gestureDetails.slidePageOffset);
+    }
 
     if (gestureClip) {
       canvas.save();

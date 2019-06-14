@@ -91,6 +91,10 @@ class GestureDetails {
 
   Rect layoutRect;
   Rect destinationRect;
+  Rect preDestinationRect;
+
+  ///slide page offset
+  Offset slidePageOffset;
 
   GestureDetails(
       {this.offset,
@@ -104,6 +108,7 @@ class GestureDetails {
       _center = gestureDetails._center;
       layoutRect = gestureDetails.layoutRect;
       destinationRect = gestureDetails.destinationRect;
+      preDestinationRect = gestureDetails.preDestinationRect;
 
       ///zoom end will call twice
       /// zoom end
@@ -172,14 +177,22 @@ class GestureDetails {
   }
 
   Rect calculateFinalDestinationRect(Rect layoutRect, Rect destinationRect) {
+//    Rect rect1 = isSliding ? this.layoutRect : layoutRect;
+//    Rect rect2 = isSliding ? this.destinationRect : destinationRect;
+
     var temp = offset;
     _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
     offset = temp;
-    return _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
+    Rect result =
+        _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
+    preDestinationRect = result;
+    return result;
   }
 
   Rect _innerCalculateFinalDestinationRect(
       Rect layoutRect, Rect destinationRect) {
+    this.layoutRect ??= layoutRect;
+    this.destinationRect ??= destinationRect;
     Offset center = _getCenter(destinationRect);
     Rect result = _getDestinationRect(destinationRect, center);
     if (_computeHorizontalBoundary) {
@@ -220,8 +233,13 @@ class GestureDetails {
         result.top <= layoutRect.top && result.bottom >= layoutRect.bottom;
 
     ///fix offset
-    offset = _getFixedOffset(destinationRect, result.center);
-    _center = result.center;
+    ///fix offset when it's not slide page
+    //if (!isSliding)
+    {
+      offset = _getFixedOffset(destinationRect, result.center);
+      _center = result.center;
+    }
+
     //offset = Offset(roundAfter(offset.dx, 4), roundAfter(offset.dy, 4));
     return result;
   }

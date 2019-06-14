@@ -1,3 +1,14 @@
+## [0.4.3]
+
+* Breaking Change:
+  Parameter [gestureConfig] is obsolete. [initGestureConfigHandler] is used to setting GestureConfig now.
+
+* Issues:
+  Fix issue about slide page.
+  
+* Features: 
+  Support to slide page at loading/failed state
+
 ## [0.4.2]
 
 * add README-ZH.md

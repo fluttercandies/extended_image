@@ -47,7 +47,7 @@ class ItemBuilder {
                   ),
                   LikeButton(
                     size: 20.0,
-                    isLiked: item.is_favorite,
+                    isLiked: item.isFavorite,
                     likeCount: item.favorites,
                     countBuilder: (int count, bool isLiked, String text) {
                       var color = isLiked ? Colors.pinkAccent : Colors.grey;
@@ -87,12 +87,12 @@ class ItemBuilder {
     ///
     final Completer<bool> completer = new Completer<bool>();
     Timer(const Duration(milliseconds: 200), () {
-      item.is_favorite = !item.is_favorite;
+      item.isFavorite = !item.isFavorite;
       item.favorites =
-          item.is_favorite ? item.favorites + 1 : item.favorites - 1;
+          item.isFavorite ? item.favorites + 1 : item.favorites - 1;
 
       // if your request is failed,return null,
-      completer.complete(item.is_favorite);
+      completer.complete(item.isFavorite);
     });
     return completer.future;
   }
