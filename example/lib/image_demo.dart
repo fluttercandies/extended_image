@@ -16,14 +16,12 @@ class _ImageDemoState extends State<ImageDemo> {
   void initState() {
     //cancellationToken = CancellationToken();
     boxShape = BoxShape.circle;
-    // TODO: implement initState
     super.initState();
   }
 
   @override
   void dispose() {
     //cancellationToken.cancel();
-    // TODO: implement dispose
     super.dispose();
   }
 

@@ -9,12 +9,10 @@ class TuChongRepository extends LoadingMoreBase<TuChongItem> {
   bool _hasMore = true;
   bool forceRefresh = false;
   @override
-  // TODO: implement hasMore
   bool get hasMore => (_hasMore && length < 100) || forceRefresh;
 
   @override
   Future<bool> refresh([bool clearBeforeRequest = false]) async {
-    // TODO: implement onRefresh
     _hasMore = true;
     pageindex = 1;
     //force to refresh list when you don't want clear list before request
@@ -27,7 +25,6 @@ class TuChongRepository extends LoadingMoreBase<TuChongItem> {
 
   @override
   Future<bool> loadData([bool isloadMoreAction = false]) async {
-    // TODO: implement getData
     String url = "";
     if (this.length == 0) {
       url = "https://api.tuchong.com/feed-app";

@@ -19,14 +19,12 @@ class _CustomImageDemoState extends State<CustomImageDemo>
         duration: Duration(seconds: 3),
         lowerBound: 0.0,
         upperBound: 1.0);
-    // TODO: implement initState
     super.initState();
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    // TODO: implement dispose
     super.dispose();
   }
 
