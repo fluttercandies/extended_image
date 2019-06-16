@@ -50,6 +50,7 @@ class ExtendedImage extends StatefulWidget {
     this.clearMemoryCacheIfFailed: true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
+    this.enableSlideOutPage: false,
     BoxConstraints constraints,
   })  : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
@@ -87,6 +88,7 @@ class ExtendedImage extends StatefulWidget {
       this.clearMemoryCacheIfFailed: true,
       this.onDoubleTap,
       this.initGestureConfigHandler,
+      this.enableSlideOutPage: false,
       BoxConstraints constraints,
       CancellationToken cancelToken,
 //      bool autoCancel: false,
@@ -161,6 +163,7 @@ class ExtendedImage extends StatefulWidget {
       this.clearMemoryCacheIfFailed: true,
       this.onDoubleTap,
       this.initGestureConfigHandler,
+      this.enableSlideOutPage: false,
       BoxConstraints constraints})
       : image = FileImage(file, scale: scale),
         assert(alignment != null),
@@ -329,6 +332,7 @@ class ExtendedImage extends StatefulWidget {
       this.clearMemoryCacheIfFailed: true,
       this.onDoubleTap,
       this.initGestureConfigHandler,
+      this.enableSlideOutPage: false,
       BoxConstraints constraints})
       : image = scale != null
             ? ExactAssetImage(name,
@@ -387,6 +391,7 @@ class ExtendedImage extends StatefulWidget {
       this.clearMemoryCacheIfFailed: true,
       this.onDoubleTap,
       this.initGestureConfigHandler,
+      this.enableSlideOutPage: false,
       BoxConstraints constraints})
       : image = MemoryImage(bytes, scale: scale),
         assert(alignment != null),
@@ -397,6 +402,10 @@ class ExtendedImage extends StatefulWidget {
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
         super(key: key);
+
+  /// whether enable slide out page
+  /// you should make sure this is in [ExtendedImageSlidePage]
+  final bool enableSlideOutPage;
 
   ///init GestureConfig when image is ready.
   final InitGestureConfigHandler initGestureConfigHandler;
@@ -604,11 +613,12 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   ImageInfo _imageInfo;
   bool _isListeningToStream = false;
   bool _invertColors;
+  ExtendedImageSlidePageState _slidePageState;
+
   @override
   void initState() {
     returnLoadStateChangedWidget = false;
     _loadState = LoadState.loading;
-    // TODO: implement initState
     super.initState();
   }
 
@@ -617,6 +627,12 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
     _invertColors = MediaQuery.of(context, nullOk: true)?.invertColors ??
         SemanticsBinding.instance.accessibilityFeatures.invertColors;
     _resolveImage();
+
+    _slidePageState = null;
+    if (widget.enableSlideOutPage) {
+      _slidePageState = context
+          .ancestorStateOfType(TypeMatcher<ExtendedImageSlidePageState>());
+    }
 
     if (TickerMode.of(context))
       _listenToStream();
@@ -632,6 +648,13 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
     if (widget.image != oldWidget.image) {
       //_cacnelNetworkImageRequest(oldWidget.image);
       _resolveImage();
+    }
+    if (widget.enableSlideOutPage != oldWidget.enableSlideOutPage) {
+      _slidePageState = null;
+      if (widget.enableSlideOutPage) {
+        _slidePageState = context
+            .ancestorStateOfType(TypeMatcher<ExtendedImageSlidePageState>());
+      }
     }
   }
 
@@ -753,10 +776,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
 
   @override
   Widget build(BuildContext context) {
-    //_loadState = LoadState.failed;
     Widget current;
-    var slidePageState =
-        context.ancestorStateOfType(TypeMatcher<ExtendedImageSlidePageState>());
     returnLoadStateChangedWidget = false;
     if (widget.loadStateChanged != null) {
       current = widget.loadStateChanged(this);
@@ -770,10 +790,6 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
         switch (_loadState) {
           case LoadState.loading:
             current = Container(
-//              margin: EdgeInsets.all(100.0),
-//              color: Colors.red,
-//              width: 60.0,
-//              height: 60.0,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -789,11 +805,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
             break;
           case LoadState.completed:
             if (widget.mode == ExtendedImageMode.Gesture) {
-              current = ExtendedImageGesture(
-                  this,
-                  context.ancestorStateOfType(
-                      TypeMatcher<ExtendedImageGesturePageViewState>()),
-                  slidePageState);
+              current = ExtendedImageGesture(this, _slidePageState);
             } else {
               current = _buildExtendedRawImage();
             }
@@ -813,11 +825,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
       } else {
         if (_loadState == LoadState.completed &&
             widget.mode == ExtendedImageMode.Gesture) {
-          current = ExtendedImageGesture(
-              this,
-              context.ancestorStateOfType(
-                  TypeMatcher<ExtendedImageGesturePageViewState>()),
-              slidePageState);
+          current = ExtendedImageGesture(this, _slidePageState);
         } else {
           current = _buildExtendedRawImage();
         }
@@ -858,11 +866,11 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
       current = ConstrainedBox(constraints: widget.constraints, child: current);
     }
 
-    ///add for loading/falied
-    if (_loadState != LoadState.completed &&
-        widget.mode == ExtendedImageMode.Gesture &&
-        slidePageState != null) {
-      current = ExtendedImageSlidePageHandler(current, slidePageState);
+    ///add for loading/falied/ unGesture image
+    if (_slidePageState != null &&
+        !(_loadState == LoadState.completed &&
+            widget.mode == ExtendedImageMode.Gesture)) {
+      current = ExtendedImageSlidePageHandler(current, _slidePageState);
     }
 
     if (widget.excludeFromSemantics) return current;
@@ -916,31 +924,24 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   //reload image as you wish,(loaded failed)
   @override
   void reLoadImage() {
-    // TODO: implement reLoadImage
     _resolveImage(true);
   }
 
   @override
-  // TODO: implement ExtendedImageInfo
   ImageInfo get extendedImageInfo => _imageInfo;
 
   @override
-  // TODO: implement ExtendedImageLoadState
   LoadState get extendedImageLoadState => _loadState;
 
   @override
-  // TODO: implement imageProvider
   ImageProvider get imageProvider => widget.image;
 
   @override
-  // TODO: implement invertColors
   bool get invertColors => _invertColors;
 
   @override
-  // TODO: implement imageStreamKey
   Object get imageStreamKey => _imageStream?.key;
 
   @override
-  // TODO: implement ImageWidget
   ExtendedImage get imageWidget => this.widget;
 }

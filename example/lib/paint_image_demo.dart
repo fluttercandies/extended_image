@@ -16,7 +16,6 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
   @override
   void initState() {
     paintType = PaintType.ClipHeart;
-    // TODO: implement initState
     super.initState();
   }
 

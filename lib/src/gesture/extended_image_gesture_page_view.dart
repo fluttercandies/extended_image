@@ -139,7 +139,6 @@ class ExtendedImageGesturePageViewState
   ExtendedImageGestureState extendedImageGestureState;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _gestureAnimation = GestureAnimation(this, offsetCallBack: (Offset value) {
       var gestureDetails = extendedImageGestureState?.gestureDetails;
@@ -195,7 +194,6 @@ class ExtendedImageGesturePageViewState
   @override
   void dispose() {
     _gestureAnimation.dispose();
-    // TODO: implement dispose
     super.dispose();
   }
 

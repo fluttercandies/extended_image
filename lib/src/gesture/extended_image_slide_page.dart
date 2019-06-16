@@ -205,10 +205,10 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
       child: result,
     );
 
-    result = IgnorePointer(
-      ignoring: _isSliding,
-      child: result,
-    );
+//    result = IgnorePointer(
+//      ignoring: _isSliding,
+//      child: result,
+//    );
 
     return result;
   }

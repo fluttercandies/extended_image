@@ -14,7 +14,6 @@ class _ImageListDemoState extends State<ImageListDemo> {
   @override
   void dispose() {
     listSourceRepository.dispose();
-    // TODO: implement dispose
     super.dispose();
   }
 

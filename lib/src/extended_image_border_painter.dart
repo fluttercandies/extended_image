@@ -34,7 +34,6 @@ class ExtendedImageBorderPainter extends CustomPainter {
   ExtendedImageBorderPainter({this.border, this.shape, this.borderRadius});
   @override
   void paint(Canvas canvas, Size size) {
-    // TODO: implement paint
     final Rect outputRect = Rect.fromLTWH(0.0, 0.0, size.width, size.height);
 
 //    Path clipPath;
@@ -70,7 +69,6 @@ class ExtendedImageBorderPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    // TODO: implement shouldRepaint
     var old = oldDelegate as ExtendedImageBorderPainter;
 
     return this.borderRadius != old.borderRadius ||

@@ -13,10 +13,9 @@ import 'extended_image_slide_page.dart';
 class ExtendedImageGesture extends StatefulWidget {
   final ExtendedImage extendedImage;
   final ExtendedImageState extendedImageState;
-  final ExtendedImageGesturePageViewState extendedImagePageViewState;
   final ExtendedImageSlidePageState extendedImageSlidePageState;
-  ExtendedImageGesture(ExtendedImageState extendedImageState,
-      this.extendedImagePageViewState, this.extendedImageSlidePageState)
+  ExtendedImageGesture(
+      ExtendedImageState extendedImageState, this.extendedImageSlidePageState)
       : extendedImage = extendedImageState.imageWidget,
         extendedImageState = extendedImageState;
   @override
@@ -33,10 +32,9 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   Offset _pointerDownPosition;
   GestureAnimation _gestureAnimation;
   GestureConfig _gestureConfig;
-
+  ExtendedImageGesturePageViewState _pageViewState;
   @override
   void initState() {
-    // TODO: implement initState
     _initGestureConfig();
     super.initState();
   }
@@ -85,9 +83,23 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   @override
+  void didChangeDependencies() {
+    _pageViewState = null;
+    if (_gestureConfig.inPageView) {
+      _pageViewState = context.ancestorStateOfType(
+          TypeMatcher<ExtendedImageGesturePageViewState>());
+    }
+    super.didChangeDependencies();
+  }
+
+  @override
   void didUpdateWidget(ExtendedImageGesture oldWidget) {
-    // TODO: implement didUpdateWidget
     _initGestureConfig();
+    _pageViewState = null;
+    if (_gestureConfig.inPageView) {
+      _pageViewState = context.ancestorStateOfType(
+          TypeMatcher<ExtendedImageGesturePageViewState>());
+    }
     super.didUpdateWidget(oldWidget);
   }
 
@@ -275,7 +287,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
     _gestureAnimation.stop();
 
-    widget.extendedImagePageViewState?.extendedImageGestureState = this;
+    _pageViewState?.extendedImageGestureState = this;
   }
 
   double _clampScale(double scale, double min, double max) {
@@ -338,11 +350,9 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   @override
-  // TODO: implement gestureDetails
   GestureDetails get gestureDetails => _gestureDetails;
   @override
   set gestureDetails(GestureDetails value) {
-    // TODO: implement gestureDetails\
     if (mounted) {
       setState(() {
         _gestureDetails = value;
@@ -351,21 +361,18 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   @override
-  // TODO: implement imageGestureConfig
   GestureConfig get imageGestureConfig => _gestureConfig;
 
   @override
   void handleDoubleTap({double scale, Offset doubleTapPosition}) {
     doubleTapPosition ??= _pointerDownPosition;
     scale ??= _gestureConfig.initialScale;
-    // TODO: implement onDoubleTap
     _handleScaleStart(ScaleStartDetails(focalPoint: doubleTapPosition));
     _handleScaleUpdate(ScaleUpdateDetails(
         focalPoint: doubleTapPosition, scale: scale / _startingScale));
   }
 
   @override
-  // TODO: implement pointerDownPosition
   Offset get pointerDownPosition => _pointerDownPosition;
 
   @override
