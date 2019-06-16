@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'extended_image.dart';
+
 enum LoadState {
   //loading
   loading,
@@ -22,6 +24,8 @@ abstract class ExtendedImageState {
   bool get invertColors;
 
   Object get imageStreamKey;
+
+  ExtendedImage get imageWidget;
 }
 
 enum ExtendedImageMode {

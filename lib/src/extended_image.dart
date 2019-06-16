@@ -604,7 +604,6 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   ImageInfo _imageInfo;
   bool _isListeningToStream = false;
   bool _invertColors;
-
   @override
   void initState() {
     returnLoadStateChangedWidget = false;
@@ -632,7 +631,6 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
     super.didUpdateWidget(oldWidget);
     if (widget.image != oldWidget.image) {
       //_cacnelNetworkImageRequest(oldWidget.image);
-      _loadState = LoadState.loading;
       _resolveImage();
     }
   }
@@ -792,7 +790,6 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
           case LoadState.completed:
             if (widget.mode == ExtendedImageMode.Gesture) {
               current = ExtendedImageGesture(
-                  widget,
                   this,
                   context.ancestorStateOfType(
                       TypeMatcher<ExtendedImageGesturePageViewState>()),
@@ -817,7 +814,6 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
         if (_loadState == LoadState.completed &&
             widget.mode == ExtendedImageMode.Gesture) {
           current = ExtendedImageGesture(
-              widget,
               this,
               context.ancestorStateOfType(
                   TypeMatcher<ExtendedImageGesturePageViewState>()),
@@ -943,4 +939,8 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   @override
   // TODO: implement imageStreamKey
   Object get imageStreamKey => _imageStream?.key;
+
+  @override
+  // TODO: implement ImageWidget
+  ExtendedImage get imageWidget => this.widget;
 }

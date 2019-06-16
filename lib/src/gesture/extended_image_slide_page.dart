@@ -39,6 +39,9 @@ class ExtendedImageSlidePage extends StatefulWidget {
   /// slide whole page or only image
   final SlideType slideType;
 
+  /// on sliding page
+  final OnSlidingPage onSlidingPage;
+
   ExtendedImageSlidePage(
       {this.child,
       this.slidePageBackgroundHandler,
@@ -46,15 +49,18 @@ class ExtendedImageSlidePage extends StatefulWidget {
       this.slideEndHandler,
       this.slideAxis: SlideAxis.both,
       this.resetPageDuration: const Duration(milliseconds: 500),
-      this.slideType: SlideType.onlyImage});
+      this.slideType: SlideType.onlyImage,
+      this.onSlidingPage});
   @override
   ExtendedImageSlidePageState createState() => ExtendedImageSlidePageState();
 }
 
 class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     with SingleTickerProviderStateMixin {
-  bool _ignoring = false;
-  bool get ignoring => _ignoring;
+  bool _isSliding = false;
+
+  ///whether is sliding page
+  bool get isSliding => _isSliding;
 
   Size _pageSize;
   Size get pageSize => _pageSize ?? context.size;
@@ -98,13 +104,14 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   void _backAnimation() {
     if (mounted) {
       setState(() {
-        if (_backAnimationController.isCompleted) _ignoring = false;
+        if (_backAnimationController.isCompleted) _isSliding = false;
       });
     }
     if (widget.slideType == SlideType.onlyImage) {
       _extendedImageGestureState?.slide();
       _extendedImageSlidePageHandlerState?.slide();
     }
+    widget.onSlidingPage?.call(this);
   }
 
   @override
@@ -130,7 +137,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
             offset: _offset,
             pageSize: pageSize,
             pageGestureAxis: widget.slideAxis);
-    _ignoring = true;
+    _isSliding = true;
     if (widget.slideType == SlideType.onlyImage) {
       _extendedImageGestureState = extendedImageGestureState;
       _extendedImageGestureState?.slide();
@@ -141,10 +148,11 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     if (mounted) {
       setState(() {});
     }
+    widget.onSlidingPage?.call(this);
   }
 
   void endSlide() {
-    if (mounted && _ignoring) {
+    if (mounted && _isSliding) {
       var popPage = widget.slideEndHandler?.call(_offset) ??
           defaultSlideEndHandler(
               offset: _offset,
@@ -154,7 +162,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
       if (popPage) {
         setState(() {
           _poping = true;
-          _ignoring = false;
+          _isSliding = false;
         });
         Navigator.pop(context);
       } else {
@@ -198,7 +206,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     );
 
     result = IgnorePointer(
-      ignoring: _ignoring,
+      ignoring: _isSliding,
       child: result,
     );
 
