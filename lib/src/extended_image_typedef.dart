@@ -3,6 +3,8 @@ import 'package:extended_image/src/gesture/extended_image_gesture_utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui show Image;
 
+import 'gesture/extended_image_slide_page.dart';
+
 ///
 ///  extended_image_typedef.dart
 ///  create by zmtzawqlp on 2019/4/3
@@ -41,3 +43,6 @@ typedef SlideScaleHandler = double Function(Offset offset);
 ///init GestureConfig when image is ready.
 typedef InitGestureConfigHandler = GestureConfig Function(
     ExtendedImageState state);
+
+///on sliding page
+typedef OnSlidingPage = void Function(ExtendedImageSlidePageState state);

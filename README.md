@@ -19,6 +19,7 @@ A powerful extended official image for Dart, which support placeholder(loading)/
     - [double tap animation](#double-tap-animation)
   - [Photo View](#photo-view)
   - [Slide Out Page](#slide-out-page)
+    - [enable slide out page](#enable-slide-out-page)
     - [include your page in ExtendedImageSlidePage](#include-your-page-in-extendedimageslidepage)
     - [make sure your page background is transparent](#make-sure-your-page-background-is-transparent)
     - [push with transparent page route](#push-with-transparent-page-route)
@@ -230,16 +231,17 @@ ExtendedImage.network(
   fit: BoxFit.contain,
   //enableLoadState: false,
   mode: ExtendedImageMode.Gesture,
-  gestureConfig: GestureConfig(
-    minScale: 0.9,
-    animationMinScale: 0.7,
-    maxScale: 3.0,
-    animationMaxScale: 3.5,
-    speed: 1.0,
-    inertialSpeed: 100.0,
-    initialScale: 1.0,
-    inPageView: false,
-  ),
+  initGestureConfigHandler: (state) {
+    return GestureConfig(
+        minScale: 0.9,
+        animationMinScale: 0.7,
+        maxScale: 3.0,
+        animationMaxScale: 3.5,
+        speed: 1.0,
+        inertialSpeed: 100.0,
+        initialScale: 1.0,
+        inPageView: false);
+  },
 )
 ```
 
@@ -345,34 +347,55 @@ Extended Image support to slide out page as WeChat.
 
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/slide.gif)
 
+### enable slide out page
+
+ExtendedImage
+
+| parameter          | description                   | default |
+| ------------------ | ----------------------------- | ------- |
+| enableSlideOutPage | whether enable slide out page | false   |
+
 ### include your page in ExtendedImageSlidePage
 
+take care of onSlidingPage call back, you can update other widgets' state as you want.
+but, do not setState directly here, image state will changed, you should only notify the widgets which are needed to change
+
 ```dart
- var page = ExtendedImageSlidePage(
-      child: PicSwiper(
-          index,
-          listSourceRepository
-          .map<PicSwiperItem>(
-          (f) => PicSwiperItem(f.imageUrl, des: f.title))
-          .toList(),
-       ),
+    return ExtendedImageSlidePage(
+      child: result,
       slideAxis: SlideAxis.both,
       slideType: SlideType.onlyImage,
-);
+      onSlidingPage: (state) {
+        ///you can change other widgets' state on page as you want
+        ///base on offset/isSliding etc
+        //var offset= state.offset;
+        var showSwiper = !state.isSliding;
+        if (showSwiper != _showSwiper) {
+          // do not setState directly here, the image state will change,
+          // you should only notify the widgets which are needed to change
+          // setState(() {
+          // _showSwiper = showSwiper;
+          // });
+
+          _showSwiper = showSwiper;
+          rebuildSwiper.add(_showSwiper);
+        }
+      },
+    );
 ```
 
 ExtendedImageGesturePage
 
-| parameter                  | description                                            | default                           |
-| -------------------------- | ------------------------------------------------------ | --------------------------------- |
-| child                      | The [child] contained by the ExtendedImageGesturePage. | -                                 |
-| slidePageBackgroundHandler | build background when slide page                       | defaultSlidePageBackgroundHandler |
-| slideScaleHandler          | custom scale of page when slide page                   | defaultSlideScaleHandler          |
-| slideEndHandler            | call back of slide end,decide whether pop page         | defaultSlideEndHandler            |
-| slideAxis                  | axis of slide(both,horizontal,vertical)                | SlideAxis.both                    |
-| resetPageDuration          | reset page position when slide end(not pop page)       | milliseconds: 500                 |
-| slideType                  | slide whole page or only image                         | SlideType.onlyImage               |
-
+| parameter                  | description                                                                      | default                           |
+| -------------------------- | -------------------------------------------------------------------------------- | --------------------------------- |
+| child                      | The [child] contained by the ExtendedImageGesturePage.                           | -                                 |
+| slidePageBackgroundHandler | build background when slide page                                                 | defaultSlidePageBackgroundHandler |
+| slideScaleHandler          | custom scale of page when slide page                                             | defaultSlideScaleHandler          |
+| slideEndHandler            | call back of slide end,decide whether pop page                                   | defaultSlideEndHandler            |
+| slideAxis                  | axis of slide(both,horizontal,vertical)                                          | SlideAxis.both                    |
+| resetPageDuration          | reset page position when slide end(not pop page)                                 | milliseconds: 500                 |
+| slideType                  | slide whole page or only image                                                   | SlideType.onlyImage               |
+| onSlidingPage              | call back when it's sliding page, change other widgets state on page as you want | -                                 |
 
 ```dart
 Color defaultSlidePageBackgroundHandler(
@@ -433,7 +456,10 @@ you should push page with TransparentMaterialPageRoute/TransparentCupertinoPageR
         : TransparentCupertinoPageRoute(builder: (_) => page),
   );
 ```
-[Slide Out Page Demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/photo_view_demo.dart)
+
+[Slide Out Page Demo Code 1](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_image.dart
+
+[Slide Out Page Demo Code 2](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/pic_swiper.dart)
 
 ## Border BorderRadius Shape
 

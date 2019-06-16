@@ -68,7 +68,7 @@ class ExtendedImageSlidePageHandlerState
 
   void _handleScaleEnd(ScaleEndDetails details) {
     if (widget.extendedImageSlidePageState != null &&
-        widget.extendedImageSlidePageState.ignoring) {
+        widget.extendedImageSlidePageState.isSliding) {
       _updatePageGestureStartingOffset = null;
       widget.extendedImageSlidePageState.endSlide();
       return;

@@ -18,7 +18,8 @@ class PicSwiper extends StatefulWidget {
 
 class _PicSwiperState extends State<PicSwiper>
     with SingleTickerProviderStateMixin {
-  var rebuild = StreamController<int>.broadcast();
+  var rebuildIndex = StreamController<int>.broadcast();
+  var rebuildSwiper = StreamController<bool>.broadcast();
   AnimationController _animationController;
   Animation<double> _animation;
   Function animationListener;
@@ -32,30 +33,30 @@ class _PicSwiperState extends State<PicSwiper>
   List<double> doubleTapScales = <double>[1.0, 2.0];
 
   int currentIndex;
+  bool _showSwiper = true;
 
   @override
   void initState() {
     currentIndex = widget.index;
     _animationController = AnimationController(
         duration: const Duration(milliseconds: 150), vsync: this);
-    // TODO: implement initState
     super.initState();
   }
 
   @override
   void dispose() {
-    rebuild.close();
+    rebuildIndex.close();
+    rebuildSwiper.close();
     _animationController?.dispose();
     clearGestureDetailsCache();
     //cancelToken?.cancel();
-    // TODO: implement dispose
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Material(
+    Widget result = Material(
 
         /// if you use ExtendedImageSlidePage and slideType =SlideType.onlyImage,
         /// make sure your page is transparent background
@@ -70,6 +71,7 @@ class _PicSwiperState extends State<PicSwiper>
                 Widget image = ExtendedImage.network(
                   item,
                   fit: BoxFit.contain,
+                  enableSlideOutPage: true,
                   mode: ExtendedImageMode.Gesture,
                   initGestureConfigHandler: (state) {
                     double initialScale = 1.0;
@@ -141,7 +143,7 @@ class _PicSwiperState extends State<PicSwiper>
               itemCount: widget.pics.length,
               onPageChanged: (int index) {
                 currentIndex = index;
-                rebuild.add(index);
+                rebuildIndex.add(index);
               },
               controller: PageController(
                 initialPage: currentIndex,
@@ -150,14 +152,45 @@ class _PicSwiperState extends State<PicSwiper>
               physics: BouncingScrollPhysics(),
               //physics: ClampingScrollPhysics(),
             ),
-            Positioned(
-              bottom: 0.0,
-              left: 0.0,
-              right: 0.0,
-              child: MySwiperPlugin(widget.pics, currentIndex, rebuild),
+            StreamBuilder<bool>(
+              builder: (c, d) {
+                if (d.data == null || !d.data) return Container();
+
+                return Positioned(
+                  bottom: 0.0,
+                  left: 0.0,
+                  right: 0.0,
+                  child:
+                      MySwiperPlugin(widget.pics, currentIndex, rebuildIndex),
+                );
+              },
+              initialData: true,
+              stream: rebuildSwiper.stream,
             )
           ],
         ));
+
+    return ExtendedImageSlidePage(
+      child: result,
+      slideAxis: SlideAxis.both,
+      slideType: SlideType.onlyImage,
+      onSlidingPage: (state) {
+        ///you can change other widgets' state on page as you want
+        ///base on offset/isSliding etc
+        //var offset= state.offset;
+        var showSwiper = !state.isSliding;
+        if (showSwiper != _showSwiper) {
+          // do not setState directly here, the image state will change,
+          // you should only notify the widgets which are needed to change
+          // setState(() {
+          // _showSwiper = showSwiper;
+          // });
+
+          _showSwiper = showSwiper;
+          rebuildSwiper.add(_showSwiper);
+        }
+      },
+    );
   }
 
   double _initalScale({Size imageSize, Size size, double initialScale}) {

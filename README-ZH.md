@@ -23,7 +23,8 @@
     - [双击图片动画](#%E5%8F%8C%E5%87%BB%E5%9B%BE%E7%89%87%E5%8A%A8%E7%94%BB)
   - [图片浏览](#%E5%9B%BE%E7%89%87%E6%B5%8F%E8%A7%88)
   - [滑动退出页面](#%E6%BB%91%E5%8A%A8%E9%80%80%E5%87%BA%E9%A1%B5%E9%9D%A2)
-    - [首先把你的页面用ExtendedImageSlidePage包一下](#%E9%A6%96%E5%85%88%E6%8A%8A%E4%BD%A0%E7%9A%84%E9%A1%B5%E9%9D%A2%E7%94%A8extendedimageslidepage%E5%8C%85%E4%B8%80%E4%B8%8B)
+    - [首先开启滑动退出页面效果](#%E9%A6%96%E5%85%88%E5%BC%80%E5%90%AF%E6%BB%91%E5%8A%A8%E9%80%80%E5%87%BA%E9%A1%B5%E9%9D%A2%E6%95%88%E6%9E%9C)
+    - [把你的页面用ExtendedImageSlidePage包一下](#%E6%8A%8A%E4%BD%A0%E7%9A%84%E9%A1%B5%E9%9D%A2%E7%94%A8extendedimageslidepage%E5%8C%85%E4%B8%80%E4%B8%8B)
     - [确保你的页面是透明背景的](#%E7%A1%AE%E4%BF%9D%E4%BD%A0%E7%9A%84%E9%A1%B5%E9%9D%A2%E6%98%AF%E9%80%8F%E6%98%8E%E8%83%8C%E6%99%AF%E7%9A%84)
     - [Push一个透明的页面](#push%E4%B8%80%E4%B8%AA%E9%80%8F%E6%98%8E%E7%9A%84%E9%A1%B5%E9%9D%A2)
   - [Border BorderRadius Shape](#border-borderradius-shape)
@@ -233,16 +234,17 @@ ExtendedImage.network(
   fit: BoxFit.contain,
   //enableLoadState: false,
   mode: ExtendedImageMode.Gesture,
-  gestureConfig: GestureConfig(
-    minScale: 0.9,
-    animationMinScale: 0.7,
-    maxScale: 3.0,
-    animationMaxScale: 3.5,
-    speed: 1.0,
-    inertialSpeed: 100.0,
-    initialScale: 1.0,
-    inPageView: false,
-  ),
+  initGestureConfigHandler: (state) {
+    return GestureConfig(
+        minScale: 0.9,
+        animationMinScale: 0.7,
+        maxScale: 3.0,
+        animationMaxScale: 3.5,
+        speed: 1.0,
+        inertialSpeed: 100.0,
+        initialScale: 1.0,
+        inPageView: false);
+  },
 )
 ```
 
@@ -353,19 +355,40 @@ ExtendedImageGesturePageView.builder(
 
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/slide.gif)
 
-### 首先把你的页面用ExtendedImageSlidePage包一下
+### 首先开启滑动退出页面效果
+
+ExtendedImage
+
+| parameter          | description              | default |
+| ------------------ | ------------------------ | ------- |
+| enableSlideOutPage | 是否开启滑动退出页面效果 | false   |
+
+### 把你的页面用ExtendedImageSlidePage包一下
+
+注意：onSlidingPage回调，你可以使用它来设置滑动页面的时候,页面上其他元素的状态。但是注意别直接使用setState来刷新，因为这样会导致ExtendedImage的状态重置掉，你应该只通知需要刷新的Widgets进行刷新
 
 ```dart
-var page = ExtendedImageSlidePage(
-  child: PicSwiper(
-    index,
-    listSourceRepository
-        .map<PicSwiperItem>(
-            (f) => PicSwiperItem(f.imageUrl, des: f.title))
-        .toList(),
-  ),
-  //pageGestureAxis: PageGestureAxis.horizontal,
-);
+    return ExtendedImageSlidePage(
+      child: result,
+      slideAxis: SlideAxis.both,
+      slideType: SlideType.onlyImage,
+      onSlidingPage: (state) {
+        ///you can change other widgets' state on page as you want
+        ///base on offset/isSliding etc
+        //var offset= state.offset;
+        var showSwiper = !state.isSliding;
+        if (showSwiper != _showSwiper) {
+          // do not setState directly here, the image state will change,
+          // you should only notify the widgets which are needed to change
+          // setState(() {
+          // _showSwiper = showSwiper;
+          // });
+
+          _showSwiper = showSwiper;
+          rebuildSwiper.add(_showSwiper);
+        }
+      },
+    );
 ```
 
 ExtendedImageGesturePage的参数
@@ -379,6 +402,7 @@ ExtendedImageGesturePage的参数
 | slideAxis                  | 滑动页面的方向（both,horizontal,vertical）,掘金是vertical，微信是Both | both                              |
 | resetPageDuration          | 滑动结束，如果不pop页面，整个页面回弹动画的时间                       | milliseconds: 500                 |
 | slideType                  | 滑动整个页面还是只是图片(wholePage/onlyImage)                         | SlideType.onlyImage               |
+| onSlidingPage              | 滑动页面的回调，你可以在这里改变页面上其他元素的状态                  | -                                 |
 
 下面是默认实现，你也可以根据你的喜好，来定义属于自己方式
 ```dart
@@ -439,7 +463,9 @@ double defaultSlideScaleHandler(
   );
 ```
 
-[滑动退出页面例子](https://github.com/fluttercandies/extended_image/blob/master/example/lib/photo_view_demo.dart)
+[滑动退出页面相关代码演示 1](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_image.dart
+
+[滑动退出页面相关代码演示 2](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/pic_swiper.dart)
 
 ## Border BorderRadius Shape
 
