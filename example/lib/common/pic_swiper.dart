@@ -33,6 +33,8 @@ class _PicSwiperState extends State<PicSwiper>
 
   int currentIndex;
 
+  bool _showSwiper = true;
+
   @override
   void initState() {
     currentIndex = widget.index;
@@ -55,7 +57,7 @@ class _PicSwiperState extends State<PicSwiper>
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return Material(
+    Widget result = Material(
 
         /// if you use ExtendedImageSlidePage and slideType =SlideType.onlyImage,
         /// make sure your page is transparent background
@@ -150,14 +152,33 @@ class _PicSwiperState extends State<PicSwiper>
               physics: BouncingScrollPhysics(),
               //physics: ClampingScrollPhysics(),
             ),
-            Positioned(
-              bottom: 0.0,
-              left: 0.0,
-              right: 0.0,
-              child: MySwiperPlugin(widget.pics, currentIndex, rebuild),
-            )
+            _showSwiper
+                ? Positioned(
+                    bottom: 0.0,
+                    left: 0.0,
+                    right: 0.0,
+                    child: MySwiperPlugin(widget.pics, currentIndex, rebuild),
+                  )
+                : Container()
           ],
         ));
+
+    return ExtendedImageSlidePage(
+      child: result,
+      slideAxis: SlideAxis.both,
+      slideType: SlideType.onlyImage,
+      onSlidingPage: (state) {
+        ///you can change other widgets state on page as you want
+        ///base on offset/isSliding etc
+        //var offset= state.offset;
+        var showSwiper = !state.isSliding;
+        if (showSwiper != _showSwiper) {
+          setState(() {
+            _showSwiper = showSwiper;
+          });
+        }
+      },
+    );
   }
 
   double _initalScale({Size imageSize, Size size, double initialScale}) {

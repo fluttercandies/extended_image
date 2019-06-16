@@ -15,8 +15,10 @@ class ExtendedImageGesture extends StatefulWidget {
   final ExtendedImageState extendedImageState;
   final ExtendedImageGesturePageViewState extendedImagePageViewState;
   final ExtendedImageSlidePageState extendedImageSlidePageState;
-  ExtendedImageGesture(this.extendedImage, this.extendedImageState,
-      this.extendedImagePageViewState, this.extendedImageSlidePageState);
+  ExtendedImageGesture(ExtendedImageState extendedImageState,
+      this.extendedImagePageViewState, this.extendedImageSlidePageState)
+      : extendedImage = extendedImageState.imageWidget,
+        extendedImageState = extendedImageState;
   @override
   _ExtendedImageGestureState createState() => _ExtendedImageGestureState();
 }
@@ -31,11 +33,11 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   Offset _pointerDownPosition;
   GestureAnimation _gestureAnimation;
   GestureConfig _gestureConfig;
+
   @override
   void initState() {
     // TODO: implement initState
     _initGestureConfig();
-
     super.initState();
   }
 
@@ -115,7 +117,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       var offsetDelta = (details.focalPoint - _startingOffset);
       //print(offsetDelta);
       bool updateGesture = false;
-      if (!widget.extendedImageSlidePageState.ignoring) {
+      if (!widget.extendedImageSlidePageState.isSliding) {
         if (offsetDelta.dx != 0 &&
             offsetDelta.dx.abs() > offsetDelta.dy.abs()) {
           if (_gestureDetails.computeHorizontalBoundary) {
@@ -169,7 +171,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     }
 
     if (widget.extendedImageSlidePageState != null &&
-        widget.extendedImageSlidePageState.ignoring) {
+        widget.extendedImageSlidePageState.isSliding) {
       return;
     }
 
@@ -208,7 +210,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
   void _handleScaleEnd(ScaleEndDetails details) {
     if (widget.extendedImageSlidePageState != null &&
-        widget.extendedImageSlidePageState.ignoring) {
+        widget.extendedImageSlidePageState.isSliding) {
       _updateSlidePageStartingOffset = null;
       // _updateSlidePageImageStartingOffset = null;
       widget.extendedImageSlidePageState.endSlide();

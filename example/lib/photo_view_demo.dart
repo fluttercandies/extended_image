@@ -62,7 +62,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
           Container(
             padding: EdgeInsets.all(margin),
             child: Text(
-                "support to select text and custom text selection toolbar/handle"),
+                "click image to show photo view, support zoom/pan image. horizontal and vertical page view are supported."),
           ),
           Expanded(
             child: PullToRefreshNotification(
