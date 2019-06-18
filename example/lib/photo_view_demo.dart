@@ -130,22 +130,20 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                           color: Colors.grey),
                                       maxLines: 10,
                                       overFlowTextSpan: OverFlowTextSpan(
-                                          children: <TextSpan>[
-                                            TextSpan(text: '  \u2026  '),
-                                            TextSpan(
-                                                text: "more detail",
-                                                style: TextStyle(
-                                                  color: Colors.blue,
-                                                ),
-                                                recognizer:
-                                                    TapGestureRecognizer()
-                                                      ..onTap = () {
-                                                        launch(
-                                                            "https://github.com/fluttercandies/extended_text");
-                                                      })
-                                          ],
-                                          background:
-                                              Theme.of(context).canvasColor),
+                                        children: <TextSpan>[
+                                          TextSpan(text: '  \u2026  '),
+                                          TextSpan(
+                                              text: "more detail",
+                                              style: TextStyle(
+                                                color: Colors.blue,
+                                              ),
+                                              recognizer: TapGestureRecognizer()
+                                                ..onTap = () {
+                                                  launch(
+                                                      "https://github.com/fluttercandies/extended_text");
+                                                })
+                                        ],
+                                      ),
                                       selectionEnabled: true,
                                       textSelectionControls:
                                           _myExtendedMaterialTextSelectionControls,

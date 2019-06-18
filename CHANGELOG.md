@@ -1,4 +1,4 @@
-## [0.5.0]
+## [0.5.1]
 
 * Features:
   Add call back [onSlidingPage] when is sliding page, you can change other widgets state in page.[ExtendedImageSlidePage]
