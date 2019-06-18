@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:extended_image/src/extended_image_border_painter.dart';
 import 'package:extended_image/src/gesture/extended_image_gesture.dart';
-import 'package:extended_image/src/gesture/extended_image_gesture_page_view.dart';
 import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/image/extended_raw_image.dart';
