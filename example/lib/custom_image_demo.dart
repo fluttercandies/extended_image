@@ -103,6 +103,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                       );
                       break;
                   }
+                  return Container();
                 },
               ),
             ),
