@@ -730,7 +730,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   void _updateSourceStream(ImageStream newStream, {bool rebuild = false}) {
     if (_imageStream?.key == newStream?.key) return;
     //print("_updateSourceStream");
-    if (_isListeningToStream) _imageStream.removeListener(_handleImageChanged);
+    if (_isListeningToStream) _imageStream.removeListener(ImageStreamListener(_handleImageChanged));
 
     if (!widget.gaplessPlayback || rebuild) {
       setState(() {
@@ -741,18 +741,18 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
 
     _imageStream = newStream;
     if (_isListeningToStream)
-      _imageStream.addListener(_handleImageChanged, onError: _loadFailed);
+      _imageStream.addListener(ImageStreamListener(_handleImageChanged, onError: _loadFailed));
   }
 
   void _listenToStream() {
     if (_isListeningToStream) return;
-    _imageStream.addListener(_handleImageChanged, onError: _loadFailed);
+    _imageStream.addListener(ImageStreamListener(_handleImageChanged, onError: _loadFailed));
     _isListeningToStream = true;
   }
 
   void _stopListeningToStream() {
     if (!_isListeningToStream) return;
-    _imageStream.removeListener(_handleImageChanged);
+    _imageStream.removeListener(ImageStreamListener(_handleImageChanged));
     _isListeningToStream = false;
   }
 
