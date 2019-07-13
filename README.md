@@ -9,27 +9,27 @@ A powerful extended official image for Dart, which support placeholder(loading)/
 ## Table of contents
 
 - [extended_image](#extendedimage)
-  - [Table of contents](#table-of-contents)
-  - [Cache Network](#cache-network)
-    - [Simple use](#simple-use)
-    - [Use Extendednetworkimageprovider](#use-extendednetworkimageprovider)
-  - [Load State](#load-state)
+  - [Table of contents](#Table-of-contents)
+  - [Cache Network](#Cache-Network)
+    - [Simple use](#Simple-use)
+    - [Use Extendednetworkimageprovider](#Use-Extendednetworkimageprovider)
+  - [Load State](#Load-State)
     - [demo code](#demo-code)
-  - [Zoom Pan](#zoom-pan)
+  - [Zoom Pan](#Zoom-Pan)
     - [double tap animation](#double-tap-animation)
-  - [Photo View](#photo-view)
-  - [Slide Out Page](#slide-out-page)
+  - [Photo View](#Photo-View)
+  - [Slide Out Page](#Slide-Out-Page)
     - [enable slide out page](#enable-slide-out-page)
-    - [include your page in ExtendedImageSlidePage](#include-your-page-in-extendedimageslidepage)
+    - [include your page in ExtendedImageSlidePage](#include-your-page-in-ExtendedImageSlidePage)
     - [make sure your page background is transparent](#make-sure-your-page-background-is-transparent)
     - [push with transparent page route](#push-with-transparent-page-route)
-  - [Border BorderRadius Shape](#border-borderradius-shape)
-  - [Clear Save](#clear-save)
+  - [Border BorderRadius Shape](#Border-BorderRadius-Shape)
+  - [Clear Save](#Clear-Save)
     - [clear](#clear)
     - [save network](#save-network)
-  - [Crop](#crop)
-  - [Paint](#paint)
-  - [Other APIs](#other-apis)
+  - [Crop](#Crop)
+  - [Paint](#Paint)
+  - [Other APIs](#Other-APIs)
 
 ## Cache Network
 
@@ -496,6 +496,13 @@ to clear disk cached , call clearDiskCachedImages method.
 // Clear the disk cache directory then return if it succeed.
 ///  <param name="duration">timespan to compute whether file has expired or not</param>
 Future<bool> clearDiskCachedImages({Duration duration})
+```
+
+to clear disk cached with specific url, call clearDiskCachedImage method.
+```dart
+/// clear the disk cache image then return if it succeed.
+///  <param name="url">clear specific one</param>
+Future<bool> clearDiskCachedImage(String url) async {
 ```
 
 to clear memory cache , call clearMemoryImageCache method.

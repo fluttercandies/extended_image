@@ -16,7 +16,7 @@
   - [目录](#%E7%9B%AE%E5%BD%95)
   - [缓存网络图片](#%E7%BC%93%E5%AD%98%E7%BD%91%E7%BB%9C%E5%9B%BE%E7%89%87)
     - [简单使用](#%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8)
-    - [使用 Extendednetworkimageprovider](#%E4%BD%BF%E7%94%A8-extendednetworkimageprovider)
+    - [使用 Extendednetworkimageprovider](#%E4%BD%BF%E7%94%A8-Extendednetworkimageprovider)
   - [加载状态](#%E5%8A%A0%E8%BD%BD%E7%8A%B6%E6%80%81)
     - [例子](#%E4%BE%8B%E5%AD%90)
   - [缩放拖拽](#%E7%BC%A9%E6%94%BE%E6%8B%96%E6%8B%BD)
@@ -24,16 +24,16 @@
   - [图片浏览](#%E5%9B%BE%E7%89%87%E6%B5%8F%E8%A7%88)
   - [滑动退出页面](#%E6%BB%91%E5%8A%A8%E9%80%80%E5%87%BA%E9%A1%B5%E9%9D%A2)
     - [首先开启滑动退出页面效果](#%E9%A6%96%E5%85%88%E5%BC%80%E5%90%AF%E6%BB%91%E5%8A%A8%E9%80%80%E5%87%BA%E9%A1%B5%E9%9D%A2%E6%95%88%E6%9E%9C)
-    - [把你的页面用ExtendedImageSlidePage包一下](#%E6%8A%8A%E4%BD%A0%E7%9A%84%E9%A1%B5%E9%9D%A2%E7%94%A8extendedimageslidepage%E5%8C%85%E4%B8%80%E4%B8%8B)
+    - [把你的页面用ExtendedImageSlidePage包一下](#%E6%8A%8A%E4%BD%A0%E7%9A%84%E9%A1%B5%E9%9D%A2%E7%94%A8ExtendedImageSlidePage%E5%8C%85%E4%B8%80%E4%B8%8B)
     - [确保你的页面是透明背景的](#%E7%A1%AE%E4%BF%9D%E4%BD%A0%E7%9A%84%E9%A1%B5%E9%9D%A2%E6%98%AF%E9%80%8F%E6%98%8E%E8%83%8C%E6%99%AF%E7%9A%84)
-    - [Push一个透明的页面](#push%E4%B8%80%E4%B8%AA%E9%80%8F%E6%98%8E%E7%9A%84%E9%A1%B5%E9%9D%A2)
-  - [Border BorderRadius Shape](#border-borderradius-shape)
+    - [Push一个透明的页面](#Push%E4%B8%80%E4%B8%AA%E9%80%8F%E6%98%8E%E7%9A%84%E9%A1%B5%E9%9D%A2)
+  - [Border BorderRadius Shape](#Border-BorderRadius-Shape)
   - [清除缓存和保存](#%E6%B8%85%E9%99%A4%E7%BC%93%E5%AD%98%E5%92%8C%E4%BF%9D%E5%AD%98)
     - [清除缓存](#%E6%B8%85%E9%99%A4%E7%BC%93%E5%AD%98)
     - [保存网络图片](#%E4%BF%9D%E5%AD%98%E7%BD%91%E7%BB%9C%E5%9B%BE%E7%89%87)
   - [裁剪](#%E8%A3%81%E5%89%AA)
   - [绘制](#%E7%BB%98%E5%88%B6)
-  - [其他 APIs](#%E5%85%B6%E4%BB%96-apis)
+  - [其他 APIs](#%E5%85%B6%E4%BB%96-APIs)
 
 ## 缓存网络图片
 
@@ -502,6 +502,13 @@ ExtendedImage.network(
 // Clear the disk cache directory then return if it succeed.
 ///  <param name="duration">timespan to compute whether file has expired or not</param>
 Future<bool> clearDiskCachedImages({Duration duration})
+```
+
+根据某一个url清除缓存， 可以调用clearDiskCachedImage方法.
+```dart
+/// clear the disk cache image then return if it succeed.
+///  <param name="url">clear specific one</param>
+Future<bool> clearDiskCachedImage(String url) async {
 ```
 
 清除内存缓存，可以调用clearMemoryImageCache方法
