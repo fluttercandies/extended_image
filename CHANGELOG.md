@@ -1,6 +1,6 @@
 ## [0.5.2]
 
-* Fix Api changes(ImageStream) over flutter version 1.5.8
+* Improve codes base on v1.7.8
 
 ## [0.5.1]
 

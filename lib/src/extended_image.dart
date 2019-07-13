@@ -606,7 +606,8 @@ class ExtendedImage extends StatefulWidget {
   _ExtendedImageState createState() => _ExtendedImageState();
 }
 
-class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
+class _ExtendedImageState extends State<ExtendedImage>
+    with ExtendedImageState, WidgetsBindingObserver {
   LoadState _loadState;
   ImageStream _imageStream;
   ImageInfo _imageInfo;
@@ -618,13 +619,13 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   void initState() {
     returnLoadStateChangedWidget = false;
     _loadState = LoadState.loading;
+    WidgetsBinding.instance.addObserver(this);
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    _invertColors = MediaQuery.of(context, nullOk: true)?.invertColors ??
-        SemanticsBinding.instance.accessibilityFeatures.invertColors;
+    _updateInvertColors();
     _resolveImage();
 
     _slidePageState = null;
@@ -658,9 +659,22 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   }
 
   @override
+  void didChangeAccessibilityFeatures() {
+    super.didChangeAccessibilityFeatures();
+    setState(() {
+      _updateInvertColors();
+    });
+  }
+
+  @override
   void reassemble() {
     _resolveImage(); // in case the image cache was flushed
     super.reassemble();
+  }
+
+  void _updateInvertColors() {
+    _invertColors = MediaQuery.of(context, nullOk: true)?.invertColors ??
+        SemanticsBinding.instance.accessibilityFeatures.invertColors;
   }
 
   void _resolveImage([bool rebuild = false]) {
@@ -773,6 +787,7 @@ class _ExtendedImageState extends State<ExtendedImage> with ExtendedImageState {
   @override
   void dispose() {
     assert(_imageStream != null);
+    WidgetsBinding.instance.removeObserver(this);
     _stopListeningToStream();
     //_cacnelNetworkImageRequest(widget.image);
     super.dispose();
