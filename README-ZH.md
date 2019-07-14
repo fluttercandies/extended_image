@@ -463,7 +463,7 @@ double defaultSlideScaleHandler(
   );
 ```
 
-[滑动退出页面相关代码演示 1](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_image.dart
+[滑动退出页面相关代码演示 1](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_image.dart)
 
 [滑动退出页面相关代码演示 2](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/pic_swiper.dart)
 
