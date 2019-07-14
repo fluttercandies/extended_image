@@ -457,7 +457,7 @@ you should push page with TransparentMaterialPageRoute/TransparentCupertinoPageR
   );
 ```
 
-[Slide Out Page Demo Code 1](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_image.dart
+[Slide Out Page Demo Code 1](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_image.dart)
 
 [Slide Out Page Demo Code 2](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/pic_swiper.dart)
 
