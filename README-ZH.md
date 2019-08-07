@@ -403,6 +403,7 @@ ExtendedImageGesturePage的参数
 | resetPageDuration          | 滑动结束，如果不pop页面，整个页面回弹动画的时间                       | milliseconds: 500                 |
 | slideType                  | 滑动整个页面还是只是图片(wholePage/onlyImage)                         | SlideType.onlyImage               |
 | onSlidingPage              | 滑动页面的回调，你可以在这里改变页面上其他元素的状态                  | -                                 |
+| canMovePage                | 是否滑动页面.有些场景如果Scale大于1.0，并不想滑动页面，可以返回false  | true                              |
 
 下面是默认实现，你也可以根据你的喜好，来定义属于自己方式
 ```dart

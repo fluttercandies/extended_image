@@ -82,6 +82,9 @@ class ExtendedImageGesturePageView extends StatefulWidget {
         canMovePage = canMovePage ?? _defaultCanMovePage,
         super(key: key);
 
+  /// whether we should move page
+  /// default: true
+
   final CanMovePage canMovePage;
 
   /// The axis along which the page view scrolls.
