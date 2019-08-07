@@ -1,3 +1,9 @@
+## [0.5.4]
+
+* Issues:
+  Fix issue about borderRadius and border
+  Fix demo error about extended_text 
+
 ## [0.5.3]
 
 * Improve codes base on v1.7.8
