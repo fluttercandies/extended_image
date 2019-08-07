@@ -1,3 +1,8 @@
+## [0.5.5]
+
+* Features:
+  Add call back [CanMovePage] for ExtendedImageGesturePageView. [related issue](https://github.com/fluttercandies/extended_image/issues/32) 
+  
 ## [0.5.4]
 
 * Issues:
