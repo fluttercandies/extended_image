@@ -60,9 +60,8 @@ class ExtendedImageBorderPainter extends CustomPainter {
         border.paint(canvas, outputRect, shape: shape);
         break;
       case BoxShape.rectangle:
-        if (borderRadius != null)
-          border.paint(canvas, outputRect,
-              shape: shape, borderRadius: borderRadius);
+        border.paint(canvas, outputRect,
+            shape: shape, borderRadius: borderRadius);
         break;
     }
   }
