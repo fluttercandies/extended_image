@@ -156,6 +156,9 @@ class _PicSwiperState extends State<PicSwiper>
               ),
               scrollDirection: Axis.horizontal,
               physics: BouncingScrollPhysics(),
+//              //move page only when scale is not more than 1.0
+//              canMovePage: (GestureDetails gestureDetails) =>
+//                  gestureDetails.totalScale <= 1.0,
               //physics: ClampingScrollPhysics(),
             ),
             StreamBuilder<bool>(
