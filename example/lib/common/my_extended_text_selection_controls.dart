@@ -2,14 +2,12 @@ import 'package:extended_text/extended_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:math' as math;
 
 // Minimal padding from all edges of the selection toolbar to all edges of the
 // viewport.
 
 const double _kToolbarScreenPadding = 8.0;
 const double _kToolbarHeight = 44.0;
-const double _kHandleSize = 22.0;
 
 ///
 ///  create by zmtzawqlp on 2019/8/3

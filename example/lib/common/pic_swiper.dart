@@ -1,17 +1,25 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:example/common/utils.dart';
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:oktoast/oktoast.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/rendering.dart';
+import 'package:ff_annotation_route/ff_annotation_route.dart';
 
+@FFRoute(
+    name: "fluttercandies://picswiper",
+    routeName: "PicSwiper",
+    argumentNames: ["index", "pics"],
+    showStatusBar: false,
+    pageRouteType: PageRouteType.transparent)
 class PicSwiper extends StatefulWidget {
   final int index;
   final List<PicSwiperItem> pics;
-  PicSwiper(this.index, this.pics);
+  PicSwiper({this.index, this.pics});
   @override
   _PicSwiperState createState() => _PicSwiperState();
 }
@@ -78,7 +86,7 @@ class _PicSwiperState extends State<PicSwiper>
 
                     if (state.extendedImageInfo != null &&
                         state.extendedImageInfo.image != null) {
-                      initialScale = _initalScale(
+                      initialScale = initScale(
                           size: size,
                           initialScale: initialScale,
                           imageSize: Size(
@@ -200,26 +208,6 @@ class _PicSwiperState extends State<PicSwiper>
         }
       },
     );
-  }
-
-  double _initalScale({Size imageSize, Size size, double initialScale}) {
-    var n1 = imageSize.height / imageSize.width;
-    var n2 = size.height / size.width;
-    if (n1 > n2) {
-      final FittedSizes fittedSizes =
-          applyBoxFit(BoxFit.contain, imageSize, size);
-      //final Size sourceSize = fittedSizes.source;
-      Size destinationSize = fittedSizes.destination;
-      return size.width / destinationSize.width;
-    } else if (n1 / n2 < 1 / 4) {
-      final FittedSizes fittedSizes =
-          applyBoxFit(BoxFit.contain, imageSize, size);
-      //final Size sourceSize = fittedSizes.source;
-      Size destinationSize = fittedSizes.destination;
-      return size.height / destinationSize.height;
-    }
-
-    return initialScale;
   }
 }
 

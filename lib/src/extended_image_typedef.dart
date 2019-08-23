@@ -49,3 +49,6 @@ typedef OnSlidingPage = void Function(ExtendedImageSlidePageState state);
 
 ///whether we can move page
 typedef CanMovePage = bool Function(GestureDetails gestureDetails);
+
+///return initial destination rect
+typedef InitDestinationRect = void Function(Rect initialDestinationRect);

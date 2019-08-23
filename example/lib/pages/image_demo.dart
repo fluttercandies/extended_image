@@ -3,7 +3,13 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:ff_annotation_route/ff_annotation_route.dart';
 
+@FFRoute(
+    name: "fluttercandies://image",
+    routeName: "image",
+    description:
+        "cache image,save to photo Library,image border,shape,borderRadius")
 class ImageDemo extends StatefulWidget {
   @override
   _ImageDemoState createState() => _ImageDemoState();

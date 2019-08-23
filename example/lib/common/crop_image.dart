@@ -111,23 +111,14 @@ class CropImage extends StatelessWidget {
         widget = GestureDetector(
           child: widget,
           onTap: () {
-            var page = PicSwiper(
-              index,
-              listSourceRepository
-                  .map<PicSwiperItem>(
-                      (f) => PicSwiperItem(f.imageUrl, des: f.title))
-                  .toList(),
-            );
-
-            Navigator.push(
-                context,
-                Platform.isAndroid
-                    ? TransparentMaterialPageRoute(builder: (_) {
-                        return page;
-                      })
-                    : TransparentCupertinoPageRoute(builder: (_) {
-                        return page;
-                      }));
+            Navigator.pushNamed(context, "fluttercandies://picswiper",
+                arguments: {
+                  "index": index,
+                  "pics": listSourceRepository
+                      .map<PicSwiperItem>(
+                          (f) => PicSwiperItem(f.imageUrl, des: f.title))
+                      .toList(),
+                });
           },
         );
 

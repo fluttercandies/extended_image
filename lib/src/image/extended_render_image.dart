@@ -573,3 +573,49 @@ Iterable<Rect> _generateImageTileRects(
       yield fundamentalRect.shift(Offset(i * strideX, j * strideY));
   }
 }
+
+Rect getDestinationRect({
+  @required Rect rect,
+  @required ui.Image image,
+  double scale = 1.0,
+  BoxFit fit,
+  Alignment alignment = Alignment.center,
+  Rect centerSlice,
+  bool flipHorizontally = false,
+}) {
+  Size outputSize = rect.size;
+  Size inputSize = Size(image.width.toDouble(), image.height.toDouble());
+
+  Offset sliceBorder;
+  if (centerSlice != null) {
+    sliceBorder = Offset(centerSlice.left + inputSize.width - centerSlice.right,
+        centerSlice.top + inputSize.height - centerSlice.bottom);
+    outputSize -= sliceBorder;
+    inputSize -= sliceBorder;
+  }
+  fit ??= centerSlice == null ? BoxFit.scaleDown : BoxFit.fill;
+  assert(centerSlice == null || (fit != BoxFit.none && fit != BoxFit.cover));
+  final FittedSizes fittedSizes =
+      applyBoxFit(fit, inputSize / scale, outputSize);
+  final Size sourceSize = fittedSizes.source * scale;
+  Size destinationSize = fittedSizes.destination;
+  if (centerSlice != null) {
+    outputSize += sliceBorder;
+    destinationSize += sliceBorder;
+    // We don't have the ability to draw a subset of the image at the same time
+    // as we apply a nine-patch stretch.
+    assert(sourceSize == inputSize,
+        'centerSlice was used with a BoxFit that does not guarantee that the image is fully visible.');
+  }
+
+  final double halfWidthDelta =
+      (outputSize.width - destinationSize.width) / 2.0;
+  final double halfHeightDelta =
+      (outputSize.height - destinationSize.height) / 2.0;
+  final double dx = halfWidthDelta +
+      (flipHorizontally ? -alignment.x : alignment.x) * halfWidthDelta;
+  final double dy = halfHeightDelta + alignment.y * halfHeightDelta;
+  final Offset destinationPosition = rect.topLeft.translate(dx, dy);
+  Rect destinationRect = destinationPosition & destinationSize;
+  return destinationRect;
+}
