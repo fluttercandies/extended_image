@@ -5,7 +5,12 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:ui' as ui show Image;
+import 'package:ff_annotation_route/ff_annotation_route.dart';
 
+@FFRoute(
+    name: "fluttercandies://paintimage",
+    routeName: "paint image",
+    description: "show how to paint any thing before/after image is painted")
 class PaintImageDemo extends StatefulWidget {
   @override
   _PaintImageDemoState createState() => _PaintImageDemoState();

@@ -5,11 +5,12 @@
 
 import 'dart:async';
 import 'package:example/common/crop_image.dart';
+import 'package:example/common/my_extended_text_selection_controls.dart';
 import 'package:example/common/push_to_refresh_header.dart';
 import 'package:example/common/tu_chong_repository.dart';
 import 'package:example/common/tu_chong_source.dart';
+import 'package:example/special_text/my_special_text_span_builder.dart';
 import 'package:extended_text/extended_text.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide CircularProgressIndicator;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:like_button/like_button.dart';
@@ -17,9 +18,12 @@ import 'package:loading_more_list/loading_more_list.dart';
 import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'common/my_extended_text_selection_controls.dart';
-import 'special_text/my_special_text_span_builder.dart';
+import 'package:ff_annotation_route/ff_annotation_route.dart';
 
+@FFRoute(
+    name: "fluttercandies://photoview",
+    routeName: "photo view",
+    description: "show how to zoom/pan image in page view like WeChat")
 class PhotoViewDemo extends StatefulWidget {
   @override
   _PhotoViewDemoState createState() => _PhotoViewDemoState();

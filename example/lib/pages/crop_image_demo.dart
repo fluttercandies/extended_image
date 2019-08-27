@@ -10,7 +10,12 @@ import 'package:flutter/material.dart' hide CircularProgressIndicator;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
+import 'package:ff_annotation_route/ff_annotation_route.dart';
 
+@FFRoute(
+    name: "fluttercandies://cropimage",
+    routeName: "image crop rect",
+    description: "show how to crop rect image")
 class CropImageDemo extends StatefulWidget {
   @override
   _CropImageDemoState createState() => _CropImageDemoState();

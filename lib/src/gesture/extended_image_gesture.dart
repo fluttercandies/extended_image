@@ -1,4 +1,3 @@
-import 'package:extended_image/src/extended_image.dart';
 import 'package:extended_image/src/gesture/extended_image_gesture_utils.dart';
 import 'package:extended_image/src/gesture/extended_image_gesture_page_view.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
@@ -11,13 +10,10 @@ import 'extended_image_slide_page.dart';
 /// scale idea from https://github.com/flutter/flutter/blob/master/examples/layers/widgets/gestures.dart
 /// zoom image
 class ExtendedImageGesture extends StatefulWidget {
-  final ExtendedImage extendedImage;
   final ExtendedImageState extendedImageState;
   final ExtendedImageSlidePageState extendedImageSlidePageState;
   ExtendedImageGesture(
-      ExtendedImageState extendedImageState, this.extendedImageSlidePageState)
-      : extendedImage = extendedImageState.imageWidget,
-        extendedImageState = extendedImageState;
+      this.extendedImageState, this.extendedImageSlidePageState);
   @override
   _ExtendedImageGestureState createState() => _ExtendedImageGestureState();
 }
@@ -43,7 +39,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     _gestureAnimation?.stop();
     _gestureAnimation?.dispose();
 
-    _gestureConfig = widget.extendedImage.initGestureConfigHandler
+    _gestureConfig = widget
+            .extendedImageState.imageWidget.initGestureConfigHandler
             ?.call(widget.extendedImageState) ??
         GestureConfig();
 
@@ -187,7 +184,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       return;
     }
 
-    double scale = _clampScale(
+    double scale = clampScale(
         (_startingScale * details.scale * _gestureConfig.speed),
         _gestureConfig.animationMinScale,
         _gestureConfig.animationMaxScale);
@@ -267,8 +264,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   void _handleDoubleTap() {
-    if (widget.extendedImage.onDoubleTap != null) {
-      widget.extendedImage.onDoubleTap(this);
+    if (widget.extendedImageState.imageWidget.onDoubleTap != null) {
+      widget.extendedImageState.imageWidget.onDoubleTap(this);
       return;
     }
 
@@ -290,10 +287,6 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     _pageViewState?.extendedImageGestureState = this;
   }
 
-  double _clampScale(double scale, double min, double max) {
-    return scale.clamp(min, max);
-  }
-
   @override
   Widget build(BuildContext context) {
     if (_gestureConfig.cacheGesture) {
@@ -303,20 +296,21 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
     Widget image = ExtendedRawImage(
       image: widget.extendedImageState.extendedImageInfo?.image,
-      width: widget.extendedImage.width,
-      height: widget.extendedImage.height,
+      width: widget.extendedImageState.imageWidget.width,
+      height: widget.extendedImageState.imageWidget.height,
       scale: widget.extendedImageState.extendedImageInfo?.scale ?? 1.0,
-      color: widget.extendedImage.color,
-      colorBlendMode: widget.extendedImage.colorBlendMode,
-      fit: widget.extendedImage.fit,
-      alignment: widget.extendedImage.alignment,
-      repeat: widget.extendedImage.repeat,
-      centerSlice: widget.extendedImage.centerSlice,
-      matchTextDirection: widget.extendedImage.matchTextDirection,
+      color: widget.extendedImageState.imageWidget.color,
+      colorBlendMode: widget.extendedImageState.imageWidget.colorBlendMode,
+      fit: widget.extendedImageState.imageWidget.fit,
+      alignment: widget.extendedImageState.imageWidget.alignment,
+      repeat: widget.extendedImageState.imageWidget.repeat,
+      centerSlice: widget.extendedImageState.imageWidget.centerSlice,
+      matchTextDirection:
+          widget.extendedImageState.imageWidget.matchTextDirection,
       invertColors: widget.extendedImageState.invertColors,
-      filterQuality: widget.extendedImage.filterQuality,
-      beforePaintImage: widget.extendedImage.beforePaintImage,
-      afterPaintImage: widget.extendedImage.afterPaintImage,
+      filterQuality: widget.extendedImageState.imageWidget.filterQuality,
+      beforePaintImage: widget.extendedImageState.imageWidget.beforePaintImage,
+      afterPaintImage: widget.extendedImageState.imageWidget.afterPaintImage,
       gestureDetails: _gestureDetails,
     );
 
