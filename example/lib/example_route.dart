@@ -8,7 +8,6 @@ import 'common/pic_swiper.dart';
 import 'pages/crop_image_demo.dart';
 import 'pages/custom_image_demo.dart';
 import 'pages/image_demo.dart';
-import 'pages/image_editor_demo.dart';
 import 'pages/image_list_demo.dart';
 import 'pages/main_page.dart';
 import 'pages/paint_image_demo.dart';
@@ -45,12 +44,6 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
         routeName: "image",
         description:
             "cache image,save to photo Library,image border,shape,borderRadius",
-      );
-    case "fluttercandies://imageeditor":
-      return RouteResult(
-        widget: ImageEditorDemo(),
-        routeName: "image editor",
-        description: "crop/rotate image",
       );
     case "fluttercandies://imagelist":
       return RouteResult(
@@ -118,7 +111,6 @@ List<String> routeNames = [
   "fluttercandies://cropimage",
   "fluttercandies://customimage",
   "fluttercandies://image",
-  "fluttercandies://imageeditor",
   "fluttercandies://imagelist",
   "fluttercandies://mainpage",
   "fluttercandies://paintimage",

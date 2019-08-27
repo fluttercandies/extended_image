@@ -10,13 +10,12 @@ import '../example_route.dart';
   routeName: "MainPage",
 )
 class MainPage extends StatelessWidget {
-  List<RouteResult> routes;
+  final List<RouteResult> routes = List<RouteResult>();
   MainPage() {
     routeNames.remove("fluttercandies://picswiper");
     routeNames.remove("fluttercandies://mainpage");
-    routes = routeNames
-        .map<RouteResult>((name) => getRouteResult(name: name))
-        .toList();
+    routes.addAll(
+        routeNames.map<RouteResult>((name) => getRouteResult(name: name)));
   }
   @override
   Widget build(BuildContext context) {

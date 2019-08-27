@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 import 'package:example/common/pic_swiper.dart';
 import 'package:example/common/tu_chong_repository.dart';

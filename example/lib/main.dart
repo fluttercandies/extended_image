@@ -1,14 +1,7 @@
 import 'dart:io';
 
 import 'package:example/common/tu_chong_repository.dart';
-import 'package:example/pages/custom_image_demo.dart';
-import 'package:example/pages/crop_image_demo.dart';
-import 'package:example/pages/image_demo.dart';
-import 'package:example/pages/image_list_demo.dart';
 import 'package:example/pages/no_route.dart';
-import 'package:example/pages/paint_image_demo.dart';
-import 'package:example/pages/photo_view_demo.dart';
-import 'package:example/pages/zoom_image_demo.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:image_picker_saver/image_picker_saver.dart';
 import "package:oktoast/oktoast.dart";
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'package:example/pages/image_editor_demo.dart';
 
 import 'example_route.dart';
 import 'example_route_helper.dart';

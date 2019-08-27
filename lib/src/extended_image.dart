@@ -14,8 +14,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/semantics.dart';
 import 'package:http_client_helper/http_client_helper.dart';
-
-import 'edit/extended_image_editor.dart';
 import 'gesture/extended_image_slide_page.dart';
 import 'gesture/extended_image_slide_page_handler.dart';
 
@@ -826,11 +824,13 @@ class _ExtendedImageState extends State<ExtendedImage>
           case LoadState.completed:
             if (widget.mode == ExtendedImageMode.Gesture) {
               current = ExtendedImageGesture(this, _slidePageState);
-            } else if (widget.mode == ExtendedImageMode.Eidt) {
-              current = ExtendedImageEditor(
-                extendedImageState: this,
-              );
-            } else {
+            }
+//            else if (widget.mode == ExtendedImageMode.Eidt) {
+//              current = ExtendedImageEditor(
+//                extendedImageState: this,
+//              );
+//            }
+            else {
               current = _buildExtendedRawImage();
             }
             break;
@@ -850,12 +850,14 @@ class _ExtendedImageState extends State<ExtendedImage>
         if (_loadState == LoadState.completed &&
             widget.mode == ExtendedImageMode.Gesture) {
           current = ExtendedImageGesture(this, _slidePageState);
-        } else if (_loadState == LoadState.completed &&
-            widget.mode == ExtendedImageMode.Eidt) {
-          current = ExtendedImageEditor(
-            extendedImageState: this,
-          );
-        } else {
+        }
+//        else if (_loadState == LoadState.completed &&
+//            widget.mode == ExtendedImageMode.Eidt) {
+//          current = ExtendedImageEditor(
+//            extendedImageState: this,
+//          );
+//        }
+        else {
           current = _buildExtendedRawImage();
         }
       }

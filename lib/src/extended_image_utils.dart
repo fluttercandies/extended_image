@@ -33,8 +33,8 @@ enum ExtendedImageMode {
   None,
   //support be to zoom,scroll
   Gesture,
-  //support be to crop,rotate
-  Eidt
+//  //support be to crop,rotate
+//  Eidt
 }
 
 ///get type from T
