@@ -1,3 +1,7 @@
+## [0.5.6]
+
+* Add key for ExtendedImageSlidePage
+
 ## [0.5.5]
 
 * Features:

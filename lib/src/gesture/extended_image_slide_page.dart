@@ -42,15 +42,17 @@ class ExtendedImageSlidePage extends StatefulWidget {
   /// on sliding page
   final OnSlidingPage onSlidingPage;
 
-  ExtendedImageSlidePage(
-      {this.child,
-      this.slidePageBackgroundHandler,
-      this.slideScaleHandler,
-      this.slideEndHandler,
-      this.slideAxis: SlideAxis.both,
-      this.resetPageDuration: const Duration(milliseconds: 500),
-      this.slideType: SlideType.onlyImage,
-      this.onSlidingPage});
+  ExtendedImageSlidePage({
+    this.child,
+    this.slidePageBackgroundHandler,
+    this.slideScaleHandler,
+    this.slideEndHandler,
+    this.slideAxis: SlideAxis.both,
+    this.resetPageDuration: const Duration(milliseconds: 500),
+    this.slideType: SlideType.onlyImage,
+    this.onSlidingPage,
+    Key key,
+  }) : super(key: key);
   @override
   ExtendedImageSlidePageState createState() => ExtendedImageSlidePageState();
 }
@@ -211,5 +213,11 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
 //    );
 
     return result;
+  }
+
+  void popPage() {
+    setState(() {
+      _poping = true;
+    });
   }
 }
