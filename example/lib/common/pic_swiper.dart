@@ -39,7 +39,8 @@ class _PicSwiperState extends State<PicSwiper>
 //    return _cancelToken;
 //  }
   List<double> doubleTapScales = <double>[1.0, 2.0];
-
+  GlobalKey<ExtendedImageSlidePageState> slidePagekey =
+      GlobalKey<ExtendedImageSlidePageState>();
   int currentIndex;
   bool _showSwiper = true;
 
@@ -187,7 +188,8 @@ class _PicSwiperState extends State<PicSwiper>
           ],
         ));
 
-    return ExtendedImageSlidePage(
+    result = ExtendedImageSlidePage(
+      key: slidePagekey,
       child: result,
       slideAxis: SlideAxis.both,
       slideType: SlideType.onlyImage,
@@ -208,6 +210,16 @@ class _PicSwiperState extends State<PicSwiper>
         }
       },
     );
+
+    result = GestureDetector(
+      child: result,
+      onTap: () {
+        slidePagekey.currentState.popPage();
+        Navigator.pop(context);
+      },
+    );
+
+    return result;
   }
 }
 

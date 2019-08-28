@@ -1,6 +1,6 @@
 name: extended_image
 description: extended official image which support placeholder(loading)/ failed state,cache network,zoom pan image,photo view,slide out page,crop,save,paint etc.
-version: 0.5.5
+version: 0.5.6
 author: zmtzawqlp <zmtzawqlp@live.com>
 homepage: https://github.com/fluttercandies/extended_image
 
