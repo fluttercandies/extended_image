@@ -142,6 +142,7 @@ class _PicSwiperState extends State<PicSwiper>
                 image = GestureDetector(
                   child: image,
                   onTap: () {
+                    slidePagekey.currentState.popPage();
                     Navigator.pop(context);
                   },
                 );
@@ -150,6 +151,17 @@ class _PicSwiperState extends State<PicSwiper>
                   return Hero(
                     tag: item + index.toString(),
                     child: image,
+                    flightShuttleBuilder: (BuildContext flightContext,
+                        Animation<double> animation,
+                        HeroFlightDirection flightDirection,
+                        BuildContext fromHeroContext,
+                        BuildContext toHeroContext) {
+                      final Hero hero =
+                          flightDirection == HeroFlightDirection.pop
+                              ? fromHeroContext.widget
+                              : toHeroContext.widget;
+                      return hero.child;
+                    },
                   );
                 } else {
                   return image;
@@ -208,14 +220,6 @@ class _PicSwiperState extends State<PicSwiper>
           _showSwiper = showSwiper;
           rebuildSwiper.add(_showSwiper);
         }
-      },
-    );
-
-    result = GestureDetector(
-      child: result,
-      onTap: () {
-        slidePagekey.currentState.popPage();
-        Navigator.pop(context);
       },
     );
 
