@@ -6,13 +6,14 @@ import 'package:flutter/material.dart';
 
 class ExtendedImageEditorLayer extends StatefulWidget {
   final Rect editRect;
-  ExtendedImageEditorLayer({@required this.editRect});
+  ExtendedImageEditorLayer({@required this.editRect, Key key})
+      : super(key: key);
   @override
-  _ExtendedImageEditorLayerState createState() =>
-      _ExtendedImageEditorLayerState();
+  ExtendedImageEditorLayerState createState() =>
+      ExtendedImageEditorLayerState();
 }
 
-class _ExtendedImageEditorLayerState extends State<ExtendedImageEditorLayer> {
+class ExtendedImageEditorLayerState extends State<ExtendedImageEditorLayer> {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(

@@ -15,4 +15,6 @@ export 'src/extended_image_border_painter.dart';
 export 'src/extended_image_typedef.dart';
 export 'src/extended_image_utils.dart';
 
+export 'src/edit/extended_image_editor.dart';
+
 export 'package:extended_image_library/extended_image_library.dart';

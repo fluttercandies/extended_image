@@ -178,7 +178,6 @@ class GestureDetails {
   Rect calculateFinalDestinationRect(Rect layoutRect, Rect destinationRect) {
 //    Rect rect1 = isSliding ? this.layoutRect : layoutRect;
 //    Rect rect2 = isSliding ? this.destinationRect : destinationRect;
-
     var temp = offset;
     _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
     offset = temp;

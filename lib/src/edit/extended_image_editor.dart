@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import '../../extended_image.dart';
 import 'extended_image_editor_layer.dart';
+import 'dart:ui' as ui;
 
 ///
 ///  create by zmtzawqlp on 2019/8/22
@@ -11,12 +12,12 @@ import 'extended_image_editor_layer.dart';
 
 class ExtendedImageEditor extends StatefulWidget {
   final ExtendedImageState extendedImageState;
-  ExtendedImageEditor({this.extendedImageState});
+  ExtendedImageEditor({this.extendedImageState, Key key}) : super(key: key);
   @override
-  _ExtendedImageEditorState createState() => _ExtendedImageEditorState();
+  ExtendedImageEditorState createState() => ExtendedImageEditorState();
 }
 
-class _ExtendedImageEditorState extends State<ExtendedImageEditor> {
+class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   Rect _initialDestinationRect;
   Rect _editRect;
   GestureDetails _gestureDetails;
@@ -86,12 +87,17 @@ class _ExtendedImageEditorState extends State<ExtendedImageEditor> {
               centerSlice: extendedImage.centerSlice,
               scale: widget.extendedImageState.extendedImageInfo?.scale,
               flipHorizontally: false);
+          _initialDestinationRect = Rect.fromLTRB(
+              _initialDestinationRect.left + 20.0,
+              _initialDestinationRect.top + 20.0,
+              _initialDestinationRect.right - 20.0,
+              _initialDestinationRect.bottom - 20.0);
         }
         _editRect ??= _initialDestinationRect;
-        image = Transform.rotate(
-          angle: pi,
-          child: image,
-        );
+//        image = Transform.rotate(
+//          angle: pi,
+//          child: image,
+//        );
         return Stack(
           overflow: Overflow.clip,
           children: <Widget>[
@@ -159,4 +165,32 @@ class _ExtendedImageEditorState extends State<ExtendedImageEditor> {
   }
 
   void _handleScaleEnd(ScaleEndDetails details) {}
+
+  Rect crop() {
+    var rect = _gestureDetails.preDestinationRect;
+
+    var imageScreenRect = rect.shift(-rect.topLeft);
+
+    var cropScreen = _editRect
+        .shift(_gestureDetails.layoutRect.topLeft)
+        .shift(-rect.topLeft);
+
+    var imageRect = Offset.zero &
+        Size(
+            widget.extendedImageState.extendedImageInfo?.image.width.toDouble(),
+            widget.extendedImageState.extendedImageInfo?.image.height
+                .toDouble());
+
+    var ratioX = imageRect.width / imageScreenRect.width;
+    var ratioY = imageRect.height / imageScreenRect.height;
+
+    var cropImageRect = Rect.fromLTWH(
+        cropScreen.left * ratioX,
+        cropScreen.top * ratioY,
+        cropScreen.width * ratioX,
+        cropScreen.height * ratioY);
+    return cropImageRect;
+  }
+
+  ui.Image get image => widget.extendedImageState.extendedImageInfo?.image;
 }

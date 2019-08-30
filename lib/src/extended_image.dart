@@ -14,43 +14,45 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/semantics.dart';
 import 'package:http_client_helper/http_client_helper.dart';
+import 'edit/extended_image_editor.dart';
 import 'gesture/extended_image_slide_page.dart';
 import 'gesture/extended_image_slide_page_handler.dart';
 
 /// extended image base on official
 class ExtendedImage extends StatefulWidget {
-  ExtendedImage({
-    Key key,
-    @required this.image,
-    this.semanticLabel,
-    this.excludeFromSemantics = false,
-    this.width,
-    this.height,
-    this.color,
-    this.colorBlendMode,
-    this.fit,
-    this.alignment = Alignment.center,
-    this.repeat = ImageRepeat.noRepeat,
-    this.centerSlice,
-    this.matchTextDirection = false,
-    this.gaplessPlayback = false,
-    this.filterQuality = FilterQuality.low,
-    this.loadStateChanged,
-    this.border,
-    this.shape,
-    this.borderRadius,
-    this.clipBehavior: Clip.antiAlias,
-    this.enableLoadState: false,
-    this.beforePaintImage,
-    this.afterPaintImage,
-    this.mode: ExtendedImageMode.None,
-    this.enableMemoryCache: true,
-    this.clearMemoryCacheIfFailed: true,
-    this.onDoubleTap,
-    this.initGestureConfigHandler,
-    this.enableSlideOutPage: false,
-    BoxConstraints constraints,
-  })  : assert(image != null),
+  ExtendedImage(
+      {Key key,
+      @required this.image,
+      this.semanticLabel,
+      this.excludeFromSemantics = false,
+      this.width,
+      this.height,
+      this.color,
+      this.colorBlendMode,
+      this.fit,
+      this.alignment = Alignment.center,
+      this.repeat = ImageRepeat.noRepeat,
+      this.centerSlice,
+      this.matchTextDirection = false,
+      this.gaplessPlayback = false,
+      this.filterQuality = FilterQuality.low,
+      this.loadStateChanged,
+      this.border,
+      this.shape,
+      this.borderRadius,
+      this.clipBehavior: Clip.antiAlias,
+      this.enableLoadState: false,
+      this.beforePaintImage,
+      this.afterPaintImage,
+      this.mode: ExtendedImageMode.None,
+      this.enableMemoryCache: true,
+      this.clearMemoryCacheIfFailed: true,
+      this.onDoubleTap,
+      this.initGestureConfigHandler,
+      this.enableSlideOutPage: false,
+      BoxConstraints constraints,
+      this.extendedImageEditorKey})
+      : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
@@ -95,7 +97,8 @@ class ExtendedImage extends StatefulWidget {
       Map<String, String> headers,
       bool cache: true,
       double scale = 1.0,
-      Duration timeRetry: const Duration(milliseconds: 100)})
+      Duration timeRetry: const Duration(milliseconds: 100),
+      this.extendedImageEditorKey})
       :
         //assert(autoCancel != null),
         image = ExtendedNetworkImageProvider(url,
@@ -162,7 +165,8 @@ class ExtendedImage extends StatefulWidget {
       this.onDoubleTap,
       this.initGestureConfigHandler,
       this.enableSlideOutPage: false,
-      BoxConstraints constraints})
+      BoxConstraints constraints,
+      this.extendedImageEditorKey})
       : image = FileImage(file, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -331,7 +335,8 @@ class ExtendedImage extends StatefulWidget {
       this.onDoubleTap,
       this.initGestureConfigHandler,
       this.enableSlideOutPage: false,
-      BoxConstraints constraints})
+      BoxConstraints constraints,
+      this.extendedImageEditorKey})
       : image = scale != null
             ? ExactAssetImage(name,
                 bundle: bundle, scale: scale, package: package)
@@ -390,7 +395,8 @@ class ExtendedImage extends StatefulWidget {
       this.onDoubleTap,
       this.initGestureConfigHandler,
       this.enableSlideOutPage: false,
-      BoxConstraints constraints})
+      BoxConstraints constraints,
+      this.extendedImageEditorKey})
       : image = MemoryImage(bytes, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -400,6 +406,9 @@ class ExtendedImage extends StatefulWidget {
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
         super(key: key);
+
+  /// key of ExtendedImageEditor
+  final Key extendedImageEditorKey;
 
   /// whether enable slide out page
   /// you should make sure this is in [ExtendedImageSlidePage]
@@ -824,13 +833,12 @@ class _ExtendedImageState extends State<ExtendedImage>
           case LoadState.completed:
             if (widget.mode == ExtendedImageMode.Gesture) {
               current = ExtendedImageGesture(this, _slidePageState);
-            }
-//            else if (widget.mode == ExtendedImageMode.Eidt) {
-//              current = ExtendedImageEditor(
-//                extendedImageState: this,
-//              );
-//            }
-            else {
+            } else if (widget.mode == ExtendedImageMode.Eidt) {
+              current = ExtendedImageEditor(
+                extendedImageState: this,
+                key: widget.extendedImageEditorKey,
+              );
+            } else {
               current = _buildExtendedRawImage();
             }
             break;
@@ -850,14 +858,13 @@ class _ExtendedImageState extends State<ExtendedImage>
         if (_loadState == LoadState.completed &&
             widget.mode == ExtendedImageMode.Gesture) {
           current = ExtendedImageGesture(this, _slidePageState);
-        }
-//        else if (_loadState == LoadState.completed &&
-//            widget.mode == ExtendedImageMode.Eidt) {
-//          current = ExtendedImageEditor(
-//            extendedImageState: this,
-//          );
-//        }
-        else {
+        } else if (_loadState == LoadState.completed &&
+            widget.mode == ExtendedImageMode.Eidt) {
+          current = ExtendedImageEditor(
+            extendedImageState: this,
+            key: widget.extendedImageEditorKey,
+          );
+        } else {
           current = _buildExtendedRawImage();
         }
       }

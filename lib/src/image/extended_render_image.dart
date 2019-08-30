@@ -525,8 +525,9 @@ void paintExtendedImage({
         alignment.inscribe(sourceSize, Offset.zero & inputSize);
 
     for (Rect tileRect
-        in _generateImageTileRects(rect, destinationRect, repeat))
+        in _generateImageTileRects(rect, destinationRect, repeat)) {
       canvas.drawImageRect(image, sourceRect, tileRect, paint);
+    }
   } else {
     for (Rect tileRect
         in _generateImageTileRects(rect, destinationRect, repeat))
