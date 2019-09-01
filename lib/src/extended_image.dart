@@ -197,7 +197,7 @@ class ExtendedImage extends StatefulWidget {
   ///
   /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
   //
-  // TODO(ianh): Implement the following (see ../services/image_resolution.dart):
+  //
   // ///
   // /// * If [width] and [height] are both specified, and [scale] is not, then
   // ///   size-aware asset resolution will be attempted also, with the given

@@ -1,9 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import '../../extended_image.dart';
-import 'extended_image_editor_layer.dart';
+import 'extended_image_crop_layer.dart';
 import 'dart:ui' as ui;
 
 ///
@@ -18,13 +16,13 @@ class ExtendedImageEditor extends StatefulWidget {
 }
 
 class ExtendedImageEditorState extends State<ExtendedImageEditor> {
-  Rect _initialDestinationRect;
-  Rect _editRect;
   GestureDetails _gestureDetails;
   GestureConfig _gestureConfig;
   Offset _normalizedOffset;
   double _startingScale;
   Offset _startingOffset;
+  final GlobalKey<ExtendedImageCropLayerState> _layerKey =
+      GlobalKey<ExtendedImageCropLayerState>();
   @override
   void initState() {
     _initGestureConfig();
@@ -45,8 +43,6 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   @override
   void didUpdateWidget(ExtendedImageEditor oldWidget) {
     _initGestureConfig();
-    _initialDestinationRect = null;
-    _editRect = null;
     super.didUpdateWidget(oldWidget);
   }
 
@@ -71,34 +67,11 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     );
 
     return GestureDetector(
-      onScaleStart: _handleScaleStart,
-      onScaleUpdate: _handleScaleUpdate,
-      onScaleEnd: _handleScaleEnd,
-      behavior: HitTestBehavior.translucent,
-      child:
-          LayoutBuilder(builder: (BuildContext c, BoxConstraints constraints) {
-        if (_initialDestinationRect == null) {
-          _initialDestinationRect = getDestinationRect(
-              rect: Rect.fromLTWH(
-                  0.0, 0.0, constraints.maxWidth, constraints.maxHeight),
-              image: widget.extendedImageState.extendedImageInfo?.image,
-              fit: extendedImage.fit,
-              alignment: extendedImage.alignment,
-              centerSlice: extendedImage.centerSlice,
-              scale: widget.extendedImageState.extendedImageInfo?.scale,
-              flipHorizontally: false);
-          _initialDestinationRect = Rect.fromLTRB(
-              _initialDestinationRect.left + 20.0,
-              _initialDestinationRect.top + 20.0,
-              _initialDestinationRect.right - 20.0,
-              _initialDestinationRect.bottom - 20.0);
-        }
-        _editRect ??= _initialDestinationRect;
-//        image = Transform.rotate(
-//          angle: pi,
-//          child: image,
-//        );
-        return Stack(
+        onScaleStart: _handleScaleStart,
+        onScaleUpdate: _handleScaleUpdate,
+        onScaleEnd: _handleScaleEnd,
+        behavior: HitTestBehavior.translucent,
+        child: Stack(
           overflow: Overflow.clip,
           children: <Widget>[
             Positioned(
@@ -109,8 +82,13 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
               right: 0.0,
             ),
             Positioned(
-              child: ExtendedImageEditorLayer(
-                editRect: _editRect,
+              child: ExtendedImageCropLayer(
+                image: widget.extendedImageState.extendedImageInfo?.image,
+                fit: extendedImage.fit,
+                alignment: extendedImage.alignment,
+                centerSlice: extendedImage.centerSlice,
+                scale: widget.extendedImageState.extendedImageInfo?.scale,
+                key: _layerKey,
               ),
               top: 0.0,
               left: 0.0,
@@ -118,9 +96,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
               right: 0.0,
             ),
           ],
-        );
-      }),
-    );
+        ));
   }
 
   void _handleScaleStart(ScaleStartDetails details) {
@@ -167,19 +143,19 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   void _handleScaleEnd(ScaleEndDetails details) {}
 
   Rect crop() {
+    if (widget.extendedImageState?.extendedImageInfo?.image == null) {
+      return null;
+    }
     var rect = _gestureDetails.preDestinationRect;
 
     var imageScreenRect = rect.shift(-rect.topLeft);
 
-    var cropScreen = _editRect
+    var cropScreen = _layerKey.currentState.editRect
         .shift(_gestureDetails.layoutRect.topLeft)
         .shift(-rect.topLeft);
-
-    var imageRect = Offset.zero &
-        Size(
-            widget.extendedImageState.extendedImageInfo?.image.width.toDouble(),
-            widget.extendedImageState.extendedImageInfo?.image.height
-                .toDouble());
+    var image = widget.extendedImageState.extendedImageInfo.image;
+    var imageRect =
+        Offset.zero & Size(image.width.toDouble(), image.height.toDouble());
 
     var ratioX = imageRect.width / imageScreenRect.width;
     var ratioY = imageRect.height / imageScreenRect.height;
