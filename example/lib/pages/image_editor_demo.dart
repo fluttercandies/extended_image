@@ -38,11 +38,11 @@ class ImageEditorDemo extends StatelessWidget {
           fit: BoxFit.contain,
           mode: ExtendedImageMode.Eidt,
           extendedImageEditorKey: editorKey,
-          initEidtConfigHandler: (state) {
-            return EditConfig(
+          initEidtorConfigHandler: (state) {
+            return EditorConfig(
                 minScale: 0.0,
                 maxScale: 3.0,
-                initialScale: 0.9,);
+                initialScale: 1.0,);
           },
         )),
       ]),

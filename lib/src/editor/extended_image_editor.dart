@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -21,7 +22,7 @@ class ExtendedImageEditor extends StatefulWidget {
 
 class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   EditActionDetails _editActionDetails;
-  EditConfig _editConfig;
+  EditorConfig _editorConfig;
   double _startingScale;
   Offset _startingOffset;
   final GlobalKey<ExtendedImageCropLayerState> _layerKey =
@@ -29,20 +30,22 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   @override
   void initState() {
     _initGestureConfig();
+
     super.initState();
   }
 
   void _initGestureConfig() {
-    double initialScale = _editConfig?.initialScale;
-    _editConfig = widget.extendedImageState.imageWidget.initEidtConfigHandler
+    double initialScale = _editorConfig?.initialScale;
+    _editorConfig = widget.extendedImageState.imageWidget.initEidtorConfigHandler
             ?.call(widget.extendedImageState) ??
         EditActionDetails();
     if (_editActionDetails == null ||
-        initialScale != _editConfig.initialScale) {
+        initialScale != _editorConfig.initialScale) {
       _editActionDetails = EditActionDetails()
         ..delta = Offset.zero
-        ..totalScale = _editConfig.initialScale
-        ..preTotalScale = _editConfig.initialScale;
+        ..totalScale = _editorConfig.initialScale
+        ..preTotalScale = _editorConfig.initialScale
+        ..cropRectPadding = _editorConfig.cropRectPadding;
     }
   }
 
@@ -92,11 +95,20 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                   builder: (BuildContext context, BoxConstraints constraints) {
                 var layoutRect = Offset.zero &
                     Size(constraints.maxWidth, constraints.maxHeight);
-
+                var padding = _editorConfig.cropRectPadding;
+                if (padding != null) {
+                  layoutRect = padding.deflateRect(layoutRect);
+                }
                 if (_editActionDetails.cropRect == null) {
                   var destinationRect = getDestinationRect(
                       rect: layoutRect,
-                      image: widget.extendedImageState.extendedImageInfo.image,
+                      inputSize: Size(
+                          widget
+                              .extendedImageState.extendedImageInfo.image.width
+                              .toDouble(),
+                          widget
+                              .extendedImageState.extendedImageInfo.image.height
+                              .toDouble()),
                       flipHorizontally: false,
                       fit: widget.extendedImageState.imageWidget.fit,
                       centerSlice:
@@ -104,16 +116,17 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                       alignment:
                           widget.extendedImageState.imageWidget.alignment,
                       scale: widget.extendedImageState.extendedImageInfo.scale);
-                  _editActionDetails.cropRect =
+                  var cropRect =
                       _editActionDetails.getRectWithScale(destinationRect);
-                  // _editActionDetails.calculateFinalDestinationRect(
-                  //     layoutRect, destinationRect);
+
+                  _editActionDetails.cropRect = cropRect;
                 }
 
                 return ExtendedImageCropLayer(
                   key: _layerKey,
                   layoutRect: layoutRect,
                   editActionDetails: _editActionDetails,
+                  editorConfig: _editorConfig,
                 );
               }),
               top: 0.0,
@@ -123,31 +136,45 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
             ),
           ],
         ));
+    result = Listener(
+      child: result,
+      onPointerDown: (_) {
+        _layerKey.currentState.pointerDown(true);
+      },
+      onPointerUp: (_) {
+        _layerKey.currentState.pointerDown(false);
+      },
+      // onPointerCancel: (_) {
+      //   pointerDown(false);
+      // },
+    );
     return result;
   }
 
   void _handleScaleStart(ScaleStartDetails details) {
+    _layerKey.currentState.pointerDown(true);
     _startingOffset = details.focalPoint;
     _editActionDetails.screenFocalPoint = details.focalPoint;
     _startingScale = _editActionDetails.totalScale;
   }
 
   void _handleScaleUpdate(ScaleUpdateDetails details) {
+    _layerKey.currentState.pointerDown(true);
     var totalScale = (_startingScale * details.scale)
-        .clamp(_editConfig.minScale, _editConfig.maxScale);
+        .clamp(_editorConfig.minScale, _editorConfig.maxScale);
     var delta = (details.focalPoint - _startingOffset);
     var scaleDelta = totalScale / _editActionDetails.preTotalScale;
     _startingOffset = details.focalPoint;
     //no more zoom
     if (details.scale != 1.0 &&
-        ((_editActionDetails.totalScale == _editConfig.minScale &&
+        ((_editActionDetails.totalScale == _editorConfig.minScale &&
                 totalScale <= _editActionDetails.totalScale) ||
-            (_editActionDetails.totalScale == _editConfig.maxScale &&
+            (_editActionDetails.totalScale == _editorConfig.maxScale &&
                 totalScale >= _editActionDetails.totalScale))) {
       return;
     }
 
-    totalScale = totalScale.clamp(_editConfig.minScale, _editConfig.maxScale);
+    totalScale = totalScale.clamp(_editorConfig.minScale, _editorConfig.maxScale);
 
     if (mounted && (scaleDelta != 1.0 || delta != Offset.zero)) {
       setState(() {
@@ -212,13 +239,13 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
 
   void flip() {
     setState(() {
-    _editActionDetails.flip();
+      _editActionDetails.flip();
     });
   }
 
   void reset() {
     setState(() {
-      _editConfig = null;
+      _editorConfig = null;
       _editActionDetails = null;
       _initGestureConfig();
     });

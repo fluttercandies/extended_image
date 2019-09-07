@@ -52,7 +52,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
       this.extendedImageEditorKey,
-      this.initEidtConfigHandler})
+      this.initEidtorConfigHandler})
       : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
@@ -100,7 +100,7 @@ class ExtendedImage extends StatefulWidget {
       double scale = 1.0,
       Duration timeRetry: const Duration(milliseconds: 100),
       this.extendedImageEditorKey,
-      this.initEidtConfigHandler})
+      this.initEidtorConfigHandler})
       :
         //assert(autoCancel != null),
         image = ExtendedNetworkImageProvider(url,
@@ -169,7 +169,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
       this.extendedImageEditorKey,
-      this.initEidtConfigHandler})
+      this.initEidtorConfigHandler})
       : image = FileImage(file, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -340,7 +340,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
       this.extendedImageEditorKey,
-      this.initEidtConfigHandler})
+      this.initEidtorConfigHandler})
       : image = scale != null
             ? ExactAssetImage(name,
                 bundle: bundle, scale: scale, package: package)
@@ -401,7 +401,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
       this.extendedImageEditorKey,
-      this.initEidtConfigHandler})
+      this.initEidtorConfigHandler})
       : image = MemoryImage(bytes, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -413,7 +413,7 @@ class ExtendedImage extends StatefulWidget {
         super(key: key);
 
   /// init EidtConfig when image is ready.
-  final InitEidtConfigHandler initEidtConfigHandler;
+  final InitEidtorConfigHandler initEidtorConfigHandler;
 
   /// key of ExtendedImageEditor
   final Key extendedImageEditorKey;

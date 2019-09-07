@@ -457,6 +457,7 @@ void paintExtendedImage({
   assert(repeat != null);
   assert(flipHorizontally != null);
   if (rect.isEmpty) return;
+
   Size outputSize = rect.size;
   Size inputSize = Size(image.width.toDouble(), image.height.toDouble());
 
@@ -515,7 +516,6 @@ void paintExtendedImage({
   bool gestureClip = false;
 
   if (gestureDetails != null) {
-    
     destinationRect =
         gestureDetails.calculateFinalDestinationRect(rect, destinationRect);
 
@@ -534,10 +534,9 @@ void paintExtendedImage({
   }
   bool hasEditAction = false;
   if (editActionDetails != null) {
-     editActionDetails.initRect(rect, destinationRect);
+    editActionDetails.initRect(rect, destinationRect);
 
-    destinationRect =
-        editActionDetails.getFinalDestinationRect();
+    destinationRect = editActionDetails.getFinalDestinationRect();
 
     ///outside and need clip
     gestureClip = outRect(rect, destinationRect);
@@ -551,10 +550,9 @@ void paintExtendedImage({
       }
     }
 
-    
     if (hasEditAction) {
       var origin =
-        editActionDetails.screenCropRect?.center ?? destinationRect.center;
+          editActionDetails.screenCropRect?.center ?? destinationRect.center;
 
       final Matrix4 result = Matrix4.identity();
 
@@ -631,8 +629,7 @@ void paintExtendedImage({
     canvas.restore();
   }
 
-  if(editActionDetails!=null && hasEditAction)
-  {
+  if (editActionDetails != null && hasEditAction) {
     canvas.restore();
   }
 
