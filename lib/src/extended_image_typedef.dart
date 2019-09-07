@@ -3,6 +3,7 @@ import 'package:extended_image/src/gesture/extended_image_gesture_utils.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui show Image;
 
+import 'editor/extended_image_editor_utils.dart';
 import 'gesture/extended_image_slide_page.dart';
 
 ///
@@ -52,3 +53,12 @@ typedef CanMovePage = bool Function(GestureDetails gestureDetails);
 
 ///return initial destination rect
 typedef InitDestinationRect = void Function(Rect initialDestinationRect);
+
+///return merged editRect rect
+typedef MergeEditRect = Rect Function(Rect editRect);
+
+///build Gesture Image
+typedef BuildGestureImage = Widget Function(GestureDetails gestureDetails);
+
+///init GestureConfig when image is ready.
+typedef InitEidtConfigHandler = EditConfig Function(ExtendedImageState state);

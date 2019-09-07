@@ -14,7 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/semantics.dart';
 import 'package:http_client_helper/http_client_helper.dart';
-import 'edit/extended_image_editor.dart';
+import 'editor/extended_image_editor.dart';
 import 'gesture/extended_image_slide_page.dart';
 import 'gesture/extended_image_slide_page_handler.dart';
 
@@ -51,7 +51,8 @@ class ExtendedImage extends StatefulWidget {
       this.initGestureConfigHandler,
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
-      this.extendedImageEditorKey})
+      this.extendedImageEditorKey,
+      this.initEidtConfigHandler})
       : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
@@ -98,7 +99,8 @@ class ExtendedImage extends StatefulWidget {
       bool cache: true,
       double scale = 1.0,
       Duration timeRetry: const Duration(milliseconds: 100),
-      this.extendedImageEditorKey})
+      this.extendedImageEditorKey,
+      this.initEidtConfigHandler})
       :
         //assert(autoCancel != null),
         image = ExtendedNetworkImageProvider(url,
@@ -166,7 +168,8 @@ class ExtendedImage extends StatefulWidget {
       this.initGestureConfigHandler,
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
-      this.extendedImageEditorKey})
+      this.extendedImageEditorKey,
+      this.initEidtConfigHandler})
       : image = FileImage(file, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -336,7 +339,8 @@ class ExtendedImage extends StatefulWidget {
       this.initGestureConfigHandler,
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
-      this.extendedImageEditorKey})
+      this.extendedImageEditorKey,
+      this.initEidtConfigHandler})
       : image = scale != null
             ? ExactAssetImage(name,
                 bundle: bundle, scale: scale, package: package)
@@ -396,7 +400,8 @@ class ExtendedImage extends StatefulWidget {
       this.initGestureConfigHandler,
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
-      this.extendedImageEditorKey})
+      this.extendedImageEditorKey,
+      this.initEidtConfigHandler})
       : image = MemoryImage(bytes, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -406,6 +411,9 @@ class ExtendedImage extends StatefulWidget {
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
         super(key: key);
+
+  /// init EidtConfig when image is ready.
+  final InitEidtConfigHandler initEidtConfigHandler;
 
   /// key of ExtendedImageEditor
   final Key extendedImageEditorKey;
