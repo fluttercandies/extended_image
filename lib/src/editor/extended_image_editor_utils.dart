@@ -281,7 +281,16 @@ class EditorConfig {
   final EidtorMaskColorHandler eidtorMaskColorHandler;
 
   /// hit test region of corner and line
-  final double cornerAndLineHitTestSize;
+  final double hitTestSize;
+
+  /// auto adjust crop rect to layout center when crop rect is changed
+  final bool autoCenter;
+
+  /// auto center animation duration
+  final Duration animationDuration;
+
+  /// duration to begin auto center animation after crop rect is changed
+  final Duration tickerDuration;
 
   EditorConfig(
       {double minScale,
@@ -293,14 +302,20 @@ class EditorConfig {
       this.lineColor,
       this.lineHeight = 0.6,
       this.eidtorMaskColorHandler,
-      this.cornerAndLineHitTestSize: 20.0})
+      this.hitTestSize: 20.0,
+      this.autoCenter = true,
+      this.animationDuration = const Duration(milliseconds: 200),
+      this.tickerDuration = const Duration(milliseconds: 400)})
       : minScale = minScale ??= 0.8,
         maxScale = maxScale ??= 5.0,
         initialScale = initialScale ??= 1.0,
         assert(minScale <= maxScale),
         assert(minScale <= initialScale && initialScale <= maxScale),
         assert(lineHeight > 0.0),
-        assert(cornerAndLineHitTestSize >= 15.0);
+        assert(hitTestSize >= 15.0),
+        assert(autoCenter != null),
+        assert(animationDuration != null),
+        assert(tickerDuration != null);
 }
 
 Rect getDestinationRect({

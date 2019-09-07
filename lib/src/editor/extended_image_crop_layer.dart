@@ -30,29 +30,47 @@ class ExtendedImageCropLayer extends StatefulWidget {
   ExtendedImageCropLayerState createState() => ExtendedImageCropLayerState();
 }
 
-class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer> {
+class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
+    with SingleTickerProviderStateMixin {
   Rect get _layoutRect => widget.layoutRect;
 
   Rect get cropRect => widget.editActionDetails.cropRect;
   set cropRect(value) => widget.editActionDetails.cropRect = value;
 
+  bool get isAnimating => _rectTweenController?.isAnimating ?? false;
+
   Timer _timer;
   bool _pointerDown = false;
-
+  Tween<Rect> _rectTween;
+  Animation<Rect> _rectAnimation;
+  AnimationController _rectTweenController;
   @override
   void initState() {
     _pointerDown = false;
+    _rectTweenController = AnimationController(
+        vsync: this, duration: widget.editorConfig.animationDuration)
+      ..addListener(_doCropAutoCenterAnimation);
     super.initState();
   }
 
   @override
   void dispose() {
     _timer?.cancel();
+    _rectTweenController?.dispose();
     super.dispose();
   }
 
   @override
   void didUpdateWidget(ExtendedImageCropLayer oldWidget) {
+    if (widget.editorConfig.animationDuration !=
+        oldWidget.editorConfig.animationDuration) {
+      _rectTweenController?.stop();
+      _rectTweenController?.dispose();
+      _rectTweenController = AnimationController(
+          vsync: this,
+          duration: widget.editorConfig.animationDuration)
+        ..addListener(_doCropAutoCenterAnimation);
+    }
     super.didUpdateWidget(oldWidget);
   }
 
@@ -65,7 +83,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer> {
     final Color maskColor = widget.editorConfig.eidtorMaskColorHandler
             ?.call(context, _pointerDown) ??
         defaultEidtorMaskColorHandler(context, _pointerDown);
-    final double gWidth = widget.editorConfig.cornerAndLineHitTestSize;
+    final double gWidth = widget.editorConfig.hitTestSize;
 
     Widget result = CustomPaint(
       painter: ExtendedImageCropLayerPainter(
@@ -239,6 +257,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer> {
   }
 
   void moveUpdate(_moveType moveType, Offset delta) {
+    if (isAnimating) return;
     Rect result = cropRect;
     final double gWidth = widget.editorConfig.cornerSize.width;
     switch (moveType) {
@@ -296,29 +315,49 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer> {
   }
 
   void startTimer() {
+    if (isAnimating) return;
     _timer?.cancel();
-    _timer = Timer.periodic(Duration(seconds: 1), (Timer timer) {
+    _timer = Timer.periodic(widget.editorConfig.tickerDuration,
+        (Timer timer) {
       _timer?.cancel();
+
       //move to center
+      var oldScreenCropRect = widget.editActionDetails.screenCropRect;
+
+      var centerCropRect = getDestinationRect(
+          rect: _layoutRect, inputSize: cropRect.size, fit: BoxFit.contain);
+      var newScreenCropRect =
+          centerCropRect.shift(widget.editActionDetails.layoutTopLeft);
+      if (widget.editorConfig.autoCenter) {
+        _rectTween =
+            RectTween(begin: oldScreenCropRect, end: newScreenCropRect);
+        _rectAnimation = _rectTweenController?.drive(_rectTween);
+        _rectTweenController?.reset();
+        _rectTweenController?.forward();
+      } else {
+        _doCropAutoCenterAnimation(newScreenCropRect: newScreenCropRect);
+      }
+    });
+  }
+
+  void _doCropAutoCenterAnimation({Rect newScreenCropRect}) {
+    if (mounted) {
       setState(() {
-        var centerCropRect = getDestinationRect(
-            rect: _layoutRect, inputSize: cropRect.size, fit: BoxFit.contain);
-        //cropRect = centerCropRect;
-
-        var newScreenCropRect =
-            centerCropRect.shift(widget.editActionDetails.layoutTopLeft);
-
         var oldScreenCropRect = widget.editActionDetails.screenCropRect;
-
         var oldScreenDestinationRect =
             widget.editActionDetails.screenDestinationRect;
 
-        var offset = newScreenCropRect.center - oldScreenCropRect.center;
+        newScreenCropRect ??= _rectAnimation.value;
 
         var scale = newScreenCropRect.width / oldScreenCropRect.width;
 
+        var offset = newScreenCropRect.center - oldScreenCropRect.center;
+
         var newScreenDestinationRect = Rect.fromCenter(
-          center: oldScreenDestinationRect.center + offset,
+          center: oldScreenCropRect.center +
+              (oldScreenDestinationRect.center - oldScreenCropRect.center) *
+                  scale +
+              offset,
           width: oldScreenDestinationRect.width * scale,
           height: oldScreenDestinationRect.height * scale,
         );
@@ -326,14 +365,15 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer> {
         var totalScale = widget.editActionDetails.rawDestinationRect.width /
             newScreenCropRect.width;
 
-        cropRect = centerCropRect;
+        cropRect =
+            newScreenCropRect.shift(-widget.editActionDetails.layoutTopLeft);
 
         widget.editActionDetails.screenDestinationRect =
             newScreenDestinationRect;
         widget.editActionDetails.totalScale = totalScale;
         widget.editActionDetails.preTotalScale = totalScale;
       });
-    });
+    }
   }
 }
 
