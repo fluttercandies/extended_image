@@ -32,7 +32,7 @@ class ExtendedImageCropLayer extends StatefulWidget {
 
 class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     with SingleTickerProviderStateMixin {
-  Rect get _layoutRect => widget.layoutRect;
+  Rect get layoutRect => widget.layoutRect;
 
   Rect get cropRect => widget.editActionDetails.cropRect;
   set cropRect(value) => widget.editActionDetails.cropRect = value;
@@ -67,8 +67,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       _rectTweenController?.stop();
       _rectTweenController?.dispose();
       _rectTweenController = AnimationController(
-          vsync: this,
-          duration: widget.editorConfig.animationDuration)
+          vsync: this, duration: widget.editorConfig.animationDuration)
         ..addListener(_doCropAutoCenterAnimation);
     }
     super.didUpdateWidget(oldWidget);
@@ -293,10 +292,10 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     }
 
     result = Rect.fromPoints(
-        Offset(max(result.left, _layoutRect.left),
-            max(result.top, _layoutRect.top)),
-        Offset(min(result.right, _layoutRect.right),
-            min(result.bottom, _layoutRect.bottom)));
+        Offset(max(result.left, layoutRect.left),
+            max(result.top, layoutRect.top)),
+        Offset(min(result.right, layoutRect.right),
+            min(result.bottom, layoutRect.bottom)));
 
     var rect = widget.editActionDetails.layerDestinationRect;
 
@@ -311,32 +310,28 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   }
 
   void moveEnd() {
+    //if (widget.editorConfig.autoCenter) 
     startTimer();
   }
 
   void startTimer() {
     if (isAnimating) return;
     _timer?.cancel();
-    _timer = Timer.periodic(widget.editorConfig.tickerDuration,
-        (Timer timer) {
+    _timer = Timer.periodic(widget.editorConfig.tickerDuration, (Timer timer) {
       _timer?.cancel();
 
       //move to center
       var oldScreenCropRect = widget.editActionDetails.screenCropRect;
 
       var centerCropRect = getDestinationRect(
-          rect: _layoutRect, inputSize: cropRect.size, fit: BoxFit.contain);
+          rect: layoutRect, inputSize: cropRect.size, fit: BoxFit.contain);
       var newScreenCropRect =
           centerCropRect.shift(widget.editActionDetails.layoutTopLeft);
-      if (widget.editorConfig.autoCenter) {
-        _rectTween =
-            RectTween(begin: oldScreenCropRect, end: newScreenCropRect);
-        _rectAnimation = _rectTweenController?.drive(_rectTween);
-        _rectTweenController?.reset();
-        _rectTweenController?.forward();
-      } else {
-        _doCropAutoCenterAnimation(newScreenCropRect: newScreenCropRect);
-      }
+
+      _rectTween = RectTween(begin: oldScreenCropRect, end: newScreenCropRect);
+      _rectAnimation = _rectTweenController?.drive(_rectTween);
+      _rectTweenController?.reset();
+      _rectTweenController?.forward();
     });
   }
 

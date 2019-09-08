@@ -1,7 +1,4 @@
 import 'dart:math';
-
-import 'dart:ui' as ui;
-
 import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:flutter/material.dart';
 
@@ -56,33 +53,59 @@ class EditActionDetails {
 
   EditActionDetails();
 
-  void rotate(double angle) {
-    if (isHalfPi) {}
+  void rotate(double angle, Rect layoutRect) {
     _rotateAngle += angle;
+    _rotateAngle %= (2 * pi);
     if (_flipX && _flipY && isPi) {
       _flipX = _flipY = false;
       _rotateAngle = 0.0;
     }
-    if (isHalfPi) {}
+
+    // _cropRect = rotateRect(_cropRect, _cropRect.center, -angle);
+    // screenDestinationRect =
+    //     rotateRect(screenDestinationRect, screenCropRect.center, -angle);
+
+    /// take care of boundary
+    var newCropRect = getDestinationRect(
+        rect: layoutRect,
+        inputSize: Size(_cropRect.height, _cropRect.width),
+        fit: BoxFit.contain);
+
+    var scale = newCropRect.width / _cropRect.height;
+
+    var newScreenDestinationRect =
+        rotateRect(screenDestinationRect, screenCropRect.center, angle);
+
+    var topLeft = screenCropRect.center -
+        (screenCropRect.center - newScreenDestinationRect.topLeft) * scale;
+    var bottomRight = screenCropRect.center +
+        -(screenCropRect.center - newScreenDestinationRect.bottomRight) * scale;
+
+    newScreenDestinationRect = Rect.fromPoints(topLeft, bottomRight);
+
+    _cropRect = newCropRect;
+    _screenDestinationRect = newScreenDestinationRect;
+    totalScale *= scale;
+    preTotalScale = totalScale;
   }
 
   void flip() {
     var flipOrigin = screenCropRect?.center;
     if (isHalfPi) {
       _flipX = !_flipX;
-      _screenDestinationRect = Rect.fromLTRB(
-          screenDestinationRect.left,
-          2 * flipOrigin.dy - screenDestinationRect.bottom,
-          screenDestinationRect.right,
-          2 * flipOrigin.dy - screenDestinationRect.top);
+      // _screenDestinationRect = Rect.fromLTRB(
+      //     screenDestinationRect.left,
+      //     2 * flipOrigin.dy - screenDestinationRect.bottom,
+      //     screenDestinationRect.right,
+      //     2 * flipOrigin.dy - screenDestinationRect.top);
     } else {
       _flipY = !_flipY;
-      _screenDestinationRect = Rect.fromLTRB(
-          2 * flipOrigin.dx - screenDestinationRect.right,
-          screenDestinationRect.top,
-          2 * flipOrigin.dx - screenDestinationRect.left,
-          screenDestinationRect.bottom);
     }
+    _screenDestinationRect = Rect.fromLTRB(
+        2 * flipOrigin.dx - screenDestinationRect.right,
+        screenDestinationRect.top,
+        2 * flipOrigin.dx - screenDestinationRect.left,
+        screenDestinationRect.bottom);
 
     if (_flipX && _flipY && isPi) {
       _flipX = _flipY = false;
@@ -90,16 +113,13 @@ class EditActionDetails {
     }
   }
 
-  Rect paintRect(Rect rect, {Offset offset: Offset.zero}) {
+  Rect paintRect(Rect rect) {
     if (!hasEditAction) return rect;
 
-    if (isHalfPi) {
-      var center = rect.center;
-      rect = Rect.fromLTWH(center.dx - rect.height / 2.0,
-          center.dy - rect.width / 2.0, rect.height, rect.width);
-    }
-
     var flipOrigin = screenCropRect?.center;
+    if (hasRotateAngle) {
+      rect = rotateRect(rect, flipOrigin, -_rotateAngle);
+    }
     if (flipOrigin != null && flipOrigin != rect.center) {
       if (flipY) {
         rect = Rect.fromLTRB(2 * flipOrigin.dx - rect.right, rect.top,
@@ -111,6 +131,7 @@ class EditActionDetails {
             rect.right, 2 * flipOrigin.dy - rect.top);
       }
     }
+
     return rect;
   }
 
@@ -203,10 +224,10 @@ class EditActionDetails {
     return screenDestinationRect;
   }
 
-  Rect getRectWithScale(Rect rect, {Offset center}) {
+  Rect getRectWithScale(Rect rect) {
     final double width = rect.width * totalScale;
     final double height = rect.height * totalScale;
-    center ??= rect.center;
+    var center = rect.center;
     return Rect.fromLTWH(
         center.dx - width / 2.0, center.dy - height / 2.0, width, height);
   }
@@ -283,9 +304,6 @@ class EditorConfig {
   /// hit test region of corner and line
   final double hitTestSize;
 
-  /// auto adjust crop rect to layout center when crop rect is changed
-  final bool autoCenter;
-
   /// auto center animation duration
   final Duration animationDuration;
 
@@ -303,7 +321,6 @@ class EditorConfig {
       this.lineHeight = 0.6,
       this.eidtorMaskColorHandler,
       this.hitTestSize: 20.0,
-      this.autoCenter = true,
       this.animationDuration = const Duration(milliseconds: 200),
       this.tickerDuration = const Duration(milliseconds: 400)})
       : minScale = minScale ??= 0.8,
@@ -313,7 +330,6 @@ class EditorConfig {
         assert(minScale <= initialScale && initialScale <= maxScale),
         assert(lineHeight > 0.0),
         assert(hitTestSize >= 15.0),
-        assert(autoCenter != null),
         assert(animationDuration != null),
         assert(tickerDuration != null);
 }
@@ -367,4 +383,20 @@ Color defaultEidtorMaskColorHandler(BuildContext context, bool pointerdown) {
   return Theme.of(context)
       .scaffoldBackgroundColor
       .withOpacity(pointerdown ? 0.4 : 0.8);
+}
+
+Offset rotateOffset(Offset input, Offset center, double angle) {
+  var x = input.dx;
+  var y = input.dy;
+  var rx0 = center.dx;
+  var ry0 = center.dy;
+  var x0 = (x - rx0) * cos(angle) - (y - ry0) * sin(angle) + rx0;
+  var y0 = (x - rx0) * sin(angle) + (y - ry0) * cos(angle) + ry0;
+  return Offset(x0, y0);
+}
+
+Rect rotateRect(Rect rect, Offset center, double angle) {
+  var leftTop = rotateOffset(rect.topLeft, center, angle);
+  var bottomRight = rotateOffset(rect.bottomRight, center, angle);
+  return Rect.fromPoints(leftTop, bottomRight);
 }

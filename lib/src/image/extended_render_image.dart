@@ -463,13 +463,13 @@ void paintExtendedImage({
 
   Offset topLeft = rect.topLeft;
 
-  if (editActionDetails != null && editActionDetails.isHalfPi) {
-    outputSize = Size(outputSize.height, outputSize.width);
-    var center = rect.center;
-    topLeft = Rect.fromLTWH(center.dx - rect.height / 2.0,
-            center.dy - rect.width / 2.0, rect.height, rect.width)
-        .topLeft;
-  }
+  // if (editActionDetails != null && editActionDetails.isHalfPi) {
+  //   outputSize = Size(outputSize.height, outputSize.width);
+  //   var center = rect.center;
+  //   topLeft = Rect.fromLTWH(center.dx - rect.height / 2.0,
+  //           center.dy - rect.width / 2.0, rect.height, rect.width)
+  //       .topLeft;
+  // }
 
   Offset sliceBorder;
   if (centerSlice != null) {
@@ -558,38 +558,24 @@ void paintExtendedImage({
 
       var editAction = editActionDetails;
 
+      result.translate(
+        origin.dx,
+        origin.dy,
+      );
+
       if (editAction.hasRotateAngle) {
-        var rotateOrigin = origin;
-        // var centerDelta = origin - destinationRect.center;
-        // if (centerDelta != Offset.zero) {
-        //   rotateOrigin = origin + Offset(centerDelta.dy, centerDelta.dx);
-        // }
-
-        result.translate(
-          rotateOrigin.dx,
-          rotateOrigin.dy,
-        );
         result.multiply(Matrix4.rotationZ(editAction.rotateAngle));
-        result.translate(-rotateOrigin.dx, -rotateOrigin.dy);
       }
 
-      if (editAction.flipY || editAction.flipX) {
-        result.translate(
-          origin.dx,
-          origin.dy,
-        );
-
-        if (editAction.flipY) {
-          result.multiply(Matrix4.rotationY(pi));
-        }
-
-        if (editAction.flipX) {
-          result.multiply(Matrix4.rotationX(pi));
-        }
-
-        result.translate(-origin.dx, -origin.dy);
+      if (editAction.flipY) {
+        result.multiply(Matrix4.rotationY(pi));
       }
 
+      if (editAction.flipX) {
+        result.multiply(Matrix4.rotationX(pi));
+      }
+
+      result.translate(-origin.dx, -origin.dy);
       canvas.transform(result.storage);
       destinationRect = editAction.paintRect(destinationRect);
     }

@@ -1,9 +1,8 @@
-import 'dart:async';
 import 'dart:math';
-
+import 'package:extended_image/src/extended_image_utils.dart';
+import 'package:extended_image/src/image/extended_raw_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import '../../extended_image.dart';
 import 'extended_image_crop_layer.dart';
 import 'dart:ui' as ui;
 
@@ -36,7 +35,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
 
   void _initGestureConfig() {
     double initialScale = _editorConfig?.initialScale;
-    _editorConfig = widget.extendedImageState.imageWidget.initEidtorConfigHandler
+    _editorConfig = widget
+            .extendedImageState.imageWidget.initEidtorConfigHandler
             ?.call(widget.extendedImageState) ??
         EditActionDetails();
     if (_editActionDetails == null ||
@@ -174,7 +174,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       return;
     }
 
-    totalScale = totalScale.clamp(_editorConfig.minScale, _editorConfig.maxScale);
+    totalScale =
+        totalScale.clamp(_editorConfig.minScale, _editorConfig.maxScale);
 
     if (mounted && (scaleDelta != 1.0 || delta != Offset.zero)) {
       setState(() {
@@ -227,13 +228,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
 
   void rotate({bool right: true}) {
     setState(() {
-      //_gestureDetails.editAction.cropRect = null;
-      _editActionDetails.rotate(right ? pi / 2.0 : -pi / 2.0);
-      var rect = _editActionDetails.cropRect;
-      var center = rect.center;
-      rect = Rect.fromLTWH(center.dx - rect.height / 2.0,
-          center.dy - rect.width / 2.0, rect.height, rect.width);
-      _editActionDetails.cropRect = rect;
+      _editActionDetails.rotate(
+          right ? pi / 2.0 : -pi / 2.0, _layerKey.currentState.layoutRect);
     });
   }
 

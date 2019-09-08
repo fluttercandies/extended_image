@@ -33,18 +33,18 @@ class ImageEditorDemo extends StatelessWidget {
           ],
         ),
         Expanded(
-            child: ExtendedImage.network(
-          "https://photo.tuchong.com/4870004/f/298584322.jpg" ?? imageTestUrl,
-          fit: BoxFit.contain,
-          mode: ExtendedImageMode.Eidt,
-          extendedImageEditorKey: editorKey,
-          initEidtorConfigHandler: (state) {
-            return EditorConfig(
-                minScale: 0.0,
-                maxScale: 3.0,
-                initialScale: 1.0,);
-          },
-        )),
+            child: 
+                 ExtendedImage.network(
+              "https://photo.tuchong.com/4870004/f/298584322.jpg" ?? imageTestUrl,
+              fit: BoxFit.contain,
+              mode: ExtendedImageMode.Eidt,
+              extendedImageEditorKey: editorKey,
+              initEidtorConfigHandler: (state) {
+                return EditorConfig(
+                    minScale: 0.0, maxScale: 3.0, initialScale: 1.0);
+              },
+            )
+            ),
       ]),
       // floatingActionButton: FloatingActionButton(
       //     onPressed: (){},
