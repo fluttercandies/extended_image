@@ -316,15 +316,15 @@ onDoubleTap: (ExtendedImageGestureState state) {
 
 ExtendedImage
 
-| parameter                | description                                                             | default |
-| ------------------------ | ----------------------------------------------------------------------- | ------- |
-| mode                     | 图片模式，默认/手势/编辑 (none,gestrue,editor)                          | none    |
-| initGestureConfigHandler | 编辑器配置的回调(图片加载完成时).你可以根据图片的信息比如宽高，来初始化 | -       |
-| extendedImageEditorKey   | key of ExtendedImageEditorState 用于裁剪旋转翻转                        | -       |
+| 参数                     | 描述                                                                    | 默认 |
+| ------------------------ | ----------------------------------------------------------------------- | ---- |
+| mode                     | 图片模式，默认/手势/编辑 (none,gestrue,editor)                          | none |
+| initGestureConfigHandler | 编辑器配置的回调(图片加载完成时).你可以根据图片的信息比如宽高，来初始化 | -    |
+| extendedImageEditorKey   | key of ExtendedImageEditorState 用于裁剪旋转翻转                        | -    |
 
 EditorConfig
 
-| parameter              | description                                                                      | default                                                      |
+| 参数                   | 描述                                                                             | 默认                                                         |
 | ---------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------ |
 | maxScale               | 最大的缩放倍数                                                                   | 5.0                                                          |
 | cropRectPadding        | 裁剪框跟图片layout区域之间的距离。最好是保持一定距离，不然裁剪框边界很难进行拖拽 | EdgeInsets.all(20.0)                                         |
@@ -336,11 +336,11 @@ EditorConfig
 | hitTestSize            | 裁剪框四角以及边线能够拖拽的区域的大小                                           | 20.0                                                         |
 | animationDuration      | 当裁剪框拖拽变化结束之后，自动适应到中间的动画的时长                             | Duration(milliseconds: 200)                                  |
 | tickerDuration         | 当裁剪框拖拽变化结束之后，多少时间才触发自动适应到中间的动画                     | Duration(milliseconds: 400)                                  |
-| cropAspectRatio        | 裁剪框的宽高比                                                                   | null(自由))                                                  |
+| cropAspectRatio        | 裁剪框的宽高比                                                                   | null(无宽高比))                                              |
 
 ### 裁剪框的宽高比 
 
-你可以自定义裁剪框的宽高比，这是一个double类型。
+这是一个double类型，你可以自定义裁剪框的宽高比。
 如果为null，那就没有宽高比限制。
 如果小于等于0，宽高比等于图片的宽高比。
 下面是一些定义好了的宽高比
