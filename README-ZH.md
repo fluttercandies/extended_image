@@ -9,6 +9,7 @@
 - [Flutter 什么功能都有的 Image](https://juejin.im/post/5c867112f265da2dd427a340)
 - [Flutter 可以缩放拖拽的图片](https://juejin.im/post/5ca758916fb9a05e1c4d01bb)
 - [Flutter 仿掘金微信图片滑动退出页面效果](https://juejin.im/post/5cf62ab0e51d45776031afb2)
+- [Flutter 图片裁剪旋转翻转编辑器](https://juejin.im/post/5d77dfbb6fb9a06b160f55fc)
 
 ## 目录
 
