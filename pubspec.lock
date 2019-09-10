@@ -49,7 +49,7 @@ packages:
       name: extended_image_library
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "0.1.4"
+    version: "0.1.5"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -115,7 +115,7 @@ packages:
       name: pedantic
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.8.0+1"
+    version: "1.7.0"
   quiver:
     dependency: transitive
     description:

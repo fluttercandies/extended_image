@@ -4,7 +4,7 @@
 
 Language: [English](README.md) | [中文简体](README-ZH.md)
 
-A powerful extended official image for Dart, which support placeholder(loading)/ failed state,cache network,zoom pan image,photo view,slide out page,editor(crop,rotate,flip) paint custom etc.
+A powerful official extension library of image, which support placeholder(loading)/ failed state, cache network, zoom pan image, photo view, slide out page, editor(crop,rotate,flip), paint custom etc.
 
 ## Table of contents
 
@@ -337,8 +337,7 @@ EditorConfig
 
 ### crop aspect ratio
 
-you can define aspect ratio of crop rect.
-it's a double value, so it's esay for you to define yourself.
+it's a double value, so it's esay for you to define by yourself.
 following are official values
 
 ``` dart
@@ -369,31 +368,43 @@ class CropAspectRatios {
 ### rotate
 
 - add key for ExtendedImageEditorState
+  
   `final GlobalKey<ExtendedImageEditorState> editorKey =GlobalKey<ExtendedImageEditorState>();`
-- rotate right:
+
+- rotate right
+  
   `editorKey.currentState.rotate(right: true);`
-- rotate left:
-`editorKey.currentState.rotate(right: false);`
+
+- rotate left
+  
+ `editorKey.currentState.rotate(right: false);`
 
 
 ### flip
+
 - add key for ExtendedImageEditorState
+  
   `final GlobalKey<ExtendedImageEditorState> editorKey =GlobalKey<ExtendedImageEditorState>();`
-- flip:
+
+- flip
+  
   `editorKey.currentState.flip();`
 
 
 ### reset
 
 - add key for ExtendedImageEditorState
+  
   `final GlobalKey<ExtendedImageEditorState> editorKey =GlobalKey<ExtendedImageEditorState>();`
-- reset:
+
+- reset
+  
   `editorKey.currentState.reset();`
 
 
 ### crop data
 
-add image library into your pubspec.yaml, it's used to crop/rotate/flip image data
+- add image library into your pubspec.yaml, it's used to crop/rotate/flip image data
 ``` yaml
 dependencies:
   image: any
@@ -424,7 +435,8 @@ dependencies:
           cropRect.width.toInt(), cropRect.height.toInt());
 ``` 
 - convert to original image data
-it's original image data, you can use it to save or any other thing.
+  
+output is original image data, you can use it to save or any other thing.
 ``` dart
    encodePng(cropData)
 ``` 
