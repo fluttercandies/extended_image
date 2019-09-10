@@ -19,9 +19,7 @@ A powerful official extension library of image, which support placeholder(loadin
     - [double tap animation](#double-tap-animation)
   - [Editor](#editor)
     - [crop aspect ratio](#crop-aspect-ratio)
-    - [rotate](#rotate)
-    - [flip](#flip)
-    - [reset](#reset)
+    - [crop,flip,reset](#cropflipreset)
     - [crop data](#crop-data)
   - [Photo View](#photo-view)
   - [Slide Out Page](#slide-out-page)
@@ -296,27 +294,27 @@ onDoubleTap: (ExtendedImageGestureState state) {
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/editor.gif)
 
 ``` dart
-   ExtendedImage.network(
-    imageTestUrl,
-    fit: BoxFit.contain,
-    mode: ExtendedImageMode.editor,
-    extendedImageEditorKey: editorKey,
-    initEidtorConfigHandler: (state) {
-    return EditorConfig(
-         maxScale: 8.0,
-        cropRectPadding: EdgeInsets.all(20.0),
-          hitTestSize: 20.0,
-          cropAspectRatio: _aspectRatio.aspectRatio);
-    },
-      ))
+    ExtendedImage.network(
+      imageTestUrl,
+      fit: BoxFit.contain,
+      mode: ExtendedImageMode.editor,
+      extendedImageEditorKey: editorKey,
+      initEditorConfigHandler: (state) {
+        return EditorConfig(
+            maxScale: 8.0,
+            cropRectPadding: EdgeInsets.all(20.0),
+            hitTestSize: 20.0,
+            cropAspectRatio: _aspectRatio.aspectRatio);
+      },
+    );
 ```
 
 ExtendedImage
 
-| parameter               | description                                                     | default |
-| ----------------------- | --------------------------------------------------------------- | ------- |
-| mode                    | image mode (none,gestrue,editor)                                | none    |
-| initEditorConfigHandler | init EditorConfig when image is ready.                         | -       |
+| parameter               | description                                                  | default |
+| ----------------------- | ------------------------------------------------------------ | ------- |
+| mode                    | image mode (none,gestrue,editor)                             | none    |
+| initEditorConfigHandler | init EditorConfig when image is ready.                       | -       |
 | extendedImageEditorKey  | key of ExtendedImageEditorState to flip/rotate/get crop rect | -       |
 
 EditorConfig
@@ -365,7 +363,7 @@ class CropAspectRatios {
   static const double ratio16_9 = 16.0 / 9.0;
 }
 ```
-### rotate
+### crop,flip,reset
 
 - add key for ExtendedImageEditorState
   
@@ -377,30 +375,15 @@ class CropAspectRatios {
 
 - rotate left
   
- `editorKey.currentState.rotate(right: false);`
-
-
-### flip
-
-- add key for ExtendedImageEditorState
-  
-  `final GlobalKey<ExtendedImageEditorState> editorKey =GlobalKey<ExtendedImageEditorState>();`
+  `editorKey.currentState.rotate(right: false);`
 
 - flip
   
   `editorKey.currentState.flip();`
 
-
-### reset
-
-- add key for ExtendedImageEditorState
-  
-  `final GlobalKey<ExtendedImageEditorState> editorKey =GlobalKey<ExtendedImageEditorState>();`
-
 - reset
   
   `editorKey.currentState.reset();`
-
 
 ### crop data
 

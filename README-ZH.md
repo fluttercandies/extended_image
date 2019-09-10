@@ -23,9 +23,7 @@
     - [双击图片动画](#%e5%8f%8c%e5%87%bb%e5%9b%be%e7%89%87%e5%8a%a8%e7%94%bb)
   - [图片编辑](#%e5%9b%be%e7%89%87%e7%bc%96%e8%be%91)
     - [裁剪框的宽高比](#%e8%a3%81%e5%89%aa%e6%a1%86%e7%9a%84%e5%ae%bd%e9%ab%98%e6%af%94)
-    - [旋转](#%e6%97%8b%e8%bd%ac)
-    - [翻转](#%e7%bf%bb%e8%bd%ac)
-    - [重置](#%e9%87%8d%e7%bd%ae)
+    - [旋转,翻转,重置](#%e6%97%8b%e8%bd%ac%e7%bf%bb%e8%bd%ac%e9%87%8d%e7%bd%ae)
     - [裁剪数据](#%e8%a3%81%e5%89%aa%e6%95%b0%e6%8d%ae)
   - [图片浏览](#%e5%9b%be%e7%89%87%e6%b5%8f%e8%a7%88)
   - [滑动退出页面](#%e6%bb%91%e5%8a%a8%e9%80%80%e5%87%ba%e9%a1%b5%e9%9d%a2)
@@ -301,19 +299,19 @@ onDoubleTap: (ExtendedImageGestureState state) {
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/editor.gif)
 
 ``` dart
-   ExtendedImage.network(
-    imageTestUrl,
-    fit: BoxFit.contain,
-    mode: ExtendedImageMode.editor,
-    extendedImageEditorKey: editorKey,
-    initEidtorConfigHandler: (state) {
-    return EditorConfig(
-         maxScale: 8.0,
-        cropRectPadding: EdgeInsets.all(20.0),
-          hitTestSize: 20.0,
-          cropAspectRatio: _aspectRatio.aspectRatio);
-    },
-      ))
+    ExtendedImage.network(
+      imageTestUrl,
+      fit: BoxFit.contain,
+      mode: ExtendedImageMode.editor,
+      extendedImageEditorKey: editorKey,
+      initEditorConfigHandler: (state) {
+        return EditorConfig(
+            maxScale: 8.0,
+            cropRectPadding: EdgeInsets.all(20.0),
+            hitTestSize: 20.0,
+            cropAspectRatio: _aspectRatio.aspectRatio);
+      },
+    );
 ```
 
 ExtendedImage
@@ -372,7 +370,7 @@ class CropAspectRatios {
   static const double ratio16_9 = 16.0 / 9.0;
 }
 ```
-### 旋转
+### 旋转,翻转,重置
 
 - 定义key，以方便操作ExtendedImageEditorState
   
@@ -386,26 +384,13 @@ class CropAspectRatios {
   
  `editorKey.currentState.rotate(right: false);`
 
-### 翻转
-- 定义key，以方便操作ExtendedImageEditorState
-  
- `final GlobalKey<ExtendedImageEditorState> editorKey =GlobalKey<ExtendedImageEditorState>();`
-
 - 翻转(镜像)
   
  `editorKey.currentState.flip();`
 
-
-### 重置
-
-- 定义key，以方便操作ExtendedImageEditorState
-  
-  `final GlobalKey<ExtendedImageEditorState> editorKey =GlobalKey<ExtendedImageEditorState>();`
-
 - 重置
   
  `editorKey.currentState.reset();`
-
 
 ### 裁剪数据
 
