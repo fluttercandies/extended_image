@@ -61,7 +61,7 @@ typedef MergeEditRect = Rect Function(Rect editRect);
 typedef BuildGestureImage = Widget Function(GestureDetails gestureDetails);
 
 ///init GestureConfig when image is ready.
-typedef InitEidtorConfigHandler = EditorConfig Function(ExtendedImageState state);
+typedef InitEditorConfigHandler = EditorConfig Function(ExtendedImageState state);
 
 ///get eidtor mask color base on pointerDown
 typedef EidtorMaskColorHandler = Color Function(

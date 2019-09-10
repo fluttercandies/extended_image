@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  extended_image_library: ^0.1.4
+  extended_image_library: ^0.1.5
 
 dev_dependencies:
   flutter_test:

@@ -81,7 +81,7 @@ class _PicSwiperState extends State<PicSwiper>
                   item,
                   fit: BoxFit.contain,
                   enableSlideOutPage: true,
-                  mode: ExtendedImageMode.Gesture,
+                  mode: ExtendedImageMode.gesture,
                   initGestureConfigHandler: (state) {
                     double initialScale = 1.0;
 

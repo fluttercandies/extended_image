@@ -44,7 +44,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableLoadState: false,
       this.beforePaintImage,
       this.afterPaintImage,
-      this.mode: ExtendedImageMode.None,
+      this.mode: ExtendedImageMode.none,
       this.enableMemoryCache: true,
       this.clearMemoryCacheIfFailed: true,
       this.onDoubleTap,
@@ -52,7 +52,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
       this.extendedImageEditorKey,
-      this.initEidtorConfigHandler})
+      this.initEditorConfigHandler})
       : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
@@ -84,7 +84,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableLoadState: true,
       this.beforePaintImage,
       this.afterPaintImage,
-      this.mode: ExtendedImageMode.None,
+      this.mode: ExtendedImageMode.none,
       this.enableMemoryCache: true,
       this.clearMemoryCacheIfFailed: true,
       this.onDoubleTap,
@@ -100,7 +100,7 @@ class ExtendedImage extends StatefulWidget {
       double scale = 1.0,
       Duration timeRetry: const Duration(milliseconds: 100),
       this.extendedImageEditorKey,
-      this.initEidtorConfigHandler})
+      this.initEditorConfigHandler})
       :
         //assert(autoCancel != null),
         image = ExtendedNetworkImageProvider(url,
@@ -161,7 +161,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableLoadState: false,
       this.beforePaintImage,
       this.afterPaintImage,
-      this.mode: ExtendedImageMode.None,
+      this.mode: ExtendedImageMode.none,
       this.enableMemoryCache: true,
       this.clearMemoryCacheIfFailed: true,
       this.onDoubleTap,
@@ -169,7 +169,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
       this.extendedImageEditorKey,
-      this.initEidtorConfigHandler})
+      this.initEditorConfigHandler})
       : image = FileImage(file, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -332,7 +332,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableLoadState: false,
       this.beforePaintImage,
       this.afterPaintImage,
-      this.mode: ExtendedImageMode.None,
+      this.mode: ExtendedImageMode.none,
       this.enableMemoryCache: true,
       this.clearMemoryCacheIfFailed: true,
       this.onDoubleTap,
@@ -340,7 +340,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
       this.extendedImageEditorKey,
-      this.initEidtorConfigHandler})
+      this.initEditorConfigHandler})
       : image = scale != null
             ? ExactAssetImage(name,
                 bundle: bundle, scale: scale, package: package)
@@ -393,7 +393,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableLoadState: false,
       this.beforePaintImage,
       this.afterPaintImage,
-      this.mode: ExtendedImageMode.None,
+      this.mode: ExtendedImageMode.none,
       this.enableMemoryCache: true,
       this.clearMemoryCacheIfFailed: true,
       this.onDoubleTap,
@@ -401,7 +401,7 @@ class ExtendedImage extends StatefulWidget {
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
       this.extendedImageEditorKey,
-      this.initEidtorConfigHandler})
+      this.initEditorConfigHandler})
       : image = MemoryImage(bytes, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -413,7 +413,7 @@ class ExtendedImage extends StatefulWidget {
         super(key: key);
 
   /// init EidtConfig when image is ready.
-  final InitEidtorConfigHandler initEidtorConfigHandler;
+  final InitEditorConfigHandler initEditorConfigHandler;
 
   /// key of ExtendedImageEditor
   final Key extendedImageEditorKey;
@@ -839,9 +839,9 @@ class _ExtendedImageState extends State<ExtendedImage>
             );
             break;
           case LoadState.completed:
-            if (widget.mode == ExtendedImageMode.Gesture) {
+            if (widget.mode == ExtendedImageMode.gesture) {
               current = ExtendedImageGesture(this, _slidePageState);
-            } else if (widget.mode == ExtendedImageMode.Eidt) {
+            } else if (widget.mode == ExtendedImageMode.editor) {
               current = ExtendedImageEditor(
                 extendedImageState: this,
                 key: widget.extendedImageEditorKey,
@@ -864,10 +864,10 @@ class _ExtendedImageState extends State<ExtendedImage>
         }
       } else {
         if (_loadState == LoadState.completed &&
-            widget.mode == ExtendedImageMode.Gesture) {
+            widget.mode == ExtendedImageMode.gesture) {
           current = ExtendedImageGesture(this, _slidePageState);
         } else if (_loadState == LoadState.completed &&
-            widget.mode == ExtendedImageMode.Eidt) {
+            widget.mode == ExtendedImageMode.editor) {
           current = ExtendedImageEditor(
             extendedImageState: this,
             key: widget.extendedImageEditorKey,
@@ -915,7 +915,7 @@ class _ExtendedImageState extends State<ExtendedImage>
     ///add for loading/falied/ unGesture image
     if (_slidePageState != null &&
         !(_loadState == LoadState.completed &&
-            widget.mode == ExtendedImageMode.Gesture)) {
+            widget.mode == ExtendedImageMode.gesture)) {
       current = ExtendedImageSlidePageHandler(current, _slidePageState);
     }
 

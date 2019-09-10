@@ -534,6 +534,16 @@ void paintExtendedImage({
   }
   bool hasEditAction = false;
   if (editActionDetails != null) {
+    if (editActionDetails.cropRectPadding != null) {
+      destinationRect = getDestinationRect(
+          inputSize: inputSize,
+          rect: editActionDetails.cropRectPadding.deflateRect(rect),
+          fit: fit,
+          flipHorizontally: false,
+          scale: scale,
+          centerSlice: centerSlice,alignment: alignment);
+    }
+
     editActionDetails.initRect(rect, destinationRect);
 
     destinationRect = editActionDetails.getFinalDestinationRect();

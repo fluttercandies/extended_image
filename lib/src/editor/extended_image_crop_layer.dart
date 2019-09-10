@@ -38,12 +38,14 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   set cropRect(value) => widget.editActionDetails.cropRect = value;
 
   bool get isAnimating => _rectTweenController?.isAnimating ?? false;
+  bool get isMoving => _currentMoveType != null;
 
   Timer _timer;
   bool _pointerDown = false;
   Tween<Rect> _rectTween;
   Animation<Rect> _rectAnimation;
   AnimationController _rectTweenController;
+  _moveType _currentMoveType;
   @override
   void initState() {
     _pointerDown = false;
@@ -109,7 +111,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
                   moveUpdate(_moveType.topLeft, details.delta);
                 },
                 onPanEnd: (_) {
-                  moveEnd();
+                  _moveEnd(_moveType.topLeft);
                 },
               ),
             ),
@@ -127,12 +129,12 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
                   moveUpdate(_moveType.topRight, details.delta);
                 },
                 onPanEnd: (_) {
-                  moveEnd();
+                  _moveEnd(_moveType.topRight);
                 },
               ),
             ),
           ),
-          //bottom right
+          //bottom left
           Positioned(
             top: cropRect.bottom - gWidth,
             left: cropRect.left - gWidth,
@@ -142,15 +144,15 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onPanUpdate: (details) {
-                  moveUpdate(_moveType.bottomRight, details.delta);
+                  moveUpdate(_moveType.bottomLeft, details.delta);
                 },
                 onPanEnd: (_) {
-                  moveEnd();
+                  _moveEnd(_moveType.bottomLeft);
                 },
               ),
             ),
           ),
-          // bottom left
+          // bottom right
           Positioned(
             top: cropRect.bottom - gWidth,
             left: cropRect.right - gWidth,
@@ -160,10 +162,10 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onPanUpdate: (details) {
-                  moveUpdate(_moveType.bottomLeft, details.delta);
+                  moveUpdate(_moveType.bottomRight, details.delta);
                 },
                 onPanEnd: (_) {
-                  moveEnd();
+                  _moveEnd(_moveType.bottomRight);
                 },
               ),
             ),
@@ -181,7 +183,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
                   moveUpdate(_moveType.top, details.delta);
                 },
                 onVerticalDragEnd: (_) {
-                  moveEnd();
+                  _moveEnd(_moveType.top);
                 },
               ),
             ),
@@ -199,7 +201,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
                   moveUpdate(_moveType.left, details.delta);
                 },
                 onHorizontalDragEnd: (_) {
-                  moveEnd();
+                  _moveEnd(_moveType.left);
                 },
               ),
             ),
@@ -217,7 +219,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
                   moveUpdate(_moveType.bottom, details.delta);
                 },
                 onVerticalDragEnd: (_) {
-                  moveEnd();
+                  _moveEnd(_moveType.bottom);
                 },
               ),
             ),
@@ -235,7 +237,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
                   moveUpdate(_moveType.right, details.delta);
                 },
                 onHorizontalDragEnd: (_) {
-                  moveEnd();
+                  _moveEnd(_moveType.right);
                 },
               ),
             ),
@@ -257,6 +259,13 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
   void moveUpdate(_moveType moveType, Offset delta) {
     if (isAnimating) return;
+
+    ///only move by one type at the same time
+    if (_currentMoveType != null && moveType != _currentMoveType) return;
+    _currentMoveType = moveType;
+
+    final Rect layerDestinationRect =
+        widget.editActionDetails.layerDestinationRect;
     Rect result = cropRect;
     final double gWidth = widget.editorConfig.cornerSize.width;
     switch (moveType) {
@@ -291,32 +300,169 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       default:
     }
 
-    result = Rect.fromPoints(
-        Offset(max(result.left, layoutRect.left),
-            max(result.top, layoutRect.top)),
-        Offset(min(result.right, layoutRect.right),
-            min(result.bottom, layoutRect.bottom)));
+    // result = Rect.fromPoints(
+    //     Offset(
+    //         max(result.left, layoutRect.left), max(result.top, layoutRect.top)),
+    //     Offset(min(result.right, layoutRect.right),
+    //         min(result.bottom, layoutRect.bottom)));
 
-    var rect = widget.editActionDetails.layerDestinationRect;
-
+    ///make sure crop rect doesn't out of image rect
     result = Rect.fromPoints(
-        Offset(max(result.left, rect.left), max(result.top, rect.top)),
-        Offset(min(result.right, rect.right), min(result.bottom, rect.bottom)));
-    if (result != cropRect && mounted) {
-      setState(() {
-        cropRect = result;
-      });
+        Offset(max(result.left, layerDestinationRect.left),
+            max(result.top, layerDestinationRect.top)),
+        Offset(min(result.right, layerDestinationRect.right),
+            min(result.bottom, layerDestinationRect.bottom)));
+
+    result = _handleAspectRatio(
+        gWidth, moveType, result, layerDestinationRect, delta);
+
+    ///move and scale image rect when crop rect is bigger than layout rect
+    if (result.left < layoutRect.left ||
+        result.right > layoutRect.right ||
+        result.top < layoutRect.top ||
+        result.bottom > layoutRect.bottom) {
+      cropRect = result;
+      var centerCropRect = getDestinationRect(
+          rect: layoutRect, inputSize: result.size, fit: BoxFit.contain);
+      var newScreenCropRect =
+          centerCropRect.shift(widget.editActionDetails.layoutTopLeft);
+      _doCropAutoCenterAnimation(newScreenCropRect: newScreenCropRect);
+    } else {
+      result = _doWithMaxSacle(result);
+
+      if (result != null && result != cropRect && mounted) {
+        setState(() {
+          cropRect = result;
+        });
+      }
     }
   }
 
-  void moveEnd() {
-    //if (widget.editorConfig.autoCenter) 
-    startTimer();
+  /// handle crop rect with aspectRatio
+  Rect _handleAspectRatio(double gWidth, _moveType moveType, Rect result,
+      Rect layerDestinationRect, Offset delta) {
+    final double aspectRatio = widget.editActionDetails.cropAspectRatio;
+    // do with aspect ratio
+    if (aspectRatio != null) {
+      final double minD = gWidth * 2;
+      switch (moveType) {
+        case _moveType.top:
+        case _moveType.bottom:
+          var isTop = moveType == _moveType.top;
+          result = _doAspectRatioV(
+              minD, result, aspectRatio, layerDestinationRect,
+              isTop: isTop);
+          break;
+        case _moveType.left:
+        case _moveType.right:
+          var isLeft = moveType == _moveType.left;
+          result = _doAspectRatioH(
+              minD, result, aspectRatio, layerDestinationRect,
+              isLeft: isLeft);
+          break;
+        case _moveType.topLeft:
+        case _moveType.topRight:
+        case _moveType.bottomRight:
+        case _moveType.bottomLeft:
+          var dx = delta.dx.abs();
+          var dy = delta.dy.abs();
+          var width = result.width;
+          var height = result.height;
+          if (dx >= dy) {
+            height = max(minD,
+                min(result.width / aspectRatio, layerDestinationRect.height));
+            width = height * aspectRatio;
+          } else {
+            width = max(minD,
+                min(result.height * aspectRatio, layerDestinationRect.width));
+            height = width / aspectRatio;
+          }
+          double top = result.top;
+          double left = result.left;
+          switch (moveType) {
+            case _moveType.topLeft:
+              top = result.bottom - height;
+              left = result.right - width;
+              break;
+            case _moveType.topRight:
+              top = result.bottom - height;
+              left = result.left;
+              break;
+            case _moveType.bottomRight:
+              top = result.top;
+              left = result.left;
+              break;
+            case _moveType.bottomLeft:
+              top = result.top;
+              left = result.right - width;
+              break;
+            default:
+          }
+          result = Rect.fromLTWH(left, top, width, height);
+          break;
+        default:
+      }
+    }
+    return result;
   }
 
-  void startTimer() {
-    if (isAnimating) return;
+  ///horizontal
+  Rect _doAspectRatioH(
+      double minD, Rect result, double aspectRatio, Rect layerDestinationRect,
+      {bool isLeft}) {
+    double height =
+        max(minD, min(result.width / aspectRatio, layerDestinationRect.height));
+    double width = height * aspectRatio;
+    var left = isLeft ? result.right - width : result.left;
+    var top = result.centerRight.dy - height / 2.0;
+    result = Rect.fromLTWH(left, top, width, height);
+    return result;
+  }
+
+  ///vertical
+  Rect _doAspectRatioV(
+      double minD, Rect result, double aspectRatio, Rect layerDestinationRect,
+      {bool isTop}) {
+    double width =
+        max(minD, min(result.height * aspectRatio, layerDestinationRect.width));
+    double height = width / aspectRatio;
+    var top = isTop ? result.bottom - height : result.top;
+    var left = result.topCenter.dx - width / 2.0;
+    result = Rect.fromLTWH(left, top, width, height);
+    return result;
+  }
+
+  Rect _doWithMaxSacle(Rect rect) {
+    var centerCropRect = getDestinationRect(
+        rect: layoutRect, inputSize: rect.size, fit: BoxFit.contain);
+    var newScreenCropRect =
+        centerCropRect.shift(widget.editActionDetails.layoutTopLeft);
+
+    var oldScreenCropRect = widget.editActionDetails.screenCropRect;
+
+    var scale = newScreenCropRect.width / oldScreenCropRect.width;
+
+    var totalScale = widget.editActionDetails.totalScale * scale;
+    if (totalScale > widget.editorConfig.maxScale) {
+      if (rect.width > cropRect.width || rect.height > cropRect.height)
+        return rect;
+      return null;
+    }
+
+    return rect;
+  }
+
+  void _moveEnd(_moveType moveType) {
+    if (_currentMoveType != null && moveType == _currentMoveType) {
+      _currentMoveType = null;
+      //if (widget.editorConfig.autoCenter)
+      _startTimer();
+    }
+  }
+
+  void _startTimer() {
     _timer?.cancel();
+    if (isAnimating) return;
     _timer = Timer.periodic(widget.editorConfig.tickerDuration, (Timer timer) {
       _timer?.cancel();
 
@@ -348,17 +494,22 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
         var offset = newScreenCropRect.center - oldScreenCropRect.center;
 
+        /// scale then move
+        /// so we do scale frist, get the new center
+        /// then move to new offset
+        var newImageCenter = oldScreenCropRect.center +
+            (oldScreenDestinationRect.center - oldScreenCropRect.center) *
+                scale;
         var newScreenDestinationRect = Rect.fromCenter(
-          center: oldScreenCropRect.center +
-              (oldScreenDestinationRect.center - oldScreenCropRect.center) *
-                  scale +
-              offset,
+          center: newImageCenter + offset,
           width: oldScreenDestinationRect.width * scale,
           height: oldScreenDestinationRect.height * scale,
         );
 
-        var totalScale = widget.editActionDetails.rawDestinationRect.width /
-            newScreenCropRect.width;
+        // var totalScale = newScreenDestinationRect.width /
+        //     (widget.editActionDetails.rawDestinationRect.width *
+        //     widget.editorConfig.initialScale);
+        var totalScale = widget.editActionDetails.totalScale * scale;
 
         cropRect =
             newScreenCropRect.shift(-widget.editActionDetails.layoutTopLeft);

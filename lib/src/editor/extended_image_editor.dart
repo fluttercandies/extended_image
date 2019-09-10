@@ -35,10 +35,15 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
 
   void _initGestureConfig() {
     double initialScale = _editorConfig?.initialScale;
+    double cropAspectRatio = _editorConfig?.cropAspectRatio;
     _editorConfig = widget
-            .extendedImageState.imageWidget.initEidtorConfigHandler
+            .extendedImageState.imageWidget.initEditorConfigHandler
             ?.call(widget.extendedImageState) ??
         EditActionDetails();
+    if (cropAspectRatio != _editorConfig.cropAspectRatio) {
+      _editActionDetails = null;
+    }
+
     if (_editActionDetails == null ||
         initialScale != _editorConfig.initialScale) {
       _editActionDetails = EditActionDetails()
@@ -46,6 +51,18 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
         ..totalScale = _editorConfig.initialScale
         ..preTotalScale = _editorConfig.initialScale
         ..cropRectPadding = _editorConfig.cropRectPadding;
+    }
+
+    if (widget.extendedImageState?.extendedImageInfo?.image != null) {
+      _editActionDetails.originalAspectRatio =
+          widget.extendedImageState.extendedImageInfo.image.width /
+              widget.extendedImageState.extendedImageInfo.image.height;
+    }
+    _editActionDetails.cropAspectRatio = _editorConfig.cropAspectRatio;
+    if (_editorConfig.cropAspectRatio != null &&
+        _editorConfig.cropAspectRatio <= 0) {
+      _editActionDetails.cropAspectRatio =
+          _editActionDetails.originalAspectRatio;
     }
   }
 
@@ -78,7 +95,6 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     Widget result = GestureDetector(
         onScaleStart: _handleScaleStart,
         onScaleUpdate: _handleScaleUpdate,
-        onScaleEnd: _handleScaleEnd,
         behavior: HitTestBehavior.translucent,
         child: Stack(
           overflow: Overflow.clip,
@@ -119,6 +135,16 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                   var cropRect =
                       _editActionDetails.getRectWithScale(destinationRect);
 
+                  if (_editActionDetails.cropAspectRatio != null) {
+                    final double aspectRatio =
+                        _editActionDetails.cropAspectRatio;
+                    double width = cropRect.width / aspectRatio;
+                    double height = min(cropRect.height, width);
+                    width = height * aspectRatio;
+
+                    cropRect = Rect.fromCenter(
+                        center: cropRect.center, width: width, height: height);
+                  }
                   _editActionDetails.cropRect = cropRect;
                 }
 
@@ -160,22 +186,26 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
 
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     _layerKey.currentState.pointerDown(true);
-    var totalScale = (_startingScale * details.scale)
-        .clamp(_editorConfig.minScale, _editorConfig.maxScale);
+    if (_layerKey.currentState.isAnimating || _layerKey.currentState.isMoving)
+      return;
+    var totalScale = _startingScale * details.scale;
+    // min(_startingScale * details.scale, _editorConfig.maxScale);
+    // totalScale=(_startingScale * details.scale).clamp(_editorConfig.minScale, _editorConfig.maxScale);
     var delta = (details.focalPoint - _startingOffset);
     var scaleDelta = totalScale / _editActionDetails.preTotalScale;
     _startingOffset = details.focalPoint;
     //no more zoom
     if (details.scale != 1.0 &&
-        ((_editActionDetails.totalScale == _editorConfig.minScale &&
-                totalScale <= _editActionDetails.totalScale) ||
+        (
+            // (_editActionDetails.totalScale == _editorConfig.minScale &&
+            //       totalScale <= _editActionDetails.totalScale) ||
             (_editActionDetails.totalScale == _editorConfig.maxScale &&
                 totalScale >= _editActionDetails.totalScale))) {
       return;
     }
 
-    totalScale =
-        totalScale.clamp(_editorConfig.minScale, _editorConfig.maxScale);
+    totalScale = min(totalScale, _editorConfig.maxScale);
+    //  totalScale.clamp(_editorConfig.minScale, _editorConfig.maxScale);
 
     if (mounted && (scaleDelta != 1.0 || delta != Offset.zero)) {
       setState(() {
@@ -183,16 +213,6 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
         _editActionDetails.delta = delta;
       });
     }
-  }
-
-  void _handleScaleEnd(ScaleEndDetails details) {
-    // var rect = _gestureDetails.preDestinationRect
-    //     .expandToInclude(_gestureDetails.editRect);
-    // if (rect != _gestureDetails.preDestinationRect) {
-    //   setState(() {
-
-    //   });
-    // }
   }
 
   Rect getCropRect() {

@@ -30,11 +30,11 @@ abstract class ExtendedImageState {
 
 enum ExtendedImageMode {
   //just show image
-  None,
+  none,
   //support be to zoom,scroll
-  Gesture,
-  //support be to crop,rotate
-  Eidt
+  gesture,
+  //support be to crop,rotate,flip
+  editor
 }
 
 ///get type from T
