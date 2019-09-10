@@ -1,3 +1,4 @@
+import 'package:extended_image/src/editor/extended_image_editor_utils.dart';
 import 'package:extended_image/src/gesture/extended_image_gesture_utils.dart';
 import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:extended_image/src/image/extended_render_image.dart';
@@ -35,12 +36,17 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
     this.beforePaintImage,
     this.afterPaintImage,
     this.gestureDetails,
+    this.editActionDetails,
   })  : assert(scale != null),
         assert(alignment != null),
         assert(repeat != null),
         assert(matchTextDirection != null),
         super(key: key);
 
+  /// details about edit
+  final EditActionDetails editActionDetails;
+
+  /// details about gestrue
   final GestureDetails gestureDetails;
 
   ///you can paint anything if you want before paint image.
@@ -189,7 +195,8 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
         soucreRect: soucreRect,
         beforePaintImage: beforePaintImage,
         afterPaintImage: afterPaintImage,
-        gestureDetails: gestureDetails);
+        gestureDetails: gestureDetails,
+        editActionDetails: editActionDetails);
   }
 
   @override
@@ -215,7 +222,8 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
       ..afterPaintImage = afterPaintImage
       ..beforePaintImage = beforePaintImage
       ..soucreRect = soucreRect
-      ..gestureDetails = gestureDetails;
+      ..gestureDetails = gestureDetails
+      ..editActionDetails = editActionDetails;
   }
 
   @override

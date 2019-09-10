@@ -1,3 +1,8 @@
+## [0.5.7]
+
+* Features:
+  Support to crop,rotate,flip image
+  
 ## [0.5.6]
 
 * Add key for ExtendedImageSlidePage

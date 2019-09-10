@@ -4,7 +4,7 @@
 
 文档语言: [English](README.md) | [中文简体](README-ZH.md)
 
-强大的官方 Image 扩展组件, 支持加载以及失败显示，缓存网络图片，缩放拖拽图片，图片浏览(微信掘金效果)，滑动退出页面(微信掘金效果)，裁剪，保存，绘制自定义效果等功能
+强大的官方Image扩展组件, 支持加载以及失败显示，缓存网络图片，缩放拖拽图片，图片浏览(微信掘金效果)，滑动退出页面(微信掘金效果)，编辑图片(裁剪旋转翻转)，保存，绘制自定义效果等功能
 
 - [Flutter 什么功能都有的 Image](https://juejin.im/post/5c867112f265da2dd427a340)
 - [Flutter 可以缩放拖拽的图片](https://juejin.im/post/5ca758916fb9a05e1c4d01bb)
@@ -13,27 +13,31 @@
 ## 目录
 
 - [extended_image](#extendedimage)
-  - [目录](#%E7%9B%AE%E5%BD%95)
-  - [缓存网络图片](#%E7%BC%93%E5%AD%98%E7%BD%91%E7%BB%9C%E5%9B%BE%E7%89%87)
-    - [简单使用](#%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8)
-    - [使用 Extendednetworkimageprovider](#%E4%BD%BF%E7%94%A8-Extendednetworkimageprovider)
-  - [加载状态](#%E5%8A%A0%E8%BD%BD%E7%8A%B6%E6%80%81)
-    - [例子](#%E4%BE%8B%E5%AD%90)
-  - [缩放拖拽](#%E7%BC%A9%E6%94%BE%E6%8B%96%E6%8B%BD)
-    - [双击图片动画](#%E5%8F%8C%E5%87%BB%E5%9B%BE%E7%89%87%E5%8A%A8%E7%94%BB)
-  - [图片浏览](#%E5%9B%BE%E7%89%87%E6%B5%8F%E8%A7%88)
-  - [滑动退出页面](#%E6%BB%91%E5%8A%A8%E9%80%80%E5%87%BA%E9%A1%B5%E9%9D%A2)
-    - [首先开启滑动退出页面效果](#%E9%A6%96%E5%85%88%E5%BC%80%E5%90%AF%E6%BB%91%E5%8A%A8%E9%80%80%E5%87%BA%E9%A1%B5%E9%9D%A2%E6%95%88%E6%9E%9C)
-    - [把你的页面用ExtendedImageSlidePage包一下](#%E6%8A%8A%E4%BD%A0%E7%9A%84%E9%A1%B5%E9%9D%A2%E7%94%A8ExtendedImageSlidePage%E5%8C%85%E4%B8%80%E4%B8%8B)
-    - [确保你的页面是透明背景的](#%E7%A1%AE%E4%BF%9D%E4%BD%A0%E7%9A%84%E9%A1%B5%E9%9D%A2%E6%98%AF%E9%80%8F%E6%98%8E%E8%83%8C%E6%99%AF%E7%9A%84)
-    - [Push一个透明的页面](#Push%E4%B8%80%E4%B8%AA%E9%80%8F%E6%98%8E%E7%9A%84%E9%A1%B5%E9%9D%A2)
-  - [Border BorderRadius Shape](#Border-BorderRadius-Shape)
-  - [清除缓存和保存](#%E6%B8%85%E9%99%A4%E7%BC%93%E5%AD%98%E5%92%8C%E4%BF%9D%E5%AD%98)
-    - [清除缓存](#%E6%B8%85%E9%99%A4%E7%BC%93%E5%AD%98)
-    - [保存网络图片](#%E4%BF%9D%E5%AD%98%E7%BD%91%E7%BB%9C%E5%9B%BE%E7%89%87)
-  - [裁剪](#%E8%A3%81%E5%89%AA)
-  - [绘制](#%E7%BB%98%E5%88%B6)
-  - [其他 APIs](#%E5%85%B6%E4%BB%96-APIs)
+  - [目录](#%e7%9b%ae%e5%bd%95)
+  - [缓存网络图片](#%e7%bc%93%e5%ad%98%e7%bd%91%e7%bb%9c%e5%9b%be%e7%89%87)
+    - [简单使用](#%e7%ae%80%e5%8d%95%e4%bd%bf%e7%94%a8)
+    - [使用 Extendednetworkimageprovider](#%e4%bd%bf%e7%94%a8-extendednetworkimageprovider)
+  - [加载状态](#%e5%8a%a0%e8%bd%bd%e7%8a%b6%e6%80%81)
+    - [例子](#%e4%be%8b%e5%ad%90)
+  - [缩放拖拽](#%e7%bc%a9%e6%94%be%e6%8b%96%e6%8b%bd)
+    - [双击图片动画](#%e5%8f%8c%e5%87%bb%e5%9b%be%e7%89%87%e5%8a%a8%e7%94%bb)
+  - [图片编辑](#%e5%9b%be%e7%89%87%e7%bc%96%e8%be%91)
+    - [裁剪框的宽高比](#%e8%a3%81%e5%89%aa%e6%a1%86%e7%9a%84%e5%ae%bd%e9%ab%98%e6%af%94)
+    - [旋转,翻转,重置](#%e6%97%8b%e8%bd%ac%e7%bf%bb%e8%bd%ac%e9%87%8d%e7%bd%ae)
+    - [裁剪数据](#%e8%a3%81%e5%89%aa%e6%95%b0%e6%8d%ae)
+  - [图片浏览](#%e5%9b%be%e7%89%87%e6%b5%8f%e8%a7%88)
+  - [滑动退出页面](#%e6%bb%91%e5%8a%a8%e9%80%80%e5%87%ba%e9%a1%b5%e9%9d%a2)
+    - [首先开启滑动退出页面效果](#%e9%a6%96%e5%85%88%e5%bc%80%e5%90%af%e6%bb%91%e5%8a%a8%e9%80%80%e5%87%ba%e9%a1%b5%e9%9d%a2%e6%95%88%e6%9e%9c)
+    - [把你的页面用ExtendedImageSlidePage包一下](#%e6%8a%8a%e4%bd%a0%e7%9a%84%e9%a1%b5%e9%9d%a2%e7%94%a8extendedimageslidepage%e5%8c%85%e4%b8%80%e4%b8%8b)
+    - [确保你的页面是透明背景的](#%e7%a1%ae%e4%bf%9d%e4%bd%a0%e7%9a%84%e9%a1%b5%e9%9d%a2%e6%98%af%e9%80%8f%e6%98%8e%e8%83%8c%e6%99%af%e7%9a%84)
+    - [Push一个透明的页面](#push%e4%b8%80%e4%b8%aa%e9%80%8f%e6%98%8e%e7%9a%84%e9%a1%b5%e9%9d%a2)
+  - [Border BorderRadius Shape](#border-borderradius-shape)
+  - [清除缓存和保存](#%e6%b8%85%e9%99%a4%e7%bc%93%e5%ad%98%e5%92%8c%e4%bf%9d%e5%ad%98)
+    - [清除缓存](#%e6%b8%85%e9%99%a4%e7%bc%93%e5%ad%98)
+    - [保存网络图片](#%e4%bf%9d%e5%ad%98%e7%bd%91%e7%bb%9c%e5%9b%be%e7%89%87)
+  - [显示裁剪图片](#%e6%98%be%e7%a4%ba%e8%a3%81%e5%89%aa%e5%9b%be%e7%89%87)
+  - [绘制](#%e7%bb%98%e5%88%b6)
+  - [其他 APIs](#%e5%85%b6%e4%bb%96-apis)
 
 ## 缓存网络图片
 
@@ -211,8 +215,8 @@ ExtendedImage
 
 | 参数                     | 描述                                                                  | 默认 |
 | ------------------------ | --------------------------------------------------------------------- | ---- |
-| mode                     | 图片模式，一种为默认，一种是支持手势 (none,gestrue)                   | none |
-| initGestureConfigHandler | 手势的配置回调(图片加载完成时).你可以根据图片的信息比如宽高，来初始化 | -    |
+| mode                     | 图片模式，默认/手势/编辑 (none,gestrue,editor)                        | none |
+| initGestureConfigHandler | 手势配置的回调(图片加载完成时).你可以根据图片的信息比如宽高，来初始化 | -    |
 | onDoubleTap              | 支持手势的时候，双击回调                                              | -    |
 
 GestureConfig
@@ -289,6 +293,143 @@ onDoubleTap: (ExtendedImageGestureState state) {
   _animationController.forward();
 },
 ```
+
+## 图片编辑
+
+![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/editor.gif)
+
+``` dart
+    ExtendedImage.network(
+      imageTestUrl,
+      fit: BoxFit.contain,
+      mode: ExtendedImageMode.editor,
+      extendedImageEditorKey: editorKey,
+      initEditorConfigHandler: (state) {
+        return EditorConfig(
+            maxScale: 8.0,
+            cropRectPadding: EdgeInsets.all(20.0),
+            hitTestSize: 20.0,
+            cropAspectRatio: _aspectRatio.aspectRatio);
+      },
+    );
+```
+
+ExtendedImage
+
+| 参数                     | 描述                                                                    | 默认 |
+| ------------------------ | ----------------------------------------------------------------------- | ---- |
+| mode                     | 图片模式，默认/手势/编辑 (none,gestrue,editor)                          | none |
+| initGestureConfigHandler | 编辑器配置的回调(图片加载完成时).你可以根据图片的信息比如宽高，来初始化 | -    |
+| extendedImageEditorKey   | key of ExtendedImageEditorState 用于裁剪旋转翻转                        | -    |
+
+EditorConfig
+
+| 参数                   | 描述                                                                             | 默认                                                         |
+| ---------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| maxScale               | 最大的缩放倍数                                                                   | 5.0                                                          |
+| cropRectPadding        | 裁剪框跟图片layout区域之间的距离。最好是保持一定距离，不然裁剪框边界很难进行拖拽 | EdgeInsets.all(20.0)                                         |
+| cornerSize             | 裁剪框四角图形的大小                                                             | Size(30.0, 5.0)                                              |
+| cornerColor            | 裁剪框四角图形的颜色                                                             | primaryColor                                                 |
+| lineColor              | 裁剪框线的颜色                                                                   | scaffoldBackgroundColor.withOpacity(0.7)                     |
+| lineHeight             | 裁剪框线的高度                                                                   | 0.6                                                          |
+| eidtorMaskColorHandler | 蒙层的颜色回调，你可以根据是否手指按下来设置不同的蒙层颜色                       | scaffoldBackgroundColor.withOpacity(pointerdown ? 0.4 : 0.8) |
+| hitTestSize            | 裁剪框四角以及边线能够拖拽的区域的大小                                           | 20.0                                                         |
+| animationDuration      | 当裁剪框拖拽变化结束之后，自动适应到中间的动画的时长                             | Duration(milliseconds: 200)                                  |
+| tickerDuration         | 当裁剪框拖拽变化结束之后，多少时间才触发自动适应到中间的动画                     | Duration(milliseconds: 400)                                  |
+| cropAspectRatio        | 裁剪框的宽高比                                                                   | null(无宽高比))                                              |
+
+### 裁剪框的宽高比 
+
+这是一个double类型，你可以自定义裁剪框的宽高比。
+如果为null，那就没有宽高比限制。
+如果小于等于0，宽高比等于图片的宽高比。
+下面是一些定义好了的宽高比
+
+``` dart
+class CropAspectRatios {
+  /// no aspect ratio for crop
+  static const double custom = null;
+
+  /// the same as aspect ratio of image
+  /// [cropAspectRatio] is not more than 0.0, it's original
+  static const double original = 0.0;
+
+  /// ratio of width and height is 1 : 1
+  static const double ratio1_1 = 1.0;
+
+  /// ratio of width and height is 3 : 4
+  static const double ratio3_4 = 3.0 / 4.0;
+
+  /// ratio of width and height is 4 : 3
+  static const double ratio4_3 = 4.0 / 3.0;
+
+  /// ratio of width and height is 9 : 16
+  static const double ratio9_16 = 9.0 / 16.0;
+
+  /// ratio of width and height is 16 : 9
+  static const double ratio16_9 = 16.0 / 9.0;
+}
+```
+### 旋转,翻转,重置
+
+- 定义key，以方便操作ExtendedImageEditorState
+  
+ `final GlobalKey<ExtendedImageEditorState> editorKey =GlobalKey<ExtendedImageEditorState>();`
+
+- 顺时针旋转90°
+  
+ `editorKey.currentState.rotate(right: true);`
+
+- 逆时针旋转90°
+  
+ `editorKey.currentState.rotate(right: false);`
+
+- 翻转(镜像)
+  
+ `editorKey.currentState.flip();`
+
+- 重置
+  
+ `editorKey.currentState.reset();`
+
+### 裁剪数据
+
+添加 image 库到 pubspec.yaml, 它是用来裁剪/旋转/翻转图片数据的
+``` yaml
+dependencies:
+  image: any
+```
+
+- 从ExtendedImageEditorState中获取裁剪区域以及图片数据
+``` dart
+      var cropRect = editorKey.currentState.getCropRect();
+      ui.Image imageData = editorKey.currentState.image;
+``` 
+- 将flutter的图片数据转换为image库的数据
+``` dart
+      var data = await imageData.toByteData(format: ui.ImageByteFormat.png);
+      image.Image src = decodePng(data.buffer.asUint8List());
+``` 
+- 翻转，旋转，裁剪数据
+``` dart
+      if (editorKey.currentState.editAction.hasEditAction) {
+        var editAction = editorKey.currentState.editAction;
+        src = copyFlip(src, flipX: editAction.flipX, flipY: editAction.flipY);
+        if (editAction.hasRotateAngle) {
+          double angle = (editAction.rotateAngle ~/ (pi / 2)) * 90.0;
+          src = copyRotate(src, angle);
+        }
+      }
+
+      var cropData = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
+          cropRect.width.toInt(), cropRect.height.toInt());
+``` 
+- 将数据转为为图片的元数据
+获取到的将是图片的元数据，你可以使用它来保存或者其他的一些用途
+
+``` dart
+      encodePng(cropData)
+``` 
 
 ## 图片浏览
 
@@ -512,6 +653,11 @@ Future<bool> clearDiskCachedImages({Duration duration})
 Future<bool> clearDiskCachedImage(String url) async {
 ```
 
+根据url获取缓存图片文件
+```dart
+Future<File> getCachedImageFile(String url) async {
+```
+
 清除内存缓存，可以调用clearMemoryImageCache方法
 
 ```dart
@@ -536,7 +682,7 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 }
 ```
 
-## 裁剪
+## 显示裁剪图片
 
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/crop.gif)
 

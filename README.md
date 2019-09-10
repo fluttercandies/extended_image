@@ -4,32 +4,36 @@
 
 Language: [English](README.md) | [中文简体](README-ZH.md)
 
-A powerful extended official image for Dart, which support placeholder(loading)/ failed state,cache network,zoom pan image,photo view,slide out page,crop,save,paint etc.
+A powerful official extension library of image, which support placeholder(loading)/ failed state, cache network, zoom pan image, photo view, slide out page, editor(crop,rotate,flip), paint custom etc.
 
 ## Table of contents
 
 - [extended_image](#extendedimage)
-  - [Table of contents](#Table-of-contents)
-  - [Cache Network](#Cache-Network)
-    - [Simple use](#Simple-use)
-    - [Use Extendednetworkimageprovider](#Use-Extendednetworkimageprovider)
-  - [Load State](#Load-State)
+  - [Table of contents](#table-of-contents)
+  - [Cache Network](#cache-network)
+    - [Simple use](#simple-use)
+    - [Use Extendednetworkimageprovider](#use-extendednetworkimageprovider)
+  - [Load State](#load-state)
     - [demo code](#demo-code)
-  - [Zoom Pan](#Zoom-Pan)
+  - [Zoom Pan](#zoom-pan)
     - [double tap animation](#double-tap-animation)
-  - [Photo View](#Photo-View)
-  - [Slide Out Page](#Slide-Out-Page)
+  - [Editor](#editor)
+    - [crop aspect ratio](#crop-aspect-ratio)
+    - [crop,flip,reset](#cropflipreset)
+    - [crop data](#crop-data)
+  - [Photo View](#photo-view)
+  - [Slide Out Page](#slide-out-page)
     - [enable slide out page](#enable-slide-out-page)
-    - [include your page in ExtendedImageSlidePage](#include-your-page-in-ExtendedImageSlidePage)
+    - [include your page in ExtendedImageSlidePage](#include-your-page-in-extendedimageslidepage)
     - [make sure your page background is transparent](#make-sure-your-page-background-is-transparent)
     - [push with transparent page route](#push-with-transparent-page-route)
-  - [Border BorderRadius Shape](#Border-BorderRadius-Shape)
-  - [Clear Save](#Clear-Save)
+  - [Border BorderRadius Shape](#border-borderradius-shape)
+  - [Clear Save](#clear-save)
     - [clear](#clear)
     - [save network](#save-network)
-  - [Crop](#Crop)
-  - [Paint](#Paint)
-  - [Other APIs](#Other-APIs)
+  - [Show Crop Image](#show-crop-image)
+  - [Paint](#paint)
+  - [Other APIs](#other-apis)
 
 ## Cache Network
 
@@ -208,7 +212,7 @@ ExtendedImage
 
 | parameter                | description                                                                     | default |
 | ------------------------ | ------------------------------------------------------------------------------- | ------- |
-| mode                     | image mode (none,gestrue)                                                       | none    |
+| mode                     | image mode (none,gestrue,editor)                                                | none    |
 | initGestureConfigHandler | init GestureConfig when image is ready，for example, base on image width/height | -       |
 | onDoubleTap              | call back of double tap under ExtendedImageMode.Gesture                         | -       |
 
@@ -284,6 +288,142 @@ onDoubleTap: (ExtendedImageGestureState state) {
   _animationController.forward();
 },
 ```
+
+## Editor
+
+![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/editor.gif)
+
+``` dart
+    ExtendedImage.network(
+      imageTestUrl,
+      fit: BoxFit.contain,
+      mode: ExtendedImageMode.editor,
+      extendedImageEditorKey: editorKey,
+      initEditorConfigHandler: (state) {
+        return EditorConfig(
+            maxScale: 8.0,
+            cropRectPadding: EdgeInsets.all(20.0),
+            hitTestSize: 20.0,
+            cropAspectRatio: _aspectRatio.aspectRatio);
+      },
+    );
+```
+
+ExtendedImage
+
+| parameter               | description                                                  | default |
+| ----------------------- | ------------------------------------------------------------ | ------- |
+| mode                    | image mode (none,gestrue,editor)                             | none    |
+| initEditorConfigHandler | init EditorConfig when image is ready.                       | -       |
+| extendedImageEditorKey  | key of ExtendedImageEditorState to flip/rotate/get crop rect | -       |
+
+EditorConfig
+
+| parameter              | description                                                        | default                                                      |
+| ---------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------ |
+| maxScale               | max scale of zoom                                                  | 5.0                                                          |
+| cropRectPadding        | the padding between crop rect and image layout rect.               | EdgeInsets.all(20.0)                                         |
+| cornerSize             | size of corner shape                                               | Size(30.0, 5.0)                                              |
+| cornerColor            | color of corner shape                                              | primaryColor                                                 |
+| lineColor              | color of crop line                                                 | scaffoldBackgroundColor.withOpacity(0.7)                     |
+| lineHeight             | height of crop line                                                | 0.6                                                          |
+| eidtorMaskColorHandler | call back of eidtor mask color base on pointerDown                 | scaffoldBackgroundColor.withOpacity(pointerdown ? 0.4 : 0.8) |
+| hitTestSize            | hit test region of corner and line                                 | 20.0                                                         |
+| animationDuration      | auto center animation duration                                     | Duration(milliseconds: 200)                                  |
+| tickerDuration         | duration to begin auto center animation after crop rect is changed | Duration(milliseconds: 400)                                  |
+| cropAspectRatio        | aspect ratio of crop rect                                          | null(custom))                                                |
+
+### crop aspect ratio
+
+it's a double value, so it's esay for you to define by yourself.
+following are official values
+
+``` dart
+class CropAspectRatios {
+  /// no aspect ratio for crop
+  static const double custom = null;
+
+  /// the same as aspect ratio of image
+  /// [cropAspectRatio] is not more than 0.0, it's original
+  static const double original = 0.0;
+
+  /// ratio of width and height is 1 : 1
+  static const double ratio1_1 = 1.0;
+
+  /// ratio of width and height is 3 : 4
+  static const double ratio3_4 = 3.0 / 4.0;
+
+  /// ratio of width and height is 4 : 3
+  static const double ratio4_3 = 4.0 / 3.0;
+
+  /// ratio of width and height is 9 : 16
+  static const double ratio9_16 = 9.0 / 16.0;
+
+  /// ratio of width and height is 16 : 9
+  static const double ratio16_9 = 16.0 / 9.0;
+}
+```
+### crop,flip,reset
+
+- add key for ExtendedImageEditorState
+  
+  `final GlobalKey<ExtendedImageEditorState> editorKey =GlobalKey<ExtendedImageEditorState>();`
+
+- rotate right
+  
+  `editorKey.currentState.rotate(right: true);`
+
+- rotate left
+  
+  `editorKey.currentState.rotate(right: false);`
+
+- flip
+  
+  `editorKey.currentState.flip();`
+
+- reset
+  
+  `editorKey.currentState.reset();`
+
+### crop data
+
+- add image library into your pubspec.yaml, it's used to crop/rotate/flip image data
+``` yaml
+dependencies:
+  image: any
+```
+
+- get crop rect and image data from ExtendedImageEditorState
+``` dart
+      var cropRect = editorKey.currentState.getCropRect();
+      ui.Image imageData = editorKey.currentState.image;
+``` 
+- convert flutter image data to image libray data.
+``` dart
+      var data = await imageData.toByteData(format: ui.ImageByteFormat.png);
+      image.Image src = decodePng(data.buffer.asUint8List());
+``` 
+- flip,rotate,crop data
+``` dart
+      if (editorKey.currentState.editAction.hasEditAction) {
+        var editAction = editorKey.currentState.editAction;
+        src = copyFlip(src, flipX: editAction.flipX, flipY: editAction.flipY);
+        if (editAction.hasRotateAngle) {
+          double angle = (editAction.rotateAngle ~/ (pi / 2)) * 90.0;
+          src = copyRotate(src, angle);
+        }
+      }
+
+      var cropData = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
+          cropRect.width.toInt(), cropRect.height.toInt());
+``` 
+- convert to original image data
+  
+output is original image data, you can use it to save or any other thing.
+
+``` dart
+      encodePng(cropData)
+``` 
 
 ## Photo View
 
@@ -506,6 +646,11 @@ to clear disk cached with specific url, call clearDiskCachedImage method.
 Future<bool> clearDiskCachedImage(String url) async {
 ```
 
+get the local cached image file
+```dart
+Future<File> getCachedImageFile(String url) async {
+```
+
 to clear memory cache , call clearMemoryImageCache method.
 
 ```dart
@@ -530,9 +675,9 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 }
 ```
 
-## Crop
+## Show Crop Image
 
-get your raw image by [Load State](#Load State), and crop image by setting soureRect.
+get your raw image by [Load State](#Load State), and crop image by soureRect.
 
 [ExtendedRawImage](https://github.com/fluttercandies/extended_image/blob/master/lib/src/image/extended_raw_image.dart)
 soureRect is which you want to show image rect.

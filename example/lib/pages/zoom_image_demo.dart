@@ -23,7 +23,7 @@ class ZoomImageDemo extends StatelessWidget {
             imageTestUrl,
             fit: BoxFit.contain,
             //enableLoadState: false,
-            mode: ExtendedImageMode.Gesture,
+            mode: ExtendedImageMode.gesture,
             initGestureConfigHandler: (state) {
               double initialScale = 1.0;
 

@@ -38,11 +38,19 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   void _initGestureConfig() {
     _gestureAnimation?.stop();
     _gestureAnimation?.dispose();
-
+    double initialScale = _gestureConfig?.initialScale;
     _gestureConfig = widget
             .extendedImageState.imageWidget.initGestureConfigHandler
             ?.call(widget.extendedImageState) ??
         GestureConfig();
+
+    if (_gestureDetails == null ||
+        initialScale != _gestureConfig.initialScale) {
+      _gestureDetails = GestureDetails(
+        totalScale: _gestureConfig.initialScale,
+        offset: Offset.zero,
+      );
+    }
 
     if (_gestureConfig.cacheGesture) {
       var cache =
@@ -72,7 +80,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
               offset: _gestureDetails.offset,
               totalScale: scale,
               gestureDetails: _gestureDetails,
-              zooming: true,
+              actionType: ActionType.zoom,
               userOffset: false);
         });
       }
@@ -122,7 +130,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     if (widget.extendedImageSlidePageState != null &&
         details.scale == 1.0 &&
         _gestureDetails.userOffset &&
-        _gestureDetails.gestureState == GestureState.pan) {
+        _gestureDetails.actionType == ActionType.pan) {
       var offsetDelta = (details.focalPoint - _startingOffset);
       //print(offsetDelta);
       bool updateGesture = false;
@@ -212,7 +220,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
             offset: offset,
             totalScale: scale,
             gestureDetails: _gestureDetails,
-            zooming: details.scale != 1.0);
+            actionType:
+                details.scale != 1.0 ? ActionType.zoom : ActionType.pan);
       });
     }
   }
@@ -247,7 +256,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       return;
     }
 
-    if (_gestureDetails.gestureState == GestureState.pan) {
+    if (_gestureDetails.actionType == ActionType.pan) {
       // get magnitude from gesture velocity
       final double magnitude = details.velocity.pixelsPerSecond.distance;
 
