@@ -420,8 +420,9 @@ dependencies:
 - convert to original image data
   
 output is original image data, you can use it to save or any other thing.
+
 ``` dart
-   encodePng(cropData)
+      encodePng(cropData)
 ``` 
 
 ## Photo View

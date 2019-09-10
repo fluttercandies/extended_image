@@ -426,8 +426,9 @@ dependencies:
 ``` 
 - 将数据转为为图片的元数据
 获取到的将是图片的元数据，你可以使用它来保存或者其他的一些用途
+
 ``` dart
-   encodePng(cropData)
+      encodePng(cropData)
 ``` 
 
 ## 图片浏览
