@@ -1,4 +1,4 @@
-## [0.5.7]
+## [0.5.8]
 
 * Features:
   Support to crop,rotate,flip image
