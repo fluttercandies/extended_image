@@ -61,7 +61,7 @@ class EditActionDetails {
   Offset get layoutTopLeft => _layoutRect?.topLeft;
 
   Rect get rawDestinationRect => _rawDestinationRect;
-  
+
   Rect get screenCropRect => cropRect?.shift(layoutTopLeft);
 
   void rotate(double angle, Rect layoutRect) {
@@ -349,7 +349,7 @@ class EditorConfig {
     this.lineColor,
     this.lineHeight = 0.6,
     this.eidtorMaskColorHandler,
-    this.hitTestSize= 20.0,
+    this.hitTestSize = 20.0,
     this.animationDuration = const Duration(milliseconds: 200),
     this.tickerDuration = const Duration(milliseconds: 400),
     this.cropAspectRatio = CropAspectRatios.custom,
