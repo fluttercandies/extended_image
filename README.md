@@ -433,6 +433,13 @@ if you have cache the gesture, remember call clearGestureDetailsCache() method a
 
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/photo_view.gif)
 
+ExtendedImageGesturePageView
+
+| parameter    | description              | default |
+| ------------ | ------------------------ | ------- |
+| cacheGesture | whether should move page | true    |
+
+
 GestureConfig
 
 | parameter    | description                                                                                                                                                      | default |

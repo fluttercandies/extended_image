@@ -10,6 +10,7 @@ final PageController _defaultPageController = PageController();
 //const PageScrollPhysics _kPagePhysics = PageScrollPhysics();
 const ScrollPhysics _defaultScrollPhysics = NeverScrollableScrollPhysics();
 
+/// whether should move page
 bool _defaultCanMovePage(GestureDetails gestureDetails) => true;
 
 ///page view to support gesture for image
