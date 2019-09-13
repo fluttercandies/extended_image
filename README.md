@@ -536,7 +536,6 @@ ExtendedImageGesturePage
 | resetPageDuration          | reset page position when slide end(not pop page)                                 | milliseconds: 500                 |
 | slideType                  | slide whole page or only image                                                   | SlideType.onlyImage               |
 | onSlidingPage              | call back when it's sliding page, change other widgets state on page as you want | -                                 |
-| canMovePage                | whether we should move page                                                      | true                              |
 
 ```dart
 Color defaultSlidePageBackgroundHandler(
