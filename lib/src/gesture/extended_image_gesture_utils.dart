@@ -227,7 +227,6 @@ class GestureDetails {
 
   Rect _innerCalculateFinalDestinationRect(
       Rect layoutRect, Rect destinationRect) {
-
     Offset center = _getCenter(destinationRect);
     Rect result = _getDestinationRect(destinationRect, center);
 
@@ -322,17 +321,17 @@ class GestureConfig {
   //initial scale of image
   final double initialScale;
 
-  GestureConfig(
-      {double minScale,
-      double maxScale,
-      double speed,
-      bool cacheGesture,
-      double inertialSpeed,
-      double initialScale,
-      bool inPageView,
-      double animationMinScale,
-      double animationMaxScale,})
-      : minScale = minScale ??= 0.8,
+  GestureConfig({
+    double minScale,
+    double maxScale,
+    double speed,
+    bool cacheGesture,
+    double inertialSpeed,
+    double initialScale,
+    bool inPageView,
+    double animationMinScale,
+    double animationMaxScale,
+  })  : minScale = minScale ??= 0.8,
         maxScale = maxScale ??= 5.0,
         speed = speed ??= 1.0,
         cacheGesture = cacheGesture ?? false,

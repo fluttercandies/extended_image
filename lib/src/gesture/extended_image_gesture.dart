@@ -336,17 +336,21 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       onPointerDown: _handlePointerDown,
     );
 
-    if (widget.extendedImageSlidePageState != null &&
-        widget.extendedImageSlidePageState.widget.slideType ==
-            SlideType.onlyImage) {
-      var extendedImageSlidePageState = widget.extendedImageSlidePageState;
-      image = Transform.translate(
-        offset: extendedImageSlidePageState.offset,
-        child: Transform.scale(
-          scale: extendedImageSlidePageState.scale,
-          child: image,
-        ),
-      );
+    if (widget.extendedImageSlidePageState != null) {
+      image = widget.extendedImageState.imageWidget?.heroBuilderForSlidingPage
+              ?.call(image) ??
+          image;
+      if (widget.extendedImageSlidePageState.widget.slideType ==
+          SlideType.onlyImage) {
+        var extendedImageSlidePageState = widget.extendedImageSlidePageState;
+        image = Transform.translate(
+          offset: extendedImageSlidePageState.offset,
+          child: Transform.scale(
+            scale: extendedImageSlidePageState.scale,
+            child: image,
+          ),
+        );
+      }
     }
 
     return image;
