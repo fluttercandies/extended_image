@@ -713,10 +713,7 @@ class _ExtendedImageState extends State<ExtendedImage>
                 : null));
     assert(newStream != null);
 
-    if (widget.image is ExtendedNetworkImageProvider &&
-        _imageInfo != null &&
-        !rebuild &&
-        _imageStream?.key == newStream?.key) {
+    if (_imageInfo != null && !rebuild && _imageStream?.key == newStream?.key) {
       setState(() {
         _loadState = LoadState.completed;
       });
