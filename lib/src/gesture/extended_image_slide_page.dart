@@ -140,6 +140,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
             pageSize: pageSize,
             pageGestureAxis: widget.slideAxis);
     _isSliding = true;
+
     if (widget.slideType == SlideType.onlyImage) {
       _extendedImageGestureState = extendedImageGestureState;
       _extendedImageGestureState?.slide();

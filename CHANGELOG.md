@@ -1,3 +1,7 @@
+## [0.5.9]
+
+* Add HeroBuilderForSlidingPage call back to fix strange hero animation
+  
 ## [0.5.8]
 
 * Features:

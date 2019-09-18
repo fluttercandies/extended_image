@@ -18,7 +18,7 @@ class FlatButtonWithIcon extends FlatButton with MaterialButtonWithIconMixin {
     Brightness colorBrightness,
     EdgeInsetsGeometry padding,
     ShapeBorder shape,
-    Clip clipBehavior,
+    Clip clipBehavior = Clip.none,
     FocusNode focusNode,
     MaterialTapTargetSize materialTapTargetSize,
     @required Widget icon,

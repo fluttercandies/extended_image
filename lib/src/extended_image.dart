@@ -52,7 +52,8 @@ class ExtendedImage extends StatefulWidget {
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
       this.extendedImageEditorKey,
-      this.initEditorConfigHandler})
+      this.initEditorConfigHandler,
+      this.heroBuilderForSlidingPage})
       : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
@@ -100,7 +101,8 @@ class ExtendedImage extends StatefulWidget {
       double scale = 1.0,
       Duration timeRetry: const Duration(milliseconds: 100),
       this.extendedImageEditorKey,
-      this.initEditorConfigHandler})
+      this.initEditorConfigHandler,
+      this.heroBuilderForSlidingPage})
       :
         //assert(autoCancel != null),
         image = ExtendedNetworkImageProvider(url,
@@ -169,7 +171,8 @@ class ExtendedImage extends StatefulWidget {
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
       this.extendedImageEditorKey,
-      this.initEditorConfigHandler})
+      this.initEditorConfigHandler,
+      this.heroBuilderForSlidingPage})
       : image = FileImage(file, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -340,7 +343,8 @@ class ExtendedImage extends StatefulWidget {
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
       this.extendedImageEditorKey,
-      this.initEditorConfigHandler})
+      this.initEditorConfigHandler,
+      this.heroBuilderForSlidingPage})
       : image = scale != null
             ? ExactAssetImage(name,
                 bundle: bundle, scale: scale, package: package)
@@ -401,7 +405,8 @@ class ExtendedImage extends StatefulWidget {
       this.enableSlideOutPage: false,
       BoxConstraints constraints,
       this.extendedImageEditorKey,
-      this.initEditorConfigHandler})
+      this.initEditorConfigHandler,
+      this.heroBuilderForSlidingPage})
       : image = MemoryImage(bytes, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -411,6 +416,9 @@ class ExtendedImage extends StatefulWidget {
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
         super(key: key);
+
+  ///build Hero only for sliding page
+  final HeroBuilderForSlidingPage heroBuilderForSlidingPage;
 
   /// init EidtConfig when image is ready.
   final InitEditorConfigHandler initEditorConfigHandler;

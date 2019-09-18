@@ -507,9 +507,10 @@ ExtendedImageGesturePageView.builder(
 
 ExtendedImage
 
-| parameter          | description              | default |
-| ------------------ | ------------------------ | ------- |
-| enableSlideOutPage | 是否开启滑动退出页面效果 | false   |
+| parameter                 | description                                                                         | default |
+| ------------------------- | ----------------------------------------------------------------------------------- | ------- |
+| enableSlideOutPage        | 是否开启滑动退出页面效果                                                            | false   |
+| heroBuilderForSlidingPage | 滑动退出页面的transform必须作用在Hero上面，这样在退出页面的时候，Hero动画才不会奇怪 | null    |
 
 ### 把你的页面用ExtendedImageSlidePage包一下
 

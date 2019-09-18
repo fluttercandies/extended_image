@@ -498,9 +498,10 @@ Extended Image support to slide out page as WeChat.
 
 ExtendedImage
 
-| parameter          | description                   | default |
-| ------------------ | ----------------------------- | ------- |
-| enableSlideOutPage | whether enable slide out page | false   |
+| parameter                 | description                                                                                                                                      | default |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------- |
+| enableSlideOutPage        | whether enable slide out page                                                                                                                    | false   |
+| heroBuilderForSlidingPage | build Hero only for sliding page, the transfrom of sliding page must be working on Hero,so that Hero animation wouldn't be strange when pop page | null    |
 
 ### include your page in ExtendedImageSlidePage
 
