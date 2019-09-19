@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:io' show File;
 import 'dart:typed_data';
 
 import 'package:extended_image/src/extended_image_border_painter.dart';
@@ -934,7 +934,7 @@ class _ExtendedImageState extends State<ExtendedImage>
   }
 
   Widget _getIndicator(BuildContext context) {
-    return Platform.isIOS
+    return Theme.of(context).platform == TargetPlatform.iOS
         ? CupertinoActivityIndicator(
             animating: true,
             radius: 16.0,

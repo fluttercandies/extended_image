@@ -1,3 +1,8 @@
+## [0.6.0]
+
+* Issues:
+  Fix issue about strange behaviour at slide out page
+  
 ## [0.5.9]
 
 * Add HeroBuilderForSlidingPage call back to fix strange hero animation
