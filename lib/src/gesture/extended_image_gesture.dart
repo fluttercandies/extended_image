@@ -323,19 +323,6 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       gestureDetails: _gestureDetails,
     );
 
-    image = GestureDetector(
-      onScaleStart: _handleScaleStart,
-      onScaleUpdate: _handleScaleUpdate,
-      onScaleEnd: _handleScaleEnd,
-      onDoubleTap: _handleDoubleTap,
-      child: image,
-    );
-
-    image = Listener(
-      child: image,
-      onPointerDown: _handlePointerDown,
-    );
-
     if (widget.extendedImageSlidePageState != null) {
       image = widget.extendedImageState.imageWidget?.heroBuilderForSlidingPage
               ?.call(image) ??
@@ -352,6 +339,20 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
         );
       }
     }
+
+    image = GestureDetector(
+      onScaleStart: _handleScaleStart,
+      onScaleUpdate: _handleScaleUpdate,
+      onScaleEnd: _handleScaleEnd,
+      onDoubleTap: _handleDoubleTap,
+      child: image,
+    );
+
+    image = Listener(
+      child: image,
+      onPointerDown: _handlePointerDown,
+    );
+
 
     return image;
   }
