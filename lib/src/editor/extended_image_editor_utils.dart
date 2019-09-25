@@ -197,12 +197,15 @@ class EditActionDetails {
             _screenDestinationRect.width * scaleDelta,
             _screenDestinationRect.height * scaleDelta);
         preTotalScale = totalScale;
+        delta = Offset.zero;
       }
 
       /// move
       else {
-        if (_screenDestinationRect != screenCropRect)
+        if (_screenDestinationRect != screenCropRect) {
           _screenDestinationRect = _screenDestinationRect.shift(delta);
+        }
+        //we have shift offset, we should clear delta.
         delta = Offset.zero;
       }
 

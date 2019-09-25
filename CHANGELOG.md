@@ -1,3 +1,8 @@
+## [0.6.1]
+
+* Issues:
+  Fix issue about drag slowly in ImageEditor
+
 ## [0.6.0]
 
 * Issues:

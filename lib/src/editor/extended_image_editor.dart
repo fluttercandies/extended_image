@@ -194,6 +194,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     var delta = (details.focalPoint - _startingOffset);
     var scaleDelta = totalScale / _editActionDetails.preTotalScale;
     _startingOffset = details.focalPoint;
+
     //no more zoom
     if (details.scale != 1.0 &&
         (
@@ -210,7 +211,10 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     if (mounted && (scaleDelta != 1.0 || delta != Offset.zero)) {
       setState(() {
         _editActionDetails.totalScale = totalScale;
-        _editActionDetails.delta = delta;
+
+        ///if we have shift offset, we should clear delta.
+        ///we should += delta in case miss delta
+        _editActionDetails.delta += delta;
       });
     }
   }
