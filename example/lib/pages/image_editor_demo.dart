@@ -30,18 +30,13 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   final GlobalKey<ExtendedImageEditorState> editorKey =
       GlobalKey<ExtendedImageEditorState>();
   List<AspectRatioItem> _aspectRatios = List<AspectRatioItem>()
-    ..add(AspectRatioItem(aspectRatioS: "custom", aspectRatio: null))
-    ..add(AspectRatioItem(aspectRatioS: "original", aspectRatio: -1.0))
-    ..add(AspectRatioItem(
-        aspectRatioS: "1*1", aspectRatio: CropAspectRatios.ratio1_1))
-    ..add(AspectRatioItem(
-        aspectRatioS: "4*3", aspectRatio: CropAspectRatios.ratio4_3))
-    ..add(AspectRatioItem(
-        aspectRatioS: "3*4", aspectRatio: CropAspectRatios.ratio3_4))
-    ..add(AspectRatioItem(
-        aspectRatioS: "16*9", aspectRatio: CropAspectRatios.ratio16_9))
-    ..add(AspectRatioItem(
-        aspectRatioS: "9*16", aspectRatio: CropAspectRatios.ratio9_16));
+    ..add(AspectRatioItem(text: "custom", value: CropAspectRatios.custom))
+    ..add(AspectRatioItem(text: "original", value: CropAspectRatios.original))
+    ..add(AspectRatioItem(text: "1*1", value: CropAspectRatios.ratio1_1))
+    ..add(AspectRatioItem(text: "4*3", value: CropAspectRatios.ratio4_3))
+    ..add(AspectRatioItem(text: "3*4", value: CropAspectRatios.ratio3_4))
+    ..add(AspectRatioItem(text: "16*9", value: CropAspectRatios.ratio16_9))
+    ..add(AspectRatioItem(text: "9*16", value: CropAspectRatios.ratio9_16));
   AspectRatioItem _aspectRatio;
   @override
   void initState() {
@@ -79,7 +74,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                           maxScale: 8.0,
                           cropRectPadding: EdgeInsets.all(20.0),
                           hitTestSize: 20.0,
-                          cropAspectRatio: _aspectRatio.aspectRatio);
+                          initCropRectType: InitCropRectType.imageRect,
+                          cropAspectRatio: _aspectRatio.value);
                     },
                   )
                 : ExtendedImage.network(
@@ -92,7 +88,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                           maxScale: 8.0,
                           cropRectPadding: EdgeInsets.all(20.0),
                           hitTestSize: 20.0,
-                          cropAspectRatio: _aspectRatio.aspectRatio);
+                          initCropRectType: InitCropRectType.imageRect,
+                          cropAspectRatio: _aspectRatio.value);
                     },
                   )),
       ]),
@@ -125,8 +122,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                               var item = _aspectRatios[index];
                               return GestureDetector(
                                 child: AspectRatioWidget(
-                                  aspectRatio: item.aspectRatio,
-                                  aspectRatioS: item.aspectRatioS,
+                                  aspectRatio: item.value,
+                                  aspectRatioS: item.text,
                                   isSelected: item == _aspectRatio,
                                 ),
                                 onTap: () {
@@ -198,7 +195,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     try {
       var cropRect = editorKey.currentState.getCropRect();
       ui.Image imageData = editorKey.currentState.image;
-  
+
       var data = await imageData.toByteData(format: ui.ImageByteFormat.png);
       image.Image src = decodePng(data.buffer.asUint8List());
 

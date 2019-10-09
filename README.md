@@ -331,7 +331,8 @@ EditorConfig
 | hitTestSize            | hit test region of corner and line                                 | 20.0                                                         |
 | animationDuration      | auto center animation duration                                     | Duration(milliseconds: 200)                                  |
 | tickerDuration         | duration to begin auto center animation after crop rect is changed | Duration(milliseconds: 400)                                  |
-| cropAspectRatio        | aspect ratio of crop rect                                          | null(custom))                                                |
+| cropAspectRatio        | aspect ratio of crop rect                                          | null(custom)                                                 |
+| initCropRectType       | init crop rect base on initial image rect or image layout rect     | imageRect                                                    |
 
 ### crop aspect ratio
 

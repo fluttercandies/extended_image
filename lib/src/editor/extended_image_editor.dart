@@ -14,7 +14,10 @@ import 'extended_image_editor_utils.dart';
 
 class ExtendedImageEditor extends StatefulWidget {
   final ExtendedImageState extendedImageState;
-  ExtendedImageEditor({this.extendedImageState, Key key}) : super(key: key);
+  ExtendedImageEditor({this.extendedImageState, Key key})
+      : assert(extendedImageState.imageWidget.fit == BoxFit.contain,
+            "Make sure the image is all painted to crop,the fit of image must be BoxFit.contain"),
+        super(key: key);
   @override
   ExtendedImageEditorState createState() => ExtendedImageEditorState();
 }
@@ -86,7 +89,9 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       alignment: extendedImage.alignment,
       repeat: extendedImage.repeat,
       centerSlice: extendedImage.centerSlice,
-      matchTextDirection: extendedImage.matchTextDirection,
+      //matchTextDirection: extendedImage.matchTextDirection,
+      //don't support TextDirection for editor
+      matchTextDirection: false,
       invertColors: widget.extendedImageState.invertColors,
       filterQuality: extendedImage.filterQuality,
       editActionDetails: _editActionDetails,
@@ -132,18 +137,19 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                       alignment:
                           widget.extendedImageState.imageWidget.alignment,
                       scale: widget.extendedImageState.extendedImageInfo.scale);
-                  var cropRect =
-                      _editActionDetails.getRectWithScale(destinationRect);
 
-                  if (_editActionDetails.cropAspectRatio != null) {
-                    final double aspectRatio =
-                        _editActionDetails.cropAspectRatio;
-                    double width = cropRect.width / aspectRatio;
-                    double height = min(cropRect.height, width);
-                    width = height * aspectRatio;
-
-                    cropRect = Rect.fromCenter(
-                        center: cropRect.center, width: width, height: height);
+                  Rect cropRect = _initCropRect(destinationRect);
+                  if (_editorConfig.initCropRectType ==
+                          InitCropRectType.layoutRect &&
+                      _editorConfig.cropAspectRatio != null &&
+                      _editorConfig.cropAspectRatio > 0) {
+                    var rect = _initCropRect(layoutRect);
+                    _editActionDetails.totalScale =
+                        _editActionDetails.preTotalScale =
+                            destinationRect.width > destinationRect.height
+                                ? rect.height / cropRect.height
+                                : rect.width / cropRect.width;
+                    cropRect = rect;
                   }
                   _editActionDetails.cropRect = cropRect;
                 }
@@ -153,6 +159,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                   layoutRect: layoutRect,
                   editActionDetails: _editActionDetails,
                   editorConfig: _editorConfig,
+                  fit: widget.extendedImageState.imageWidget.fit,
                 );
               }),
               top: 0.0,
@@ -175,6 +182,20 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       // },
     );
     return result;
+  }
+
+  Rect _initCropRect(Rect rect) {
+    var cropRect = _editActionDetails.getRectWithScale(rect);
+
+    if (_editActionDetails.cropAspectRatio != null) {
+      final double aspectRatio = _editActionDetails.cropAspectRatio;
+      double width = cropRect.width / aspectRatio;
+      double height = min(cropRect.height, width);
+      width = height * aspectRatio;
+      cropRect = Rect.fromCenter(
+          center: cropRect.center, width: width, height: height);
+    }
+    return cropRect;
   }
 
   void _handleScaleStart(ScaleStartDetails details) {
@@ -253,7 +274,9 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   void rotate({bool right: true}) {
     setState(() {
       _editActionDetails.rotate(
-          right ? pi / 2.0 : -pi / 2.0, _layerKey.currentState.layoutRect);
+          right ? pi / 2.0 : -pi / 2.0,
+          _layerKey.currentState.layoutRect,
+          widget.extendedImageState.imageWidget.fit);
     });
   }
 

@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:extended_image/src/extended_image_typedef.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class EditActionDetails {
@@ -64,7 +65,7 @@ class EditActionDetails {
 
   Rect get screenCropRect => cropRect?.shift(layoutTopLeft);
 
-  void rotate(double angle, Rect layoutRect) {
+  void rotate(double angle, Rect layoutRect, BoxFit fit) {
     _rotateAngle += angle;
     _rotateAngle %= (2 * pi);
     if (_flipX && _flipY && isPi) {
@@ -80,7 +81,7 @@ class EditActionDetails {
     var newCropRect = getDestinationRect(
         rect: layoutRect,
         inputSize: Size(cropRect.height, cropRect.width),
-        fit: BoxFit.contain);
+        fit: fit);
 
     var scale = newCropRect.width / cropRect.height;
 
@@ -203,6 +204,20 @@ class EditActionDetails {
       /// move
       else {
         if (_screenDestinationRect != screenCropRect) {
+          var topSame =
+              doubleEqual(_screenDestinationRect.top, screenCropRect.top);
+          var leftSame =
+              doubleEqual(_screenDestinationRect.left, screenCropRect.left);
+          var bottomSame =
+              doubleEqual(_screenDestinationRect.bottom, screenCropRect.bottom);
+          var rightSame =
+              doubleEqual(_screenDestinationRect.right, screenCropRect.right);
+          if (topSame && bottomSame) {
+            delta = Offset(delta.dx, 0.0);
+          } else if (leftSame && rightSame) {
+            delta = Offset(0.0, delta.dy);
+          }
+
           _screenDestinationRect = _screenDestinationRect.shift(delta);
         }
         //we have shift offset, we should clear delta.
@@ -216,10 +231,10 @@ class EditActionDetails {
       if (screenCropRect != null) {
         Rect rect = screenCropRect.expandToInclude(_screenDestinationRect);
         if (rect != _screenDestinationRect) {
-          var topSame = rect.top == screenCropRect.top;
-          var leftSame = rect.left == screenCropRect.left;
-          var bottomSame = rect.bottom == screenCropRect.bottom;
-          var rightSame = rect.right == screenCropRect.right;
+          var topSame = doubleEqual(rect.top, screenCropRect.top);
+          var leftSame = doubleEqual(rect.left, screenCropRect.left);
+          var bottomSame = doubleEqual(rect.bottom, screenCropRect.bottom);
+          var rightSame = doubleEqual(rect.right, screenCropRect.right);
 
           ///make sure that image rect keep  same aspect ratio
           if (topSame && bottomSame) {
@@ -244,11 +259,9 @@ class EditActionDetails {
         }
       }
     } else {
-      // if (cropRect != null) {
-      //   _screenDestinationRect = cropRect.shift(layoutTopLeft);
-      // } else {
       _screenDestinationRect = getRectWithScale(_rawDestinationRect);
-      //}
+      _screenDestinationRect =
+          computeBoundary(_screenDestinationRect, screenCropRect);
     }
     return _screenDestinationRect;
   }
@@ -343,20 +356,24 @@ class EditorConfig {
   /// default is custom
   final double cropAspectRatio;
 
-  EditorConfig({
-    double maxScale,
-    //double initialScale,
-    this.cropRectPadding = const EdgeInsets.all(20.0),
-    this.cornerSize = const Size(30.0, 5.0),
-    this.cornerColor,
-    this.lineColor,
-    this.lineHeight = 0.6,
-    this.eidtorMaskColorHandler,
-    this.hitTestSize = 20.0,
-    this.animationDuration = const Duration(milliseconds: 200),
-    this.tickerDuration = const Duration(milliseconds: 400),
-    this.cropAspectRatio = CropAspectRatios.custom,
-  })  : maxScale = maxScale ??= 5.0,
+  /// init crop rect base on initial image rect or image layout rect
+  final InitCropRectType initCropRectType;
+
+  EditorConfig(
+      {double maxScale,
+      //double initialScale,
+      this.cropRectPadding = const EdgeInsets.all(20.0),
+      this.cornerSize = const Size(30.0, 5.0),
+      this.cornerColor,
+      this.lineColor,
+      this.lineHeight = 0.6,
+      this.eidtorMaskColorHandler,
+      this.hitTestSize = 20.0,
+      this.animationDuration = const Duration(milliseconds: 200),
+      this.tickerDuration = const Duration(milliseconds: 400),
+      this.cropAspectRatio = CropAspectRatios.custom,
+      this.initCropRectType = InitCropRectType.imageRect})
+      : maxScale = maxScale ??= 5.0,
         // initialScale = initialScale ??= 1.0,
         // assert(minScale <= maxScale),
         // assert(minScale <= initialScale && initialScale <= maxScale),
@@ -432,6 +449,10 @@ Rect getDestinationRect({
   final double dy = halfHeightDelta + alignment.y * halfHeightDelta;
   final Offset destinationPosition = rect.topLeft.translate(dx, dy);
   Rect destinationRect = destinationPosition & destinationSize;
+
+  // final Rect sourceRect =
+  //     centerSlice ?? alignment.inscribe(sourceSize, Offset.zero & inputSize);
+
   return destinationRect;
 }
 
@@ -455,4 +476,15 @@ Rect rotateRect(Rect rect, Offset center, double angle) {
   var leftTop = rotateOffset(rect.topLeft, center, angle);
   var bottomRight = rotateOffset(rect.bottomRight, center, angle);
   return Rect.fromPoints(leftTop, bottomRight);
+}
+
+bool doubleEqual(double left, double right) {
+  return (left - right).abs() <= precisionErrorTolerance;
+}
+
+enum InitCropRectType {
+  //init crop rect base on initial image rect
+  imageRect,
+  //init crop rect base on image layout rect
+  layoutRect
 }

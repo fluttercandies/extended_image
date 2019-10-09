@@ -24,7 +24,7 @@ double initScale({Size imageSize, Size size, double initialScale}) {
 }
 
 class AspectRatioItem {
-  final String aspectRatioS;
-  final double aspectRatio;
-  AspectRatioItem({this.aspectRatio, this.aspectRatioS});
+  final String text;
+  final double value;
+  AspectRatioItem({this.value, this.text});
 }

@@ -1,3 +1,10 @@
+## [0.6.2]
+
+* Features:
+  Add InitCropRectType(imageRect,layoutRect) for EditorConfig to define init crop rect base on initial image rect or image layout rect.
+* Breaking Change:
+  Make sure the image is all painted to crop,the fit of image must be BoxFit.contain.
+    
 ## [0.6.1]
 
 * Issues:
