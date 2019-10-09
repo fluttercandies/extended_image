@@ -541,7 +541,8 @@ void paintExtendedImage({
           fit: fit,
           flipHorizontally: false,
           scale: scale,
-          centerSlice: centerSlice,alignment: alignment);
+          centerSlice: centerSlice,
+          alignment: alignment);
     }
 
     editActionDetails.initRect(rect, destinationRect);

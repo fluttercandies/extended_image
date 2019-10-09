@@ -337,7 +337,8 @@ EditorConfig
 | hitTestSize            | 裁剪框四角以及边线能够拖拽的区域的大小                                           | 20.0                                                         |
 | animationDuration      | 当裁剪框拖拽变化结束之后，自动适应到中间的动画的时长                             | Duration(milliseconds: 200)                                  |
 | tickerDuration         | 当裁剪框拖拽变化结束之后，多少时间才触发自动适应到中间的动画                     | Duration(milliseconds: 400)                                  |
-| cropAspectRatio        | 裁剪框的宽高比                                                                   | null(无宽高比))                                              |
+| cropAspectRatio        | 裁剪框的宽高比                                                                   | null(无宽高比)                                               |
+| initCropRectType       | 剪切框的初始化类型(根据图片初始化区域或者图片的layout区域)                       | imageRect                                                    |
 
 ### 裁剪框的宽高比 
 

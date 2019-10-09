@@ -23,8 +23,13 @@ class ExtendedImageCropLayer extends StatefulWidget {
   final EditActionDetails editActionDetails;
   final EditorConfig editorConfig;
   final Rect layoutRect;
+  final BoxFit fit;
   ExtendedImageCropLayer(
-      {this.editActionDetails, this.layoutRect, this.editorConfig, Key key})
+      {this.editActionDetails,
+      this.layoutRect,
+      this.editorConfig,
+      Key key,
+      this.fit})
       : super(key: key);
   @override
   ExtendedImageCropLayerState createState() => ExtendedImageCropLayerState();
@@ -323,7 +328,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
         result.bottom > layoutRect.bottom) {
       cropRect = result;
       var centerCropRect = getDestinationRect(
-          rect: layoutRect, inputSize: result.size, fit: BoxFit.contain);
+          rect: layoutRect, inputSize: result.size, fit: widget.fit);
       var newScreenCropRect =
           centerCropRect.shift(widget.editActionDetails.layoutTopLeft);
       _doCropAutoCenterAnimation(newScreenCropRect: newScreenCropRect);
@@ -434,7 +439,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
   Rect _doWithMaxSacle(Rect rect) {
     var centerCropRect = getDestinationRect(
-        rect: layoutRect, inputSize: rect.size, fit: BoxFit.contain);
+        rect: layoutRect, inputSize: rect.size, fit: widget.fit);
     var newScreenCropRect =
         centerCropRect.shift(widget.editActionDetails.layoutTopLeft);
 
@@ -470,7 +475,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       var oldScreenCropRect = widget.editActionDetails.screenCropRect;
 
       var centerCropRect = getDestinationRect(
-          rect: layoutRect, inputSize: cropRect.size, fit: BoxFit.contain);
+          rect: layoutRect, inputSize: cropRect.size, fit: widget.fit);
       var newScreenCropRect =
           centerCropRect.shift(widget.editActionDetails.layoutTopLeft);
 
