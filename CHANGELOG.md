@@ -1,3 +1,10 @@
+## [0.6.3]
+
+* Issues:
+  Fix issue that forget canvas.restore after canvas.clipRect
+* Breaking Change:
+  ImageEditor：you should crop image before flip or rotate image now.
+
 ## [0.6.2]
 
 * Features:

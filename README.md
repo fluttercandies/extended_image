@@ -406,6 +406,9 @@ dependencies:
 ``` 
 - flip,rotate,crop data
 ``` dart
+      src = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
+          cropRect.width.toInt(), cropRect.height.toInt());
+
       if (editorKey.currentState.editAction.hasEditAction) {
         var editAction = editorKey.currentState.editAction;
         src = copyFlip(src, flipX: editAction.flipX, flipY: editAction.flipY);
@@ -414,9 +417,6 @@ dependencies:
           src = copyRotate(src, angle);
         }
       }
-
-      var cropData = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
-          cropRect.width.toInt(), cropRect.height.toInt());
 ``` 
 - convert to original image data
   

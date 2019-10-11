@@ -133,7 +133,10 @@ class EditActionDetails {
     if (hasRotateAngle) {
       rect = rotateRect(rect, flipOrigin, -_rotateAngle);
     }
-    if (flipOrigin != null && flipOrigin != rect.center) {
+    if (flipOrigin != null 
+    //&& flipOrigin != rect.center
+    ) 
+    {
       if (flipY) {
         rect = Rect.fromLTRB(2 * flipOrigin.dx - rect.right, rect.top,
             2 * flipOrigin.dx - rect.left, rect.bottom);

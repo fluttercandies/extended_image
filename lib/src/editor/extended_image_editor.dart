@@ -245,16 +245,22 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       return null;
     }
 
+    var cropScreen = _editActionDetails.screenCropRect;
     var imageScreenRect = _editActionDetails.screenDestinationRect;
-    var cropScreen =
-        _editActionDetails.screenCropRect.shift(-imageScreenRect.topLeft);
+    imageScreenRect = _editActionDetails.paintRect(imageScreenRect);
+    cropScreen = _editActionDetails.paintRect(cropScreen);
+
+    //move to zero
+    cropScreen = cropScreen.shift(-imageScreenRect.topLeft);
+
     imageScreenRect = imageScreenRect.shift(-imageScreenRect.topLeft);
 
     var image = widget.extendedImageState.extendedImageInfo.image;
-    var size = _editActionDetails.isHalfPi
-        ? Size(image.height.toDouble(), image.width.toDouble())
-        : Size(image.width.toDouble(), image.height.toDouble());
-    var imageRect = Offset.zero & size;
+    // var size = _editActionDetails.isHalfPi
+    //     ? Size(image.height.toDouble(), image.width.toDouble())
+    //     : Size(image.width.toDouble(), image.height.toDouble());
+    var imageRect =
+        Offset.zero & Size(image.width.toDouble(), image.height.toDouble());
 
     var ratioX = imageRect.width / imageScreenRect.width;
     var ratioY = imageRect.height / imageScreenRect.height;

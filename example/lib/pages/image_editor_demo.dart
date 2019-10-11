@@ -38,6 +38,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     ..add(AspectRatioItem(text: "16*9", value: CropAspectRatios.ratio16_9))
     ..add(AspectRatioItem(text: "9*16", value: CropAspectRatios.ratio9_16));
   AspectRatioItem _aspectRatio;
+  bool _cropping = false;
   @override
   void initState() {
     _aspectRatio = _aspectRatios.first;
@@ -47,52 +48,51 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(children: <Widget>[
-        AppBar(
-          title: Text("image editor demo"),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.photo_library),
-              onPressed: _getImage,
-            ),
-            IconButton(
-              icon: Icon(Icons.done),
-              onPressed: _save,
-            ),
-          ],
-        ),
-        Expanded(
-            child: _fileImage != null
-                ? ExtendedImage.file(
-                    _fileImage,
-                    fit: BoxFit.contain,
-                    mode: ExtendedImageMode.editor,
-                    enableLoadState: true,
-                    extendedImageEditorKey: editorKey,
-                    initEditorConfigHandler: (state) {
-                      return EditorConfig(
-                          maxScale: 8.0,
-                          cropRectPadding: EdgeInsets.all(20.0),
-                          hitTestSize: 20.0,
-                          initCropRectType: InitCropRectType.imageRect,
-                          cropAspectRatio: _aspectRatio.value);
-                    },
-                  )
-                : ExtendedImage.network(
-                    imageTestUrl,
-                    fit: BoxFit.contain,
-                    mode: ExtendedImageMode.editor,
-                    extendedImageEditorKey: editorKey,
-                    initEditorConfigHandler: (state) {
-                      return EditorConfig(
-                          maxScale: 8.0,
-                          cropRectPadding: EdgeInsets.all(20.0),
-                          hitTestSize: 20.0,
-                          initCropRectType: InitCropRectType.imageRect,
-                          cropAspectRatio: _aspectRatio.value);
-                    },
-                  )),
-      ]),
+      appBar: AppBar(
+        title: Text("image editor demo"),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.photo_library),
+            onPressed: _getImage,
+          ),
+          IconButton(
+            icon: Icon(Icons.done),
+            onPressed: _save,
+          ),
+        ],
+      ),
+      body: Center(
+        child: _fileImage != null
+            ? ExtendedImage.file(
+                _fileImage,
+                fit: BoxFit.contain,
+                mode: ExtendedImageMode.editor,
+                enableLoadState: true,
+                extendedImageEditorKey: editorKey,
+                initEditorConfigHandler: (state) {
+                  return EditorConfig(
+                      maxScale: 8.0,
+                      cropRectPadding: EdgeInsets.all(20.0),
+                      hitTestSize: 20.0,
+                      initCropRectType: InitCropRectType.imageRect,
+                      cropAspectRatio: _aspectRatio.value);
+                },
+              )
+            : ExtendedImage.network(
+                imageTestUrl,
+                fit: BoxFit.contain,
+                mode: ExtendedImageMode.editor,
+                extendedImageEditorKey: editorKey,
+                initEditorConfigHandler: (state) {
+                  return EditorConfig(
+                      maxScale: 8.0,
+                      cropRectPadding: EdgeInsets.all(20.0),
+                      hitTestSize: 20.0,
+                      initCropRectType: InitCropRectType.imageRect,
+                      cropAspectRatio: _aspectRatio.value);
+                },
+              ),
+      ),
       bottomNavigationBar: BottomAppBar(
         color: Colors.lightBlue,
         shape: CircularNotchedRectangle(),
@@ -192,12 +192,24 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   }
 
   void _save() async {
+    if (_cropping) return;
+    var msg = "";
     try {
+      _cropping = true;
+      showbusyingDialog();
       var cropRect = editorKey.currentState.getCropRect();
       ui.Image imageData = editorKey.currentState.image;
-
+      var time0 = DateTime.now();
       var data = await imageData.toByteData(format: ui.ImageByteFormat.png);
+      var time1 = DateTime.now();
+      print("toByteData : ${time1.difference(time0)}");
+
       image.Image src = decodePng(data.buffer.asUint8List());
+      var time2 = DateTime.now();
+      print("decode png: ${time2.difference(time1)}");
+
+      src = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
+          cropRect.width.toInt(), cropRect.height.toInt());
 
       if (editorKey.currentState.editAction.hasEditAction) {
         var editAction = editorKey.currentState.editAction;
@@ -207,16 +219,24 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
           src = copyRotate(src, angle);
         }
       }
+      var time3 = DateTime.now();
+      print("crop/flip/rotate: ${time3.difference(time2)}");
 
-      var cropData = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
-          cropRect.width.toInt(), cropRect.height.toInt());
+      ///reduce compress level will help reduce the time of encode for big image.
+      var fileData = encodePng(src, level: 1);
+      var time4 = DateTime.now();
+      print("encode png: ${time4.difference(time3)}");
+      print("total time: ${time4.difference(time0)}");
 
-      var fileFath =
-          await ImagePickerSaver.saveFile(fileData: encodePng(cropData));
-      showToast("save image : $fileFath");
+      var fileFath = await ImagePickerSaver.saveFile(fileData: fileData);
+      msg = "save image : $fileFath";
     } catch (e) {
-      showToast("save faild: $e");
+      msg = "save faild: $e";
     }
+
+    Navigator.of(context).pop();
+    showToast(msg);
+    _cropping = false;
   }
 
   File _fileImage;
@@ -225,8 +245,40 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         await picker.ImagePicker.pickImage(source: picker.ImageSource.gallery);
 
     setState(() {
+      editorKey.currentState.reset();
       _fileImage = image;
     });
+  }
+
+  void showbusyingDialog() {
+    var primaryColor = Theme.of(context).primaryColor;
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            height: double.infinity,
+            width: double.infinity,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                // CircularProgressIndicator(
+                //   strokeWidth: 2.0,
+                //   valueColor:
+                //       AlwaysStoppedAnimation(primaryColor),
+                // ),
+                // SizedBox(
+                //   width: 10.0,
+                // ),
+                Text(
+                  "Cropping...",
+                  style: TextStyle(color: primaryColor),
+                )
+              ],
+            ),
+          ),
+        ));
   }
 }
 

@@ -513,21 +513,21 @@ void paintExtendedImage({
   final Offset destinationPosition = topLeft.translate(dx, dy);
   Rect destinationRect = destinationPosition & destinationSize;
 
-  bool gestureClip = false;
+  bool needClip = false;
 
   if (gestureDetails != null) {
     destinationRect =
         gestureDetails.calculateFinalDestinationRect(rect, destinationRect);
 
     ///outside and need clip
-    gestureClip = outRect(rect, destinationRect);
+    needClip = outRect(rect, destinationRect);
 
     if (gestureDetails.slidePageOffset != null) {
       destinationRect = destinationRect.shift(gestureDetails.slidePageOffset);
       rect = rect.shift(gestureDetails.slidePageOffset);
     }
 
-    if (gestureClip) {
+    if (needClip) {
       canvas.save();
       canvas.clipRect(rect);
     }
@@ -550,13 +550,13 @@ void paintExtendedImage({
     destinationRect = editActionDetails.getFinalDestinationRect();
 
     ///outside and need clip
-    gestureClip = outRect(rect, destinationRect);
+    needClip = outRect(rect, destinationRect);
 
     hasEditAction = editActionDetails.hasEditAction;
 
-    if (gestureClip || hasEditAction) {
+    if (needClip || hasEditAction) {
       canvas.save();
-      if (gestureClip) {
+      if (needClip) {
         canvas.clipRect(rect);
       }
     }
@@ -622,11 +622,8 @@ void paintExtendedImage({
 
   if (needSave) canvas.restore();
 
-  if (gestureDetails != null && gestureClip) {
-    canvas.restore();
-  }
 
-  if (editActionDetails != null && hasEditAction) {
+  if (needClip || hasEditAction) {
     canvas.restore();
   }
 

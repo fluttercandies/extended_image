@@ -414,6 +414,9 @@ dependencies:
 ``` 
 - 翻转，旋转，裁剪数据
 ``` dart
+      src = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
+          cropRect.width.toInt(), cropRect.height.toInt());
+
       if (editorKey.currentState.editAction.hasEditAction) {
         var editAction = editorKey.currentState.editAction;
         src = copyFlip(src, flipX: editAction.flipX, flipY: editAction.flipY);
@@ -422,9 +425,6 @@ dependencies:
           src = copyRotate(src, angle);
         }
       }
-
-      var cropData = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
-          cropRect.width.toInt(), cropRect.height.toInt());
 ``` 
 - 将数据转为为图片的元数据
 获取到的将是图片的元数据，你可以使用它来保存或者其他的一些用途
