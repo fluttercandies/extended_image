@@ -1,6 +1,8 @@
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/image/extended_raw_image.dart';
+import 'package:extended_image_library/extended_image_library.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'extended_image_crop_layer.dart';
@@ -17,6 +19,8 @@ class ExtendedImageEditor extends StatefulWidget {
   ExtendedImageEditor({this.extendedImageState, Key key})
       : assert(extendedImageState.imageWidget.fit == BoxFit.contain,
             "Make sure the image is all painted to crop,the fit of image must be BoxFit.contain"),
+        assert(extendedImageState.imageWidget.image is ExtendedImageProvider,
+            "Make sure the image provider is ExtendedImageProvider, we will get raw image data from it"),
         super(key: key);
   @override
   ExtendedImageEditorState createState() => ExtendedImageEditorState();
@@ -274,6 +278,10 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   }
 
   ui.Image get image => widget.extendedImageState.extendedImageInfo?.image;
+
+  Uint8List get rawImageData =>
+      (widget.extendedImageState?.imageWidget?.image as ExtendedImageProvider)
+          .rawImageData;
 
   EditActionDetails get editAction => _editActionDetails;
 

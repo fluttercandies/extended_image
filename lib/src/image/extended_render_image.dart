@@ -575,7 +575,7 @@ void paintExtendedImage({
       );
 
       if (editAction.hasRotateAngle) {
-        result.multiply(Matrix4.rotationZ(editAction.rotateAngle));
+        result.multiply(Matrix4.rotationZ(editAction.rotateRadian));
       }
 
       if (editAction.flipY) {

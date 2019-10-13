@@ -1,15 +1,13 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:example/common/common_widget.dart';
+import 'package:example/common/crop_editor_helper.dart';
 import 'package:example/common/utils.dart';
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
-import 'package:image/image.dart';
-import 'package:image/image.dart' as image;
-import 'dart:ui' as ui;
-import 'dart:math';
 import 'package:image_picker_saver/image_picker_saver.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:image_picker/image_picker.dart' as picker;
@@ -114,10 +112,14 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       context: context,
                       builder: (BuildContext context) {
                         return Container(
-                          height: 60.0,
-                          color: Colors.lightBlue,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
+                          //height: 60.0,
+                          //alignment: Alignment.center,
+                          //color: Colors.lightBlue.withOpacity(0.4),
+                          child: GridView.builder(
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 3),
+                            padding: EdgeInsets.all(20.0),
                             itemBuilder: (_, index) {
                               var item = _aspectRatios[index];
                               return GestureDetector(
@@ -191,47 +193,31 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     );
   }
 
+  Uint8List data;
   void _save() async {
     if (_cropping) return;
     var msg = "";
     try {
       _cropping = true;
-      showbusyingDialog();
-      var cropRect = editorKey.currentState.getCropRect();
-      ui.Image imageData = editorKey.currentState.image;
-      var time0 = DateTime.now();
-      var data = await imageData.toByteData(format: ui.ImageByteFormat.png);
-      var time1 = DateTime.now();
-      print("toByteData : ${time1.difference(time0)}");
 
-      image.Image src = decodePng(data.buffer.asUint8List());
-      var time2 = DateTime.now();
-      print("decode png: ${time2.difference(time1)}");
+      showBusyingDialog();
 
-      src = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
-          cropRect.width.toInt(), cropRect.height.toInt());
+      ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
+      ///it will block showBusyingDialog
+      ///if you don't want to block ui, use compute/isolate,but it costs more time.
+      await Future.delayed(Duration(milliseconds: 200));
 
-      if (editorKey.currentState.editAction.hasEditAction) {
-        var editAction = editorKey.currentState.editAction;
-        src = copyFlip(src, flipX: editAction.flipX, flipY: editAction.flipY);
-        if (editAction.hasRotateAngle) {
-          double angle = (editAction.rotateAngle ~/ (pi / 2)) * 90.0;
-          src = copyRotate(src, angle);
-        }
-      }
-      var time3 = DateTime.now();
-      print("crop/flip/rotate: ${time3.difference(time2)}");
-
-      ///reduce compress level will help reduce the time of encode for big image.
-      var fileData = encodePng(src, level: 1);
-      var time4 = DateTime.now();
-      print("encode png: ${time4.difference(time3)}");
-      print("total time: ${time4.difference(time0)}");
+      ///if you don't want to block ui, use compute/isolate,but it costs more time.
+      var fileData =
+          await cropImageDataWithDartLibrary(state: editorKey.currentState);
+      // var fileData =
+      //     await cropImageDataWithNativeLibrary(state: editorKey.currentState);
 
       var fileFath = await ImagePickerSaver.saveFile(fileData: fileData);
       msg = "save image : $fileFath";
     } catch (e) {
       msg = "save faild: $e";
+      print(msg);
     }
 
     Navigator.of(context).pop();
@@ -250,9 +236,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     });
   }
 
-  void showbusyingDialog() {
+  Future showBusyingDialog() async {
     var primaryColor = Theme.of(context).primaryColor;
-    showDialog(
+    return showDialog(
         context: context,
         barrierDismissible: false,
         child: Material(
@@ -272,7 +258,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 //   width: 10.0,
                 // ),
                 Text(
-                  "Cropping...",
+                  "cropping...",
                   style: TextStyle(color: primaryColor),
                 )
               ],
@@ -280,22 +266,4 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
           ),
         ));
   }
-}
-
-image.Image copyFlip(image.Image src,
-    {bool flipX = false, bool flipY = false}) {
-  if (!flipX && !flipY) return src;
-
-  image.Image dst = image.Image(src.width, src.height,
-      channels: src.channels, exif: src.exif, iccp: src.iccProfile);
-
-  for (int yi = 0; yi < src.height; ++yi,) {
-    for (int xi = 0; xi < src.width; ++xi,) {
-      var sx = flipY ? src.width - 1 - xi : xi;
-      var sy = flipX ? src.height - 1 - yi : yi;
-      dst.setPixel(xi, yi, src.getPixel(sx, sy));
-    }
-  }
-
-  return dst;
 }

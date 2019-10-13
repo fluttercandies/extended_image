@@ -3,7 +3,9 @@
 * Issues:
   Fix issue that forget canvas.restore after canvas.clipRect
 * Breaking Change:
-  ImageEditor：you should crop image before flip or rotate image now.
+  ImageEditor：you should crop image data before flip or rotate image data now.
+* Improve:
+  Increase cropping speed
 
 ## [0.6.2]
 

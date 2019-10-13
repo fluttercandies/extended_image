@@ -394,36 +394,44 @@ dependencies:
   image: any
 ```
 
-- get crop rect and image data from ExtendedImageEditorState
+- get crop rect and raw image data from ExtendedImageEditorState
 ``` dart
-      var cropRect = editorKey.currentState.getCropRect();
-      ui.Image imageData = editorKey.currentState.image;
+  ///crop rect base on raw image
+  final Rect cropRect = state.getCropRect();
+
+  var data = state.rawImageData;
 ``` 
-- convert flutter image data to image libray data.
+- convert raw image data to image libray data.
 ``` dart
-      var data = await imageData.toByteData(format: ui.ImageByteFormat.png);
-      image.Image src = decodePng(data.buffer.asUint8List());
+  ///if you don't want to block ui, use compute/isolate,but it costs more time.
+  //Image src = await compute(decodeImage, data);
+  Image src = decodeImage(data);
 ``` 
 - flip,rotate,crop data
 ``` dart
-      src = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
-          cropRect.width.toInt(), cropRect.height.toInt());
+  //clear orientation
+  src = bakeOrientation(src);
 
-      if (editorKey.currentState.editAction.hasEditAction) {
-        var editAction = editorKey.currentState.editAction;
-        src = copyFlip(src, flipX: editAction.flipX, flipY: editAction.flipY);
-        if (editAction.hasRotateAngle) {
-          double angle = (editAction.rotateAngle ~/ (pi / 2)) * 90.0;
-          src = copyRotate(src, angle);
-        }
-      }
+  if (editAction.needCrop)
+    src = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
+        cropRect.width.toInt(), cropRect.height.toInt());
+
+  if (editAction.needFlip)
+    src = copyFlip(src, flipX: editAction.flipX, flipY: editAction.flipY);
+
+  if (editAction.hasRotateAngle) src = copyRotate(src, editAction.rotateAngle);
 ``` 
 - convert to original image data
   
 output is original image data, you can use it to save or any other thing.
 
 ``` dart
-      encodePng(cropData)
+  //var fileData = encodePng(src, level: 1);
+  ///you can encode your image as you want
+  ///
+  ///if you don't want to block ui, use compute/isolate,but it costs more time.
+  //var fileData = await compute(encodeJpg, src);
+  var fileData = encodeJpg(src);
 ``` 
 
 ## Photo View

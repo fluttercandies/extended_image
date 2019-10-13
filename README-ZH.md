@@ -404,33 +404,41 @@ dependencies:
 
 - 从ExtendedImageEditorState中获取裁剪区域以及图片数据
 ``` dart
-      var cropRect = editorKey.currentState.getCropRect();
-      ui.Image imageData = editorKey.currentState.image;
+  ///crop rect base on raw image
+  final Rect cropRect = state.getCropRect();
+
+  var data = state.rawImageData;
 ``` 
 - 将flutter的图片数据转换为image库的数据
 ``` dart
-      var data = await imageData.toByteData(format: ui.ImageByteFormat.png);
-      image.Image src = decodePng(data.buffer.asUint8List());
+  ///if you don't want to block ui, use compute/isolate,but it costs more time.
+  //Image src = await compute(decodeImage, data);
+  Image src = decodeImage(data);
 ``` 
 - 翻转，旋转，裁剪数据
 ``` dart
-      src = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
-          cropRect.width.toInt(), cropRect.height.toInt());
+  //相机拍照的图片带有旋转，处理之前需要去掉
+  src = bakeOrientation(src);
 
-      if (editorKey.currentState.editAction.hasEditAction) {
-        var editAction = editorKey.currentState.editAction;
-        src = copyFlip(src, flipX: editAction.flipX, flipY: editAction.flipY);
-        if (editAction.hasRotateAngle) {
-          double angle = (editAction.rotateAngle ~/ (pi / 2)) * 90.0;
-          src = copyRotate(src, angle);
-        }
-      }
+  if (editAction.needCrop)
+    src = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
+        cropRect.width.toInt(), cropRect.height.toInt());
+
+  if (editAction.needFlip)
+    src = copyFlip(src, flipX: editAction.flipX, flipY: editAction.flipY);
+
+  if (editAction.hasRotateAngle) src = copyRotate(src, editAction.rotateAngle);
 ``` 
 - 将数据转为为图片的元数据
 获取到的将是图片的元数据，你可以使用它来保存或者其他的一些用途
 
 ``` dart
-      encodePng(cropData)
+  //var fileData = encodePng(src, level: 1);
+  ///you can encode your image as you want
+  ///
+  ///if you don't want to block ui, use compute/isolate,but it costs more time.
+  //var fileData = await compute(encodeJpg, src);
+  var fileData = encodeJpg(src);
 ``` 
 
 ## 图片浏览
