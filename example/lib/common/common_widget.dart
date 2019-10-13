@@ -63,15 +63,11 @@ class AspectRatioWidget extends StatelessWidget {
       {this.aspectRatioS, this.aspectRatio, this.isSelected: false});
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 60.0,
-      height: 60.0,
-      child: CustomPaint(
-        painter: AspectRatioPainter(
-            aspectRatio: aspectRatio,
-            aspectRatioS: aspectRatioS,
-            isSelected: isSelected),
-      ),
+    return CustomPaint(
+      painter: AspectRatioPainter(
+          aspectRatio: aspectRatio,
+          aspectRatioS: aspectRatioS,
+          isSelected: isSelected),
     );
   }
 }
@@ -85,7 +81,7 @@ class AspectRatioPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Color color = isSelected ? Colors.black : Colors.white;
+    final Color color = isSelected ? Colors.blue : Colors.grey;
     var rect = (Offset.zero & size);
     Paint paint = Paint()
       ..color = color
@@ -104,7 +100,7 @@ class AspectRatioPainter extends CustomPainter {
             text: aspectRatioS,
             style: TextStyle(
               color: color,
-              fontSize: 10.0,
+              fontSize: 16.0,
             )),
         textDirection: TextDirection.ltr,
         maxLines: 1);

@@ -173,7 +173,7 @@ class ExtendedImage extends StatefulWidget {
       this.extendedImageEditorKey,
       this.initEditorConfigHandler,
       this.heroBuilderForSlidingPage})
-      : image = FileImage(file, scale: scale),
+      : image = ExtendedFileImageProvider(file, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
         assert(filterQuality != null),
@@ -346,9 +346,10 @@ class ExtendedImage extends StatefulWidget {
       this.initEditorConfigHandler,
       this.heroBuilderForSlidingPage})
       : image = scale != null
-            ? ExactAssetImage(name,
+            ? ExtendedExactAssetImageProvider(name,
                 bundle: bundle, scale: scale, package: package)
-            : AssetImage(name, bundle: bundle, package: package),
+            : ExtendedAssetImageProvider(name,
+                bundle: bundle, package: package),
         assert(alignment != null),
         assert(repeat != null),
         assert(matchTextDirection != null),
@@ -407,7 +408,7 @@ class ExtendedImage extends StatefulWidget {
       this.extendedImageEditorKey,
       this.initEditorConfigHandler,
       this.heroBuilderForSlidingPage})
-      : image = MemoryImage(bytes, scale: scale),
+      : image = ExtendedMemoryImageProvider(bytes, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
         assert(matchTextDirection != null),

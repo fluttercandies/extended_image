@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class EditActionDetails {
-  double _rotateAngle = 0.0;
+  double _rotateRadian = 0.0;
   bool _flipX = false;
   bool _flipY = false;
   bool _computeHorizontalBoundary = false;
@@ -44,17 +44,23 @@ class EditActionDetails {
 
   bool get flipY => _flipY;
 
-  double get rotateAngle => _rotateAngle;
+  double get rotateRadian => _rotateRadian;
 
   bool get hasRotateAngle => !isTwoPi;
 
   bool get hasEditAction => hasRotateAngle || _flipX || _flipY;
 
-  bool get isHalfPi => (_rotateAngle % (pi)) != 0;
+  bool get needCrop => screenCropRect != screenDestinationRect;
+
+  double get rotateAngle => (rotateRadian ~/ (pi / 2)) * 90.0;
+
+  bool get needFlip => _flipX || _flipY;
+
+  bool get isHalfPi => (_rotateRadian % (pi)) != 0;
 
   bool get isPi => !isHalfPi && !isTwoPi;
 
-  bool get isTwoPi => (_rotateAngle % (2 * pi)) == 0;
+  bool get isTwoPi => (_rotateRadian % (2 * pi)) == 0;
 
   /// destination rect base on layer
   Rect get layerDestinationRect => screenDestinationRect?.shift(-layoutTopLeft);
@@ -66,11 +72,11 @@ class EditActionDetails {
   Rect get screenCropRect => cropRect?.shift(layoutTopLeft);
 
   void rotate(double angle, Rect layoutRect, BoxFit fit) {
-    _rotateAngle += angle;
-    _rotateAngle %= (2 * pi);
+    _rotateRadian += angle;
+    _rotateRadian %= (2 * pi);
     if (_flipX && _flipY && isPi) {
       _flipX = _flipY = false;
-      _rotateAngle = 0.0;
+      _rotateRadian = 0.0;
     }
 
     // _cropRect = rotateRect(_cropRect, _cropRect.center, -angle);
@@ -121,7 +127,7 @@ class EditActionDetails {
 
     if (_flipX && _flipY && isPi) {
       _flipX = _flipY = false;
-      _rotateAngle = 0.0;
+      _rotateRadian = 0.0;
     }
   }
 
@@ -131,9 +137,11 @@ class EditActionDetails {
 
     var flipOrigin = screenCropRect?.center;
     if (hasRotateAngle) {
-      rect = rotateRect(rect, flipOrigin, -_rotateAngle);
+      rect = rotateRect(rect, flipOrigin, -_rotateRadian);
     }
-    if (flipOrigin != null && flipOrigin != rect.center) {
+    if (flipOrigin != null
+        //&& flipOrigin != rect.center
+        ) {
       if (flipY) {
         rect = Rect.fromLTRB(2 * flipOrigin.dx - rect.right, rect.top,
             2 * flipOrigin.dx - rect.left, rect.bottom);
@@ -149,14 +157,14 @@ class EditActionDetails {
   }
 
   @override
-  int get hashCode => hashValues(_rotateAngle, _flipX, _flipY, cropRect,
+  int get hashCode => hashValues(_rotateRadian, _flipX, _flipY, cropRect,
       _layoutRect, _rawDestinationRect, _cropAspectRatio, cropRectPadding);
 
   @override
   bool operator ==(dynamic other) {
     if (other.runtimeType != runtimeType) return false;
     final EditActionDetails typedOther = other;
-    return _rotateAngle == typedOther.rotateAngle &&
+    return _rotateRadian == typedOther.rotateRadian &&
         _flipX == typedOther.flipX &&
         _flipY == typedOther.flipY &&
         cropRect == typedOther.cropRect &&
@@ -378,7 +386,7 @@ class EditorConfig {
         // assert(minScale <= maxScale),
         // assert(minScale <= initialScale && initialScale <= maxScale),
         assert(lineHeight > 0.0),
-        assert(hitTestSize >= 15.0),
+        assert(hitTestSize >= 0.0),
         assert(animationDuration != null),
         assert(tickerDuration != null);
 }
