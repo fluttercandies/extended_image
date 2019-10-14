@@ -1,3 +1,10 @@
+## [0.6.4]
+
+* Issues:
+  Fix issue that rawImageData can't be cached for ExtendedExactAssetImageProvider/ExtendedAssetImageProvider.
+* Improve:
+  Add demo about ImageEditor with native library, it's faster. 
+
 ## [0.6.3]
 
 * Issues:

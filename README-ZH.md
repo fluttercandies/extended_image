@@ -26,6 +26,8 @@
     - [裁剪框的宽高比](#%e8%a3%81%e5%89%aa%e6%a1%86%e7%9a%84%e5%ae%bd%e9%ab%98%e6%af%94)
     - [旋转,翻转,重置](#%e6%97%8b%e8%bd%ac%e7%bf%bb%e8%bd%ac%e9%87%8d%e7%bd%ae)
     - [裁剪数据](#%e8%a3%81%e5%89%aa%e6%95%b0%e6%8d%ae)
+      - [使用dart库(稳定)](#%e4%bd%bf%e7%94%a8dart%e5%ba%93%e7%a8%b3%e5%ae%9a)
+      - [使用原生库(快速)](#%e4%bd%bf%e7%94%a8%e5%8e%9f%e7%94%9f%e5%ba%93%e5%bf%ab%e9%80%9f)
   - [图片浏览](#%e5%9b%be%e7%89%87%e6%b5%8f%e8%a7%88)
   - [滑动退出页面](#%e6%bb%91%e5%8a%a8%e9%80%80%e5%87%ba%e9%a1%b5%e9%9d%a2)
     - [首先开启滑动退出页面效果](#%e9%a6%96%e5%85%88%e5%bc%80%e5%90%af%e6%bb%91%e5%8a%a8%e9%80%80%e5%87%ba%e9%a1%b5%e9%9d%a2%e6%95%88%e6%9e%9c)
@@ -396,7 +398,10 @@ class CropAspectRatios {
 
 ### 裁剪数据
 
-添加 image 库到 pubspec.yaml, 它是用来裁剪/旋转/翻转图片数据的
+#### 使用dart库(稳定)
+
+- 添加 [Image](https://github.com/brendan-duncan/image) 库到 pubspec.yaml, 它是用来裁剪/旋转/翻转图片数据的
+  
 ``` yaml
 dependencies:
   image: any
@@ -411,9 +416,14 @@ dependencies:
 ``` 
 - 将flutter的图片数据转换为image库的数据
 ``` dart
-  ///if you don't want to block ui, use compute/isolate,but it costs more time.
+  /// it costs much time and blocks ui.
+  //Image src = decodeImage(data);
+
+  /// it will not block ui with using isolate.
   //Image src = await compute(decodeImage, data);
-  Image src = decodeImage(data);
+  //Image src = await isolateDecodeImage(data);
+  final lb = await loadBalancer;
+  Image src = await lb.run<Image, List<int>>(decodeImage, data);
 ``` 
 - 翻转，旋转，裁剪数据
 ``` dart
@@ -424,22 +434,81 @@ dependencies:
     src = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
         cropRect.width.toInt(), cropRect.height.toInt());
 
-  if (editAction.needFlip)
-    src = copyFlip(src, flipX: editAction.flipX, flipY: editAction.flipY);
+  if (editAction.needFlip) {
+    Flip mode;
+    if (editAction.flipY && editAction.flipX) {
+      mode = Flip.both;
+    } else if (editAction.flipY) {
+      mode = Flip.horizontal;
+    } else if (editAction.flipX) {
+      mode = Flip.vertical;
+    }
+    src = flip(src, mode);
+  }
 
   if (editAction.hasRotateAngle) src = copyRotate(src, editAction.rotateAngle);
 ``` 
 - 将数据转为为图片的元数据
+  
 获取到的将是图片的元数据，你可以使用它来保存或者其他的一些用途
 
 ``` dart
-  //var fileData = encodePng(src, level: 1);
-  ///you can encode your image as you want
+  /// you can encode your image
   ///
-  ///if you don't want to block ui, use compute/isolate,but it costs more time.
+  /// it costs much time and blocks ui.
+  //var fileData = encodeJpg(src);
+
+  /// it will not block ui with using isolate.
   //var fileData = await compute(encodeJpg, src);
-  var fileData = encodeJpg(src);
+  //var fileData = await isolateEncodeImage(src);
+  var fileData = await lb.run<List<int>, Image>(encodeJpg, src);
 ``` 
+
+#### 使用原生库(快速)
+
+- 添加 [ImageEditor](https://github.com/fluttercandies/flutter_image_editor) 库到 pubspec.yaml, 它是用来裁剪/旋转/翻转图片数据的。
+  
+``` yaml
+dependencies:
+  image_editor: any
+```
+
+- 从ExtendedImageEditorState中获取裁剪区域以及图片数据
+``` dart
+  ///crop rect base on raw image
+  final Rect cropRect = state.getCropRect();
+
+  final img = state.rawImageData;
+``` 
+- 准备裁剪选项
+``` dart
+  final rotateAngle = action.rotateAngle.toInt();
+  final flipHorizontal = action.flipY;
+  final flipVertical = action.flipX;
+
+  ImageEditorOption option = ImageEditorOption();
+
+  if (action.needCrop) option.addOption(ClipOption.fromRect(cropRect));
+
+  if (action.needFlip)
+    option.addOption(
+        FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
+
+  if (action.hasRotateAngle) option.addOption(RotateOption(rotateAngle));
+``` 
+
+- 使用editImage方法进行裁剪 
+  
+获取到的将是图片的元数据，你可以使用它来保存或者其他的一些用途
+
+``` dart
+  final result = await ImageEditor.editImage(
+    image: img,
+    imageEditorOption: option,
+  );
+``` 
+
+[more detail](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_editor_helper.dart)
 
 ## 图片浏览
 

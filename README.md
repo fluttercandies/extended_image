@@ -21,6 +21,8 @@ A powerful official extension library of image, which support placeholder(loadin
     - [crop aspect ratio](#crop-aspect-ratio)
     - [crop,flip,reset](#cropflipreset)
     - [crop data](#crop-data)
+      - [dart library(stable)](#dart-librarystable)
+      - [native library(faster)](#native-libraryfaster)
   - [Photo View](#photo-view)
   - [Slide Out Page](#slide-out-page)
     - [enable slide out page](#enable-slide-out-page)
@@ -388,7 +390,10 @@ class CropAspectRatios {
 
 ### crop data
 
-- add image library into your pubspec.yaml, it's used to crop/rotate/flip image data
+#### dart library(stable)
+
+- add [Image](https://github.com/brendan-duncan/image) library into your pubspec.yaml, it's used to crop/rotate/flip image data
+  
 ``` yaml
 dependencies:
   image: any
@@ -403,11 +408,16 @@ dependencies:
 ``` 
 - convert raw image data to image libray data.
 ``` dart
-  ///if you don't want to block ui, use compute/isolate,but it costs more time.
+  /// it costs much time and blocks ui.
+  //Image src = decodeImage(data);
+
+  /// it will not block ui with using isolate.
   //Image src = await compute(decodeImage, data);
-  Image src = decodeImage(data);
+  //Image src = await isolateDecodeImage(data);
+  final lb = await loadBalancer;
+  Image src = await lb.run<Image, List<int>>(decodeImage, data);
 ``` 
-- flip,rotate,crop data
+- crop,flip,rotate data
 ``` dart
   //clear orientation
   src = bakeOrientation(src);
@@ -416,23 +426,81 @@ dependencies:
     src = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
         cropRect.width.toInt(), cropRect.height.toInt());
 
-  if (editAction.needFlip)
-    src = copyFlip(src, flipX: editAction.flipX, flipY: editAction.flipY);
+  if (editAction.needFlip) {
+    Flip mode;
+    if (editAction.flipY && editAction.flipX) {
+      mode = Flip.both;
+    } else if (editAction.flipY) {
+      mode = Flip.horizontal;
+    } else if (editAction.flipX) {
+      mode = Flip.vertical;
+    }
+    src = flip(src, mode);
+  }
 
   if (editAction.hasRotateAngle) src = copyRotate(src, editAction.rotateAngle);
 ``` 
 - convert to original image data
   
-output is original image data, you can use it to save or any other thing.
+output is raw image data, you can use it to save or any other thing.
 
 ``` dart
-  //var fileData = encodePng(src, level: 1);
-  ///you can encode your image as you want
+  /// you can encode your image
   ///
-  ///if you don't want to block ui, use compute/isolate,but it costs more time.
+  /// it costs much time and blocks ui.
+  //var fileData = encodeJpg(src);
+
+  /// it will not block ui with using isolate.
   //var fileData = await compute(encodeJpg, src);
-  var fileData = encodeJpg(src);
+  //var fileData = await isolateEncodeImage(src);
+  var fileData = await lb.run<List<int>, Image>(encodeJpg, src);
 ``` 
+
+#### native library(faster)
+
+- add [ImageEditor](https://github.com/fluttercandies/flutter_image_editor) library into your pubspec.yaml, it's used to crop/rotate/flip image data
+``` yaml
+dependencies:
+  image_editor: any
+```
+
+- get crop rect and raw image data from ExtendedImageEditorState
+``` dart
+  ///crop rect base on raw image
+  final Rect cropRect = state.getCropRect();
+
+  var data = state.rawImageData;
+``` 
+- prepare crop option
+``` dart
+  final rotateAngle = action.rotateAngle.toInt();
+  final flipHorizontal = action.flipY;
+  final flipVertical = action.flipX;
+  final img = state.rawImageData;
+
+  ImageEditorOption option = ImageEditorOption();
+
+  if (action.needCrop) option.addOption(ClipOption.fromRect(rect));
+
+  if (action.needFlip)
+    option.addOption(
+        FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
+
+  if (action.hasRotateAngle) option.addOption(RotateOption(rotateAngle));
+``` 
+
+- crop with editImage 
+  
+output is raw image data, you can use it to save or any other thing.
+
+``` dart
+  final result = await ImageEditor.editImage(
+    image: img,
+    imageEditorOption: option,
+  );
+``` 
+
+[more detail](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_editor_helper.dart)
 
 ## Photo View
 

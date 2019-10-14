@@ -1,16 +1,20 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:example/common/common_widget.dart';
 import 'package:example/common/crop_editor_helper.dart';
 import 'package:example/common/utils.dart';
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'package:image_picker_saver/image_picker_saver.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:image_picker/image_picker.dart' as picker;
+import 'package:url_launcher/url_launcher.dart';
 
 ///
 ///  create by zmtzawqlp on 2019/8/22
@@ -55,7 +59,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
           ),
           IconButton(
             icon: Icon(Icons.done),
-            onPressed: _save,
+            onPressed: () {
+              _showCropDialog(context);
+            },
           ),
         ],
       ),
@@ -112,9 +118,6 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       context: context,
                       builder: (BuildContext context) {
                         return Container(
-                          //height: 60.0,
-                          //alignment: Alignment.center,
-                          //color: Colors.lightBlue.withOpacity(0.4),
                           child: GridView.builder(
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
@@ -193,8 +196,123 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     );
   }
 
-  Uint8List data;
-  void _save() async {
+  void _showCropDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext content) {
+          return Column(
+            children: <Widget>[
+              Expanded(
+                child: Container(),
+              ),
+              Container(
+                  margin: EdgeInsets.all(20.0),
+                  child: Material(
+                      child: Padding(
+                    padding: EdgeInsets.all(15.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          "select library to crop",
+                          style: TextStyle(
+                              fontSize: 24.0, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        Text.rich(TextSpan(children: <TextSpan>[
+                          TextSpan(
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text: "Image",
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      decorationStyle:
+                                          TextDecorationStyle.solid,
+                                      decorationColor: Colors.blue,
+                                      decoration: TextDecoration.underline),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      launch(
+                                          "https://github.com/brendan-duncan/image");
+                                    }),
+                              TextSpan(
+                                  text:
+                                      "(Dart library) for decoding/encoding image formats, and image processing. It's stable.")
+                            ],
+                          ),
+                          TextSpan(text: "\n\n"),
+                          TextSpan(
+                            children: <TextSpan>[
+                              TextSpan(
+                                  text: "ImageEditor",
+                                  style: TextStyle(
+                                      color: Colors.blue,
+                                      decorationStyle:
+                                          TextDecorationStyle.solid,
+                                      decorationColor: Colors.blue,
+                                      decoration: TextDecoration.underline),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      launch(
+                                          "https://github.com/fluttercandies/flutter_image_editor");
+                                    }),
+                              TextSpan(
+                                  text:
+                                      "(Native library) support android/ios, crop flip rotate. It's faster.")
+                            ],
+                          )
+                        ])),
+                        SizedBox(
+                          height: 20.0,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            OutlineButton(
+                              child: Text(
+                                'Dart',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                ),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                _cropImage(false);
+                              },
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0)),
+                            ),
+                            OutlineButton(
+                              child: Text(
+                                'Native',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                ),
+                              ),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                _cropImage(true);
+                              },
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ))),
+              Expanded(
+                child: Container(),
+              )
+            ],
+          );
+        });
+  }
+
+  void _cropImage(bool useNative) async {
     if (_cropping) return;
     var msg = "";
     try {
@@ -202,18 +320,25 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
       showBusyingDialog();
 
-      ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
-      ///it will block showBusyingDialog
-      ///if you don't want to block ui, use compute/isolate,but it costs more time.
-      await Future.delayed(Duration(milliseconds: 200));
+      Uint8List fileData;
 
-      ///if you don't want to block ui, use compute/isolate,but it costs more time.
-      var fileData =
-          await cropImageDataWithDartLibrary(state: editorKey.currentState);
-      // var fileData =
-      //     await cropImageDataWithNativeLibrary(state: editorKey.currentState);
+      /// native library
+      if (useNative) {
+        fileData =
+            await cropImageDataWithNativeLibrary(state: editorKey.currentState);
+      } else {
+        ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
+        ///it will block showBusyingDialog
+        ///if you don't want to block ui, use compute/isolate,but it costs more time.
+        //await Future.delayed(Duration(milliseconds: 200));
+
+        ///if you don't want to block ui, use compute/isolate,but it costs more time.
+        fileData =
+            await cropImageDataWithDartLibrary(state: editorKey.currentState);
+      }
 
       var fileFath = await ImagePickerSaver.saveFile(fileData: fileData);
+
       msg = "save image : $fileFath";
     } catch (e) {
       msg = "save faild: $e";
@@ -249,14 +374,13 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                // CircularProgressIndicator(
-                //   strokeWidth: 2.0,
-                //   valueColor:
-                //       AlwaysStoppedAnimation(primaryColor),
-                // ),
-                // SizedBox(
-                //   width: 10.0,
-                // ),
+                CircularProgressIndicator(
+                  strokeWidth: 2.0,
+                  valueColor: AlwaysStoppedAnimation(primaryColor),
+                ),
+                SizedBox(
+                  width: 10.0,
+                ),
                 Text(
                   "cropping...",
                   style: TextStyle(color: primaryColor),
