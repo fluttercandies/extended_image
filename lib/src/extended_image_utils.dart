@@ -26,6 +26,8 @@ abstract class ExtendedImageState {
   Object get imageStreamKey;
 
   ExtendedImage get imageWidget;
+
+  Widget get completedWidget;
 }
 
 enum ExtendedImageMode {
