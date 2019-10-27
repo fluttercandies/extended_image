@@ -845,16 +845,7 @@ class _ExtendedImageState extends State<ExtendedImage>
             );
             break;
           case LoadState.completed:
-            if (widget.mode == ExtendedImageMode.gesture) {
-              current = ExtendedImageGesture(this, _slidePageState);
-            } else if (widget.mode == ExtendedImageMode.editor) {
-              current = ExtendedImageEditor(
-                extendedImageState: this,
-                key: widget.extendedImageEditorKey,
-              );
-            } else {
-              current = _buildExtendedRawImage();
-            }
+            current = _getCompletedWidget();
             break;
           case LoadState.failed:
             current = Container(
@@ -869,15 +860,8 @@ class _ExtendedImageState extends State<ExtendedImage>
             break;
         }
       } else {
-        if (_loadState == LoadState.completed &&
-            widget.mode == ExtendedImageMode.gesture) {
-          current = ExtendedImageGesture(this, _slidePageState);
-        } else if (_loadState == LoadState.completed &&
-            widget.mode == ExtendedImageMode.editor) {
-          current = ExtendedImageEditor(
-            extendedImageState: this,
-            key: widget.extendedImageEditorKey,
-          );
+        if (_loadState == LoadState.completed) {
+          current = _getCompletedWidget();
         } else {
           current = _buildExtendedRawImage();
         }
@@ -932,6 +916,21 @@ class _ExtendedImageState extends State<ExtendedImage>
       label: widget.semanticLabel == null ? '' : widget.semanticLabel,
       child: current,
     );
+  }
+
+  Widget _getCompletedWidget() {
+    Widget current;
+    if (widget.mode == ExtendedImageMode.gesture) {
+      current = ExtendedImageGesture(this, _slidePageState);
+    } else if (widget.mode == ExtendedImageMode.editor) {
+      current = ExtendedImageEditor(
+        extendedImageState: this,
+        key: widget.extendedImageEditorKey,
+      );
+    } else {
+      current = _buildExtendedRawImage();
+    }
+    return current;
   }
 
   Widget _getIndicator(BuildContext context) {
@@ -996,4 +995,7 @@ class _ExtendedImageState extends State<ExtendedImage>
 
   @override
   ExtendedImage get imageWidget => this.widget;
+
+  @override
+  Widget get completedWidget => _getCompletedWidget();
 }

@@ -71,6 +71,11 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                       break;
                     case LoadState.completed:
                       _controller.forward();
+
+                      ///if you don't want override completed widget
+                      ///please return null or state.completedWidget
+                      //return null;
+                      //return state.completedWidget;
                       return FadeTransition(
                         opacity: _controller,
                         child: ExtendedRawImage(

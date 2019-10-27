@@ -75,6 +75,11 @@ class CropImage extends StatelessWidget {
             //image will not to be limited by size which you set for ExtendedImage first time.
             state.returnLoadStateChangedWidget = !knowImageSize;
 
+            ///if you don't want override completed widget
+            ///please return null or state.completedWidget
+            //return null;
+            //return state.completedWidget;
+
             widget = Hero(
                 tag: item.imageUrl + index.toString(),
                 child:

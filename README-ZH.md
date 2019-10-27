@@ -101,6 +101,16 @@ loadStateChanged 不仅仅只在网络图片中可以使用, 如果你的图片�
 
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/custom.gif)
 
+注意:
+
+* 如果你不想重写某个状态，那么请返回null
+  
+* 如果你想重写完成图片的 size 或者 soucreRect, 你可以通过使用 ExtendedRawImage 来完成
+  
+* 如果你想增加一些新效果 (比如动画), 你可以重写并且使用ExtendedImageState.completedWidget
+
+* ExtendedImageState.completedWidget 包含手势或者裁剪, 这样你不会丢失它们
+  
 ```dart
 /// custom load state widget if you want
     final LoadStateChanged loadStateChanged;
@@ -132,6 +142,7 @@ ExtendedImageState 状态回调
 | invertColors                 | 是否反转颜色                                                                                       | -    |
 | imageStreamKey               | 图片流的唯一键                                                                                     | -    |
 | reLoadImage()                | 如果图片加载失败，你可以通过调用这个方法来重新加载图片                                             | -    |
+| completedWidget              | 返回图片完成的Widget，它包含手势以及裁剪                                                                                             | -       |
 
 ```dart
 abstract class ExtendedImageState {
@@ -168,6 +179,10 @@ ExtendedImage.network(
           fit: BoxFit.fill,
         );
         break;
+      ///if you don't want override completed widget
+      ///please return null or state.completedWidget
+      //return null;
+      //return state.completedWidget;             
       case LoadState.completed:
         _controller.forward();
         return FadeTransition(

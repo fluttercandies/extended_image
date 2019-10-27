@@ -97,6 +97,17 @@ you can set enableLoadState(default value is ture for network and others are fal
 
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/custom.gif)
 
+Notice:
+
+* if you don't want to override any state, please return null in this case
+  
+* if you want to override size or soucreRect, you can override it with ExtendedRawImage at completed state
+  
+* if you want to add something (like animation) at completed state, you can override it with ExtendedImageState.completedWidget
+
+* ExtendedImageState.completedWidget is include gesture or editor, so that you would't miss them
+
+
 ```dart
 /// custom load state widget if you want
     final LoadStateChanged loadStateChanged;
@@ -128,6 +139,7 @@ ExtendedImageState(LoadStateChanged call back)
 | invertColors                 | invertColors                                                                                                                                  | -       |
 | imageStreamKey               | key of image                                                                                                                                  | -       |
 | reLoadImage()                | if image load failed,you can reload image by call it                                                                                          | -       |
+| completedWidget              | return completed widget include gesture or editor                                                                                             | -       |
 
 ```dart
 abstract class ExtendedImageState {
@@ -143,6 +155,8 @@ abstract class ExtendedImageState {
   bool get invertColors;
 
   Object get imageStreamKey;
+
+  Widget get completedWidget;
 }
 ```
 
@@ -164,6 +178,11 @@ ExtendedImage.network(
           fit: BoxFit.fill,
         );
         break;
+
+      ///if you don't want override completed widget
+      ///please return null or state.completedWidget
+      //return null;
+      //return state.completedWidget;        
       case LoadState.completed:
         _controller.forward();
         return FadeTransition(
