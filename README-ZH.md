@@ -158,6 +158,8 @@ abstract class ExtendedImageState {
   bool get invertColors;
 
   Object get imageStreamKey;
+  
+  Widget get completedWidget;
 }
 ```
 
