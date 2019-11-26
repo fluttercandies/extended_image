@@ -4,13 +4,13 @@ import 'package:example/common/tu_chong_source.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
-import 'package:extended_image_library/extended_image_library.dart';
+//import 'package:extended_image_library/extended_image_library.dart';
 
 @FFRoute(
     name: "fluttercandies://WaterfallFlowDemo",
     routeName: "WaterfallFlow",
     description:
-        "Show how to build loading more WaterfallFlow with ExtendedImage.")
+        "show how to build loading more WaterfallFlow with ExtendedImage.")
 class WaterfallFlowDemo extends StatefulWidget {
   @override
   _WaterfallFlowDemoState createState() => _WaterfallFlowDemoState();
