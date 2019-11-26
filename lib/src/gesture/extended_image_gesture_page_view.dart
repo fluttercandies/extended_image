@@ -160,46 +160,60 @@ class ExtendedImageGesturePageViewState
             gestureDetails: gestureDetails);
       }
     });
-    switch (widget.scrollDirection) {
-      case Axis.vertical:
-        _gestureRecognizers = <Type, GestureRecognizerFactory>{
-          VerticalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<
-              VerticalDragGestureRecognizer>(
-            () => VerticalDragGestureRecognizer(),
-            (VerticalDragGestureRecognizer instance) {
-              instance
-                ..onDown = _handleDragDown
-                ..onStart = _handleDragStart
-                ..onUpdate = _handleDragUpdate
-                ..onEnd = _handleDragEnd
-                ..onCancel = _handleDragCancel
-                ..minFlingDistance = widget.physics?.minFlingDistance
-                ..minFlingVelocity = widget.physics?.minFlingVelocity
-                ..maxFlingVelocity = widget.physics?.maxFlingVelocity;
-            },
-          ),
-        };
-        break;
-      case Axis.horizontal:
-        _gestureRecognizers = <Type, GestureRecognizerFactory>{
-          HorizontalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<
-              HorizontalDragGestureRecognizer>(
-            () => HorizontalDragGestureRecognizer(),
-            (HorizontalDragGestureRecognizer instance) {
-              instance
-                ..onDown = _handleDragDown
-                ..onStart = _handleDragStart
-                ..onUpdate = _handleDragUpdate
-                ..onEnd = _handleDragEnd
-                ..onCancel = _handleDragCancel
-                ..minFlingDistance = widget.physics?.minFlingDistance
-                ..minFlingVelocity = widget.physics?.minFlingVelocity
-                ..maxFlingVelocity = widget.physics?.maxFlingVelocity;
-            },
-          ),
-        };
-        break;
+    _initGestureRecognizers();
+  }
+
+  void _initGestureRecognizers({ExtendedImageGesturePageView oldWidget}) {
+    if (oldWidget == null ||
+        oldWidget.scrollDirection != widget.scrollDirection) {
+      switch (widget.scrollDirection) {
+        case Axis.vertical:
+          _gestureRecognizers = <Type, GestureRecognizerFactory>{
+            VerticalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<
+                VerticalDragGestureRecognizer>(
+              () => VerticalDragGestureRecognizer(),
+              (VerticalDragGestureRecognizer instance) {
+                instance
+                  ..onDown = _handleDragDown
+                  ..onStart = _handleDragStart
+                  ..onUpdate = _handleDragUpdate
+                  ..onEnd = _handleDragEnd
+                  ..onCancel = _handleDragCancel
+                  ..minFlingDistance = widget.physics?.minFlingDistance
+                  ..minFlingVelocity = widget.physics?.minFlingVelocity
+                  ..maxFlingVelocity = widget.physics?.maxFlingVelocity;
+              },
+            ),
+          };
+          break;
+        case Axis.horizontal:
+          _gestureRecognizers = <Type, GestureRecognizerFactory>{
+            HorizontalDragGestureRecognizer:
+                GestureRecognizerFactoryWithHandlers<
+                    HorizontalDragGestureRecognizer>(
+              () => HorizontalDragGestureRecognizer(),
+              (HorizontalDragGestureRecognizer instance) {
+                instance
+                  ..onDown = _handleDragDown
+                  ..onStart = _handleDragStart
+                  ..onUpdate = _handleDragUpdate
+                  ..onEnd = _handleDragEnd
+                  ..onCancel = _handleDragCancel
+                  ..minFlingDistance = widget.physics?.minFlingDistance
+                  ..minFlingVelocity = widget.physics?.minFlingVelocity
+                  ..maxFlingVelocity = widget.physics?.maxFlingVelocity;
+              },
+            ),
+          };
+          break;
+      }
     }
+  }
+
+  @override
+  void didUpdateWidget(ExtendedImageGesturePageView oldWidget) {
+    _initGestureRecognizers(oldWidget: oldWidget);
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
