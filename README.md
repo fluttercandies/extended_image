@@ -35,6 +35,8 @@ A powerful official extension library of image, which support placeholder(loadin
     - [save network](#save-network)
   - [Show Crop Image](#show-crop-image)
   - [Paint](#paint)
+  - [WaterfallFlow](#waterfallflow)
+  - [CollectGarbage/viewportBuilder](#collectgarbageviewportbuilder)
   - [Other APIs](#other-apis)
 
 ## Cache Network
@@ -86,6 +88,9 @@ ExtendedImage.network(
 | timeLimit   | time limit to request image                                                           | -                   |
 | timeRetry   | the time duration to retry to request                                                 | milliseconds: 100   |
 | cancelToken | token to cancel network request                                                       | CancellationToken() |
+
+you can create new provider and extends it with ExtendedProvider, and override instantiateImageCodec method.
+so that you can handle image raw data here (compress image).
 
 ## Load State
 
@@ -239,16 +244,17 @@ ExtendedImage
 
 GestureConfig
 
-| parameter         | description                                                                                                                                                      | default         |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-| minScale          | min scale                                                                                                                                                        | 0.8             |
-| animationMinScale | the min scale for zooming then animation back to minScale when scale end                                                                                         | minScale \_ 0.8 |
-| maxScale          | max scale                                                                                                                                                        | 5.0             |
-| animationMaxScale | the max scale for zooming then animation back to maxScale when scale end                                                                                         | maxScale \_ 1.2 |
-| speed             | speed for zoom/pan                                                                                                                                               | 1.0             |
-| inertialSpeed     | inertial speed for zoom/pan                                                                                                                                      | 100             |
-| cacheGesture      | save Gesture state (for example in ExtendedImageGesturePageView, gesture state will not change when scroll back),remember clearGestureDetailsCache at right time | false           |
-| inPageView        | whether in ExtendedImageGesturePageView                                                                                                                          | false           |
+| parameter         | description                                                                                                                                                      | default                 |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| minScale          | min scale                                                                                                                                                        | 0.8                     |
+| animationMinScale | the min scale for zooming then animation back to minScale when scale end                                                                                         | minScale \_ 0.8         |
+| maxScale          | max scale                                                                                                                                                        | 5.0                     |
+| animationMaxScale | the max scale for zooming then animation back to maxScale when scale end                                                                                         | maxScale \_ 1.2         |
+| speed             | speed for zoom/pan                                                                                                                                               | 1.0                     |
+| inertialSpeed     | inertial speed for zoom/pan                                                                                                                                      | 100                     |
+| cacheGesture      | save Gesture state (for example in ExtendedImageGesturePageView, gesture state will not change when scroll back),remember clearGestureDetailsCache at right time | false                   |
+| inPageView        | whether in ExtendedImageGesturePageView                                                                                                                          | false                   |
+| initialAlignment  | init image rect with alignment when initialScale > 1.0                                                                                                           | InitialAlignment.center |
 
 ```dart
 ExtendedImage.network(
@@ -265,7 +271,9 @@ ExtendedImage.network(
         speed: 1.0,
         inertialSpeed: 100.0,
         initialScale: 1.0,
-        inPageView: false);
+        inPageView: false,
+        initialAlignment: InitialAlignment.center,
+        );
   },
 )
 ```
@@ -798,9 +806,6 @@ ExtendedRawImage(
 )
 ```
 
-[crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/crop_image_demo.dart)
-
-
 ## Paint
 
 provide BeforePaintImage and AfterPaintImage callback, you will have the chance to paint things you want.
@@ -846,8 +851,62 @@ ExtendedImage
   );
 ```
 
-see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/paint_image_demo.dart)
+see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/paint_image_demo.dart)
 and [push to refresh header which is used in crop image demo](https://github.com/fluttercandies/extended_image/tree/master/example/lib/common/push_to_refresh_header.dart)
+
+## WaterfallFlow
+
+build WaterfallFlow with [LoadingMoreList](https://github.com/fluttercandies/loading_more_list) or [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) with ExtendedImage.
+
+```dart
+            LoadingMoreList(
+              ListConfig<TuChongItem>(
+                waterfallFlowDelegate: WaterfallFlowDelegate(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                ),
+                itemBuilder: buildWaterfallFlowItem,
+                sourceList: listSourceRepository,
+                padding: EdgeInsets.all(5.0),
+                lastChildLayoutType: LastChildLayoutType.foot,
+              ),
+            ),
+```
+## CollectGarbage/viewportBuilder
+
+you can collect garbage when item is dispose or viewport indexes is changed.
+
+more details, [LoadingMoreList](https://github.com/fluttercandies/loading_more_list), [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) and  [ExtendedList](https://github.com/fluttercandies/extended_list)
+
+```dart
+            LoadingMoreList(
+              ListConfig<TuChongItem>(
+                waterfallFlowDelegate: WaterfallFlowDelegate(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                ),
+                itemBuilder: buildWaterfallFlowItem,
+                sourceList: listSourceRepository,
+                padding: EdgeInsets.all(5.0),
+                lastChildLayoutType: LastChildLayoutType.foot,
+                collectGarbage: (List<int> garbages) {
+                  ///collectGarbage
+                  garbages.forEach((index) {
+                    final provider = ExtendedNetworkImageProvider(
+                      listSourceRepository[index].imageUrl,
+                    );
+                    provider.evict();
+                  });
+                  //print("collect garbage : $garbages");
+                },
+                viewportBuilder: (int firstIndex, int lastIndex) {
+                  print("viewport : [$firstIndex,$lastIndex]");
+                },
+              ),
+            ),
+```
 
 ## Other APIs
 

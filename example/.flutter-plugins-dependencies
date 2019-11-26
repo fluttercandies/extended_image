@@ -1,0 +1,1 @@
+{"dependencyGraph":[{"name":"image_editor","dependencies":[]},{"name":"image_picker","dependencies":[]},{"name":"image_picker_saver","dependencies":[]},{"name":"path_provider","dependencies":[]},{"name":"url_launcher","dependencies":[]}]}

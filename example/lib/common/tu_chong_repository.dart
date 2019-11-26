@@ -4,6 +4,15 @@ import 'package:example/common/tu_chong_source.dart';
 import 'dart:async';
 import 'dart:convert';
 
+Future<bool> onLikeButtonTap(bool isLiked, TuChongItem item) {
+  ///send your request here
+  return Future<bool>.delayed(const Duration(milliseconds: 50), () {
+    item.isFavorite = !item.isFavorite;
+    item.favorites = item.isFavorite ? item.favorites + 1 : item.favorites - 1;
+    return item.isFavorite;
+  });
+}
+
 class TuChongRepository extends LoadingMoreBase<TuChongItem> {
   int pageindex = 1;
   bool _hasMore = true;
@@ -36,7 +45,7 @@ class TuChongRepository extends LoadingMoreBase<TuChongItem> {
     bool isSuccess = false;
     try {
       //to show loading more clearly, in your app,remove this
-      //await Future.delayed(Duration(milliseconds: 500, seconds: 1));
+      await Future.delayed(Duration(milliseconds: 500));
 
       var result = await HttpClientHelper.get(url);
 
@@ -44,12 +53,9 @@ class TuChongRepository extends LoadingMoreBase<TuChongItem> {
       if (pageindex == 1) {
         this.clear();
       }
-
-      source.feedList.forEach((item) {
-        if (item.hasImage && !this.contains(item) && hasMore) {
-          this.add(item);
-        }
-      });
+      for (var item in source.feedList) {
+        if (item.hasImage && !this.contains(item) && hasMore) this.add(item);
+      }
 
       _hasMore = source.feedList.length != 0;
       pageindex++;
