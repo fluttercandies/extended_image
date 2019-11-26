@@ -865,6 +865,8 @@ ExtendedImage
 
 使用 [LoadingMoreList](https://github.com/fluttercandies/loading_more_list) 或者 [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) 以及ExtendedImage创建瀑布流布局.
 
+![img](https://github.com/fluttercandies/flutter_candies/tree/master/gif/waterfall_flow/known_sized.gif)
+
 ```dart
             LoadingMoreList(
               ListConfig<TuChongItem>(

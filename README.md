@@ -858,6 +858,8 @@ and [push to refresh header which is used in crop image demo](https://github.com
 
 build WaterfallFlow with [LoadingMoreList](https://github.com/fluttercandies/loading_more_list) or [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) with ExtendedImage.
 
+![img](https://github.com/fluttercandies/flutter_candies/tree/master/gif/waterfall_flow/known_sized.gif)
+
 ```dart
             LoadingMoreList(
               ListConfig<TuChongItem>(
