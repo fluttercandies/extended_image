@@ -264,6 +264,7 @@ class GestureDetails {
 
   Rect _innerCalculateFinalDestinationRect(
       Rect layoutRect, Rect destinationRect) {
+    _boundary = Boundary();
     Offset center = _getCenter(destinationRect);
     Rect result = _getDestinationRect(destinationRect, center);
 
