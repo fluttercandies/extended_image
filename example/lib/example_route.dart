@@ -5,14 +5,13 @@
 
 import 'package:flutter/widgets.dart';
 import 'common/pic_swiper.dart';
-import 'pages/crop_image_demo.dart';
 import 'pages/custom_image_demo.dart';
 import 'pages/image_demo.dart';
 import 'pages/image_editor_demo.dart';
-import 'pages/image_list_demo.dart';
 import 'pages/main_page.dart';
 import 'pages/paint_image_demo.dart';
 import 'pages/photo_view_demo.dart';
+import 'pages/waterfall_flow_demo.dart';
 import 'pages/zoom_image_demo.dart';
 
 RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
@@ -26,12 +25,6 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
         showStatusBar: false,
         routeName: "PicSwiper",
         pageRouteType: PageRouteType.transparent,
-      );
-    case "fluttercandies://cropimage":
-      return RouteResult(
-        widget: CropImageDemo(),
-        routeName: "image crop rect",
-        description: "show how to crop rect image",
       );
     case "fluttercandies://customimage":
       return RouteResult(
@@ -50,13 +43,7 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
       return RouteResult(
         widget: ImageEditorDemo(),
         routeName: "image editor",
-        description: "crop/rotate image",
-      );
-    case "fluttercandies://imagelist":
-      return RouteResult(
-        widget: ImageListDemo(),
-        routeName: "image list",
-        description: "show cache image in list",
+        description: "crop,rotate and flip with image editor",
       );
     case "fluttercandies://mainpage":
       return RouteResult(
@@ -75,6 +62,13 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
         widget: PhotoViewDemo(),
         routeName: "photo view",
         description: "show how to zoom/pan image in page view like WeChat",
+      );
+    case "fluttercandies://WaterfallFlowDemo":
+      return RouteResult(
+        widget: WaterfallFlowDemo(),
+        routeName: "WaterfallFlow",
+        description:
+            "show how to build loading more WaterfallFlow with ExtendedImage.",
       );
     case "fluttercandies://zoomimage":
       return RouteResult(
@@ -115,13 +109,12 @@ enum PageRouteType { material, cupertino, transparent }
 
 List<String> routeNames = [
   "fluttercandies://picswiper",
-  "fluttercandies://cropimage",
   "fluttercandies://customimage",
   "fluttercandies://image",
   "fluttercandies://imageeditor",
-  "fluttercandies://imagelist",
   "fluttercandies://mainpage",
   "fluttercandies://paintimage",
   "fluttercandies://photoview",
+  "fluttercandies://WaterfallFlowDemo",
   "fluttercandies://zoomimage"
 ];

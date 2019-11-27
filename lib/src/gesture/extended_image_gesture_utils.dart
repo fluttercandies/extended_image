@@ -104,6 +104,8 @@ class GestureDetails {
   ///from
   Rect rawDestinationRect;
 
+  InitialAlignment initialAlignment;
+
   @override
   int get hashCode => hashValues(
       offset,
@@ -208,21 +210,56 @@ class GestureDetails {
   Rect _getDestinationRect(Rect destinationRect, Offset center) {
     final double width = destinationRect.width * totalScale;
     final double height = destinationRect.height * totalScale;
-
     return Rect.fromLTWH(
         center.dx - width / 2.0, center.dy - height / 2.0, width, height);
   }
 
   Rect calculateFinalDestinationRect(Rect layoutRect, Rect destinationRect) {
     rawDestinationRect = destinationRect;
+
     var temp = offset;
     _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
     offset = temp;
     Rect result =
         _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
+
+    ///first call,initial image rect with alignment
+    if (totalScale > 1.0 &&
+        this.destinationRect == null &&
+        initialAlignment != null) {
+      offset = _getFixedOffset(destinationRect,
+          result.center + _getCenterDif(result, layoutRect, initialAlignment));
+      result = _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
+      initialAlignment = null;
+    }
     this.destinationRect = result;
     this.layoutRect = layoutRect;
     return result;
+  }
+
+  Offset _getCenterDif(Rect result, Rect layout, InitialAlignment alignment) {
+    switch (alignment) {
+      case InitialAlignment.topLeft:
+        return layout.topLeft - result.topLeft;
+      case InitialAlignment.topCenter:
+        return layout.topCenter - result.topCenter;
+      case InitialAlignment.topRight:
+        return layout.topRight - result.topRight;
+      case InitialAlignment.centerLeft:
+        return layout.centerLeft - result.centerLeft;
+      case InitialAlignment.center:
+        return layout.center - result.center;
+      case InitialAlignment.centerRight:
+        return layout.centerRight - result.centerRight;
+      case InitialAlignment.bottomLeft:
+        return layout.bottomLeft - result.bottomLeft;
+      case InitialAlignment.bottomCenter:
+        return layout.bottomCenter - result.bottomCenter;
+      case InitialAlignment.bottomRight:
+        return layout.bottomRight - result.bottomRight;
+      default:
+        return Offset.zero;
+    }
   }
 
   Rect _innerCalculateFinalDestinationRect(
@@ -293,6 +330,37 @@ class GestureDetails {
   }
 }
 
+/// init image rect with alignment when initialScale > 1.0
+/// see https://github.com/fluttercandies/extended_image/issues/66
+enum InitialAlignment {
+  /// The top left corner.
+  topLeft,
+
+  /// The center point along the top edge.
+  topCenter,
+
+  /// The top right corner.
+  topRight,
+
+  /// The center point along the left edge.
+  centerLeft,
+
+  /// The center point, both horizontally and vertically.
+  center,
+
+  /// The center point along the right edge.
+  centerRight,
+
+  /// The bottom left corner.
+  bottomLeft,
+
+  /// The center point along the bottom edge.
+  bottomCenter,
+
+  /// The bottom right corner.
+  bottomRight,
+}
+
 class GestureConfig {
   //the min scale for zooming then animation back to minScale when scale end
   final double animationMinScale;
@@ -318,8 +386,12 @@ class GestureConfig {
   ///final Offset direction = details.velocity.pixelsPerSecond / magnitude * _gestureConfig.inertialSpeed;
   final double inertialSpeed;
 
-  //initial scale of image
+  ///initial scale of image
   final double initialScale;
+
+  /// init image rect with alignment when initialScale > 1.0
+  /// see https://github.com/fluttercandies/extended_image/issues/66
+  final InitialAlignment initialAlignment;
 
   GestureConfig({
     double minScale,
@@ -331,6 +403,7 @@ class GestureConfig {
     bool inPageView,
     double animationMinScale,
     double animationMaxScale,
+    this.initialAlignment = InitialAlignment.center,
   })  : minScale = minScale ??= 0.8,
         maxScale = maxScale ??= 5.0,
         speed = speed ??= 1.0,

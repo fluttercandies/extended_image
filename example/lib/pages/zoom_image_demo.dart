@@ -37,14 +37,16 @@ class ZoomImageDemo extends StatelessWidget {
                         state.extendedImageInfo.image.height.toDouble()));
               }
               return GestureConfig(
-                  minScale: 0.9,
-                  animationMinScale: 0.7,
-                  maxScale: 3.0,
-                  animationMaxScale: 3.5,
-                  speed: 1.0,
-                  inertialSpeed: 100.0,
-                  initialScale: initialScale,
-                  inPageView: false);
+                minScale: 0.9,
+                animationMinScale: 0.7,
+                maxScale: 4.0,
+                animationMaxScale: 4.5,
+                speed: 1.0,
+                inertialSpeed: 100.0,
+                initialScale:  initialScale,
+                inPageView: false,
+                initialAlignment: InitialAlignment.center,
+              );
             },
           );
         }),

@@ -40,6 +40,8 @@
     - [保存网络图片](#%e4%bf%9d%e5%ad%98%e7%bd%91%e7%bb%9c%e5%9b%be%e7%89%87)
   - [显示裁剪图片](#%e6%98%be%e7%a4%ba%e8%a3%81%e5%89%aa%e5%9b%be%e7%89%87)
   - [绘制](#%e7%bb%98%e5%88%b6)
+  - [瀑布流](#%e7%80%91%e5%b8%83%e6%b5%81)
+  - [内存回收/可视区域追踪](#%e5%86%85%e5%ad%98%e5%9b%9e%e6%94%b6%e5%8f%af%e8%a7%86%e5%8c%ba%e5%9f%9f%e8%bf%bd%e8%b8%aa)
   - [其他 APIs](#%e5%85%b6%e4%bb%96-apis)
 
 ## 缓存网络图片
@@ -92,6 +94,8 @@ ExtendedNetworkImageProvider(
 | timeRetry   | 请求重试间隔          | milliseconds: 100   |
 | cancelToken | 用于取消请求的 Token  | CancellationToken() |
 
+当然你也可以继承任何的ExtendedProvider,并且覆写instantiateImageCodec方法，这样你可以统一处理图片的元数据，比如进行压缩图片。
+
 ## 加载状态
 
 Extended Image一共有3种状态，分别是正在加载，完成，失败(loading,completed,failed)，你可以通过实现loadStateChanged回调来定义显示的效果
@@ -142,7 +146,7 @@ ExtendedImageState 状态回调
 | invertColors                 | 是否反转颜色                                                                                       | -    |
 | imageStreamKey               | 图片流的唯一键                                                                                     | -    |
 | reLoadImage()                | 如果图片加载失败，你可以通过调用这个方法来重新加载图片                                             | -    |
-| completedWidget              | 返回图片完成的Widget，它包含手势以及裁剪                                                                                             | -       |
+| completedWidget              | 返回图片完成的Widget，它包含手势以及裁剪                                                           | -    |
 
 ```dart
 abstract class ExtendedImageState {
@@ -241,16 +245,17 @@ ExtendedImage
 
 GestureConfig
 
-| 参数              | 描述                                                                                                 | 默认值         |
-| ----------------- | ---------------------------------------------------------------------------------------------------- | -------------- |
-| minScale          | 缩放最小值                                                                                           | 0.8            |
-| animationMinScale | 缩放动画最小值，当缩放结束时回到minScale值                                                           | minScale * 0.8 |
-| maxScale          | 缩放最大值                                                                                           | 5.0            |
-| animationMaxScale | 缩放动画最大值，当缩放结束时回到maxScale值                                                           | maxScale * 1.2 |
-| speed             | 缩放拖拽速度，与用户操作成正比                                                                       | 1.0            |
-| inertialSpeed     | 拖拽惯性速度，与惯性速度成正比                                                                       | 100            |
-| cacheGesture      | 是否缓存手势状态，可用于ExtendedImageGesturePageView中保留状态，使用clearGestureDetailsCache方法清除 | false          |
-| inPageView        | 是否使用ExtendedImageGesturePageView展示图片                                                         | false          |
+| 参数              | 描述                                                                                                 | 默认值                  |
+| ----------------- | ---------------------------------------------------------------------------------------------------- | ----------------------- |
+| minScale          | 缩放最小值                                                                                           | 0.8                     |
+| animationMinScale | 缩放动画最小值，当缩放结束时回到minScale值                                                           | minScale * 0.8          |
+| maxScale          | 缩放最大值                                                                                           | 5.0                     |
+| animationMaxScale | 缩放动画最大值，当缩放结束时回到maxScale值                                                           | maxScale * 1.2          |
+| speed             | 缩放拖拽速度，与用户操作成正比                                                                       | 1.0                     |
+| inertialSpeed     | 拖拽惯性速度，与惯性速度成正比                                                                       | 100                     |
+| cacheGesture      | 是否缓存手势状态，可用于ExtendedImageGesturePageView中保留状态，使用clearGestureDetailsCache方法清除 | false                   |
+| inPageView        | 是否使用ExtendedImageGesturePageView展示图片                                                         | false                   |
+| initialAlignment  | 当图片的初始化缩放大于1.0的时候，根据相对位置初始化图片                                              | InitialAlignment.center |
 
 ```dart
 ExtendedImage.network(
@@ -267,7 +272,9 @@ ExtendedImage.network(
         speed: 1.0,
         inertialSpeed: 100.0,
         initialScale: 1.0,
-        inPageView: false);
+        inPageView: false,
+        initialAlignment: InitialAlignment.center,
+        );
   },
 )
 ```
@@ -804,7 +811,6 @@ ExtendedRawImage(
 )
 ```
 
-[crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/crop_image_demo.dart)
 
 ## 绘制
 
@@ -852,8 +858,65 @@ ExtendedImage
 ```
 
 在例子中可以看到把图片Clip成了一个桃心，你也可以根据你的要求，做出不同的Clip
-[绘制例子](https://github.com/fluttercandies/extended_image/blob/master/example/lib/paint_image_demo.dart)
+[绘制例子](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/paint_image_demo.dart)
 [下拉刷新头当中，也使用了这个技巧](https://github.com/fluttercandies/extended_image/tree/master/example/lib/common/push_to_refresh_header.dart)
+
+## 瀑布流
+
+使用 [LoadingMoreList](https://github.com/fluttercandies/loading_more_list) 或者 [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) 以及ExtendedImage创建瀑布流布局.
+
+![img](https://github.com/fluttercandies/flutter_candies/tree/master/gif/waterfall_flow/known_sized.gif)
+
+```dart
+            LoadingMoreList(
+              ListConfig<TuChongItem>(
+                waterfallFlowDelegate: WaterfallFlowDelegate(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                ),
+                itemBuilder: buildWaterfallFlowItem,
+                sourceList: listSourceRepository,
+                padding: EdgeInsets.all(5.0),
+                lastChildLayoutType: LastChildLayoutType.foot,
+              ),
+            ),
+```
+## 内存回收/可视区域追踪
+
+当列表元素回收的时候你可以回收掉图片的内存缓存以减少内存压力。你也可以监听到viewport中indexes的变化。
+
+
+更多详情请查看[LoadingMoreList](https://github.com/fluttercandies/loading_more_list), [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) 和 [ExtendedList](https://github.com/fluttercandies/extended_list)
+
+```dart
+            LoadingMoreList(
+              ListConfig<TuChongItem>(
+                waterfallFlowDelegate: WaterfallFlowDelegate(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                ),
+                itemBuilder: buildWaterfallFlowItem,
+                sourceList: listSourceRepository,
+                padding: EdgeInsets.all(5.0),
+                lastChildLayoutType: LastChildLayoutType.foot,
+                collectGarbage: (List<int> garbages) {
+                  ///collectGarbage
+                  garbages.forEach((index) {
+                    final provider = ExtendedNetworkImageProvider(
+                      listSourceRepository[index].imageUrl,
+                    );
+                    provider.evict();
+                  });
+                  //print("collect garbage : $garbages");
+                },
+                viewportBuilder: (int firstIndex, int lastIndex) {
+                  print("viewport : [$firstIndex,$lastIndex]");
+                },
+              ),
+            ),
+```
 
 ## 其他 APIs
 

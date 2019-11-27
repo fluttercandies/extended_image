@@ -38,18 +38,20 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   void _initGestureConfig() {
     _gestureAnimation?.stop();
     _gestureAnimation?.dispose();
-    double initialScale = _gestureConfig?.initialScale;
+    final double initialScale = _gestureConfig?.initialScale;
+    final InitialAlignment initialAlignment = _gestureConfig?.initialAlignment;
     _gestureConfig = widget
             .extendedImageState.imageWidget.initGestureConfigHandler
             ?.call(widget.extendedImageState) ??
         GestureConfig();
 
     if (_gestureDetails == null ||
-        initialScale != _gestureConfig.initialScale) {
+        initialScale != _gestureConfig.initialScale ||
+        initialAlignment != _gestureConfig.initialAlignment) {
       _gestureDetails = GestureDetails(
         totalScale: _gestureConfig.initialScale,
         offset: Offset.zero,
-      );
+      )..initialAlignment = _gestureConfig.initialAlignment;
     }
 
     if (_gestureConfig.cacheGesture) {
@@ -352,7 +354,6 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       child: image,
       onPointerDown: _handlePointerDown,
     );
-
 
     return image;
   }

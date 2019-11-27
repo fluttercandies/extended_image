@@ -1,9 +1,18 @@
+## [0.6.6]
+
+* Features:
+  Support init image with alignment when initialScale >1.0.
+* Issues:
+  Fix issue that scrollDirection didn't work when set it dynamically(ExtendedImageGesturePageView ).
+* Improve:
+  Add WaterfallFlow demo.
+
 ## [0.6.5]
 
 * Features:
   Add completedWidget for ExtendedImageState, it is include gesture or editor, so that you would't miss them
 * Improve:
-  improve documents about Load State 
+  Improve documents about Load State 
 
 ## [0.6.4]
 
