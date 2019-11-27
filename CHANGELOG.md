@@ -1,3 +1,8 @@
+## [0.6.7]
+
+* Issues:
+  Fix issue that ExtendedImageGesturePageView didn't work well when set initial alignment.
+
 ## [0.6.6]
 
 * Features:

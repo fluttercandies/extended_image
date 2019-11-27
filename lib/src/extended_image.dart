@@ -831,17 +831,8 @@ class _ExtendedImageState extends State<ExtendedImage>
         switch (_loadState) {
           case LoadState.loading:
             current = Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  _getIndicator(context),
-                  SizedBox(
-                    width: 5.0,
-                  ),
-                  Text("loading...")
-                ],
-              ),
+              alignment: Alignment.center,
+              child: _getIndicator(context),
             );
             break;
           case LoadState.completed:
