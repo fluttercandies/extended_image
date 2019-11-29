@@ -207,6 +207,7 @@ class TuChongItem {
       images
           .add(imagesItem == null ? null : new ImageItem.fromJson(imagesItem));
     }
+    
 
     rewardListPrefix = jsonRes['reward_list_prefix'] == null ? null : [];
 
@@ -319,6 +320,9 @@ class ImageItem {
   String description;
   String excerpt;
   String title;
+  String get imageUrl {
+    return "https://photo.tuchong.com/$userId/f/$imgId.jpg";
+  }
 
   ImageItem.fromParams(
       {this.height,

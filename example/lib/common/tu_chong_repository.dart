@@ -18,7 +18,7 @@ class TuChongRepository extends LoadingMoreBase<TuChongItem> {
   bool _hasMore = true;
   bool forceRefresh = false;
   @override
-  bool get hasMore => (_hasMore && length < 100) || forceRefresh;
+  bool get hasMore => (_hasMore && length < 300) || forceRefresh;
 
   @override
   Future<bool> refresh([bool clearBeforeRequest = false]) async {

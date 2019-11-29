@@ -158,32 +158,7 @@ Widget buildWaterfallFlowItem(BuildContext c, TuChongItem item, int index) {
       SizedBox(
         height: 5.0,
       ),
-      Wrap(
-          runSpacing: 5.0,
-          spacing: 5.0,
-          children: item.tags.map<Widget>((tag) {
-            final color = item.tagColors[item.tags.indexOf(tag)];
-            return Container(
-              padding: EdgeInsets.all(3.0),
-              decoration: BoxDecoration(
-                color: color,
-                border:
-                    Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(5.0),
-                ),
-              ),
-              child: Text(
-                tag,
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    fontSize: fontSize,
-                    color: color.computeLuminance() < 0.5
-                        ? Colors.white
-                        : Colors.black),
-              ),
-            );
-          }).toList()),
+      buildTagsWidget(item),
       SizedBox(
         height: 5.0,
       ),
@@ -192,24 +167,56 @@ Widget buildWaterfallFlowItem(BuildContext c, TuChongItem item, int index) {
   );
 }
 
-Widget buildBottomWidget(TuChongItem item) {
+Widget buildTagsWidget(TuChongItem item) {
+  final fontSize = 12.0;
+  return Wrap(
+      runSpacing: 5.0,
+      spacing: 5.0,
+      children: item.tags.map<Widget>((tag) {
+        final color = item.tagColors[item.tags.indexOf(tag)];
+        return Container(
+          padding: EdgeInsets.all(3.0),
+          decoration: BoxDecoration(
+            color: color,
+            border: Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
+            borderRadius: BorderRadius.all(
+              Radius.circular(5.0),
+            ),
+          ),
+          child: Text(
+            tag,
+            textAlign: TextAlign.start,
+            style: TextStyle(
+                fontSize: fontSize,
+                color: color.computeLuminance() < 0.5
+                    ? Colors.white
+                    : Colors.black),
+          ),
+        );
+      }).toList());
+}
+
+Widget buildBottomWidget(TuChongItem item, {bool showAvatar = true}) {
   final fontSize = 12.0;
   return Row(
     children: <Widget>[
-      ExtendedImage.network(
-        item.avatarUrl,
-        width: 25.0,
-        height: 25.0,
-        shape: BoxShape.circle,
-        //enableLoadState: false,
-        border: Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
-        loadStateChanged: (state) {
-          if (state.extendedImageLoadState == LoadState.completed) {
-            return null;
-          }
-          return Image.asset("assets/avatar.jpg");
-        },
-      ),
+      showAvatar
+          ? ExtendedImage.network(
+              item.avatarUrl,
+              width: 25.0,
+              height: 25.0,
+              shape: BoxShape.circle,
+              //enableLoadState: false,
+              border:
+                  Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
+              loadStateChanged: (state) {
+                if (state.extendedImageLoadState == LoadState.completed) {
+                  return null;
+                }
+                return Image.asset("assets/avatar.jpg");
+              },
+            )
+          : Container(),
       Expanded(
         child: Container(),
       ),
