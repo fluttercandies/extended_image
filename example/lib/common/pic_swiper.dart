@@ -85,7 +85,7 @@ class _PicSwiperState extends State<PicSwiper>
                   heroBuilderForSlidingPage: (Widget result) {
                     if (index == currentIndex) {
                       return Hero(
-                        tag: item + index.toString(),
+                        tag: item,
                         child: result,
                         flightShuttleBuilder: (BuildContext flightContext,
                             Animation<double> animation,
@@ -256,14 +256,13 @@ class MySwiperPlugin extends StatelessWidget {
                 Text(
                   " / ${pics.length}",
                 ),
+                SizedBox(width: 10.0,),
                 Expanded(
                     child: Text(pics[data.data].des ?? "",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 16.0, color: Colors.blue))),
-                Container(
-                  width: 10.0,
-                ),
+               SizedBox(width: 10.0,),
                 GestureDetector(
                   child: Container(
                     padding: EdgeInsets.only(right: 10.0),
