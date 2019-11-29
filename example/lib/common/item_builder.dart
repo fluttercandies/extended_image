@@ -158,6 +158,7 @@ Widget buildWaterfallFlowItem(BuildContext c, TuChongItem item, int index) {
       SizedBox(
         height: 5.0,
       ),
+      buildTagsWidget(item),
       SizedBox(
         height: 5.0,
       ),
