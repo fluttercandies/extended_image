@@ -5,7 +5,6 @@ import 'package:example/pages/no_route.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker_saver/image_picker_saver.dart';
 import "package:oktoast/oktoast.dart";
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -39,12 +38,12 @@ class MyApp extends StatelessWidget {
           //you can track page here
           // print(name);
         }, showStatusBarChange: (bool showStatusBar) {
-          if (showStatusBar) {
-            SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-            SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-          } else {
-            SystemChrome.setEnabledSystemUIOverlays([]);
-          }
+          // if (showStatusBar) {
+          //   SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+          //   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+          // } else {
+          //   SystemChrome.setEnabledSystemUIOverlays([]);
+          // }
         })
       ],
       builder: (c, w) {

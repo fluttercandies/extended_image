@@ -83,7 +83,7 @@ class _PicSwiperState extends State<PicSwiper>
                   enableSlideOutPage: true,
                   mode: ExtendedImageMode.gesture,
                   heroBuilderForSlidingPage: (Widget result) {
-                    if (index == currentIndex) {
+                    if (index < min(9, widget.pics.length)) {
                       return Hero(
                         tag: item,
                         child: result,
@@ -256,13 +256,17 @@ class MySwiperPlugin extends StatelessWidget {
                 Text(
                   " / ${pics.length}",
                 ),
-                SizedBox(width: 10.0,),
+                SizedBox(
+                  width: 10.0,
+                ),
                 Expanded(
                     child: Text(pics[data.data].des ?? "",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(fontSize: 16.0, color: Colors.blue))),
-               SizedBox(width: 10.0,),
+                SizedBox(
+                  width: 10.0,
+                ),
                 GestureDetector(
                   child: Container(
                     padding: EdgeInsets.only(right: 10.0),
