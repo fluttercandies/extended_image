@@ -2,6 +2,7 @@ import 'dart:convert' show json;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:extended_image/extended_image.dart';
 
 class TuChongSource {
   int counts;
@@ -207,7 +208,6 @@ class TuChongItem {
       images
           .add(imagesItem == null ? null : new ImageItem.fromJson(imagesItem));
     }
-    
 
     rewardListPrefix = jsonRes['reward_list_prefix'] == null ? null : [];
 
@@ -346,5 +346,19 @@ class ImageItem {
   @override
   String toString() {
     return '{"height": $height,"img_id": $imgId,"user_id": $userId,"width": $width,"description": ${description != null ? '${json.encode(description)}' : 'null'},"excerpt": ${excerpt != null ? '${json.encode(excerpt)}' : 'null'},"title": ${title != null ? '${json.encode(title)}' : 'null'}}';
+  }
+
+  ImageProvider createNetworkImage() {
+    return ExtendedNetworkImageProvider(imageUrl);
+  }
+
+  ImageProvider createResizeImage() {
+    return ResizeImage(ExtendedNetworkImageProvider(imageUrl),
+        width: width ~/ 5, height: height ~/ 5);
+  }
+
+  void clearCache() {
+    createNetworkImage().evict();
+    createResizeImage().evict();
   }
 }

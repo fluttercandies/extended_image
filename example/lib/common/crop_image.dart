@@ -47,99 +47,104 @@ class CropImage extends StatelessWidget {
       }
     }
 
-    return ExtendedImage.network(imageItem.imageUrl,
+    return ExtendedImage(
+        //if you don't want to resize image to reduce the memory
+        //use ExtendedImage.network(imageItem.imageUrl)
+        image: imageItem.createResizeImage(),
         //fit: BoxFit.fill,
         //height: 200.0,
         width: width,
-        height: height, loadStateChanged: (ExtendedImageState state) {
-      Widget widget;
-      switch (state.extendedImageLoadState) {
-        case LoadState.loading:
-          widget = Container(
-            color: Colors.grey,
-            alignment: Alignment.center,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.0,
-              valueColor:
-                  AlwaysStoppedAnimation(Theme.of(context).primaryColor),
-            ),
-          );
-          break;
-        case LoadState.completed:
-          //if you can't konw image size before build,
-          //you have to handle crop when image is loaded.
-          //so maybe your loading widget size will not the same
-          //as image actual size, set returnLoadStateChangedWidget=true,so that
-          //image will not to be limited by size which you set for ExtendedImage first time.
-          state.returnLoadStateChangedWidget = !knowImageSize;
-
-          ///if you don't want override completed widget
-          ///please return null or state.completedWidget
-          //return null;
-          //return state.completedWidget;
-          widget = Hero(
-              tag: imageItem.imageUrl,
-              child: buildImage(state.extendedImageInfo.image, num300, num400));
-
-          break;
-        case LoadState.failed:
-          widget = GestureDetector(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                Image.asset(
-                  "assets/failed.jpg",
-                  fit: BoxFit.fill,
+        height: height,
+        loadStateChanged: (ExtendedImageState state) {
+          Widget widget;
+          switch (state.extendedImageLoadState) {
+            case LoadState.loading:
+              widget = Container(
+                color: Colors.grey,
+                alignment: Alignment.center,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.0,
+                  valueColor:
+                      AlwaysStoppedAnimation(Theme.of(context).primaryColor),
                 ),
-                Positioned(
-                  bottom: 0.0,
-                  left: 0.0,
-                  right: 0.0,
+              );
+              break;
+            case LoadState.completed:
+              //if you can't konw image size before build,
+              //you have to handle crop when image is loaded.
+              //so maybe your loading widget size will not the same
+              //as image actual size, set returnLoadStateChangedWidget=true,so that
+              //image will not to be limited by size which you set for ExtendedImage first time.
+              state.returnLoadStateChangedWidget = !knowImageSize;
+
+              ///if you don't want override completed widget
+              ///please return null or state.completedWidget
+              //return null;
+              //return state.completedWidget;
+              widget = Hero(
+                  tag: imageItem.imageUrl,
+                  child: buildImage(
+                      state.extendedImageInfo.image, num300, num400));
+
+              break;
+            case LoadState.failed:
+              widget = GestureDetector(
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[
+                    Image.asset(
+                      "assets/failed.jpg",
+                      fit: BoxFit.fill,
+                    ),
+                    Positioned(
+                      bottom: 0.0,
+                      left: 0.0,
+                      right: 0.0,
+                      child: Text(
+                        "load image failed, click to reload",
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  ],
+                ),
+                onTap: () {
+                  state.reLoadImage();
+                },
+              );
+              break;
+          }
+          if (index == 8 && tuChongItem.images.length > 9) {
+            widget = Stack(
+              children: <Widget>[
+                widget,
+                Container(
+                  color: Colors.grey.withOpacity(0.2),
+                  alignment: Alignment.center,
                   child: Text(
-                    "load image failed, click to reload",
-                    textAlign: TextAlign.center,
+                    "+${tuChongItem.images.length - 9}",
+                    style: TextStyle(fontSize: 18.0, color: Colors.white),
                   ),
                 )
               ],
-            ),
+            );
+          }
+
+          widget = GestureDetector(
+            child: widget,
             onTap: () {
-              state.reLoadImage();
+              Navigator.pushNamed(context, "fluttercandies://picswiper",
+                  arguments: {
+                    "index": index,
+                    "pics": tuChongItem.images
+                        .map<PicSwiperItem>(
+                            (f) => PicSwiperItem(f.imageUrl, des: f.title))
+                        .toList(),
+                  });
             },
           );
-          break;
-      }
-      if (index == 8 && tuChongItem.images.length > 9) {
-        widget = Stack(
-          children: <Widget>[
-            widget,
-            Container(
-              color: Colors.grey.withOpacity(0.2),
-              alignment: Alignment.center,
-              child: Text(
-                "+${tuChongItem.images.length - 9}",
-                style: TextStyle(fontSize: 18.0, color: Colors.white),
-              ),
-            )
-          ],
-        );
-      }
 
-      widget = GestureDetector(
-        child: widget,
-        onTap: () {
-          Navigator.pushNamed(context, "fluttercandies://picswiper",
-              arguments: {
-                "index": index,
-                "pics": tuChongItem.images
-                    .map<PicSwiperItem>(
-                        (f) => PicSwiperItem(f.imageUrl, des: f.title))
-                    .toList(),
-              });
-        },
-      );
-
-      return widget;
-    });
+          return widget;
+        });
   }
 
   Widget buildImage(ui.Image image, double num300, double num400) {
