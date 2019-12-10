@@ -1,3 +1,8 @@
+## [0.6.8]
+
+* Issues:
+  Fix breaking change for flutter 1.10.15 about miss load parameter.
+
 ## [0.6.7]
 
 * Issues:

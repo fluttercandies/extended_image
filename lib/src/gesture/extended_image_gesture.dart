@@ -93,8 +93,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   void didChangeDependencies() {
     _pageViewState = null;
     if (_gestureConfig.inPageView) {
-      _pageViewState = context.ancestorStateOfType(
-          TypeMatcher<ExtendedImageGesturePageViewState>());
+      _pageViewState =
+          context.findAncestorStateOfType<ExtendedImageGesturePageViewState>();
     }
     super.didChangeDependencies();
   }
@@ -104,8 +104,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     _initGestureConfig();
     _pageViewState = null;
     if (_gestureConfig.inPageView) {
-      _pageViewState = context.ancestorStateOfType(
-          TypeMatcher<ExtendedImageGesturePageViewState>());
+      _pageViewState =
+          context.findAncestorStateOfType<ExtendedImageGesturePageViewState>();
     }
     super.didUpdateWidget(oldWidget);
   }
