@@ -36,13 +36,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
-# use following code if your flutter sdk is more than 1.10    
-dependency_overrides:
-  extended_image_library:
-    git:
-        url: https://github.com/fluttercandies/extended_image_library.git
-        ref: dev
-        
+ 
 dev_dependencies:
   flutter_test:
     sdk: flutter
