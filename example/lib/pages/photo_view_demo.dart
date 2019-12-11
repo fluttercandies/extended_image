@@ -92,10 +92,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                           final item = listSourceRepository[index];
                           if (item.hasImage) {
                             item.images.forEach((image) {
-                              final provider = ExtendedNetworkImageProvider(
-                                image.imageUrl,
-                              );
-                              provider.evict();
+                              image.clearCache();
                             });
                           }
                         });

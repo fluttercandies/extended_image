@@ -655,8 +655,8 @@ class _ExtendedImageState extends State<ExtendedImage>
 
     _slidePageState = null;
     if (widget.enableSlideOutPage) {
-      _slidePageState = context
-          .ancestorStateOfType(TypeMatcher<ExtendedImageSlidePageState>());
+      _slidePageState =
+          context.findAncestorStateOfType<ExtendedImageSlidePageState>();
     }
 
     if (TickerMode.of(context))
@@ -678,7 +678,7 @@ class _ExtendedImageState extends State<ExtendedImage>
       _slidePageState = null;
       if (widget.enableSlideOutPage) {
         _slidePageState = context
-            .ancestorStateOfType(TypeMatcher<ExtendedImageSlidePageState>());
+            .findAncestorStateOfType<ExtendedImageSlidePageState>();
       }
     }
   }
