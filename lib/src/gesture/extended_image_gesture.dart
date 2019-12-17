@@ -244,6 +244,9 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
       _gestureAnimation.animationScale(
           _gestureDetails.totalScale, _gestureConfig.maxScale, velocity);
+      if (widget.extendedImageState.imageWidget.onGestureZoom != null) {
+        widget.extendedImageState.imageWidget.onGestureZoom(_gestureConfig.maxScale);
+      }
       return;
     }
 
@@ -255,10 +258,17 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
       _gestureAnimation.animationScale(
           _gestureDetails.totalScale, _gestureConfig.minScale, velocity);
+      if (widget.extendedImageState.imageWidget.onGestureZoom != null) {
+        widget.extendedImageState.imageWidget.onGestureZoom(_gestureConfig.minScale);
+      }
       return;
     }
 
-    if (_gestureDetails.actionType == ActionType.pan) {
+    if (_gestureDetails.actionType == ActionType.zoom) {
+      if (widget.extendedImageState.imageWidget.onGestureZoom != null) {
+        widget.extendedImageState.imageWidget.onGestureZoom(gestureDetails.totalScale);
+      }
+    } else if (_gestureDetails.actionType == ActionType.pan) {
       // get magnitude from gesture velocity
       final double magnitude = details.velocity.pixelsPerSecond.distance;
 

@@ -27,6 +27,9 @@ typedef GestureOffsetAnimationCallBack = void Function(Offset offset);
 /// animation call back for scale
 typedef GestureScaleAnimationCallBack = void Function(double scale);
 
+/// animation call back for zoom
+typedef GestureZoomCallBack = void Function(double scale);
+
 /// double tap call back
 typedef DoubleTap = void Function(ExtendedImageGestureState state);
 
