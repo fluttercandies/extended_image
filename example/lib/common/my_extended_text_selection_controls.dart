@@ -14,7 +14,7 @@ const double _kToolbarHeight = 44.0;
 ///
 
 class MyExtendedMaterialTextSelectionControls
-    extends MaterialExtendedTextSelectionControls {
+    extends ExtendedMaterialTextSelectionControls {
   MyExtendedMaterialTextSelectionControls();
   @override
   Widget buildToolbar(
@@ -51,7 +51,7 @@ class MyExtendedMaterialTextSelectionControls
     return ConstrainedBox(
       constraints: BoxConstraints.tight(globalEditableRegion.size),
       child: CustomSingleChildLayout(
-        delegate: MaterialExtendedTextSelectionToolbarLayout(
+        delegate: ExtendedMaterialTextSelectionToolbarLayout(
           MediaQuery.of(context).size,
           globalEditableRegion,
           preciseMidpoint,
