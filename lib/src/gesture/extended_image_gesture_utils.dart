@@ -300,11 +300,11 @@ class GestureDetails {
       }
     }
 
-    _computeHorizontalBoundary =
-        result.left <= layoutRect.left && result.right >= layoutRect.right;
+    _computeHorizontalBoundary = result.left.ceil() <= layoutRect.left.ceil() &&
+        result.right.ceil() >= layoutRect.right.ceil();
 
-    _computeVerticalBoundary =
-        result.top <= layoutRect.top && result.bottom >= layoutRect.bottom;
+    _computeVerticalBoundary = result.top.ceil() <= layoutRect.top.ceil() &&
+        result.bottom.ceil() >= layoutRect.bottom.ceil();
 
     ///fix offset
     ///fix offset when it's not slide page
