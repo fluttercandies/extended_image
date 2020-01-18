@@ -29,7 +29,7 @@ class ExtendedRenderImage extends RenderBox {
     TextDirection textDirection,
     bool invertColors = false,
     FilterQuality filterQuality = FilterQuality.low,
-    Rect soucreRect,
+    Rect sourceRect,
     AfterPaintImage afterPaintImage,
     BeforePaintImage beforePaintImage,
     GestureDetails gestureDetails,
@@ -53,7 +53,7 @@ class ExtendedRenderImage extends RenderBox {
         _invertColors = invertColors,
         _textDirection = textDirection,
         _filterQuality = filterQuality,
-        _soucreRect = soucreRect,
+        _sourceRect = sourceRect,
         _beforePaintImage = beforePaintImage,
         _afterPaintImage = afterPaintImage,
         _gestureDetails = gestureDetails,
@@ -96,11 +96,11 @@ class ExtendedRenderImage extends RenderBox {
   }
 
   ///input rect, you can use this to crop image.
-  Rect _soucreRect;
-  Rect get soucreRect => _soucreRect;
-  set soucreRect(Rect value) {
-    if (value == _soucreRect) return;
-    _soucreRect = value;
+  Rect _sourceRect;
+  Rect get sourceRect => _sourceRect;
+  set sourceRect(Rect value) {
+    if (value == _sourceRect) return;
+    _sourceRect = value;
     markNeedsPaint();
   }
 
@@ -395,7 +395,7 @@ class ExtendedRenderImage extends RenderBox {
         flipHorizontally: _flipHorizontally,
         invertColors: invertColors,
         filterQuality: _filterQuality,
-        customSoucreRect: _soucreRect,
+        customsourceRect: _sourceRect,
         beforePaintImage: beforePaintImage,
         afterPaintImage: afterPaintImage,
         gestureDetails: gestureDetails,
@@ -443,7 +443,7 @@ void paintExtendedImage({
   bool flipHorizontally = false,
   bool invertColors = false,
   FilterQuality filterQuality = FilterQuality.low,
-  Rect customSoucreRect,
+  Rect customsourceRect,
   //you can paint anything if you want before paint image.
   BeforePaintImage beforePaintImage,
   //you can paint anything if you want after paint image.
@@ -608,7 +608,7 @@ void paintExtendedImage({
   }
 
   if (centerSlice == null) {
-    final Rect sourceRect = customSoucreRect ??
+    final Rect sourceRect = customsourceRect ??
         alignment.inscribe(sourceSize, Offset.zero & inputSize);
     for (Rect tileRect
         in _generateImageTileRects(rect, destinationRect, repeat)) {

@@ -22,10 +22,10 @@ class ExtendedImageSlidePage extends StatefulWidget {
   ///builder background when slide page
   final SlidePageBackgroundHandler slidePageBackgroundHandler;
 
-  ///builder of page background when slide page
+  ///customize scale of page when slide page
   final SlideScaleHandler slideScaleHandler;
 
-  ///change offset when slide page
+  ///customize offset when slide page
   final SlideOffsetHanlder slideOffsetHandler;
 
   ///call back of slide end

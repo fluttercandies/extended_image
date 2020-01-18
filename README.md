@@ -106,7 +106,7 @@ Notice:
 
 * if you don't want to override any state, please return null in this case
   
-* if you want to override size or soucreRect, you can override it with ExtendedRawImage at completed state
+* if you want to override size or sourceRect, you can override it with ExtendedRawImage at completed state
   
 * if you want to add something (like animation) at completed state, you can override it with ExtendedImageState.completedWidget
 
@@ -642,12 +642,13 @@ ExtendedImageGesturePage
 | -------------------------- | -------------------------------------------------------------------------------- | --------------------------------- |
 | child                      | The [child] contained by the ExtendedImageGesturePage.                           | -                                 |
 | slidePageBackgroundHandler | build background when slide page                                                 | defaultSlidePageBackgroundHandler |
-| slideScaleHandler          | custom scale of page when slide page                                             | defaultSlideScaleHandler          |
+| slideScaleHandler          | customize scale of page when slide page                                             | defaultSlideScaleHandler          |
 | slideEndHandler            | call back of slide end,decide whether pop page                                   | defaultSlideEndHandler            |
 | slideAxis                  | axis of slide(both,horizontal,vertical)                                          | SlideAxis.both                    |
 | resetPageDuration          | reset page position when slide end(not pop page)                                 | milliseconds: 500                 |
 | slideType                  | slide whole page or only image                                                   | SlideType.onlyImage               |
 | onSlidingPage              | call back when it's sliding page, change other widgets state on page as you want | -                                 |
+| slideOffsetHandler         | customize offset when slide page                                                    | -                                 |
 
 ```dart
 Color defaultSlidePageBackgroundHandler(
@@ -801,7 +802,7 @@ ExtendedRawImage(
   width: num400,
   height: num300,
   fit: BoxFit.fill,
-  soucreRect: Rect.fromLTWH(
+  sourceRect: Rect.fromLTWH(
       (image.width - width) / 2.0, 0.0, width, image.height.toDouble()),
 )
 ```
