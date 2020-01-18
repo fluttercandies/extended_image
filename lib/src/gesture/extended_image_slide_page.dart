@@ -25,6 +25,9 @@ class ExtendedImageSlidePage extends StatefulWidget {
   ///builder of page background when slide page
   final SlideScaleHandler slideScaleHandler;
 
+  ///change offset when slide page
+  final SlideOffsetHanlder slideOffsetHandler;
+
   ///call back of slide end
   ///decide whether pop page
   final SlideEndHandler slideEndHandler;
@@ -46,6 +49,7 @@ class ExtendedImageSlidePage extends StatefulWidget {
     this.child,
     this.slidePageBackgroundHandler,
     this.slideScaleHandler,
+    this.slideOffsetHandler,
     this.slideEndHandler,
     this.slideAxis: SlideAxis.both,
     this.resetPageDuration: const Duration(milliseconds: 500),
@@ -133,6 +137,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     } else if (widget.slideAxis == SlideAxis.vertical) {
       _offset = Offset(0.0, value.dy);
     }
+    _offset = widget.slideOffsetHandler?.call(_offset) ?? _offset;
 
     _scale = widget.slideScaleHandler?.call(_offset) ??
         defaultSlideScaleHandler(

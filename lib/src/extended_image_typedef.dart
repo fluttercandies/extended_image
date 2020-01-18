@@ -34,6 +34,9 @@ typedef DoubleTap = void Function(ExtendedImageGestureState state);
 typedef SlidePageBackgroundHandler = Color Function(
     Offset offset, Size pageSize);
 
+/// custom offset of page when slide page
+typedef SlideOffsetHanlder = Offset Function(Offset offset);
+
 ///if return true ,pop page
 ///else reset page state
 typedef SlideEndHandler = bool Function(Offset offset);
