@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:example/common/common_widget.dart';
 import 'package:example/common/crop_editor_helper.dart';
+import 'package:example/common/image_picker/image_picker.dart';
 import 'package:example/common/utils.dart';
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'package:image_picker_saver/image_picker_saver.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:image_picker/image_picker.dart' as picker;
 import 'package:url_launcher/url_launcher.dart';
 
 ///
@@ -67,7 +66,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
       ),
       body: Center(
         child: _fileImage != null
-            ? ExtendedImage.file(
+            ? ExtendedImage.memory(
                 _fileImage,
                 fit: BoxFit.contain,
                 mode: ExtendedImageMode.editor,
@@ -350,14 +349,11 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     _cropping = false;
   }
 
-  File _fileImage;
+  Uint8List _fileImage;
   void _getImage() async {
-    var image =
-        await picker.ImagePicker.pickImage(source: picker.ImageSource.gallery);
-
+    _fileImage = await pickImage();
     setState(() {
       editorKey.currentState.reset();
-      _fileImage = image;
     });
   }
 
