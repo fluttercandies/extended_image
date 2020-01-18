@@ -32,7 +32,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
     this.matchTextDirection = false,
     this.invertColors = false,
     this.filterQuality = FilterQuality.low,
-    this.soucreRect,
+    this.sourceRect,
     this.beforePaintImage,
     this.afterPaintImage,
     this.gestureDetails,
@@ -169,7 +169,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
 
   ///input Rect, you can use this to crop image.
   ///it work when centerSlice==null
-  final Rect soucreRect;
+  final Rect sourceRect;
 
   @override
   ExtendedRenderImage createRenderObject(BuildContext context) {
@@ -192,7 +192,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
             : null,
         invertColors: invertColors,
         filterQuality: filterQuality,
-        soucreRect: soucreRect,
+        sourceRect: sourceRect,
         beforePaintImage: beforePaintImage,
         afterPaintImage: afterPaintImage,
         gestureDetails: gestureDetails,
@@ -221,7 +221,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
       ..filterQuality = filterQuality
       ..afterPaintImage = afterPaintImage
       ..beforePaintImage = beforePaintImage
-      ..soucreRect = soucreRect
+      ..sourceRect = sourceRect
       ..gestureDetails = gestureDetails
       ..editActionDetails = editActionDetails;
   }

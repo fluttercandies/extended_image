@@ -1,3 +1,8 @@
+## [0.6.9]
+
+* Features:
+  Support customize offset when slide page.
+
 ## [0.6.8]
 
 * Issues:

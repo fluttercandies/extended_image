@@ -109,7 +109,7 @@ loadStateChanged 不仅仅只在网络图片中可以使用, 如果你的图片�
 
 * 如果你不想重写某个状态，那么请返回null
   
-* 如果你想重写完成图片的 size 或者 soucreRect, 你可以通过使用 ExtendedRawImage 来完成
+* 如果你想重写完成图片的 size 或者 sourceRect, 你可以通过使用 ExtendedRawImage 来完成
   
 * 如果你想增加一些新效果 (比如动画), 你可以重写并且使用ExtendedImageState.completedWidget
 
@@ -654,7 +654,7 @@ ExtendedImageGesturePage的参数
 | resetPageDuration          | 滑动结束，如果不pop页面，整个页面回弹动画的时间                       | milliseconds: 500                 |
 | slideType                  | 滑动整个页面还是只是图片(wholePage/onlyImage)                         | SlideType.onlyImage               |
 | onSlidingPage              | 滑动页面的回调，你可以在这里改变页面上其他元素的状态                  | -                                 |
-
+| slideOffsetHandler         | 在滑动页面的时候自定义Offset                                          | -                                 |
 
 下面是默认实现，你也可以根据你的喜好，来定义属于自己方式
 ```dart
@@ -797,7 +797,7 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/crop.gif)
 
 你可以通过
-[ExtendedRawImage](https://github.com/fluttercandies/extended_image/blob/master/lib/src/image/extended_raw_image.dart)(可以在状态回调的时候使用),soucreRect 是你想要显示图片的哪一部分，这个在各个app里面应该是比较常见的操作
+[ExtendedRawImage](https://github.com/fluttercandies/extended_image/blob/master/lib/src/image/extended_raw_image.dart)(可以在状态回调的时候使用),sourceRect 是你想要显示图片的哪一部分，这个在各个app里面应该是比较常见的操作
 
 
 ```dart
@@ -806,7 +806,7 @@ ExtendedRawImage(
   width: num400,
   height: num300,
   fit: BoxFit.fill,
-  soucreRect: Rect.fromLTWH(
+  sourceRect: Rect.fromLTWH(
       (image.width - width) / 2.0, 0.0, width, image.height.toDouble()),
 )
 ```
