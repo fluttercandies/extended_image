@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'extended_image_editor_utils.dart';
+import '../extended_image_utils.dart';
 
 ///
 ///  create by zhoumaotuo on 2019/8/22

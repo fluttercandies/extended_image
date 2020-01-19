@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'extended_image_gesture_utils.dart';
 import 'extended_image_slide_page.dart';
-import '../editor/extended_image_editor_utils.dart';
+import '../extended_image_utils.dart';
 
 ///
 ///  create by zmtzawqlp on 2019/6/14

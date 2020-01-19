@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-import '../editor/extended_image_editor_utils.dart';
+import '../extended_image_utils.dart';
 
 ///
 ///  create by zmtzawqlp on 2019/6/3

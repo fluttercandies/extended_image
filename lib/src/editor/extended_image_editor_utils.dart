@@ -3,6 +3,8 @@ import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../extended_image_utils.dart';
+
 class EditActionDetails {
   double _rotateRadian = 0.0;
   bool _flipX = false;
@@ -485,27 +487,6 @@ Rect rotateRect(Rect rect, Offset center, double angle) {
   var leftTop = rotateOffset(rect.topLeft, center, angle);
   var bottomRight = rotateOffset(rect.bottomRight, center, angle);
   return Rect.fromPoints(leftTop, bottomRight);
-}
-
-bool doubleEqual(double left, double right) {
-  return doubleCompare(left, right) == 0;
-}
-
-/// Compare two double-precision values.
-/// Returns an integer that indicates whether [value] is less than, equal to, or greater than [other].
-///
-/// [value] less than [other] will return `-1`
-/// [value] equal to [other] will return `0`
-/// [value] greater than [other] will return `1`
-///
-/// If [value] or [other] is not finite (`NaN` or infinity), throws an [UnsupportedError].
-int doubleCompare(double value, double other,
-    {double precision = precisionErrorTolerance}) {
-  if (value.isNaN || other.isNaN)
-    throw UnsupportedError('Compared with Infinity or NaN');
-  double n = value - other;
-  if (n.abs() < precision) return 0;
-  return n < 0 ? -1 : 1;
 }
 
 enum InitCropRectType {
