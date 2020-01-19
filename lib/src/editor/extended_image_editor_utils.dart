@@ -285,13 +285,13 @@ class EditActionDetails {
   Rect computeBoundary(Rect result, Rect layoutRect) {
     if (_computeHorizontalBoundary) {
       //move right
-      if (result.left >= layoutRect.left) {
+      if (doubleCompare(result.left, layoutRect.left) >= 0) {
         result = Rect.fromLTWH(
             layoutRect.left, result.top, result.width, result.height);
       }
 
       ///move left
-      if (result.right <= layoutRect.right) {
+      if (doubleCompare(result.right, layoutRect.right) <= 0) {
         result = Rect.fromLTWH(layoutRect.right - result.width, result.top,
             result.width, result.height);
       }
@@ -299,23 +299,24 @@ class EditActionDetails {
 
     if (_computeVerticalBoundary) {
       //move down
-      if (result.bottom <= layoutRect.bottom) {
+      if (doubleCompare(result.bottom, layoutRect.bottom) <= 0) {
         result = Rect.fromLTWH(result.left, layoutRect.bottom - result.height,
             result.width, result.height);
       }
 
       //move up
-      if (result.top >= layoutRect.top) {
+      if (doubleCompare(result.top, layoutRect.top) >= 0) {
         result = Rect.fromLTWH(
             result.left, layoutRect.top, result.width, result.height);
       }
     }
 
     _computeHorizontalBoundary =
-        result.left <= layoutRect.left && result.right >= layoutRect.right;
+        doubleCompare(result.left, layoutRect.left) <= 0 &&
+            doubleCompare(result.right, layoutRect.right) >= 0;
 
-    _computeVerticalBoundary =
-        result.top <= layoutRect.top && result.bottom >= layoutRect.bottom;
+    _computeVerticalBoundary = doubleCompare(result.top, layoutRect.top) <= 0 &&
+        doubleCompare(result.bottom, layoutRect.bottom) >= 0;
     return result;
   }
 }
@@ -487,7 +488,24 @@ Rect rotateRect(Rect rect, Offset center, double angle) {
 }
 
 bool doubleEqual(double left, double right) {
-  return (left - right).abs() <= precisionErrorTolerance;
+  return doubleCompare(left, right) == 0;
+}
+
+/// Compare two double-precision values.
+/// Returns an integer that indicates whether [value] is less than, equal to, or greater than [other].
+///
+/// [value] less than [other] will return `-1`
+/// [value] equal to [other] will return `0`
+/// [value] greater than [other] will return `1`
+///
+/// If [value] or [other] is not finite (`NaN` or infinity), throws an [UnsupportedError].
+int doubleCompare(double value, double other,
+    {double precision = precisionErrorTolerance}) {
+  if (value.isNaN || other.isNaN)
+    throw UnsupportedError('Compared with Infinity or NaN');
+  double n = value - other;
+  if (n.abs() < precision) return 0;
+  return n < 0 ? -1 : 1;
 }
 
 enum InitCropRectType {

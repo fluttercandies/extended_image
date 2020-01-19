@@ -322,10 +322,10 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
         gWidth, moveType, result, layerDestinationRect, delta);
 
     ///move and scale image rect when crop rect is bigger than layout rect
-    if (result.left < layoutRect.left ||
-        result.right > layoutRect.right ||
-        result.top < layoutRect.top ||
-        result.bottom > layoutRect.bottom) {
+    if (doubleCompare(result.left, layoutRect.left) < 0 ||
+        doubleCompare(result.right, layoutRect.right) > 0 ||
+        doubleCompare(result.top, layoutRect.top) < 0 ||
+        doubleCompare(result.bottom, layoutRect.bottom) > 0) {
       cropRect = result;
       var centerCropRect = getDestinationRect(
           rect: layoutRect, inputSize: result.size, fit: widget.fit);
@@ -373,7 +373,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
           var dy = delta.dy.abs();
           var width = result.width;
           var height = result.height;
-          if (dx >= dy) {
+          if (doubleCompare(dx, dy) >= 0) {
             height = max(minD,
                 min(result.width / aspectRatio, layerDestinationRect.height));
             width = height * aspectRatio;
@@ -448,9 +448,9 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     var scale = newScreenCropRect.width / oldScreenCropRect.width;
 
     var totalScale = widget.editActionDetails.totalScale * scale;
-    if (totalScale > widget.editorConfig.maxScale) {
-      if (rect.width > cropRect.width || rect.height > cropRect.height)
-        return rect;
+    if (doubleCompare(totalScale, widget.editorConfig.maxScale) > 0) {
+      if (doubleCompare(rect.width, cropRect.width) > 0 ||
+          doubleCompare(rect.height, cropRect.height) > 0) return rect;
       return null;
     }
 
