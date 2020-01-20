@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'extended_image_gesture_utils.dart';
 import 'extended_image_slide_page.dart';
+import '../extended_image_utils.dart';
 
 ///
 ///  create by zmtzawqlp on 2019/6/14
@@ -57,7 +58,7 @@ class ExtendedImageSlidePageHandlerState
 
       var delta = (details.focalPoint - _startingOffset).distance;
 
-      if (delta > minGesturePageDelta) {
+      if (doubleCompare(delta, minGesturePageDelta) > 0) {
         _updatePageGestureStartingOffset ??= details.focalPoint;
         widget.extendedImageSlidePageState.slide(
             details.focalPoint - _updatePageGestureStartingOffset,

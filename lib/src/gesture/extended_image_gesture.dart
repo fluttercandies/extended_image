@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'extended_image_slide_page.dart';
+import '../editor/extended_image_editor_utils.dart';
 
 /// scale idea from https://github.com/flutter/flutter/blob/master/examples/layers/widgets/gestures.dart
 /// zoom image
@@ -138,7 +139,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       bool updateGesture = false;
       if (!widget.extendedImageSlidePageState.isSliding) {
         if (offsetDelta.dx != 0 &&
-            offsetDelta.dx.abs() > offsetDelta.dy.abs()) {
+            doubleCompare(offsetDelta.dx.abs(), offsetDelta.dy.abs()) > 0) {
           if (_gestureDetails.computeHorizontalBoundary) {
             if (offsetDelta.dx > 0) {
               updateGesture = _gestureDetails.boundary.left;
@@ -150,7 +151,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
           }
         }
         if (offsetDelta.dy != 0 &&
-            offsetDelta.dy.abs() > offsetDelta.dx.abs()) {
+            doubleCompare(offsetDelta.dy.abs(), offsetDelta.dx.abs()) > 0) {
           if (_gestureDetails.computeVerticalBoundary) {
             if (offsetDelta.dy < 0) {
               updateGesture = _gestureDetails.boundary.bottom;
@@ -180,7 +181,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 //        } else {}
 //      }
 
-      if (delta > minGesturePageDelta && updateGesture) {
+      if (doubleCompare(delta, minGesturePageDelta) > 0 && updateGesture) {
         _updateSlidePageStartingOffset ??= details.focalPoint;
         _updateSlidePageImageStartingOffset ??= _gestureDetails.offset;
         widget.extendedImageSlidePageState.slide(
@@ -203,10 +204,12 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     //scale = roundAfter(scale, 3);
     //no more zoom
     if (details.scale != 1.0 &&
-        ((_gestureDetails.totalScale == _gestureConfig.animationMinScale &&
-                scale <= _gestureDetails.totalScale) ||
-            (_gestureDetails.totalScale == _gestureConfig.animationMaxScale &&
-                scale >= _gestureDetails.totalScale))) {
+        ((doubleEqual(_gestureDetails.totalScale,
+                    _gestureConfig.animationMinScale) &&
+                doubleCompare(scale, _gestureDetails.totalScale) <= 0) ||
+            (doubleEqual(_gestureDetails.totalScale,
+                    _gestureConfig.animationMaxScale) &&
+                doubleCompare(scale, _gestureDetails.totalScale) >= 0))) {
       return;
     }
 
@@ -237,7 +240,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       return;
     }
     //animate back to maxScale if gesture exceeded the maxScale specified
-    if (_gestureDetails.totalScale > _gestureConfig.maxScale) {
+    if (doubleCompare(_gestureDetails.totalScale, _gestureConfig.maxScale) >
+        0) {
       final double velocity =
           (_gestureDetails.totalScale - _gestureConfig.maxScale) /
               _gestureConfig.maxScale;
@@ -248,7 +252,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     }
 
     //animate back to minScale if gesture fell smaller than the minScale specified
-    if (_gestureDetails.totalScale < _gestureConfig.minScale) {
+    if (doubleCompare(_gestureDetails.totalScale, _gestureConfig.minScale) <
+        0) {
       final double velocity =
           (_gestureConfig.minScale - _gestureDetails.totalScale) /
               _gestureConfig.minScale;
@@ -263,7 +268,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       final double magnitude = details.velocity.pixelsPerSecond.distance;
 
       // do a significant magnitude
-      if (magnitude >= minMagnitude) {
+      if (doubleCompare(magnitude, minMagnitude) >= 0) {
         final Offset direction = details.velocity.pixelsPerSecond /
             magnitude *
             _gestureConfig.inertialSpeed;
