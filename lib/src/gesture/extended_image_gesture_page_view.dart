@@ -343,7 +343,7 @@ class ExtendedImageGesturePageViewState
         final double magnitude = details.velocity.pixelsPerSecond.distance;
 
         // do a significant magnitude
-        if (magnitude >= minMagnitude) {
+        if (doubleCompare(magnitude, minMagnitude) >= 0) {
           Offset direction = details.velocity.pixelsPerSecond /
               magnitude *
               (extendedImageGestureState.imageGestureConfig.inertialSpeed);

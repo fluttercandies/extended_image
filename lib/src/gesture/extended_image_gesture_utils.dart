@@ -3,6 +3,7 @@ import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:flutter/material.dart';
 
 import 'extended_image_slide_page.dart';
+import '../extended_image_utils.dart';
 
 ///
 ///  extended_image_gesture_utils.dart
@@ -13,10 +14,10 @@ import 'extended_image_slide_page.dart';
 
 ///whether gesture rect is out size
 bool outRect(Rect rect, Rect destinationRect) {
-  return destinationRect.top < rect.top ||
-      destinationRect.left < rect.left ||
-      destinationRect.right > rect.right ||
-      destinationRect.bottom > rect.bottom;
+  return doubleCompare(destinationRect.top, rect.top) < 0 ||
+      doubleCompare(destinationRect.left, rect.left) < 0 ||
+      doubleCompare(destinationRect.right, rect.right) > 0 ||
+      doubleCompare(destinationRect.bottom, rect.bottom) > 0;
 }
 
 class Boundary {
@@ -270,14 +271,14 @@ class GestureDetails {
 
     if (_computeHorizontalBoundary) {
       //move right
-      if (result.left >= layoutRect.left) {
+      if (doubleCompare(result.left, layoutRect.left) >= 0) {
         result = Rect.fromLTWH(
             layoutRect.left, result.top, result.width, result.height);
         _boundary.left = true;
       }
 
       ///move left
-      if (result.right <= layoutRect.right) {
+      if (doubleCompare(result.right, layoutRect.right) <= 0) {
         result = Rect.fromLTWH(layoutRect.right - result.width, result.top,
             result.width, result.height);
         _boundary.right = true;
@@ -286,14 +287,14 @@ class GestureDetails {
 
     if (_computeVerticalBoundary) {
       //move down
-      if (result.bottom <= layoutRect.bottom) {
+      if (doubleCompare(result.bottom, layoutRect.bottom) <= 0) {
         result = Rect.fromLTWH(result.left, layoutRect.bottom - result.height,
             result.width, result.height);
         _boundary.bottom = true;
       }
 
       //move up
-      if (result.top >= layoutRect.top) {
+      if (doubleCompare(result.top, layoutRect.top) >= 0) {
         result = Rect.fromLTWH(
             result.left, layoutRect.top, result.width, result.height);
         _boundary.top = true;
@@ -301,10 +302,11 @@ class GestureDetails {
     }
 
     _computeHorizontalBoundary =
-        result.left <= layoutRect.left && result.right >= layoutRect.right;
+        doubleCompare(result.left, layoutRect.left) <= 0 &&
+            doubleCompare(result.right, layoutRect.right) >= 0;
 
-    _computeVerticalBoundary =
-        result.top <= layoutRect.top && result.bottom >= layoutRect.bottom;
+    _computeVerticalBoundary = doubleCompare(result.top, layoutRect.top) <= 0 &&
+        doubleCompare(result.bottom, layoutRect.bottom) >= 0;
 
     ///fix offset
     ///fix offset when it's not slide page
@@ -528,12 +530,13 @@ Color defaultSlidePageBackgroundHandler(
 bool defaultSlideEndHandler(
     {Offset offset, Size pageSize, SlideAxis pageGestureAxis}) {
   if (pageGestureAxis == SlideAxis.both) {
-    return offset.distance >
-        Offset(pageSize.width, pageSize.height).distance / 3.5;
+    return doubleCompare(offset.distance,
+            Offset(pageSize.width, pageSize.height).distance / 3.5) >
+        0;
   } else if (pageGestureAxis == SlideAxis.horizontal) {
-    return offset.dx.abs() > pageSize.width / 3.5;
+    return doubleCompare(offset.dx.abs(), pageSize.width / 3.5) > 0;
   } else if (pageGestureAxis == SlideAxis.vertical) {
-    return offset.dy.abs() > pageSize.height / 3.5;
+    return doubleCompare(offset.dy.abs(), pageSize.height / 3.5) > 0;
   }
   return true;
 }

@@ -148,11 +148,12 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                       _editorConfig.cropAspectRatio != null &&
                       _editorConfig.cropAspectRatio > 0) {
                     var rect = _initCropRect(layoutRect);
-                    _editActionDetails.totalScale =
-                        _editActionDetails.preTotalScale =
-                            destinationRect.width > destinationRect.height
-                                ? rect.height / cropRect.height
-                                : rect.width / cropRect.width;
+                    _editActionDetails.totalScale = _editActionDetails
+                        .preTotalScale = doubleCompare(
+                                destinationRect.width, destinationRect.height) >
+                            0
+                        ? rect.height / cropRect.height
+                        : rect.width / cropRect.width;
                     cropRect = rect;
                   }
                   _editActionDetails.cropRect = cropRect;
@@ -225,8 +226,10 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
         (
             // (_editActionDetails.totalScale == _editorConfig.minScale &&
             //       totalScale <= _editActionDetails.totalScale) ||
-            (_editActionDetails.totalScale == _editorConfig.maxScale &&
-                totalScale >= _editActionDetails.totalScale))) {
+            (doubleEqual(
+                    _editActionDetails.totalScale, _editorConfig.maxScale) &&
+                doubleCompare(totalScale, _editActionDetails.totalScale) >=
+                    0))) {
       return;
     }
 

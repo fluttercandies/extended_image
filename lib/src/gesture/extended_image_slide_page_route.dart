@@ -6,6 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
+import '../extended_image_utils.dart';
+
 ///
 ///  create by zmtzawqlp on 2019/6/3
 ///
@@ -535,7 +537,7 @@ class _CupertinoBackGestureController<T> {
     // If the user releases the page before mid screen with sufficient velocity,
     // or after mid screen, we should animate the page out. Otherwise, the page
     // should be animated back in.
-    if (velocity.abs() >= _kMinFlingVelocity)
+    if (doubleCompare(velocity.abs(), _kMinFlingVelocity) >= 0)
       animateForward = velocity > 0 ? false : true;
     else
       animateForward = controller.value > 0.5 ? true : false;
