@@ -1,11 +1,15 @@
 //import 'dart:typed_data';
 import 'dart:isolate';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
+import 'package:http_client_helper/http_client_helper.dart';
 import "package:isolate/load_balancer.dart";
 import "package:isolate/isolate_runner.dart";
 import 'dart:ui' hide Image;
 import 'package:extended_image/extended_image.dart';
 import 'package:image/image.dart';
 import 'package:image_editor/image_editor.dart';
+import 'package:http/http.dart';
 
 final loadBalancer = LoadBalancer.create(1, IsolateRunner.spawn);
 
@@ -54,7 +58,23 @@ Future<List<int>> cropImageDataWithDartLibrary(
   ///crop rect base on raw image
   final Rect cropRect = state.getCropRect();
 
-  var data = state.rawImageData;
+  // in web, we can't get rawImageData due to .
+  // using following code to get imageCodec without download it.
+  // final Uri resolved = Uri.base.resolve(key.url);
+  // // This API only exists in the web engine implementation and is not
+  // // contained in the analyzer summary for Flutter.
+  // return ui.webOnlyInstantiateImageCodecFromUrl(
+  //     resolved); //
+  final data = kIsWeb &&
+          state.widget.extendedImageState.imageWidget.image
+              is ExtendedNetworkImageProvider
+      ? await _loadNetwork(state.widget.extendedImageState.imageWidget.image)
+      ///toByteData is not work on web
+      ///https://github.com/flutter/flutter/issues/44908
+      // (await state.image.toByteData(format: ui.ImageByteFormat.png))
+      //     .buffer
+      //     .asUint8List()
+      : state.rawImageData;
 
   final EditActionDetails editAction = state.editAction;
 
@@ -66,8 +86,14 @@ Future<List<int>> cropImageDataWithDartLibrary(
   /// it will not block ui with using isolate.
   //Image src = await compute(decodeImage, data);
   //Image src = await isolateDecodeImage(data);
-  final lb = await loadBalancer;
-  Image src = await lb.run<Image, List<int>>(decodeImage, data);
+  Image src;
+  LoadBalancer lb;
+  if (kIsWeb) {
+    src = decodeImage(data);
+  } else {
+    lb = await loadBalancer;
+    src = await lb.run<Image, List<int>>(decodeImage, data);
+  }
 
   var time2 = DateTime.now();
 
@@ -105,7 +131,12 @@ Future<List<int>> cropImageDataWithDartLibrary(
   /// it will not block ui with using isolate.
   //var fileData = await compute(encodeJpg, src);
   //var fileData = await isolateEncodeImage(src);
-  var fileData = await lb.run<List<int>, Image>(encodeJpg, src);
+  List<int> fileData;
+  if (kIsWeb) {
+    fileData = encodeJpg(src);
+  } else {
+    fileData = await lb.run<List<int>, Image>(encodeJpg, src);
+  }
 
   var time4 = DateTime.now();
   print("${time4.difference(time3)} : encode");
@@ -143,4 +174,21 @@ Future<List<int>> cropImageDataWithNativeLibrary(
 
   print("${DateTime.now().difference(start)} ：total time");
   return result;
+}
+
+Future<Uint8List> _loadNetwork(ExtendedNetworkImageProvider key) async {
+  try {
+    Response response = await HttpClientHelper.get(key.url,
+        headers: key.headers,
+        timeLimit: key.timeLimit,
+        timeRetry: key.timeRetry,
+        retries: key.retries,
+        cancelToken: key.cancelToken);
+    return response.bodyBytes;
+  } on OperationCanceledError catch (_) {
+    print('User cancel request ${key.url}.');
+    return Future.error(StateError('User cancel request ${key.url}.'));
+  } catch (e) {
+    return Future.error(StateError('failed load ${key.url}. \n $e'));
+  }
 }

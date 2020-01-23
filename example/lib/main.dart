@@ -1,4 +1,4 @@
-import 'package:example/common/tu_chong_repository.dart';
+import 'package:example/common/data/tu_chong_repository.dart';
 import 'package:example/pages/no_route.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';

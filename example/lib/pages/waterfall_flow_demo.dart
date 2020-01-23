@@ -1,11 +1,13 @@
+import 'dart:math';
+
 import 'package:example/common/item_builder.dart';
-import 'package:example/common/tu_chong_repository.dart';
-import 'package:example/common/tu_chong_source.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
-//import 'package:extended_image_library/extended_image_library.dart';
+import 'package:example/common/data/tu_chong_repository.dart';
+import 'package:example/common/data/tu_chong_source.dart';
 
 @FFRoute(
     name: "fluttercandies://WaterfallFlowDemo",
@@ -39,34 +41,38 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
           AppBar(
             title: Text("WaterfallFlowDemo"),
           ),
-          Expanded(
-            child: 
-            LoadingMoreList(
-              ListConfig<TuChongItem>(
-                waterfallFlowDelegate: WaterfallFlowDelegate(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
+          Expanded(child: LayoutBuilder(
+            builder: (c, data) {
+              final crossAxisCount =
+                  max(data.maxWidth ~/ (ScreenUtil.screenWidthDp / 2.0), 2);
+              print('${data.maxWidth}---${ScreenUtil.screenWidthDp}');
+              return LoadingMoreList(
+                ListConfig<TuChongItem>(
+                  waterfallFlowDelegate: WaterfallFlowDelegate(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                  ),
+                  itemBuilder: buildWaterfallFlowItem,
+                  sourceList: listSourceRepository,
+                  padding: EdgeInsets.all(5.0),
+                  lastChildLayoutType: LastChildLayoutType.foot,
+                  collectGarbage: (List<int> garbages) {
+                    ///collectGarbage
+                    garbages.forEach((index) {
+                      final provider = ExtendedNetworkImageProvider(
+                        listSourceRepository[index].imageUrl,
+                      );
+                      provider.evict();
+                    });
+                  },
+                  // viewportBuilder: (int firstIndex, int lastIndex) {
+                  //   print("viewport : [$firstIndex,$lastIndex]");
+                  // },
                 ),
-                itemBuilder: buildWaterfallFlowItem,
-                sourceList: listSourceRepository,
-                padding: EdgeInsets.all(5.0),
-                lastChildLayoutType: LastChildLayoutType.foot,
-                collectGarbage: (List<int> garbages) {
-                  ///collectGarbage
-                  garbages.forEach((index) {
-                    final provider = ExtendedNetworkImageProvider(
-                      listSourceRepository[index].imageUrl,
-                    );
-                    provider.evict();
-                  });
-                },
-                // viewportBuilder: (int firstIndex, int lastIndex) {
-                //   print("viewport : [$firstIndex,$lastIndex]");
-                // },
-              ),
-            ),
-          )
+              );
+            },
+          ))
         ],
       ),
     );

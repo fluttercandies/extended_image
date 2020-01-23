@@ -1,5 +1,7 @@
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class FlatButtonWithIcon extends FlatButton with MaterialButtonWithIconMixin {
   FlatButtonWithIcon({
@@ -64,6 +66,8 @@ class AspectRatioWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
+      size: Size(ScreenUtil.instance.setWidth(200.0),
+          ScreenUtil.instance.setWidth(200.0)),
       painter: AspectRatioPainter(
           aspectRatio: aspectRatio,
           aspectRatioS: aspectRatioS,
@@ -83,9 +87,10 @@ class AspectRatioPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Color color = isSelected ? Colors.blue : Colors.grey;
     var rect = (Offset.zero & size);
+    //https://github.com/flutter/flutter/issues/49328
     Paint paint = Paint()
       ..color = color
-      ..style = PaintingStyle.stroke;
+      ..style = PaintingStyle.fill;
     final double aspectRatioResult =
         (aspectRatio != null && aspectRatio > 0.0) ? aspectRatio : 1.0;
     canvas.drawRect(
@@ -99,7 +104,9 @@ class AspectRatioPainter extends CustomPainter {
         text: TextSpan(
             text: aspectRatioS,
             style: TextStyle(
-              color: color,
+              color: (color.computeLuminance() < 0.5
+                  ? Colors.white
+                  : Colors.black),
               fontSize: 16.0,
             )),
         textDirection: TextDirection.ltr,

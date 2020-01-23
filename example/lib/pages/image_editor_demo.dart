@@ -8,10 +8,11 @@ import 'package:example/common/image_picker/image_picker.dart';
 import 'package:example/common/utils.dart';
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
-import 'package:image_picker_saver/image_picker_saver.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -59,7 +60,10 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
           IconButton(
             icon: Icon(Icons.done),
             onPressed: () {
-              _showCropDialog(context);
+              if (kIsWeb)
+                _cropImage(false);
+              else
+                _showCropDialog(context);
             },
           ),
         ],
@@ -113,33 +117,40 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 ),
                 textColor: Colors.white,
                 onPressed: () {
-                  showModalBottomSheet(
+                  showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return Container(
-                          child: GridView.builder(
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3),
-                            padding: EdgeInsets.all(20.0),
-                            itemBuilder: (_, index) {
-                              var item = _aspectRatios[index];
-                              return GestureDetector(
-                                child: AspectRatioWidget(
-                                  aspectRatio: item.value,
-                                  aspectRatioS: item.text,
-                                  isSelected: item == _aspectRatio,
-                                ),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  setState(() {
-                                    _aspectRatio = item;
-                                  });
+                        return Column(
+                          children: <Widget>[
+                            Expanded(
+                              child: SizedBox(),
+                            ),
+                            SizedBox(
+                              height: ScreenUtil.instance.setWidth(200.0),
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                padding: EdgeInsets.all(20.0),
+                                itemBuilder: (_, index) {
+                                  var item = _aspectRatios[index];
+                                  return GestureDetector(
+                                    child: AspectRatioWidget(
+                                      aspectRatio: item.value,
+                                      aspectRatioS: item.text,
+                                      isSelected: item == _aspectRatio,
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      setState(() {
+                                        _aspectRatio = item;
+                                      });
+                                    },
+                                  );
                                 },
-                              );
-                            },
-                            itemCount: _aspectRatios.length,
-                          ),
+                                itemCount: _aspectRatios.length,
+                              ),
+                            ),
+                          ],
                         );
                       });
                 },
@@ -335,12 +346,12 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         fileData =
             await cropImageDataWithDartLibrary(state: editorKey.currentState);
       }
-
-      var fileFath = await ImagePickerSaver.saveFile(fileData: fileData);
+      final fileFath = await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
+      // var fileFath = await ImagePickerSaver.saveFile(fileData: fileData);
 
       msg = "save image : $fileFath";
-    } catch (e) {
-      msg = "save faild: $e";
+    } catch (e, stack) {
+      msg = "save faild: $e\n $stack";
       print(msg);
     }
 

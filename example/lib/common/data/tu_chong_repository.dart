@@ -1,6 +1,8 @@
+import 'package:example/common/data/mock_data.dart';
+import 'package:example/common/data/tu_chong_source.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http_client_helper/http_client_helper.dart';
 import 'package:loading_more_list/loading_more_list.dart';
-import 'package:example/common/tu_chong_source.dart';
 import 'dart:async';
 import 'dart:convert';
 
@@ -46,18 +48,25 @@ class TuChongRepository extends LoadingMoreBase<TuChongItem> {
     try {
       //to show loading more clearly, in your app,remove this
       await Future.delayed(Duration(milliseconds: 500));
+      List<TuChongItem> feedList;
+      if (!kIsWeb) {
+        final result = await HttpClientHelper.get(url);
+        feedList = TuChongSource.fromJson(json.decode(result.body)).feedList;
+      } else {
+        feedList = mockSource.feedList
+            .getRange(this.length, this.length + 20)
+            .toList();
+      }
 
-      var result = await HttpClientHelper.get(url);
-
-      var source = TuChongSource.fromJson(json.decode(result.body));
       if (pageindex == 1) {
         this.clear();
       }
-      for (var item in source.feedList) {
+
+      for (var item in feedList) {
         if (item.hasImage && !this.contains(item) && hasMore) this.add(item);
       }
 
-      _hasMore = source.feedList.length != 0;
+      _hasMore = feedList.length != 0;
       pageindex++;
 //      this.clear();
 //      _hasMore=false;

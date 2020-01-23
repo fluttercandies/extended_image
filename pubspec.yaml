@@ -10,8 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  extended_image_library: ^0.1.9
-
+  # extended_image_library: ^0.1.9
+  extended_image_library: 
+    path: D:\Flutter\github\FlutterCandies\dev\extended_image_library  
 dev_dependencies:
   flutter_test:
     sdk: flutter
