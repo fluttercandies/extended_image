@@ -1,13 +1,10 @@
 import 'dart:math';
 
 import 'package:example/common/item_builder.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
-import 'package:example/common/data/tu_chong_repository.dart';
-import 'package:example/common/data/tu_chong_source.dart';
+import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 
 @FFRoute(
     name: "fluttercandies://WaterfallFlowDemo",
@@ -44,8 +41,7 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
           Expanded(child: LayoutBuilder(
             builder: (c, data) {
               final crossAxisCount =
-                  max(data.maxWidth ~/ (ScreenUtil.screenWidthDp / 2.0), 2);
-              print('${data.maxWidth}---${ScreenUtil.screenWidthDp}');
+                  max(data.maxWidth ~/ (ScreenUtil.instance.screenWidthDp / 2.0), 2);
               return LoadingMoreList(
                 ListConfig<TuChongItem>(
                   waterfallFlowDelegate: WaterfallFlowDelegate(
@@ -57,15 +53,15 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
                   sourceList: listSourceRepository,
                   padding: EdgeInsets.all(5.0),
                   lastChildLayoutType: LastChildLayoutType.foot,
-                  collectGarbage: (List<int> garbages) {
-                    ///collectGarbage
-                    garbages.forEach((index) {
-                      final provider = ExtendedNetworkImageProvider(
-                        listSourceRepository[index].imageUrl,
-                      );
-                      provider.evict();
-                    });
-                  },
+                  // collectGarbage: (List<int> garbages) {
+                  //   ///collectGarbage
+                  //   garbages.forEach((index) {
+                  //     final provider = ExtendedNetworkImageProvider(
+                  //       listSourceRepository[index].imageUrl,
+                  //     );
+                  //     provider.evict();
+                  //   });
+                  // },
                   // viewportBuilder: (int firstIndex, int lastIndex) {
                   //   print("viewport : [$firstIndex,$lastIndex]");
                   // },

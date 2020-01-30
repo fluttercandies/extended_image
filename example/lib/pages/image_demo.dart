@@ -1,7 +1,8 @@
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 
@@ -65,15 +66,18 @@ class _ImageDemoState extends State<ImageDemo> {
           ),
           Row(
             children: <Widget>[
-              RaisedButton(
-                child: Text("clear all cache"),
-                onPressed: () {
-                  clearDiskCachedImages().then((bool done) {
-                    showToast(done ? "clear succeed" : "clear failed",
-                        position: ToastPosition(align: Alignment.topCenter));
-                  });
-                },
-              ),
+              kIsWeb
+                  ? Container()
+                  : RaisedButton(
+                      child: Text("clear all cache"),
+                      onPressed: () {
+                        clearDiskCachedImages().then((bool done) {
+                          showToast(done ? "clear succeed" : "clear failed",
+                              position:
+                                  ToastPosition(align: Alignment.topCenter));
+                        });
+                      },
+                    ),
               Expanded(
                 child: Container(),
               ),

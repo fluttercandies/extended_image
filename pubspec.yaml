@@ -11,8 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   # extended_image_library: ^0.1.9
-  extended_image_library: 
-    path: D:\Flutter\github\FlutterCandies\dev\extended_image_library  
+  extended_image_library:
+    git:
+        url: https://github.com/fluttercandies/extended_image_library.git
 dev_dependencies:
   flutter_test:
     sdk: flutter

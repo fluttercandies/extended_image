@@ -691,6 +691,7 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
+    if(oldDelegate.runtimeType!=this.runtimeType) return true;
     var delegate = oldDelegate as ExtendedImageCropLayerPainter;
     return cropRect != delegate.cropRect ||
         cornerSize != delegate.cornerSize ||

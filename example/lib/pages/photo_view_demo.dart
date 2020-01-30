@@ -5,8 +5,7 @@
 
 import 'dart:async';
 import 'dart:math';
-import 'package:example/common/data/tu_chong_repository.dart';
-import 'package:example/common/data/tu_chong_source.dart';
+import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 import 'package:example/common/item_builder.dart';
 import 'package:example/common/my_extended_text_selection_controls.dart';
 import 'package:example/common/pic_grid_view.dart';
@@ -16,7 +15,6 @@ import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide CircularProgressIndicator;
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -75,7 +73,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
             child: LayoutBuilder(
               builder: (c, data) {
                 final crossAxisCount =
-                    max(data.maxWidth ~/ ScreenUtil.screenWidthDp, 1);
+                    max(data.maxWidth ~/ ScreenUtil.instance.screenWidthDp, 1);
                 return PullToRefreshNotification(
                     pullBackOnRefresh: false,
                     maxDragOffset: maxDragOffset,
@@ -97,17 +95,17 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                               crossAxisSpacing: 5,
                               mainAxisSpacing: 5,
                             ),
-                            collectGarbage: (List<int> indexes) {
-                              ///collectGarbage
-                              indexes.forEach((index) {
-                                final item = listSourceRepository[index];
-                                if (item.hasImage) {
-                                  item.images.forEach((image) {
-                                    image.clearCache();
-                                  });
-                                }
-                              });
-                            },
+                            // collectGarbage: (List<int> indexes) {
+                            //   ///collectGarbage
+                            //   indexes.forEach((index) {
+                            //     final item = listSourceRepository[index];
+                            //     if (item.hasImage) {
+                            //       item.images.forEach((image) {
+                            //         image.clearCache();
+                            //       });
+                            //     }
+                            //   });
+                            // },
                             itemBuilder: (context, item, index) {
                               String title = item.site.name;
                               if (title == null || title == "") {

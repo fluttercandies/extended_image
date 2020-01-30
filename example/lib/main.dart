@@ -1,4 +1,4 @@
-import 'package:example/common/data/tu_chong_repository.dart';
+import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 import 'package:example/pages/no_route.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';
@@ -7,8 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker_saver/image_picker_saver.dart';
 import "package:oktoast/oktoast.dart";
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'example_route.dart';
 import 'example_route_helper.dart';
 
@@ -17,7 +15,7 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   final TuChongRepository listSourceRepository = TuChongRepository();
   MyApp() {
-    clearDiskCachedImages(duration: Duration(days: 7));
+    if (!kIsWeb) clearDiskCachedImages(duration: Duration(days: 7));
     listSourceRepository.loadData().then((result) {
       if (listSourceRepository.length > 0)
         _imageTestUrl = listSourceRepository.first.imageUrl;
@@ -47,9 +45,10 @@ class MyApp extends StatelessWidget {
         })
       ],
       builder: (c, w) {
-        ScreenUtil.instance =
-            ScreenUtil(width: 750, height: 1334, allowFontScaling: true)
-              ..init(c);
+        ScreenUtil.init(width: 750, height: 1334, allowFontScaling: true);
+        // ScreenUtil.instance =
+        //     ScreenUtil(width: 750, height: 1334, allowFontScaling: true)
+        //       ..init(c);
         if (!kIsWeb) {
           final data = MediaQuery.of(c);
           return MediaQuery(

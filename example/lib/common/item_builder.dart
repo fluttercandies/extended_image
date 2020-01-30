@@ -3,8 +3,7 @@ import 'dart:async';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
-import 'package:example/common/data/tu_chong_repository.dart';
-import 'package:example/common/data/tu_chong_source.dart';
+import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 
 class ItemBuilder {
   static Widget itemBuilder(BuildContext context, TuChongItem item, int index) {

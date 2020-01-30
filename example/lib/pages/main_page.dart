@@ -1,4 +1,5 @@
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'package:oktoast/oktoast.dart';
@@ -52,25 +53,27 @@ class MainPage extends StatelessWidget {
         },
         itemCount: routeNames.length,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ///clear memory
-          clearMemoryImageCache();
+      floatingActionButton: kIsWeb
+          ? null
+          : FloatingActionButton(
+              onPressed: () {
+                ///clear memory
+                clearMemoryImageCache();
 
-          ///clear local cahced
-          clearDiskCachedImages().then((bool done) {
-            showToast(done ? "clear succeed" : "clear failed",
-                position: ToastPosition(align: Alignment.center));
-          });
-        },
-        child: Text(
-          "clear cache",
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            inherit: false,
-          ),
-        ),
-      ),
+                ///clear local cahced
+                clearDiskCachedImages().then((bool done) {
+                  showToast(done ? "clear succeed" : "clear failed",
+                      position: ToastPosition(align: Alignment.center));
+                });
+              },
+              child: Text(
+                "clear cache",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  inherit: false,
+                ),
+              ),
+            ),
     );
   }
 }
