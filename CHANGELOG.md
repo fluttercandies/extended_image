@@ -1,3 +1,9 @@
+## [0.7.0]
+
+* Features:
+  Support web.
+  Add clearMemoryCacheWhenDispose parameter that whether  clear memory cache when image is disposed.
+
 ## [0.6.9]
 
 * Features:
