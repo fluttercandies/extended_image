@@ -130,6 +130,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                           height: 40.0,
                                           shape: BoxShape.circle,
                                           //enableLoadState: false,
+                                          clearMemoryCacheWhenDispose: true,
                                           border: Border.all(
                                               color:
                                                   Colors.grey.withOpacity(0.4),

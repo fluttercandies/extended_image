@@ -53,6 +53,7 @@ class CropImage extends StatelessWidget {
         //fit: BoxFit.fill,
         //height: 200.0,
         width: width,
+        clearMemoryCacheWhenDispose: true,
         height: height, loadStateChanged: (ExtendedImageState state) {
       Widget widget;
       switch (state.extendedImageLoadState) {

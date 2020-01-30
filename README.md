@@ -1,6 +1,6 @@
 # extended_image
 
-[![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image) [![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers) [![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network)  [![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE)  [![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues) <a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5bcc0gy"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="flutter-candies" title="flutter-candies"></a>
+[![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image) [![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers) [![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network) [![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE) [![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues) <a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5bcc0gy"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="flutter-candies" title="flutter-candies"></a>
 
 Language: [English](README.md) | [中文简体](README-ZH.md)
 
@@ -104,14 +104,13 @@ you can set enableLoadState(default value is ture for network and others are fal
 
 Notice:
 
-* if you don't want to override any state, please return null in this case
-  
-* if you want to override size or sourceRect, you can override it with ExtendedRawImage at completed state
-  
-* if you want to add something (like animation) at completed state, you can override it with ExtendedImageState.completedWidget
+- if you don't want to override any state, please return null in this case
 
-* ExtendedImageState.completedWidget is include gesture or editor, so that you would't miss them
+- if you want to override size or sourceRect, you can override it with ExtendedRawImage at completed state
 
+- if you want to add something (like animation) at completed state, you can override it with ExtendedImageState.completedWidget
+
+- ExtendedImageState.completedWidget is include gesture or editor, so that you would't miss them
 
 ```dart
 /// custom load state widget if you want
@@ -187,7 +186,7 @@ ExtendedImage.network(
       ///if you don't want override completed widget
       ///please return null or state.completedWidget
       //return null;
-      //return state.completedWidget;        
+      //return state.completedWidget;
       case LoadState.completed:
         _controller.forward();
         return FadeTransition(
@@ -322,7 +321,7 @@ onDoubleTap: (ExtendedImageGestureState state) {
 
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/editor.gif)
 
-``` dart
+```dart
     ExtendedImage.network(
       imageTestUrl,
       fit: BoxFit.contain,
@@ -368,7 +367,7 @@ EditorConfig
 it's a double value, so it's esay for you to define by yourself.
 following are official values
 
-``` dart
+```dart
 class CropAspectRatios {
   /// no aspect ratio for crop
   static const double custom = null;
@@ -393,26 +392,27 @@ class CropAspectRatios {
   static const double ratio16_9 = 16.0 / 9.0;
 }
 ```
+
 ### crop,flip,reset
 
 - add key for ExtendedImageEditorState
-  
+
   `final GlobalKey<ExtendedImageEditorState> editorKey =GlobalKey<ExtendedImageEditorState>();`
 
 - rotate right
-  
+
   `editorKey.currentState.rotate(right: true);`
 
 - rotate left
-  
+
   `editorKey.currentState.rotate(right: false);`
 
 - flip
-  
+
   `editorKey.currentState.flip();`
 
 - reset
-  
+
   `editorKey.currentState.reset();`
 
 ### crop data
@@ -420,21 +420,24 @@ class CropAspectRatios {
 #### dart library(stable)
 
 - add [Image](https://github.com/brendan-duncan/image) library into your pubspec.yaml, it's used to crop/rotate/flip image data
-  
-``` yaml
+
+```yaml
 dependencies:
   image: any
 ```
 
 - get crop rect and raw image data from ExtendedImageEditorState
-``` dart
+
+```dart
   ///crop rect base on raw image
   final Rect cropRect = state.getCropRect();
 
   var data = state.rawImageData;
-``` 
+```
+
 - convert raw image data to image libray data.
-``` dart
+
+```dart
   /// it costs much time and blocks ui.
   //Image src = decodeImage(data);
 
@@ -443,9 +446,11 @@ dependencies:
   //Image src = await isolateDecodeImage(data);
   final lb = await loadBalancer;
   Image src = await lb.run<Image, List<int>>(decodeImage, data);
-``` 
+```
+
 - crop,flip,rotate data
-``` dart
+
+```dart
   //clear orientation
   src = bakeOrientation(src);
 
@@ -466,12 +471,13 @@ dependencies:
   }
 
   if (editAction.hasRotateAngle) src = copyRotate(src, editAction.rotateAngle);
-``` 
+```
+
 - convert to original image data
-  
+
 output is raw image data, you can use it to save or any other thing.
 
-``` dart
+```dart
   /// you can encode your image
   ///
   /// it costs much time and blocks ui.
@@ -481,25 +487,29 @@ output is raw image data, you can use it to save or any other thing.
   //var fileData = await compute(encodeJpg, src);
   //var fileData = await isolateEncodeImage(src);
   var fileData = await lb.run<List<int>, Image>(encodeJpg, src);
-``` 
+```
 
 #### native library(faster)
 
 - add [ImageEditor](https://github.com/fluttercandies/flutter_image_editor) library into your pubspec.yaml, it's used to crop/rotate/flip image data
-``` yaml
+
+```yaml
 dependencies:
   image_editor: any
 ```
 
 - get crop rect and raw image data from ExtendedImageEditorState
-``` dart
+
+```dart
   ///crop rect base on raw image
   final Rect cropRect = state.getCropRect();
 
   var data = state.rawImageData;
-``` 
+```
+
 - prepare crop option
-``` dart
+
+```dart
   final rotateAngle = action.rotateAngle.toInt();
   final flipHorizontal = action.flipY;
   final flipVertical = action.flipX;
@@ -514,18 +524,18 @@ dependencies:
         FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
 
   if (action.hasRotateAngle) option.addOption(RotateOption(rotateAngle));
-``` 
+```
 
-- crop with editImage 
-  
+- crop with editImage
+
 output is raw image data, you can use it to save or any other thing.
 
-``` dart
+```dart
   final result = await ImageEditor.editImage(
     image: img,
     imageEditorOption: option,
   );
-``` 
+```
 
 [more detail](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_editor_helper.dart)
 
@@ -542,7 +552,6 @@ ExtendedImageGesturePageView
 | parameter    | description              | default |
 | ------------ | ------------------------ | ------- |
 | cacheGesture | whether should move page | true    |
-
 
 GestureConfig
 
@@ -590,7 +599,6 @@ ExtendedImageGesturePageView.builder(
   scrollDirection: Axis.horizontal,
 ),
 ```
-
 
 ## Slide Out Page
 
@@ -642,13 +650,13 @@ ExtendedImageGesturePage
 | -------------------------- | -------------------------------------------------------------------------------- | --------------------------------- |
 | child                      | The [child] contained by the ExtendedImageGesturePage.                           | -                                 |
 | slidePageBackgroundHandler | build background when slide page                                                 | defaultSlidePageBackgroundHandler |
-| slideScaleHandler          | customize scale of page when slide page                                             | defaultSlideScaleHandler          |
+| slideScaleHandler          | customize scale of page when slide page                                          | defaultSlideScaleHandler          |
 | slideEndHandler            | call back of slide end,decide whether pop page                                   | defaultSlideEndHandler            |
 | slideAxis                  | axis of slide(both,horizontal,vertical)                                          | SlideAxis.both                    |
 | resetPageDuration          | reset page position when slide end(not pop page)                                 | milliseconds: 500                 |
 | slideType                  | slide whole page or only image                                                   | SlideType.onlyImage               |
 | onSlidingPage              | call back when it's sliding page, change other widgets state on page as you want | -                                 |
-| slideOffsetHandler         | customize offset when slide page                                                    | -                                 |
+| slideOffsetHandler         | customize offset when slide page                                                 | -                                 |
 
 ```dart
 Color defaultSlidePageBackgroundHandler(
@@ -752,6 +760,7 @@ Future<bool> clearDiskCachedImages({Duration duration})
 ```
 
 to clear disk cached with specific url, call clearDiskCachedImage method.
+
 ```dart
 /// clear the disk cache image then return if it succeed.
 ///  <param name="url">clear specific one</param>
@@ -759,6 +768,7 @@ Future<bool> clearDiskCachedImage(String url) async {
 ```
 
 get the local cached image file
+
 ```dart
 Future<File> getCachedImageFile(String url) async {
 ```
@@ -776,7 +786,6 @@ to clear memory cache , call clearMemoryImageCache method.
 ### save network
 
 call saveNetworkImageToPhoto and save image with [image_picker_saver](https://github.com/cnhefang/image_picker_saver)
-
 
 ```dart
 ///save netwrok image to photo
@@ -876,11 +885,12 @@ build WaterfallFlow with [LoadingMoreList](https://github.com/fluttercandies/loa
               ),
             ),
 ```
+
 ## CollectGarbage/viewportBuilder
 
 you can collect garbage when item is dispose or viewport indexes is changed.
 
-more details, [LoadingMoreList](https://github.com/fluttercandies/loading_more_list), [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) and  [ExtendedList](https://github.com/fluttercandies/extended_list)
+more details, [LoadingMoreList](https://github.com/fluttercandies/loading_more_list), [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) and [ExtendedList](https://github.com/fluttercandies/extended_list)
 
 ```dart
             LoadingMoreList(
@@ -915,7 +925,8 @@ more details, [LoadingMoreList](https://github.com/fluttercandies/loading_more_l
 
 ExtendedImage
 
-| parameter                | description                                                                                    | default |
-| ------------------------ | ---------------------------------------------------------------------------------------------- | ------- |
-| enableMemoryCache        | whether cache in PaintingBinding.instance.imageCache)                                          | true    |
-| clearMemoryCacheIfFailed | when failed to load image, whether clear memory cache.if ture, image will reload in next time. | true    |
+| parameter                   | description                                                                                    | default |
+| --------------------------- | ---------------------------------------------------------------------------------------------- | ------- |
+| enableMemoryCache           | whether cache in PaintingBinding.instance.imageCache)                                          | true    |
+| clearMemoryCacheIfFailed    | when failed to load image, whether clear memory cache.if ture, image will reload in next time. | true    |
+| clearMemoryCacheWhenDispose | when image is removed from the tree permanently, whether clear memory cache.                   | false   |
