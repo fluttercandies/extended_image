@@ -110,6 +110,7 @@ Widget buildWaterfallFlowItem(BuildContext c, TuChongItem item, int index) {
             ExtendedImage.network(
               item.imageUrl,
               shape: BoxShape.rectangle,
+              clearMemoryCacheWhenDispose: true,
               border:
                   Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
               borderRadius: BorderRadius.all(

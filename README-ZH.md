@@ -1,10 +1,10 @@
 # extended_image
 
-[![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image) [![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers) [![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network)  [![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE)  [![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues) <a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5bcc0gy"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="flutter-candies" title="flutter-candies"></a>
+[![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image) [![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers) [![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network) [![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE) [![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues) <a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5bcc0gy"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="flutter-candies" title="flutter-candies"></a>
 
 文档语言: [English](README.md) | [中文简体](README-ZH.md)
 
-强大的官方Image扩展组件, 支持加载以及失败显示，缓存网络图片，缩放拖拽图片，图片浏览(微信掘金效果)，滑动退出页面(微信掘金效果)，编辑图片(裁剪旋转翻转)，保存，绘制自定义效果等功能
+强大的官方 Image 扩展组件, 支持加载以及失败显示，缓存网络图片，缩放拖拽图片，图片浏览(微信掘金效果)，滑动退出页面(微信掘金效果)，编辑图片(裁剪旋转翻转)，保存，绘制自定义效果等功能
 
 - [Flutter 什么功能都有的 Image](https://juejin.im/post/5c867112f265da2dd427a340)
 - [Flutter 可以缩放拖拽的图片](https://juejin.im/post/5ca758916fb9a05e1c4d01bb)
@@ -26,14 +26,14 @@
     - [裁剪框的宽高比](#%e8%a3%81%e5%89%aa%e6%a1%86%e7%9a%84%e5%ae%bd%e9%ab%98%e6%af%94)
     - [旋转,翻转,重置](#%e6%97%8b%e8%bd%ac%e7%bf%bb%e8%bd%ac%e9%87%8d%e7%bd%ae)
     - [裁剪数据](#%e8%a3%81%e5%89%aa%e6%95%b0%e6%8d%ae)
-      - [使用dart库(稳定)](#%e4%bd%bf%e7%94%a8dart%e5%ba%93%e7%a8%b3%e5%ae%9a)
+      - [使用 dart 库(稳定)](#%e4%bd%bf%e7%94%a8dart%e5%ba%93%e7%a8%b3%e5%ae%9a)
       - [使用原生库(快速)](#%e4%bd%bf%e7%94%a8%e5%8e%9f%e7%94%9f%e5%ba%93%e5%bf%ab%e9%80%9f)
   - [图片浏览](#%e5%9b%be%e7%89%87%e6%b5%8f%e8%a7%88)
   - [滑动退出页面](#%e6%bb%91%e5%8a%a8%e9%80%80%e5%87%ba%e9%a1%b5%e9%9d%a2)
     - [首先开启滑动退出页面效果](#%e9%a6%96%e5%85%88%e5%bc%80%e5%90%af%e6%bb%91%e5%8a%a8%e9%80%80%e5%87%ba%e9%a1%b5%e9%9d%a2%e6%95%88%e6%9e%9c)
-    - [把你的页面用ExtendedImageSlidePage包一下](#%e6%8a%8a%e4%bd%a0%e7%9a%84%e9%a1%b5%e9%9d%a2%e7%94%a8extendedimageslidepage%e5%8c%85%e4%b8%80%e4%b8%8b)
+    - [把你的页面用 ExtendedImageSlidePage 包一下](#%e6%8a%8a%e4%bd%a0%e7%9a%84%e9%a1%b5%e9%9d%a2%e7%94%a8extendedimageslidepage%e5%8c%85%e4%b8%80%e4%b8%8b)
     - [确保你的页面是透明背景的](#%e7%a1%ae%e4%bf%9d%e4%bd%a0%e7%9a%84%e9%a1%b5%e9%9d%a2%e6%98%af%e9%80%8f%e6%98%8e%e8%83%8c%e6%99%af%e7%9a%84)
-    - [Push一个透明的页面](#push%e4%b8%80%e4%b8%aa%e9%80%8f%e6%98%8e%e7%9a%84%e9%a1%b5%e9%9d%a2)
+    - [Push 一个透明的页面](#push%e4%b8%80%e4%b8%aa%e9%80%8f%e6%98%8e%e7%9a%84%e9%a1%b5%e9%9d%a2)
   - [Border BorderRadius Shape](#border-borderradius-shape)
   - [清除缓存和保存](#%e6%b8%85%e9%99%a4%e7%bc%93%e5%ad%98%e5%92%8c%e4%bf%9d%e5%ad%98)
     - [清除缓存](#%e6%b8%85%e9%99%a4%e7%bc%93%e5%ad%98)
@@ -94,27 +94,27 @@ ExtendedNetworkImageProvider(
 | timeRetry   | 请求重试间隔          | milliseconds: 100   |
 | cancelToken | 用于取消请求的 Token  | CancellationToken() |
 
-当然你也可以继承任何的ExtendedProvider,并且覆写instantiateImageCodec方法，这样你可以统一处理图片的元数据，比如进行压缩图片。
+当然你也可以继承任何的 ExtendedProvider,并且覆写 instantiateImageCodec 方法，这样你可以统一处理图片的元数据，比如进行压缩图片。
 
 ## 加载状态
 
-Extended Image一共有3种状态，分别是正在加载，完成，失败(loading,completed,failed)，你可以通过实现loadStateChanged回调来定义显示的效果
+Extended Image 一共有 3 种状态，分别是正在加载，完成，失败(loading,completed,failed)，你可以通过实现 loadStateChanged 回调来定义显示的效果
 
 loadStateChanged 不仅仅只在网络图片中可以使用, 如果你的图片很大，需要长时间加载，
-你可以把enableLoadState设置为了true，这样也会有状态回调了，（默认只有网络图片,enableLoadState为true）
+你可以把 enableLoadState 设置为了 true，这样也会有状态回调了，（默认只有网络图片,enableLoadState 为 true）
 
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/custom.gif)
 
 注意:
 
-* 如果你不想重写某个状态，那么请返回null
-  
-* 如果你想重写完成图片的 size 或者 sourceRect, 你可以通过使用 ExtendedRawImage 来完成
-  
-* 如果你想增加一些新效果 (比如动画), 你可以重写并且使用ExtendedImageState.completedWidget
+- 如果你不想重写某个状态，那么请返回 null
 
-* ExtendedImageState.completedWidget 包含手势或者裁剪, 这样你不会丢失它们
-  
+- 如果你想重写完成图片的 size 或者 sourceRect, 你可以通过使用 ExtendedRawImage 来完成
+
+- 如果你想增加一些新效果 (比如动画), 你可以重写并且使用 ExtendedImageState.completedWidget
+
+- ExtendedImageState.completedWidget 包含手势或者裁剪, 这样你不会丢失它们
+
 ```dart
 /// custom load state widget if you want
     final LoadStateChanged loadStateChanged;
@@ -137,16 +137,16 @@ enum LoadState {
 
 ExtendedImageState 状态回调
 
-| 参数/方法                    | 描述                                                                                               | 默认 |
-| ---------------------------- | -------------------------------------------------------------------------------------------------- | ---- |
-| extendedImageInfo            | 图片的信息，包括底层image和image的大小                                                             | -    |
-| extendedImageLoadState       | 状态(loading,completed,failed)                                                                     | -    |
-| returnLoadStateChangedWidget | 如果这个为true的话，状态回调返回的widget将不会对(width/height/gesture/border/shape）等效果进行包装 | -    |
-| imageProvider                | 图片的Provider                                                                                     | -    |
-| invertColors                 | 是否反转颜色                                                                                       | -    |
-| imageStreamKey               | 图片流的唯一键                                                                                     | -    |
-| reLoadImage()                | 如果图片加载失败，你可以通过调用这个方法来重新加载图片                                             | -    |
-| completedWidget              | 返回图片完成的Widget，它包含手势以及裁剪                                                           | -    |
+| 参数/方法                    | 描述                                                                                                   | 默认 |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------ | ---- |
+| extendedImageInfo            | 图片的信息，包括底层 image 和 image 的大小                                                             | -    |
+| extendedImageLoadState       | 状态(loading,completed,failed)                                                                         | -    |
+| returnLoadStateChangedWidget | 如果这个为 true 的话，状态回调返回的 widget 将不会对(width/height/gesture/border/shape）等效果进行包装 | -    |
+| imageProvider                | 图片的 Provider                                                                                        | -    |
+| invertColors                 | 是否反转颜色                                                                                           | -    |
+| imageStreamKey               | 图片流的唯一键                                                                                         | -    |
+| reLoadImage()                | 如果图片加载失败，你可以通过调用这个方法来重新加载图片                                                 | -    |
+| completedWidget              | 返回图片完成的 Widget，它包含手势以及裁剪                                                              | -    |
 
 ```dart
 abstract class ExtendedImageState {
@@ -162,7 +162,7 @@ abstract class ExtendedImageState {
   bool get invertColors;
 
   Object get imageStreamKey;
-  
+
   Widget get completedWidget;
 }
 ```
@@ -188,7 +188,7 @@ ExtendedImage.network(
       ///if you don't want override completed widget
       ///please return null or state.completedWidget
       //return null;
-      //return state.completedWidget;             
+      //return state.completedWidget;
       case LoadState.completed:
         _controller.forward();
         return FadeTransition(
@@ -245,17 +245,17 @@ ExtendedImage
 
 GestureConfig
 
-| 参数              | 描述                                                                                                 | 默认值                  |
-| ----------------- | ---------------------------------------------------------------------------------------------------- | ----------------------- |
-| minScale          | 缩放最小值                                                                                           | 0.8                     |
-| animationMinScale | 缩放动画最小值，当缩放结束时回到minScale值                                                           | minScale * 0.8          |
-| maxScale          | 缩放最大值                                                                                           | 5.0                     |
-| animationMaxScale | 缩放动画最大值，当缩放结束时回到maxScale值                                                           | maxScale * 1.2          |
-| speed             | 缩放拖拽速度，与用户操作成正比                                                                       | 1.0                     |
-| inertialSpeed     | 拖拽惯性速度，与惯性速度成正比                                                                       | 100                     |
-| cacheGesture      | 是否缓存手势状态，可用于ExtendedImageGesturePageView中保留状态，使用clearGestureDetailsCache方法清除 | false                   |
-| inPageView        | 是否使用ExtendedImageGesturePageView展示图片                                                         | false                   |
-| initialAlignment  | 当图片的初始化缩放大于1.0的时候，根据相对位置初始化图片                                              | InitialAlignment.center |
+| 参数              | 描述                                                                                                     | 默认值                  |
+| ----------------- | -------------------------------------------------------------------------------------------------------- | ----------------------- |
+| minScale          | 缩放最小值                                                                                               | 0.8                     |
+| animationMinScale | 缩放动画最小值，当缩放结束时回到 minScale 值                                                             | minScale \* 0.8         |
+| maxScale          | 缩放最大值                                                                                               | 5.0                     |
+| animationMaxScale | 缩放动画最大值，当缩放结束时回到 maxScale 值                                                             | maxScale \* 1.2         |
+| speed             | 缩放拖拽速度，与用户操作成正比                                                                           | 1.0                     |
+| inertialSpeed     | 拖拽惯性速度，与惯性速度成正比                                                                           | 100                     |
+| cacheGesture      | 是否缓存手势状态，可用于 ExtendedImageGesturePageView 中保留状态，使用 clearGestureDetailsCache 方法清除 | false                   |
+| inPageView        | 是否使用 ExtendedImageGesturePageView 展示图片                                                           | false                   |
+| initialAlignment  | 当图片的初始化缩放大于 1.0 的时候，根据相对位置初始化图片                                                | InitialAlignment.center |
 
 ```dart
 ExtendedImage.network(
@@ -325,7 +325,7 @@ onDoubleTap: (ExtendedImageGestureState state) {
 
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/editor.gif)
 
-``` dart
+```dart
     ExtendedImage.network(
       imageTestUrl,
       fit: BoxFit.contain,
@@ -351,29 +351,29 @@ ExtendedImage
 
 EditorConfig
 
-| 参数                   | 描述                                                                             | 默认                                                         |
-| ---------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| maxScale               | 最大的缩放倍数                                                                   | 5.0                                                          |
-| cropRectPadding        | 裁剪框跟图片layout区域之间的距离。最好是保持一定距离，不然裁剪框边界很难进行拖拽 | EdgeInsets.all(20.0)                                         |
-| cornerSize             | 裁剪框四角图形的大小                                                             | Size(30.0, 5.0)                                              |
-| cornerColor            | 裁剪框四角图形的颜色                                                             | primaryColor                                                 |
-| lineColor              | 裁剪框线的颜色                                                                   | scaffoldBackgroundColor.withOpacity(0.7)                     |
-| lineHeight             | 裁剪框线的高度                                                                   | 0.6                                                          |
-| eidtorMaskColorHandler | 蒙层的颜色回调，你可以根据是否手指按下来设置不同的蒙层颜色                       | scaffoldBackgroundColor.withOpacity(pointerdown ? 0.4 : 0.8) |
-| hitTestSize            | 裁剪框四角以及边线能够拖拽的区域的大小                                           | 20.0                                                         |
-| animationDuration      | 当裁剪框拖拽变化结束之后，自动适应到中间的动画的时长                             | Duration(milliseconds: 200)                                  |
-| tickerDuration         | 当裁剪框拖拽变化结束之后，多少时间才触发自动适应到中间的动画                     | Duration(milliseconds: 400)                                  |
-| cropAspectRatio        | 裁剪框的宽高比                                                                   | null(无宽高比)                                               |
-| initCropRectType       | 剪切框的初始化类型(根据图片初始化区域或者图片的layout区域)                       | imageRect                                                    |
+| 参数                   | 描述                                                                               | 默认                                                         |
+| ---------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| maxScale               | 最大的缩放倍数                                                                     | 5.0                                                          |
+| cropRectPadding        | 裁剪框跟图片 layout 区域之间的距离。最好是保持一定距离，不然裁剪框边界很难进行拖拽 | EdgeInsets.all(20.0)                                         |
+| cornerSize             | 裁剪框四角图形的大小                                                               | Size(30.0, 5.0)                                              |
+| cornerColor            | 裁剪框四角图形的颜色                                                               | primaryColor                                                 |
+| lineColor              | 裁剪框线的颜色                                                                     | scaffoldBackgroundColor.withOpacity(0.7)                     |
+| lineHeight             | 裁剪框线的高度                                                                     | 0.6                                                          |
+| eidtorMaskColorHandler | 蒙层的颜色回调，你可以根据是否手指按下来设置不同的蒙层颜色                         | scaffoldBackgroundColor.withOpacity(pointerdown ? 0.4 : 0.8) |
+| hitTestSize            | 裁剪框四角以及边线能够拖拽的区域的大小                                             | 20.0                                                         |
+| animationDuration      | 当裁剪框拖拽变化结束之后，自动适应到中间的动画的时长                               | Duration(milliseconds: 200)                                  |
+| tickerDuration         | 当裁剪框拖拽变化结束之后，多少时间才触发自动适应到中间的动画                       | Duration(milliseconds: 400)                                  |
+| cropAspectRatio        | 裁剪框的宽高比                                                                     | null(无宽高比)                                               |
+| initCropRectType       | 剪切框的初始化类型(根据图片初始化区域或者图片的 layout 区域)                       | imageRect                                                    |
 
-### 裁剪框的宽高比 
+### 裁剪框的宽高比
 
-这是一个double类型，你可以自定义裁剪框的宽高比。
-如果为null，那就没有宽高比限制。
-如果小于等于0，宽高比等于图片的宽高比。
+这是一个 double 类型，你可以自定义裁剪框的宽高比。
+如果为 null，那就没有宽高比限制。
+如果小于等于 0，宽高比等于图片的宽高比。
 下面是一些定义好了的宽高比
 
-``` dart
+```dart
 class CropAspectRatios {
   /// no aspect ratio for crop
   static const double custom = null;
@@ -398,48 +398,52 @@ class CropAspectRatios {
   static const double ratio16_9 = 16.0 / 9.0;
 }
 ```
+
 ### 旋转,翻转,重置
 
-- 定义key，以方便操作ExtendedImageEditorState
-  
- `final GlobalKey<ExtendedImageEditorState> editorKey =GlobalKey<ExtendedImageEditorState>();`
+- 定义 key，以方便操作 ExtendedImageEditorState
 
-- 顺时针旋转90°
-  
- `editorKey.currentState.rotate(right: true);`
+`final GlobalKey<ExtendedImageEditorState> editorKey =GlobalKey<ExtendedImageEditorState>();`
 
-- 逆时针旋转90°
-  
- `editorKey.currentState.rotate(right: false);`
+- 顺时针旋转 90°
+
+`editorKey.currentState.rotate(right: true);`
+
+- 逆时针旋转 90°
+
+`editorKey.currentState.rotate(right: false);`
 
 - 翻转(镜像)
-  
- `editorKey.currentState.flip();`
+
+`editorKey.currentState.flip();`
 
 - 重置
-  
- `editorKey.currentState.reset();`
+
+`editorKey.currentState.reset();`
 
 ### 裁剪数据
 
-#### 使用dart库(稳定)
+#### 使用 dart 库(稳定)
 
 - 添加 [Image](https://github.com/brendan-duncan/image) 库到 pubspec.yaml, 它是用来裁剪/旋转/翻转图片数据的
-  
-``` yaml
+
+```yaml
 dependencies:
   image: any
 ```
 
-- 从ExtendedImageEditorState中获取裁剪区域以及图片数据
-``` dart
+- 从 ExtendedImageEditorState 中获取裁剪区域以及图片数据
+
+```dart
   ///crop rect base on raw image
   final Rect cropRect = state.getCropRect();
 
   var data = state.rawImageData;
-``` 
-- 将flutter的图片数据转换为image库的数据
-``` dart
+```
+
+- 将 flutter 的图片数据转换为 image 库的数据
+
+```dart
   /// it costs much time and blocks ui.
   //Image src = decodeImage(data);
 
@@ -448,9 +452,11 @@ dependencies:
   //Image src = await isolateDecodeImage(data);
   final lb = await loadBalancer;
   Image src = await lb.run<Image, List<int>>(decodeImage, data);
-``` 
+```
+
 - 翻转，旋转，裁剪数据
-``` dart
+
+```dart
   //相机拍照的图片带有旋转，处理之前需要去掉
   src = bakeOrientation(src);
 
@@ -471,12 +477,13 @@ dependencies:
   }
 
   if (editAction.hasRotateAngle) src = copyRotate(src, editAction.rotateAngle);
-``` 
+```
+
 - 将数据转为为图片的元数据
-  
+
 获取到的将是图片的元数据，你可以使用它来保存或者其他的一些用途
 
-``` dart
+```dart
   /// you can encode your image
   ///
   /// it costs much time and blocks ui.
@@ -486,26 +493,29 @@ dependencies:
   //var fileData = await compute(encodeJpg, src);
   //var fileData = await isolateEncodeImage(src);
   var fileData = await lb.run<List<int>, Image>(encodeJpg, src);
-``` 
+```
 
 #### 使用原生库(快速)
 
 - 添加 [ImageEditor](https://github.com/fluttercandies/flutter_image_editor) 库到 pubspec.yaml, 它是用来裁剪/旋转/翻转图片数据的。
-  
-``` yaml
+
+```yaml
 dependencies:
   image_editor: any
 ```
 
-- 从ExtendedImageEditorState中获取裁剪区域以及图片数据
-``` dart
+- 从 ExtendedImageEditorState 中获取裁剪区域以及图片数据
+
+```dart
   ///crop rect base on raw image
   final Rect cropRect = state.getCropRect();
 
   final img = state.rawImageData;
-``` 
+```
+
 - 准备裁剪选项
-``` dart
+
+```dart
   final rotateAngle = action.rotateAngle.toInt();
   final flipHorizontal = action.flipY;
   final flipVertical = action.flipX;
@@ -519,18 +529,18 @@ dependencies:
         FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
 
   if (action.hasRotateAngle) option.addOption(RotateOption(rotateAngle));
-``` 
+```
 
-- 使用editImage方法进行裁剪 
-  
+- 使用 editImage 方法进行裁剪
+
 获取到的将是图片的元数据，你可以使用它来保存或者其他的一些用途
 
-``` dart
+```dart
   final result = await ImageEditor.editImage(
     image: img,
     imageEditorOption: option,
   );
-``` 
+```
 
 [more detail](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_editor_helper.dart)
 
@@ -538,26 +548,25 @@ dependencies:
 
 支持跟微信/掘金一样的图片查看效果
 
-ExtendedImageGesturePageView跟官方PageView一样的使用，不同的是，它避免了跟缩放拖拽手势冲突
+ExtendedImageGesturePageView 跟官方 PageView 一样的使用，不同的是，它避免了跟缩放拖拽手势冲突
 
 支持缓存手势的状态，就是说你缩放了图片，然后下一个，再回到之前的图片，图片的缩放状态可以保存，
-如果你缓存了手势，记住在合适的时候使用clearGestureDetailsCache()清除掉，比如页面销毁的时候
-
+如果你缓存了手势，记住在合适的时候使用 clearGestureDetailsCache()清除掉，比如页面销毁的时候
 
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/photo_view.gif)
 
 ExtendedImageGesturePageView
 
-| parameter   | description                                                          | default |
-| ----------- | -------------------------------------------------------------------- | ------- |
-| canMovePage | 是否滑动页面.有些场景如果Scale大于1.0，并不想滑动页面，可以返回false | true    |
+| parameter   | description                                                              | default |
+| ----------- | ------------------------------------------------------------------------ | ------- |
+| canMovePage | 是否滑动页面.有些场景如果 Scale 大于 1.0，并不想滑动页面，可以返回 false | true    |
 
 GestureConfig
 
-| 参数         | 描述                                                                                                 | 默认  |
-| ------------ | ---------------------------------------------------------------------------------------------------- | ----- |
-| cacheGesture | 是否缓存手势状态，可用于ExtendedImageGesturePageView中保留状态，使用clearGestureDetailsCache方法清除 | false |
-| inPageView   | 是否使用ExtendedImageGesturePageView展示图片                                                         | false |
+| 参数         | 描述                                                                                                     | 默认  |
+| ------------ | -------------------------------------------------------------------------------------------------------- | ----- |
+| cacheGesture | 是否缓存手势状态，可用于 ExtendedImageGesturePageView 中保留状态，使用 clearGestureDetailsCache 方法清除 | false |
+| inPageView   | 是否使用 ExtendedImageGesturePageView 展示图片                                                           | false |
 
 ```dart
 ExtendedImageGesturePageView.builder(
@@ -609,14 +618,14 @@ ExtendedImageGesturePageView.builder(
 
 ExtendedImage
 
-| parameter                 | description                                                                         | default |
-| ------------------------- | ----------------------------------------------------------------------------------- | ------- |
-| enableSlideOutPage        | 是否开启滑动退出页面效果                                                            | false   |
-| heroBuilderForSlidingPage | 滑动退出页面的transform必须作用在Hero上面，这样在退出页面的时候，Hero动画才不会奇怪 | null    |
+| parameter                 | description                                                                              | default |
+| ------------------------- | ---------------------------------------------------------------------------------------- | ------- |
+| enableSlideOutPage        | 是否开启滑动退出页面效果                                                                 | false   |
+| heroBuilderForSlidingPage | 滑动退出页面的 transform 必须作用在 Hero 上面，这样在退出页面的时候，Hero 动画才不会奇怪 | null    |
 
-### 把你的页面用ExtendedImageSlidePage包一下
+### 把你的页面用 ExtendedImageSlidePage 包一下
 
-注意：onSlidingPage回调，你可以使用它来设置滑动页面的时候,页面上其他元素的状态。但是注意别直接使用setState来刷新，因为这样会导致ExtendedImage的状态重置掉，你应该只通知需要刷新的Widgets进行刷新
+注意：onSlidingPage 回调，你可以使用它来设置滑动页面的时候,页面上其他元素的状态。但是注意别直接使用 setState 来刷新，因为这样会导致 ExtendedImage 的状态重置掉，你应该只通知需要刷新的 Widgets 进行刷新
 
 ```dart
     return ExtendedImageSlidePage(
@@ -642,21 +651,22 @@ ExtendedImage
     );
 ```
 
-ExtendedImageGesturePage的参数
+ExtendedImageGesturePage 的参数
 
-| parameter                  | description                                                           | default                           |
-| -------------------------- | --------------------------------------------------------------------- | --------------------------------- |
-| child                      | 需要包裹的页面                                                        | -                                 |
-| slidePageBackgroundHandler | 在滑动页面的时候根据Offset自定义整个页面的背景色                      | defaultSlidePageBackgroundHandler |
-| slideScaleHandler          | 在滑动页面的时候根据Offset自定义整个页面的缩放值                      | defaultSlideScaleHandler          |
-| slideEndHandler            | 滑动页面结束的时候计算是否需要pop页面                                 | defaultSlideEndHandler            |
-| slideAxis                  | 滑动页面的方向（both,horizontal,vertical）,掘金是vertical，微信是Both | both                              |
-| resetPageDuration          | 滑动结束，如果不pop页面，整个页面回弹动画的时间                       | milliseconds: 500                 |
-| slideType                  | 滑动整个页面还是只是图片(wholePage/onlyImage)                         | SlideType.onlyImage               |
-| onSlidingPage              | 滑动页面的回调，你可以在这里改变页面上其他元素的状态                  | -                                 |
-| slideOffsetHandler         | 在滑动页面的时候自定义Offset                                          | -                                 |
+| parameter                  | description                                                             | default                           |
+| -------------------------- | ----------------------------------------------------------------------- | --------------------------------- |
+| child                      | 需要包裹的页面                                                          | -                                 |
+| slidePageBackgroundHandler | 在滑动页面的时候根据 Offset 自定义整个页面的背景色                      | defaultSlidePageBackgroundHandler |
+| slideScaleHandler          | 在滑动页面的时候根据 Offset 自定义整个页面的缩放值                      | defaultSlideScaleHandler          |
+| slideEndHandler            | 滑动页面结束的时候计算是否需要 pop 页面                                 | defaultSlideEndHandler            |
+| slideAxis                  | 滑动页面的方向（both,horizontal,vertical）,掘金是 vertical，微信是 Both | both                              |
+| resetPageDuration          | 滑动结束，如果不 pop 页面，整个页面回弹动画的时间                       | milliseconds: 500                 |
+| slideType                  | 滑动整个页面还是只是图片(wholePage/onlyImage)                           | SlideType.onlyImage               |
+| onSlidingPage              | 滑动页面的回调，你可以在这里改变页面上其他元素的状态                    | -                                 |
+| slideOffsetHandler         | 在滑动页面的时候自定义 Offset                                           | -                                 |
 
 下面是默认实现，你也可以根据你的喜好，来定义属于自己方式
+
 ```dart
 Color defaultSlidePageBackgroundHandler(
     {Offset offset, Size pageSize, Color color, SlideAxis pageGestureAxis}) {
@@ -698,13 +708,15 @@ double defaultSlideScaleHandler(
   return max(1.0 - scale, 0.8);
 }
 ```
+
 ### 确保你的页面是透明背景的
+
 如果你设置 slideType =SlideType.onlyImage, 请确保的你页面是透明的，毕竟没法操控你页面上的颜色
 
-### Push一个透明的页面
+### Push 一个透明的页面
 
-这里我把官方的MaterialPageRoute 和CupertinoPageRoute拷贝出来了，
-改为TransparentMaterialPageRoute/TransparentCupertinoPageRoute，因为它们的opaque不能设置为false
+这里我把官方的 MaterialPageRoute 和 CupertinoPageRoute 拷贝出来了，
+改为 TransparentMaterialPageRoute/TransparentCupertinoPageRoute，因为它们的 opaque 不能设置为 false
 
 ```dart
   Navigator.push(
@@ -748,7 +760,7 @@ ExtendedImage.network(
 
 ### 清除缓存
 
-清除本地缓存，可以调用clearDiskCachedImages方法
+清除本地缓存，可以调用 clearDiskCachedImages 方法
 
 ```dart
 // Clear the disk cache directory then return if it succeed.
@@ -756,19 +768,21 @@ ExtendedImage.network(
 Future<bool> clearDiskCachedImages({Duration duration})
 ```
 
-根据某一个url清除缓存， 可以调用clearDiskCachedImage方法.
+根据某一个 url 清除缓存， 可以调用 clearDiskCachedImage 方法.
+
 ```dart
 /// clear the disk cache image then return if it succeed.
 ///  <param name="url">clear specific one</param>
 Future<bool> clearDiskCachedImage(String url) async {
 ```
 
-根据url获取缓存图片文件
+根据 url 获取缓存图片文件
+
 ```dart
 Future<File> getCachedImageFile(String url) async {
 ```
 
-清除内存缓存，可以调用clearMemoryImageCache方法
+清除内存缓存，可以调用 clearMemoryImageCache 方法
 
 ```dart
 ///clear all of image in memory
@@ -781,7 +795,7 @@ Future<File> getCachedImageFile(String url) async {
 ### 保存网络图片
 
 这是一个例子，使用到[image_picker_saver](https://github.com/cnhefang/image_picker_saver)
-插件，ExtendedImage做的只是提供网络图片的数据源
+插件，ExtendedImage 做的只是提供网络图片的数据源
 
 ```dart
 ///save netwrok image to photo
@@ -797,8 +811,7 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/crop.gif)
 
 你可以通过
-[ExtendedRawImage](https://github.com/fluttercandies/extended_image/blob/master/lib/src/image/extended_raw_image.dart)(可以在状态回调的时候使用),sourceRect 是你想要显示图片的哪一部分，这个在各个app里面应该是比较常见的操作
-
+[ExtendedRawImage](https://github.com/fluttercandies/extended_image/blob/master/lib/src/image/extended_raw_image.dart)(可以在状态回调的时候使用),sourceRect 是你想要显示图片的哪一部分，这个在各个 app 里面应该是比较常见的操作
 
 ```dart
 ExtendedRawImage(
@@ -811,12 +824,11 @@ ExtendedRawImage(
 )
 ```
 
-
 ## 绘制
 
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/paint.gif)
 
-提供了 BeforePaintImage and AfterPaintImage 两个回调, 这样你就能绘制你想要的东西或者进图片进行Clip。
+提供了 BeforePaintImage and AfterPaintImage 两个回调, 这样你就能绘制你想要的东西或者进图片进行 Clip。
 
 ExtendedImage
 
@@ -857,13 +869,13 @@ ExtendedImage
   );
 ```
 
-在例子中可以看到把图片Clip成了一个桃心，你也可以根据你的要求，做出不同的Clip
+在例子中可以看到把图片 Clip 成了一个桃心，你也可以根据你的要求，做出不同的 Clip
 [绘制例子](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/paint_image_demo.dart)
 [下拉刷新头当中，也使用了这个技巧](https://github.com/fluttercandies/extended_image/tree/master/example/lib/common/push_to_refresh_header.dart)
 
 ## 瀑布流
 
-使用 [LoadingMoreList](https://github.com/fluttercandies/loading_more_list) 或者 [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) 以及ExtendedImage创建瀑布流布局.
+使用 [LoadingMoreList](https://github.com/fluttercandies/loading_more_list) 或者 [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) 以及 ExtendedImage 创建瀑布流布局.
 
 ![img](https://github.com/fluttercandies/flutter_candies/tree/master/gif/waterfall_flow/known_sized.gif)
 
@@ -882,10 +894,10 @@ ExtendedImage
               ),
             ),
 ```
+
 ## 内存回收/可视区域追踪
 
-当列表元素回收的时候你可以回收掉图片的内存缓存以减少内存压力。你也可以监听到viewport中indexes的变化。
-
+当列表元素回收的时候你可以回收掉图片的内存缓存以减少内存压力。你也可以监听到 viewport 中 indexes 的变化。
 
 更多详情请查看[LoadingMoreList](https://github.com/fluttercandies/loading_more_list), [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) 和 [ExtendedList](https://github.com/fluttercandies/extended_list)
 
@@ -922,7 +934,8 @@ ExtendedImage
 
 ExtendedImage
 
-| 参数                     | 描述                               | 默认 |
-| ------------------------ | ---------------------------------- | ---- |
-| enableMemoryCache        | 是否缓存到内存                     | true |
-| clearMemoryCacheIfFailed | 如果图片加载失败，是否清掉内存缓存 | true |
+| 参数                        | 描述                                     | 默认  |
+| --------------------------- | ---------------------------------------- | ----- |
+| enableMemoryCache           | 是否缓存到内存                           | true  |
+| clearMemoryCacheIfFailed    | 如果图片加载失败，是否清掉内存缓存       | true  |
+| clearMemoryCacheWhenDispose | 如果图片从 tree 中移除，是否清掉内存缓存 | false |
