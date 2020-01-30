@@ -1,11 +1,9 @@
 import 'dart:async';
 
-import 'package:example/common/tu_chong_source.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
-
-import 'tu_chong_repository.dart';
+import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 
 class ItemBuilder {
   static Widget itemBuilder(BuildContext context, TuChongItem item, int index) {
@@ -265,9 +263,6 @@ Widget buildBottomWidget(TuChongItem item, {bool showAvatar = true}) {
           return onLikeButtonTap(isLiked, item);
         },
       ),
-      // Container(
-      //   child: Text(content),
-      // ),
     ],
   );
 }

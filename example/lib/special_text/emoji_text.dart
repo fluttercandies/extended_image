@@ -1,4 +1,5 @@
 import 'package:extended_text_library/extended_text_library.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 ///emoji/image text
@@ -11,7 +12,9 @@ class EmojiText extends SpecialText {
   @override
   InlineSpan finishText() {
     var key = toString();
-    if (EmojiUitl.instance.emojiMap.containsKey(key)) {
+    ///https://github.com/flutter/flutter/issues/42086
+    /// widget span is not working on web
+    if (EmojiUitl.instance.emojiMap.containsKey(key) && !kIsWeb) {
       //fontsize id define image height
       //size = 30.0/26.0 * fontSize
       final double size = 20.0;

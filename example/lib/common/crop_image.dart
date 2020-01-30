@@ -1,9 +1,8 @@
 import 'dart:math';
 import 'package:example/common/pic_swiper.dart';
-import 'package:example/common/tu_chong_source.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 import 'dart:ui' as ui show Image;
 
 ///
@@ -25,8 +24,8 @@ class CropImage extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!tuChongItem.hasImage) return Container();
 
-    final double num300 = ScreenUtil.getInstance().setWidth(300);
-    final double num400 = ScreenUtil.getInstance().setWidth(400);
+    final double num300 = ScreenUtil.instance.setWidth(300);
+    final double num400 = ScreenUtil.instance.setWidth(400);
     double height = num300;
     double width = num400;
     final imageItem = tuChongItem.images[index];
@@ -47,104 +46,102 @@ class CropImage extends StatelessWidget {
       }
     }
 
-    return ExtendedImage(
+    return ExtendedImage.network(imageItem.imageUrl,
         //if you don't want to resize image to reduce the memory
         //use ExtendedImage.network(imageItem.imageUrl)
-        image: imageItem.createResizeImage(),
+        //image: imageItem.createResizeImage(),
         //fit: BoxFit.fill,
         //height: 200.0,
         width: width,
-        height: height,
-        loadStateChanged: (ExtendedImageState state) {
-          Widget widget;
-          switch (state.extendedImageLoadState) {
-            case LoadState.loading:
-              widget = Container(
-                color: Colors.grey,
-                alignment: Alignment.center,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.0,
-                  valueColor:
-                      AlwaysStoppedAnimation(Theme.of(context).primaryColor),
-                ),
-              );
-              break;
-            case LoadState.completed:
-              //if you can't konw image size before build,
-              //you have to handle crop when image is loaded.
-              //so maybe your loading widget size will not the same
-              //as image actual size, set returnLoadStateChangedWidget=true,so that
-              //image will not to be limited by size which you set for ExtendedImage first time.
-              state.returnLoadStateChangedWidget = !knowImageSize;
+        height: height, loadStateChanged: (ExtendedImageState state) {
+      Widget widget;
+      switch (state.extendedImageLoadState) {
+        case LoadState.loading:
+          widget = Container(
+            color: Colors.grey,
+            alignment: Alignment.center,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.0,
+              valueColor:
+                  AlwaysStoppedAnimation(Theme.of(context).primaryColor),
+            ),
+          );
+          break;
+        case LoadState.completed:
+          //if you can't konw image size before build,
+          //you have to handle crop when image is loaded.
+          //so maybe your loading widget size will not the same
+          //as image actual size, set returnLoadStateChangedWidget=true,so that
+          //image will not to be limited by size which you set for ExtendedImage first time.
+          state.returnLoadStateChangedWidget = !knowImageSize;
 
-              ///if you don't want override completed widget
-              ///please return null or state.completedWidget
-              //return null;
-              //return state.completedWidget;
-              widget = Hero(
-                  tag: imageItem.imageUrl,
-                  child: buildImage(
-                      state.extendedImageInfo.image, num300, num400));
+          ///if you don't want override completed widget
+          ///please return null or state.completedWidget
+          //return null;
+          //return state.completedWidget;
+          widget = Hero(
+              tag: imageItem.imageUrl,
+              child: buildImage(state.extendedImageInfo.image, num300, num400));
 
-              break;
-            case LoadState.failed:
-              widget = GestureDetector(
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: <Widget>[
-                    Image.asset(
-                      "assets/failed.jpg",
-                      fit: BoxFit.fill,
-                    ),
-                    Positioned(
-                      bottom: 0.0,
-                      left: 0.0,
-                      right: 0.0,
-                      child: Text(
-                        "load image failed, click to reload",
-                        textAlign: TextAlign.center,
-                      ),
-                    )
-                  ],
-                ),
-                onTap: () {
-                  state.reLoadImage();
-                },
-              );
-              break;
-          }
-          if (index == 8 && tuChongItem.images.length > 9) {
-            widget = Stack(
+          break;
+        case LoadState.failed:
+          widget = GestureDetector(
+            child: Stack(
+              fit: StackFit.expand,
               children: <Widget>[
-                widget,
-                Container(
-                  color: Colors.grey.withOpacity(0.2),
-                  alignment: Alignment.center,
+                Image.asset(
+                  "assets/failed.jpg",
+                  fit: BoxFit.fill,
+                ),
+                Positioned(
+                  bottom: 0.0,
+                  left: 0.0,
+                  right: 0.0,
                   child: Text(
-                    "+${tuChongItem.images.length - 9}",
-                    style: TextStyle(fontSize: 18.0, color: Colors.white),
+                    "load image failed, click to reload",
+                    textAlign: TextAlign.center,
                   ),
                 )
               ],
-            );
-          }
-
-          widget = GestureDetector(
-            child: widget,
+            ),
             onTap: () {
-              Navigator.pushNamed(context, "fluttercandies://picswiper",
-                  arguments: {
-                    "index": index,
-                    "pics": tuChongItem.images
-                        .map<PicSwiperItem>(
-                            (f) => PicSwiperItem(f.imageUrl, des: f.title))
-                        .toList(),
-                  });
+              state.reLoadImage();
             },
           );
+          break;
+      }
+      if (index == 8 && tuChongItem.images.length > 9) {
+        widget = Stack(
+          children: <Widget>[
+            widget,
+            Container(
+              color: Colors.grey.withOpacity(0.2),
+              alignment: Alignment.center,
+              child: Text(
+                "+${tuChongItem.images.length - 9}",
+                style: TextStyle(fontSize: 18.0, color: Colors.white),
+              ),
+            )
+          ],
+        );
+      }
 
-          return widget;
-        });
+      widget = GestureDetector(
+        child: widget,
+        onTap: () {
+          Navigator.pushNamed(context, "fluttercandies://picswiper",
+              arguments: {
+                "index": index,
+                "pics": tuChongItem.images
+                    .map<PicSwiperItem>(
+                        (f) => PicSwiperItem(f.imageUrl, des: f.title))
+                    .toList(),
+              });
+        },
+      );
+
+      return widget;
+    });
   }
 
   Widget buildImage(ui.Image image, double num300, double num400) {

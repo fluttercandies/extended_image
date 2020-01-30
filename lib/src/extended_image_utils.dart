@@ -68,7 +68,7 @@ int doubleCompare(double value, double other,
     {double precision = precisionErrorTolerance}) {
   if (value.isNaN || other.isNaN)
     throw UnsupportedError('Compared with Infinity or NaN');
-  double n = value - other;
+  final n = value - other;
   if (n.abs() < precision) return 0;
   return n < 0 ? -1 : 1;
 }

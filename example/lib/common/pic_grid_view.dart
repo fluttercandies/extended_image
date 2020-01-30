@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'crop_image.dart';
-import 'tu_chong_source.dart';
+import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 
 const int maxPicGridViewCount = 9;
 
