@@ -176,6 +176,7 @@ Future<List<int>> cropImageDataWithNativeLibrary(
   return result;
 }
 
+/// it may be failed, due to Cross-domain
 Future<Uint8List> _loadNetwork(ExtendedNetworkImageProvider key) async {
   try {
     Response response = await HttpClientHelper.get(key.url,

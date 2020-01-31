@@ -82,6 +82,7 @@ class _PicSwiperState extends State<PicSwiper>
                   fit: BoxFit.contain,
                   enableSlideOutPage: true,
                   mode: ExtendedImageMode.gesture,
+                
                   heroBuilderForSlidingPage: (Widget result) {
                     if (index < min(9, widget.pics.length)) {
                       return Hero(
@@ -120,6 +121,7 @@ class _PicSwiperState extends State<PicSwiper>
                         initialScale: initialScale,
                         maxScale: max(initialScale, 5.0),
                         animationMaxScale: max(initialScale, 5.0),
+                        initialAlignment: InitialAlignment.center,
                         //you can cache gesture state even though page view page change.
                         //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
                         cacheGesture: false);

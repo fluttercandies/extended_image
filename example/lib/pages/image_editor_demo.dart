@@ -6,7 +6,6 @@ import 'package:example/common/common_widget.dart';
 import 'package:example/common/crop_editor_helper.dart';
 import 'package:example/common/image_picker/image_picker.dart';
 import 'package:example/common/utils.dart';
-import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -69,9 +68,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         ],
       ),
       body: Center(
-        child: _fileImage != null
+        child: _memoryImage != null
             ? ExtendedImage.memory(
-                _fileImage,
+                _memoryImage,
                 fit: BoxFit.contain,
                 mode: ExtendedImageMode.editor,
                 enableLoadState: true,
@@ -85,8 +84,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       cropAspectRatio: _aspectRatio.value);
                 },
               )
-            : ExtendedImage.network(
-                imageTestUrl,
+            : ExtendedImage.asset(
+                'assets/image.jpg',
                 fit: BoxFit.contain,
                 mode: ExtendedImageMode.editor,
                 extendedImageEditorKey: editorKey,
@@ -360,9 +359,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     _cropping = false;
   }
 
-  Uint8List _fileImage;
+  Uint8List _memoryImage;
   void _getImage() async {
-    _fileImage = await pickImage();
+    _memoryImage = await pickImage();
     setState(() {
       editorKey.currentState.reset();
     });

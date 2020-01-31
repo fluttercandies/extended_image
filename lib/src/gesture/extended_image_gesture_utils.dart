@@ -216,6 +216,8 @@ class GestureDetails {
   }
 
   Rect calculateFinalDestinationRect(Rect layoutRect, Rect destinationRect) {
+    final destinationRectChanged = rawDestinationRect != destinationRect;
+  
     rawDestinationRect = destinationRect;
 
     var temp = offset;
@@ -226,12 +228,12 @@ class GestureDetails {
 
     ///first call,initial image rect with alignment
     if (totalScale > 1.0 &&
-        this.destinationRect == null &&
+        destinationRectChanged &&
         initialAlignment != null) {
       offset = _getFixedOffset(destinationRect,
           result.center + _getCenterDif(result, layoutRect, initialAlignment));
       result = _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
-      initialAlignment = null;
+      //initialAlignment = null;
     }
     this.destinationRect = result;
     this.layoutRect = layoutRect;
