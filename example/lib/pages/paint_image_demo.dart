@@ -83,11 +83,19 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                   if (paintType == PaintType.ClipHeart) {
                     if (!rect.isEmpty) canvas.restore();
                   } else if (paintType == PaintType.PaintHeart) {
+                    // canvas.drawPath(
+                    //     clipheart(rect, canvas),
+                    //     Paint()
+                    //       ..colorFilter = ColorFilter.mode(
+                    //           Color(0x55ea5504), BlendMode.srcIn)
+                    //       ..isAntiAlias = false
+                    //       ..filterQuality = FilterQuality.low);
                     canvas.drawPath(
                         clipheart(rect, canvas),
                         Paint()
-                          ..colorFilter = ColorFilter.mode(
-                              Color(0x55ea5504), BlendMode.srcIn)
+                          // ..colorFilter = ColorFilter.mode(
+                          //     Color(0x55ea5504), BlendMode.srcIn)
+                          ..color=Color(0x55ea5504).withOpacity(0.2)
                           ..isAntiAlias = false
                           ..filterQuality = FilterQuality.low);
 

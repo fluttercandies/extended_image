@@ -1,5 +1,6 @@
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 import 'package:oktoast/oktoast.dart';
@@ -43,15 +44,17 @@ class _CustomImageDemoState extends State<CustomImageDemo>
           AppBar(
             title: Text("CustomImage"),
           ),
-          RaisedButton(
-            child: Text("clear all cache"),
-            onPressed: () {
-              clearDiskCachedImages().then((bool done) {
-                showToast(done ? "clear succeed" : "clear failed",
-                    position: ToastPosition(align: Alignment.topCenter));
-              });
-            },
-          ),
+          !kIsWeb
+              ? RaisedButton(
+                  child: Text("clear all cache"),
+                  onPressed: () {
+                    clearDiskCachedImages().then((bool done) {
+                      showToast(done ? "clear succeed" : "clear failed",
+                          position: ToastPosition(align: Alignment.topCenter));
+                    });
+                  },
+                )
+              : Container(),
           Expanded(
             child: Align(
               child: ExtendedImage.network(

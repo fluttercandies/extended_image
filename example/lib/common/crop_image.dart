@@ -147,7 +147,9 @@ class CropImage extends StatelessWidget {
 
   Widget buildImage(ui.Image image, double num300, double num400) {
     var n = image.height / image.width;
-    if (n >= 4 / 3) {
+    if (tuChongItem.images.length == 1) {
+      return ExtendedRawImage(image: image, fit: BoxFit.cover);
+    } else if (n >= 4 / 3) {
       Widget imageWidget = ExtendedRawImage(
           image: image,
           width: num300,

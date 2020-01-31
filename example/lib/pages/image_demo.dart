@@ -81,15 +81,18 @@ class _ImageDemoState extends State<ImageDemo> {
               Expanded(
                 child: Container(),
               ),
-              RaisedButton(
-                child: Text("save network image to photo"),
-                onPressed: () {
-                  saveNetworkImageToPhoto(url).then((bool done) {
-                    showToast(done ? "save succeed" : "save failed",
-                        position: ToastPosition(align: Alignment.topCenter));
-                  });
-                },
-              ),
+              !kIsWeb
+                  ? RaisedButton(
+                      child: Text("save network image to photo"),
+                      onPressed: () {
+                        saveNetworkImageToPhoto(url).then((bool done) {
+                          showToast(done ? "save succeed" : "save failed",
+                              position:
+                                  ToastPosition(align: Alignment.topCenter));
+                        });
+                      },
+                    )
+                  : Container(),
             ],
           ),
           Expanded(
