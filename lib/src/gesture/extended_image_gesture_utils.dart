@@ -529,14 +529,15 @@ Color defaultSlidePageBackgroundHandler(
 
 bool defaultSlideEndHandler(
     {Offset offset, Size pageSize, SlideAxis pageGestureAxis}) {
+  final parameter = 6;
   if (pageGestureAxis == SlideAxis.both) {
     return doubleCompare(offset.distance,
-            Offset(pageSize.width, pageSize.height).distance / 3.5) >
+            Offset(pageSize.width, pageSize.height).distance / parameter) >
         0;
   } else if (pageGestureAxis == SlideAxis.horizontal) {
-    return doubleCompare(offset.dx.abs(), pageSize.width / 3.5) > 0;
+    return doubleCompare(offset.dx.abs(), pageSize.width / parameter) > 0;
   } else if (pageGestureAxis == SlideAxis.vertical) {
-    return doubleCompare(offset.dy.abs(), pageSize.height / 3.5) > 0;
+    return doubleCompare(offset.dy.abs(), pageSize.height / parameter) > 0;
   }
   return true;
 }

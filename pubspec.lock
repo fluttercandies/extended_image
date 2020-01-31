@@ -60,12 +60,10 @@ packages:
   extended_image_library:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "91cda6ddf8d0d9489b37cef6adb3ff06f5c44056"
-      url: "https://github.com/fluttercandies/extended_image_library.git"
-    source: git
-    version: "0.1.9"
+      name: extended_image_library
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.0"
   flutter:
     dependency: "direct main"
     description: flutter
