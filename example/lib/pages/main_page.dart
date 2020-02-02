@@ -2,6 +2,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
+import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 import 'package:oktoast/oktoast.dart';
 
 import '../example_route.dart';
@@ -25,6 +26,20 @@ class MainPage extends StatelessWidget {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text("extended image"),
+        actions: <Widget>[
+          FlatButton(
+              child: Text(
+                'Github',
+                style: TextStyle(
+                  decorationStyle: TextDecorationStyle.solid,
+                  decoration: TextDecoration.underline,
+                  color: Colors.white,
+                ),
+              ),
+              onPressed: () {
+                launch('https://github.com/fluttercandies/extended_image');
+              })
+        ],
       ),
       body: ListView.builder(
         itemBuilder: (c, index) {

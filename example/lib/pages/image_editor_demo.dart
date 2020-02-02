@@ -87,6 +87,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 'assets/image.jpg',
                 fit: BoxFit.contain,
                 mode: ExtendedImageMode.editor,
+                enableLoadState: true,
                 extendedImageEditorKey: editorKey,
                 initEditorConfigHandler: (state) {
                   return EditorConfig(
