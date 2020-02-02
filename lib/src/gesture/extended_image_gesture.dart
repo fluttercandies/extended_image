@@ -29,6 +29,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   GestureAnimation _gestureAnimation;
   GestureConfig _gestureConfig;
   ExtendedImageGesturePageViewState _pageViewState;
+
   @override
   void initState() {
     _initGestureConfig();
@@ -36,8 +37,6 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   void _initGestureConfig() {
-    _gestureAnimation?.stop();
-    _gestureAnimation?.dispose();
     final double initialScale = _gestureConfig?.initialScale;
     final InitialAlignment initialAlignment = _gestureConfig?.initialAlignment;
     _gestureConfig = widget
@@ -113,7 +112,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   @override
   void dispose() {
     super.dispose();
-    _gestureAnimation.dispose();
+    _gestureAnimation?.stop();
+    _gestureAnimation?.dispose();
   }
 
   void _handleScaleStart(ScaleStartDetails details) {
@@ -380,6 +380,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   void handleDoubleTap({double scale, Offset doubleTapPosition}) {
     doubleTapPosition ??= _pointerDownPosition;
     scale ??= _gestureConfig.initialScale;
+    scale = scale.clamp(_gestureConfig.minScale, _gestureConfig.maxScale);
     _handleScaleStart(ScaleStartDetails(focalPoint: doubleTapPosition));
     _handleScaleUpdate(ScaleUpdateDetails(
         focalPoint: doubleTapPosition, scale: scale / _startingScale));

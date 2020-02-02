@@ -2,7 +2,10 @@
 
 * Features:
   Support web.
-  Add clearMemoryCacheWhenDispose parameter that whether  clear memory cache when image is disposed.
+  Add clearMemoryCacheWhenDispose parameter that whether clear memory cache when image is disposed.
+* Issues:
+  Fix animationMinScale and animationMaxScale are not working for gif.  
+  Fix scale parameter of handleDoubleTap method is beyond minScale and maxScale.
 
 ## [0.6.9]
 
