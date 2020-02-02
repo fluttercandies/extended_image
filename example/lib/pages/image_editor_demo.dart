@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:example/common/common_widget.dart';
 import 'package:example/common/crop_editor_helper.dart';
 import 'package:example/common/image_picker/image_picker.dart';
-import 'package:example/common/utils.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';

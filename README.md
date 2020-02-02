@@ -63,7 +63,7 @@ ExtendedImage.network(
 
 ### Use Extendednetworkimageprovider
 
-[ExtendedNetworkImageProvider](https://github.com/fluttercandies/extended_image/blob/master/lib/src/extended_network_image_provider.dart)
+[ExtendedNetworkImageProvider](https://github.com/fluttercandies/extended_image_library/blob/master/lib/src/extended_network_image_provider.dart)
 
 ```dart
    ExtendedNetworkImageProvider(
@@ -720,9 +720,9 @@ you should push page with TransparentMaterialPageRoute/TransparentCupertinoPageR
   );
 ```
 
-[Slide Out Page Demo Code 1](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_image.dart)
+[Slide Out Page Demo Code 1](https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/crop_image.dart)
 
-[Slide Out Page Demo Code 2](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/pic_swiper.dart)
+[Slide Out Page Demo Code 2](https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/pic_swiper.dart)
 
 ## Border BorderRadius Shape
 
@@ -864,7 +864,7 @@ ExtendedImage
 ```
 
 see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/paint_image_demo.dart)
-and [push to refresh header which is used in crop image demo](https://github.com/fluttercandies/extended_image/tree/master/example/lib/common/push_to_refresh_header.dart)
+and [push to refresh header which is used in crop image demo]https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/push_to_refresh_header.dart)
 
 ## WaterfallFlow
 

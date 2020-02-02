@@ -6,11 +6,6 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
-import 'package:example/common/item_builder.dart';
-import 'package:example/common/my_extended_text_selection_controls.dart';
-import 'package:example/common/pic_grid_view.dart';
-import 'package:example/common/push_to_refresh_header.dart';
-import 'package:example/special_text/my_special_text_span_builder.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/gestures.dart';
@@ -141,7 +136,10 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                               return null;
                                             }
                                             return Image.asset(
-                                                "assets/avatar.jpg");
+                                              "assets/avatar.jpg",
+                                              package:
+                                                  'flutter_candies_demo_library',
+                                            );
                                           },
                                         ),
                                         SizedBox(
