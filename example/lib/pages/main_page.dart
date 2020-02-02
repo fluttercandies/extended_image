@@ -25,9 +25,12 @@ class MainPage extends StatelessWidget {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text("extended image"),
+        title: Text("ExtendedImage"),
         actions: <Widget>[
-          FlatButton(
+          ButtonTheme(
+            minWidth: 0.0,
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: FlatButton(
               child: Text(
                 'Github',
                 style: TextStyle(
@@ -38,7 +41,20 @@ class MainPage extends StatelessWidget {
               ),
               onPressed: () {
                 launch('https://github.com/fluttercandies/extended_image');
-              })
+              },
+            ),
+          ),
+          ButtonTheme(
+            padding: EdgeInsets.only(right: 10.0),
+            minWidth: 0.0,
+            child: FlatButton(
+              child:
+                  Image.network('https://pub.idqqimg.com/wpa/images/group.png'),
+              onPressed: () {
+                launch('https://jq.qq.com/?_wv=1027&k=5bcc0gy');
+              },
+            ),
+          )
         ],
       ),
       body: ListView.builder(

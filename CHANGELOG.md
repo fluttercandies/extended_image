@@ -1,3 +1,8 @@
+## [0.7.1]
+
+* Improve:
+  scale parameter of method(handleDoubleTap) is support animationMinScale and animationMaxScale now.  
+
 ## [0.7.0]
 
 * Features:
@@ -5,7 +10,7 @@
   Add clearMemoryCacheWhenDispose parameter that whether clear memory cache when image is disposed.
 * Issues:
   Fix animationMinScale and animationMaxScale are not working for gif.  
-  Fix scale parameter of handleDoubleTap method is beyond minScale and maxScale.
+  Fix scale parameter of method(handleDoubleTap) is beyond minScale and maxScale.
 
 ## [0.6.9]
 
