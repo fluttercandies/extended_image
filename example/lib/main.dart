@@ -1,5 +1,4 @@
 import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
-import 'package:example/pages/no_route.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';
 import 'package:flutter/cupertino.dart';
@@ -57,7 +56,7 @@ class MyApp extends StatelessWidget {
         }
         return w;
       },
-      initialRoute: "fluttercandies://mainpage",
+      initialRoute: 'fluttercandies://mainpage',
       onGenerateRoute: (RouteSettings settings) {
         var routeResult =
             getRouteResult(name: settings.name, arguments: settings.arguments);
@@ -72,7 +71,10 @@ class MyApp extends StatelessWidget {
               showStatusBar: routeResult.showStatusBar);
         }
 
-        var page = routeResult.widget ?? NoRoute();
+        var page = routeResult.widget ??
+            getRouteResult(
+                name: 'fluttercandies://mainpage',
+                arguments: settings.arguments);
         final platform = Theme.of(context).platform;
         switch (routeResult.pageRouteType) {
           case PageRouteType.material:
@@ -103,4 +105,3 @@ class MyApp extends StatelessWidget {
 String _imageTestUrl;
 String get imageTestUrl =>
     _imageTestUrl ?? "https://photo.tuchong.com/4870004/f/298584322.jpg";
-
