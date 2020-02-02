@@ -57,6 +57,13 @@ class FlatButtonWithIcon extends FlatButton with MaterialButtonWithIconMixin {
         );
 }
 
+
+class AspectRatioItem {
+  final String text;
+  final double value;
+  AspectRatioItem({this.value, this.text});
+}
+
 class AspectRatioWidget extends StatelessWidget {
   final String aspectRatioS;
   final double aspectRatio;

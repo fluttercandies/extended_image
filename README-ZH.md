@@ -729,9 +729,9 @@ double defaultSlideScaleHandler(
   );
 ```
 
-[滑动退出页面相关代码演示 1](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_image.dart)
+[滑动退出页面相关代码演示 1](https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/crop_image.dart)
 
-[滑动退出页面相关代码演示 2](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/pic_swiper.dart)
+[滑动退出页面相关代码演示 2](https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/pic_swiper.dart)
 
 ## Border BorderRadius Shape
 
@@ -873,7 +873,7 @@ ExtendedImage
 
 在例子中可以看到把图片 Clip 成了一个桃心，你也可以根据你的要求，做出不同的 Clip
 [绘制例子](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/paint_image_demo.dart)
-[下拉刷新头当中，也使用了这个技巧](https://github.com/fluttercandies/extended_image/tree/master/example/lib/common/push_to_refresh_header.dart)
+[下拉刷新头当中，也使用了这个技巧](https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/push_to_refresh_header.dart)
 
 ## 瀑布流
 

@@ -5,7 +5,6 @@ import 'package:extended_image_library/extended_image_library.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker_saver/image_picker_saver.dart';
 import "package:oktoast/oktoast.dart";
 import 'example_route.dart';
 import 'example_route_helper.dart';
@@ -105,10 +104,3 @@ String _imageTestUrl;
 String get imageTestUrl =>
     _imageTestUrl ?? "https://photo.tuchong.com/4870004/f/298584322.jpg";
 
-///save netwrok image to photo
-Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
-  if (kIsWeb) return false;
-  var data = await getNetworkImageData(url, useCache: useCache);
-  var filePath = await ImagePickerSaver.saveFile(fileData: data);
-  return filePath != null && filePath != "";
-}
