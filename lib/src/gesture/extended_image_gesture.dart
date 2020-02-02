@@ -380,10 +380,13 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   void handleDoubleTap({double scale, Offset doubleTapPosition}) {
     doubleTapPosition ??= _pointerDownPosition;
     scale ??= _gestureConfig.initialScale;
-    scale = scale.clamp(_gestureConfig.minScale, _gestureConfig.maxScale);
+    //scale = scale.clamp(_gestureConfig.minScale, _gestureConfig.maxScale);
     _handleScaleStart(ScaleStartDetails(focalPoint: doubleTapPosition));
     _handleScaleUpdate(ScaleUpdateDetails(
         focalPoint: doubleTapPosition, scale: scale / _startingScale));
+    if (scale < _gestureConfig.minScale || scale > _gestureConfig.maxScale) {
+      _handleScaleEnd(ScaleEndDetails());
+    }
   }
 
   @override
