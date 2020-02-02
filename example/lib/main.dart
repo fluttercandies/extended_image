@@ -58,14 +58,25 @@ class MyApp extends StatelessWidget {
       },
       initialRoute: 'fluttercandies://mainpage',
       onGenerateRoute: (RouteSettings settings) {
+        var routeName = settings.name;
+        //when refresh web, route will as following
+        //   /
+        //   /fluttercandies:
+        //   /fluttercandies:/
+        //   /fluttercandies://mainpage
+
+        if (kIsWeb && routeName.startsWith('/')) {
+          routeName = routeName.replaceFirst('/', '');
+        }
+
         var routeResult =
-            getRouteResult(name: settings.name, arguments: settings.arguments);
+            getRouteResult(name: routeName, arguments: settings.arguments);
 
         if (routeResult.showStatusBar != null ||
             routeResult.routeName != null) {
           settings = FFRouteSettings(
               arguments: settings.arguments,
-              name: settings.name,
+              name: routeName,
               isInitialRoute: settings.isInitialRoute,
               routeName: routeResult.routeName,
               showStatusBar: routeResult.showStatusBar);
@@ -73,8 +84,10 @@ class MyApp extends StatelessWidget {
 
         var page = routeResult.widget ??
             getRouteResult(
-                name: 'fluttercandies://mainpage',
-                arguments: settings.arguments);
+                    name: 'fluttercandies://mainpage',
+                    arguments: settings.arguments)
+                .widget;
+                
         final platform = Theme.of(context).platform;
         switch (routeResult.pageRouteType) {
           case PageRouteType.material:
