@@ -61,6 +61,7 @@ class ExtendedImage extends StatefulWidget {
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
+        handleLoadingProgress = false,
         super(key: key);
 
   ExtendedImage.network(
@@ -106,6 +107,7 @@ class ExtendedImage extends StatefulWidget {
     this.initEditorConfigHandler,
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose: false,
+    bool handleLoadingProgress: false,
   })  :
         //assert(autoCancel != null),
         image = ExtendedNetworkImageProvider(url,
@@ -122,6 +124,7 @@ class ExtendedImage extends StatefulWidget {
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
+        handleLoadingProgress = handleLoadingProgress,
         super(key: key);
 
   /// Creates a widget that displays an [ImageStream] obtained from a [File].
@@ -187,6 +190,7 @@ class ExtendedImage extends StatefulWidget {
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
+        handleLoadingProgress = false,
         super(key: key);
 
   /// Creates a widget that displays an [ImageStream] obtained from an asset
@@ -364,6 +368,7 @@ class ExtendedImage extends StatefulWidget {
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
+        handleLoadingProgress = false,
         super(key: key);
 
   /// Creates a widget that displays an [ImageStream] obtained from a [Uint8List].
@@ -425,7 +430,11 @@ class ExtendedImage extends StatefulWidget {
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
+        handleLoadingProgress = false,
         super(key: key);
+
+  /// whether handle loading progress for network
+  final bool handleLoadingProgress;
 
   ///when image is removed from the tree permanently, whether clear memory cache
   final bool clearMemoryCacheWhenDispose;
@@ -651,6 +660,9 @@ class _ExtendedImageState extends State<ExtendedImage>
   bool _isListeningToStream = false;
   bool _invertColors;
   ExtendedImageSlidePageState _slidePageState;
+  ImageChunkEvent _loadingProgress;
+  int _frameNumber;
+  bool _wasSynchronouslyLoaded;
 
   @override
   void initState() {
@@ -746,9 +758,18 @@ class _ExtendedImageState extends State<ExtendedImage>
     setState(() {
       _loadState = LoadState.failed;
     });
+    if (kDebugMode) {
+      print(exception);
+    }
     if (!widget.enableMemoryCache || widget.clearMemoryCacheIfFailed) {
       widget.image.evict();
     }
+  }
+
+  void _handleImageChunk(ImageChunkEvent event) {
+    setState(() {
+      _loadingProgress = event;
+    });
   }
 
   void _handleImageChanged(ImageInfo imageInfo, bool synchronousCall) {
@@ -765,6 +786,9 @@ class _ExtendedImageState extends State<ExtendedImage>
       }
       //_loadState = LoadState.completed;
       _imageInfo = imageInfo;
+      _loadingProgress = null;
+      _frameNumber = _frameNumber == null ? 0 : _frameNumber + 1;
+      _wasSynchronouslyLoaded |= synchronousCall;
     });
 
     if (!widget.enableMemoryCache) {
@@ -779,8 +803,11 @@ class _ExtendedImageState extends State<ExtendedImage>
     if (_imageStream?.key == newStream?.key) return;
     //print("_updateSourceStream");
     if (_isListeningToStream)
-      _imageStream.removeListener(
-          ImageStreamListener(_handleImageChanged, onError: _loadFailed));
+      _imageStream.removeListener(ImageStreamListener(
+        _handleImageChanged,
+        onError: _loadFailed,
+        onChunk: widget.handleLoadingProgress ? _handleImageChunk : null,
+      ));
 
     if (!widget.gaplessPlayback || rebuild) {
       setState(() {
@@ -789,23 +816,38 @@ class _ExtendedImageState extends State<ExtendedImage>
       });
     }
 
+    setState(() {
+      _loadingProgress = null;
+      _frameNumber = null;
+      _wasSynchronouslyLoaded = false;
+    });
+
     _imageStream = newStream;
     if (_isListeningToStream)
-      _imageStream.addListener(
-          ImageStreamListener(_handleImageChanged, onError: _loadFailed));
+      _imageStream.addListener(ImageStreamListener(
+        _handleImageChanged,
+        onError: _loadFailed,
+        onChunk: widget.handleLoadingProgress ? _handleImageChunk : null,
+      ));
   }
 
   void _listenToStream() {
     if (_isListeningToStream) return;
-    _imageStream.addListener(
-        ImageStreamListener(_handleImageChanged, onError: _loadFailed));
+    _imageStream.addListener(ImageStreamListener(
+      _handleImageChanged,
+      onError: _loadFailed,
+      onChunk: widget.handleLoadingProgress ? _handleImageChunk : null,
+    ));
     _isListeningToStream = true;
   }
 
   void _stopListeningToStream() {
     if (!_isListeningToStream) return;
-    _imageStream.removeListener(
-        ImageStreamListener(_handleImageChanged, onError: _loadFailed));
+    _imageStream.removeListener(ImageStreamListener(
+      _handleImageChanged,
+      onError: _loadFailed,
+      onChunk: widget.handleLoadingProgress ? _handleImageChunk : null,
+    ));
     _isListeningToStream = false;
   }
 
@@ -974,6 +1016,11 @@ class _ExtendedImageState extends State<ExtendedImage>
     super.debugFillProperties(description);
     description.add(DiagnosticsProperty<ImageStream>('stream', _imageStream));
     description.add(DiagnosticsProperty<ImageInfo>('pixels', _imageInfo));
+    description.add(DiagnosticsProperty<ImageChunkEvent>(
+        'loadingProgress', _loadingProgress));
+    description.add(DiagnosticsProperty<int>('frameNumber', _frameNumber));
+    description.add(DiagnosticsProperty<bool>(
+        'wasSynchronouslyLoaded', _wasSynchronouslyLoaded));
   }
 
   //reload image as you wish,(loaded failed)
@@ -1002,4 +1049,13 @@ class _ExtendedImageState extends State<ExtendedImage>
 
   @override
   Widget get completedWidget => _getCompletedWidget();
+
+  @override
+  ImageChunkEvent get loadingProgress => _loadingProgress;
+
+  @override
+  int get frameNumber => _frameNumber;
+
+  @override
+  bool get wasSynchronouslyLoaded => _wasSynchronouslyLoaded;
 }

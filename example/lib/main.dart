@@ -29,19 +29,6 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      navigatorObservers: [
-        FFNavigatorObserver(routeChange: (name) {
-          //you can track page here
-          // print(name);
-        }, showStatusBarChange: (bool showStatusBar) {
-          // if (showStatusBar) {
-          //   SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-          //   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
-          // } else {
-          //   SystemChrome.setEnabledSystemUIOverlays([]);
-          // }
-        })
-      ],
       builder: (c, w) {
         ScreenUtil.init(width: 750, height: 1334, allowFontScaling: true);
         // ScreenUtil.instance =
@@ -87,7 +74,7 @@ class MyApp extends StatelessWidget {
                     name: 'fluttercandies://mainpage',
                     arguments: settings.arguments)
                 .widget;
-                
+
         final platform = Theme.of(context).platform;
         switch (routeResult.pageRouteType) {
           case PageRouteType.material:

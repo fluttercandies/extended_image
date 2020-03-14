@@ -174,6 +174,8 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
         });
         Navigator.pop(context);
       } else {
+        //_isSliding=false;
+ 
         _backOffsetAnimation = _backAnimationController
             .drive(Tween<Offset>(begin: _offset, end: Offset.zero));
         _backScaleAnimation = _backAnimationController

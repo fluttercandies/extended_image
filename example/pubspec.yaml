@@ -27,8 +27,6 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   js: ^0.6.1+1  
-  # flutter_candies_demo_library:
-  #   path: D:\zmt\FlutterCandies\dev\flutter_candies_demo_library
   flutter_candies_demo_library:
     git:
         url: https://github.com/fluttercandies/flutter_candies_demo_library.git

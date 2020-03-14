@@ -1,3 +1,8 @@
+## [0.7.2]
+
+* support loading progress for network
+* public HttpClient of ExtendedNetworkImageProvider
+  
 ## [0.7.1]
 
 * Improve:

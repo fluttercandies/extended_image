@@ -29,6 +29,12 @@ abstract class ExtendedImageState {
   ExtendedImage get imageWidget;
 
   Widget get completedWidget;
+
+  ImageChunkEvent get loadingProgress;
+
+  int get frameNumber;
+
+  bool get wasSynchronouslyLoaded;
 }
 
 enum ExtendedImageMode {
