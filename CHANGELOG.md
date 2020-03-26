@@ -2,6 +2,7 @@
 
 * support loading progress for network
 * public HttpClient of ExtendedNetworkImageProvider
+* public ExtendedImageGestureState for SlideOffsetHanlder/SlideEndHandler/SlideScaleHandler to get scale of image
   
 ## [0.7.1]
 

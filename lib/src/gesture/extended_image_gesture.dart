@@ -5,15 +5,22 @@ import 'package:extended_image/src/image/extended_raw_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import '../extended_image_typedef.dart';
 import 'extended_image_slide_page.dart';
+
+bool _defaultCanScaleICmage(GestureDetails details) => true;
 
 /// scale idea from https://github.com/flutter/flutter/blob/master/examples/layers/widgets/gestures.dart
 /// zoom image
 class ExtendedImageGesture extends StatefulWidget {
   final ExtendedImageState extendedImageState;
-  final ExtendedImageSlidePageState extendedImageSlidePageState;
+  final ImageBuilderForGesture imageBuilder;
+  final CanScaleImage canScaleImage;
   ExtendedImageGesture(
-      this.extendedImageState, this.extendedImageSlidePageState);
+    this.extendedImageState, {
+    this.imageBuilder,
+    CanScaleImage canScaleImage,
+  }) : canScaleImage = canScaleImage ?? _defaultCanScaleICmage;
   @override
   _ExtendedImageGestureState createState() => _ExtendedImageGestureState();
 }
@@ -29,7 +36,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   GestureAnimation _gestureAnimation;
   GestureConfig _gestureConfig;
   ExtendedImageGesturePageViewState _pageViewState;
-
+  ExtendedImageSlidePageState get extendedImageSlidePageState =>
+      widget.extendedImageState.slidePageState;
   @override
   void initState() {
     _initGestureConfig();
@@ -124,19 +132,19 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     _startingOffset = details.focalPoint;
   }
 
-  Offset _updateSlidePageStartingOffset;
-  Offset _updateSlidePageImageStartingOffset;
+  Offset _updateSlidePagePreOffset;
+  //Offset _updateSlidePageImageStartingOffset;
 
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     ///whether gesture page
-    if (widget.extendedImageSlidePageState != null &&
+    if (extendedImageSlidePageState != null &&
         details.scale == 1.0 &&
         _gestureDetails.userOffset &&
         _gestureDetails.actionType == ActionType.pan) {
       var offsetDelta = (details.focalPoint - _startingOffset);
       //print(offsetDelta);
       bool updateGesture = false;
-      if (!widget.extendedImageSlidePageState.isSliding) {
+      if (!extendedImageSlidePageState.isSliding) {
         if (offsetDelta.dx != 0 &&
             doubleCompare(offsetDelta.dx.abs(), offsetDelta.dy.abs()) > 0) {
           if (_gestureDetails.computeHorizontalBoundary) {
@@ -181,23 +189,24 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 //      }
 
       if (doubleCompare(delta, minGesturePageDelta) > 0 && updateGesture) {
-        _updateSlidePageStartingOffset ??= details.focalPoint;
-        _updateSlidePageImageStartingOffset ??= _gestureDetails.offset;
-        widget.extendedImageSlidePageState.slide(
-            details.focalPoint - _updateSlidePageStartingOffset,
+        _updateSlidePagePreOffset ??= details.focalPoint;
+        //_updateSlidePageImageStartingOffset ??= _gestureDetails.offset;
+        extendedImageSlidePageState.slide(
+            details.focalPoint - _updateSlidePagePreOffset,
             extendedImageGestureState: this);
+        _updateSlidePagePreOffset = details.focalPoint;
       }
     }
 
-    if (widget.extendedImageSlidePageState != null &&
-        widget.extendedImageSlidePageState.isSliding) {
+    if (extendedImageSlidePageState != null &&
+        extendedImageSlidePageState.isSliding) {
       return;
     }
 
-    double scale = clampScale(
-        (_startingScale * details.scale * _gestureConfig.speed),
-        _gestureConfig.animationMinScale,
-        _gestureConfig.animationMaxScale);
+    double scale = widget.canScaleImage(_gestureDetails)
+        ? clampScale((_startingScale * details.scale * _gestureConfig.speed),
+            _gestureConfig.animationMinScale, _gestureConfig.animationMaxScale)
+        : _gestureDetails.totalScale;
 
     //Round the scale to three points after comma to prevent shaking
     //scale = roundAfter(scale, 3);
@@ -231,11 +240,11 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   void _handleScaleEnd(ScaleEndDetails details) {
-    if (widget.extendedImageSlidePageState != null &&
-        widget.extendedImageSlidePageState.isSliding) {
-      _updateSlidePageStartingOffset = null;
+    if (extendedImageSlidePageState != null &&
+        extendedImageSlidePageState.isSliding) {
+      _updateSlidePagePreOffset = null;
       // _updateSlidePageImageStartingOffset = null;
-      widget.extendedImageSlidePageState.endSlide();
+      extendedImageSlidePageState.endSlide(details);
       return;
     }
     //animate back to maxScale if gesture exceeded the maxScale specified
@@ -329,13 +338,11 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       gestureDetails: _gestureDetails,
     );
 
-    if (widget.extendedImageSlidePageState != null) {
+    if (extendedImageSlidePageState != null) {
       image = widget.extendedImageState.imageWidget?.heroBuilderForSlidingPage
               ?.call(image) ??
           image;
-      if (widget.extendedImageSlidePageState.widget.slideType ==
-          SlideType.onlyImage) {
-        var extendedImageSlidePageState = widget.extendedImageSlidePageState;
+      if (extendedImageSlidePageState.widget.slideType == SlideType.onlyImage) {
         image = Transform.translate(
           offset: extendedImageSlidePageState.offset,
           child: Transform.scale(
@@ -345,6 +352,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
         );
       }
     }
+
+    image = widget.imageBuilder?.call(image) ?? image;
 
     image = GestureDetector(
       onScaleStart: _handleScaleStart,
@@ -396,8 +405,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   void slide() {
     if (mounted) {
       setState(() {
-        _gestureDetails.slidePageOffset =
-            widget.extendedImageSlidePageState?.offset;
+        _gestureDetails.slidePageOffset = extendedImageSlidePageState?.offset;
       });
     }
   }

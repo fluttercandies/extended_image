@@ -106,6 +106,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   }
 
   ExtendedImageGestureState _extendedImageGestureState;
+  ExtendedImageGestureState get imageGestureState => _extendedImageGestureState;
   ExtendedImageSlidePageHandlerState _extendedImageSlidePageHandlerState;
   void _backAnimation() {
     if (mounted) {
@@ -131,37 +132,51 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
       {ExtendedImageGestureState extendedImageGestureState,
       ExtendedImageSlidePageHandlerState extendedImageSlidePageHandlerState}) {
     if (_backAnimationController.isAnimating) return;
-    _offset = value;
+    _extendedImageGestureState = extendedImageGestureState;
+    _extendedImageSlidePageHandlerState = extendedImageSlidePageHandlerState;
+    _offset += value;
     if (widget.slideAxis == SlideAxis.horizontal) {
-      _offset = Offset(value.dx, 0.0);
+      _offset += Offset(value.dx, 0.0);
     } else if (widget.slideAxis == SlideAxis.vertical) {
-      _offset = Offset(0.0, value.dy);
+      _offset += Offset(0.0, value.dy);
     }
-    _offset = widget.slideOffsetHandler?.call(_offset) ?? _offset;
+    _offset = widget.slideOffsetHandler?.call(
+          _offset,
+          state: this,
+        ) ??
+        _offset;
 
-    _scale = widget.slideScaleHandler?.call(_offset) ??
+    _scale = widget.slideScaleHandler?.call(
+          _offset,
+          state: this,
+        ) ??
         defaultSlideScaleHandler(
             offset: _offset,
             pageSize: pageSize,
             pageGestureAxis: widget.slideAxis);
-    _isSliding = true;
 
-    if (widget.slideType == SlideType.onlyImage) {
-      _extendedImageGestureState = extendedImageGestureState;
-      _extendedImageGestureState?.slide();
-      _extendedImageSlidePageHandlerState = extendedImageSlidePageHandlerState;
-      _extendedImageSlidePageHandlerState?.slide();
-    }
+    //if (_scale != 1.0 || _offset != Offset.zero)
+    {
+      _isSliding = true;
+      if (widget.slideType == SlideType.onlyImage) {
+        _extendedImageGestureState?.slide();
+        _extendedImageSlidePageHandlerState?.slide();
+      }
 
-    if (mounted) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
+      widget.onSlidingPage?.call(this);
     }
-    widget.onSlidingPage?.call(this);
   }
 
-  void endSlide() {
+  void endSlide(ScaleEndDetails details) {
     if (mounted && _isSliding) {
-      var popPage = widget.slideEndHandler?.call(_offset) ??
+      var popPage = widget.slideEndHandler?.call(
+            _offset,
+            state: this,
+            details: details,
+          ) ??
           defaultSlideEndHandler(
               offset: _offset,
               pageSize: _pageSize,
@@ -175,15 +190,20 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
         Navigator.pop(context);
       } else {
         //_isSliding=false;
- 
-        _backOffsetAnimation = _backAnimationController
-            .drive(Tween<Offset>(begin: _offset, end: Offset.zero));
-        _backScaleAnimation = _backAnimationController
-            .drive(Tween<double>(begin: _scale, end: 1.0));
-        _offset = Offset.zero;
-        _scale = 1.0;
-        _backAnimationController.reset();
-        _backAnimationController.forward();
+        if (_offset != Offset.zero || _scale != 1.0) {
+          _backOffsetAnimation = _backAnimationController
+              .drive(Tween<Offset>(begin: _offset, end: Offset.zero));
+          _backScaleAnimation = _backAnimationController
+              .drive(Tween<double>(begin: _scale, end: 1.0));
+          _offset = Offset.zero;
+          _scale = 1.0;
+          _backAnimationController.reset();
+          _backAnimationController.forward();
+        } else {
+          setState(() {
+            _isSliding = false;
+          });
+        }
       }
     }
   }

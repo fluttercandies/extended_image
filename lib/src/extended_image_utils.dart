@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'extended_image.dart';
+import 'gesture/extended_image_slide_page.dart';
 
 enum LoadState {
   //loading
@@ -35,6 +36,8 @@ abstract class ExtendedImageState {
   int get frameNumber;
 
   bool get wasSynchronouslyLoaded;
+
+  ExtendedImageSlidePageState get slidePageState;
 }
 
 enum ExtendedImageMode {

@@ -1,6 +1,6 @@
 @JS()
 library image_saver;
-
+// ignore:avoid_web_libraries_in_flutter
 import 'dart:html';
 import 'dart:async';
 import 'dart:typed_data';

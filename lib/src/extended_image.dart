@@ -967,7 +967,7 @@ class _ExtendedImageState extends State<ExtendedImage>
   Widget _getCompletedWidget() {
     Widget current;
     if (widget.mode == ExtendedImageMode.gesture) {
-      current = ExtendedImageGesture(this, _slidePageState);
+      current = ExtendedImageGesture(this);
     } else if (widget.mode == ExtendedImageMode.editor) {
       current = ExtendedImageEditor(
         extendedImageState: this,
@@ -1058,4 +1058,7 @@ class _ExtendedImageState extends State<ExtendedImage>
 
   @override
   bool get wasSynchronouslyLoaded => _wasSynchronouslyLoaded;
+
+  @override
+  ExtendedImageSlidePageState get slidePageState => _slidePageState;
 }

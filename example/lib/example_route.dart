@@ -73,6 +73,7 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
         widget: PicSwiperPage(
           index: arguments['index'],
           pics: arguments['pics'],
+          tuChongItem: arguments['tuChongItem'],
         ),
         showStatusBar: false,
         routeName: "PicSwiper",
@@ -195,7 +196,7 @@ class Routes {
   ///
   /// [name] : fluttercandies://picswiper
   /// [routeName] : PicSwiper
-  /// [arguments] : [index, pics]
+  /// [arguments] : [index, pics, tuChongItem]
   /// [showStatusBar] : false
   /// [pageRouteType] : PageRouteType.transparent
   static const String FLUTTERCANDIES_PICSWIPER = "fluttercandies://picswiper";
