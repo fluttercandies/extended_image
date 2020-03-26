@@ -35,14 +35,24 @@ typedef SlidePageBackgroundHandler = Color Function(
     Offset offset, Size pageSize);
 
 /// customize offset of page when slide page
-typedef SlideOffsetHanlder = Offset Function(Offset offset);
+typedef SlideOffsetHanlder = Offset Function(
+  Offset offset, {
+  ExtendedImageSlidePageState state,
+});
 
 ///if return true ,pop page
 ///else reset page state
-typedef SlideEndHandler = bool Function(Offset offset);
+typedef SlideEndHandler = bool Function(
+  Offset offset, {
+  ExtendedImageSlidePageState state,
+  ScaleEndDetails details,
+});
 
 ///customize scale of page when slide page
-typedef SlideScaleHandler = double Function(Offset offset);
+typedef SlideScaleHandler = double Function(
+  Offset offset, {
+  ExtendedImageSlidePageState state,
+});
 
 ///init GestureConfig when image is ready.
 typedef InitGestureConfigHandler = GestureConfig Function(
@@ -75,3 +85,10 @@ typedef EidtorMaskColorHandler = Color Function(
 ///the transfrom of sliding page must be working on Hero
 ///so that Hero animation wouldn't be strange when pop page
 typedef HeroBuilderForSlidingPage = Widget Function(Widget widget);
+
+
+///build image for gesture, we can handle custom Widget about gesture
+typedef ImageBuilderForGesture = Widget Function(Widget image);
+
+///whether should scale image
+typedef CanScaleImage = bool Function(GestureDetails details);

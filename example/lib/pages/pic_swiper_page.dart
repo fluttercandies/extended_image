@@ -5,18 +5,28 @@ import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 @FFRoute(
     name: "fluttercandies://picswiper",
     routeName: "PicSwiper",
-    argumentNames: ["index", "pics"],
+    argumentNames: [
+      "index",
+      "pics",
+      "tuChongItem",
+    ],
     showStatusBar: false,
     pageRouteType: PageRouteType.transparent)
 class PicSwiperPage extends StatelessWidget {
   final int index;
   final List<PicSwiperItem> pics;
-  PicSwiperPage({this.index, this.pics});
+  final TuChongItem tuChongItem;
+  PicSwiperPage({
+    this.index,
+    this.pics,
+    this.tuChongItem,
+  });
   @override
   Widget build(BuildContext context) {
     return PicSwiper(
       index: index,
       pics: pics,
+      tuChongItem: tuChongItem,
     );
   }
 }

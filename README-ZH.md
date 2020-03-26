@@ -28,14 +28,14 @@
     - [裁剪框的宽高比](#%e8%a3%81%e5%89%aa%e6%a1%86%e7%9a%84%e5%ae%bd%e9%ab%98%e6%af%94)
     - [旋转,翻转,重置](#%e6%97%8b%e8%bd%ac%e7%bf%bb%e8%bd%ac%e9%87%8d%e7%bd%ae)
     - [裁剪数据](#%e8%a3%81%e5%89%aa%e6%95%b0%e6%8d%ae)
-      - [使用 dart 库(稳定)](#%e4%bd%bf%e7%94%a8dart%e5%ba%93%e7%a8%b3%e5%ae%9a)
+      - [使用 dart 库(稳定)](#%e4%bd%bf%e7%94%a8-dart-%e5%ba%93%e7%a8%b3%e5%ae%9a)
       - [使用原生库(快速)](#%e4%bd%bf%e7%94%a8%e5%8e%9f%e7%94%9f%e5%ba%93%e5%bf%ab%e9%80%9f)
   - [图片浏览](#%e5%9b%be%e7%89%87%e6%b5%8f%e8%a7%88)
   - [滑动退出页面](#%e6%bb%91%e5%8a%a8%e9%80%80%e5%87%ba%e9%a1%b5%e9%9d%a2)
     - [首先开启滑动退出页面效果](#%e9%a6%96%e5%85%88%e5%bc%80%e5%90%af%e6%bb%91%e5%8a%a8%e9%80%80%e5%87%ba%e9%a1%b5%e9%9d%a2%e6%95%88%e6%9e%9c)
-    - [把你的页面用 ExtendedImageSlidePage 包一下](#%e6%8a%8a%e4%bd%a0%e7%9a%84%e9%a1%b5%e9%9d%a2%e7%94%a8extendedimageslidepage%e5%8c%85%e4%b8%80%e4%b8%8b)
+    - [把你的页面用 ExtendedImageSlidePage 包一下](#%e6%8a%8a%e4%bd%a0%e7%9a%84%e9%a1%b5%e9%9d%a2%e7%94%a8-extendedimageslidepage-%e5%8c%85%e4%b8%80%e4%b8%8b)
     - [确保你的页面是透明背景的](#%e7%a1%ae%e4%bf%9d%e4%bd%a0%e7%9a%84%e9%a1%b5%e9%9d%a2%e6%98%af%e9%80%8f%e6%98%8e%e8%83%8c%e6%99%af%e7%9a%84)
-    - [Push 一个透明的页面](#push%e4%b8%80%e4%b8%aa%e9%80%8f%e6%98%8e%e7%9a%84%e9%a1%b5%e9%9d%a2)
+    - [Push 一个透明的页面](#push-%e4%b8%80%e4%b8%aa%e9%80%8f%e6%98%8e%e7%9a%84%e9%a1%b5%e9%9d%a2)
   - [Border BorderRadius Shape](#border-borderradius-shape)
   - [清除缓存和保存](#%e6%b8%85%e9%99%a4%e7%bc%93%e5%ad%98%e5%92%8c%e4%bf%9d%e5%ad%98)
     - [清除缓存](#%e6%b8%85%e9%99%a4%e7%bc%93%e5%ad%98)
@@ -149,6 +149,7 @@ ExtendedImageState 状态回调
 | imageStreamKey               | 图片流的唯一键                                                                                         | -    |
 | reLoadImage()                | 如果图片加载失败，你可以通过调用这个方法来重新加载图片                                                 | -    |
 | completedWidget              | 返回图片完成的 Widget，它包含手势以及裁剪                                                              | -    |
+| loadingProgress              | 返回网络图片加载进度 (ImageChunkEvent  )                                      | -    |
 
 ```dart
 abstract class ExtendedImageState {

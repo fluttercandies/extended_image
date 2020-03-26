@@ -146,6 +146,7 @@ ExtendedImageState(LoadStateChanged call back)
 | imageStreamKey               | key of image                                                                                                                                  | -       |
 | reLoadImage()                | if image load failed,you can reload image by call it                                                                                          | -       |
 | completedWidget              | return completed widget include gesture or editor                                                                                             | -       |
+| loadingProgress              | return the loading progress for newwork image (ImageChunkEvent  )                                                                             | -       |
 
 ```dart
 abstract class ExtendedImageState {

@@ -50,7 +50,7 @@ class ExtendedImageSlidePageHandlerState
     _startingOffset = details.focalPoint;
   }
 
-  Offset _updatePageGestureStartingOffset;
+  Offset _updateSlidePagePreOffset;
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     ///whether gesture page
     if (widget.extendedImageSlidePageState != null && details.scale == 1.0) {
@@ -59,10 +59,11 @@ class ExtendedImageSlidePageHandlerState
       var delta = (details.focalPoint - _startingOffset).distance;
 
       if (doubleCompare(delta, minGesturePageDelta) > 0) {
-        _updatePageGestureStartingOffset ??= details.focalPoint;
+        _updateSlidePagePreOffset ??= details.focalPoint;
         widget.extendedImageSlidePageState.slide(
-            details.focalPoint - _updatePageGestureStartingOffset,
+            details.focalPoint - _updateSlidePagePreOffset,
             extendedImageSlidePageHandlerState: this);
+        _updateSlidePagePreOffset = details.focalPoint;
       }
     }
   }
@@ -70,8 +71,8 @@ class ExtendedImageSlidePageHandlerState
   void _handleScaleEnd(ScaleEndDetails details) {
     if (widget.extendedImageSlidePageState != null &&
         widget.extendedImageSlidePageState.isSliding) {
-      _updatePageGestureStartingOffset = null;
-      widget.extendedImageSlidePageState.endSlide();
+      _updateSlidePagePreOffset = null;
+      widget.extendedImageSlidePageState.endSlide(details);
       return;
     }
   }

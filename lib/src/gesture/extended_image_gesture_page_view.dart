@@ -330,6 +330,11 @@ class ExtendedImageGesturePageViewState
       final int currentPage = pageController.page.round();
       bool movePage = (pageController.page != currentPage);
 
+      if (!widget.canMovePage(gestureDetails)) {
+        //stop
+        temp = DragEndDetails(primaryVelocity: 0.0);
+      }
+
       /// stop when zoom in, so that it will not move to next/previous page
       if (!movePage &&
           gestureDetails != null &&
