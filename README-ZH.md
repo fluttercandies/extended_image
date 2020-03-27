@@ -149,7 +149,7 @@ ExtendedImageState 状态回调
 | imageStreamKey               | 图片流的唯一键                                                                                         | -    |
 | reLoadImage()                | 如果图片加载失败，你可以通过调用这个方法来重新加载图片                                                 | -    |
 | completedWidget              | 返回图片完成的 Widget，它包含手势以及裁剪                                                              | -    |
-| loadingProgress              | 返回网络图片加载进度 (ImageChunkEvent  )                                      | -    |
+| loadingProgress              | 返回网络图片加载进度 (ImageChunkEvent )                                                                | -    |
 
 ```dart
 abstract class ExtendedImageState {
@@ -248,24 +248,24 @@ ExtendedImage
 
 GestureConfig
 
-| 参数              | 描述                                                                                                     | 默认值                  |
-| ----------------- | -------------------------------------------------------------------------------------------------------- | ----------------------- |
-| minScale          | 缩放最小值                                                                                               | 0.8                     |
-| animationMinScale | 缩放动画最小值，当缩放结束时回到 minScale 值                                                             | minScale \* 0.8         |
-| maxScale          | 缩放最大值                                                                                               | 5.0                     |
-| animationMaxScale | 缩放动画最大值，当缩放结束时回到 maxScale 值                                                             | maxScale \* 1.2         |
-| speed             | 缩放拖拽速度，与用户操作成正比                                                                           | 1.0                     |
-| inertialSpeed     | 拖拽惯性速度，与惯性速度成正比                                                                           | 100                     |
-| cacheGesture      | 是否缓存手势状态，可用于 ExtendedImageGesturePageView 中保留状态，使用 clearGestureDetailsCache 方法清除 | false                   |
-| inPageView        | 是否使用 ExtendedImageGesturePageView 展示图片                                                           | false                   |
-| initialAlignment  | 当图片的初始化缩放大于 1.0 的时候，根据相对位置初始化图片                                                | InitialAlignment.center |
+| 参数              | 描述                                                                                                         | 默认值                  |
+| ----------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| minScale          | 缩放最小值                                                                                                   | 0.8                     |
+| animationMinScale | 缩放动画最小值，当缩放结束时回到 minScale 值                                                                 | minScale \* 0.8         |
+| maxScale          | 缩放最大值                                                                                                   | 5.0                     |
+| animationMaxScale | 缩放动画最大值，当缩放结束时回到 maxScale 值                                                                 | maxScale \* 1.2         |
+| speed             | 缩放拖拽速度，与用户操作成正比                                                                               | 1.0                     |
+| inertialSpeed     | 拖拽惯性速度，与惯性速度成正比                                                                               | 100                     |
+| cacheGesture      | 是否缓存手势状态，可用于 ExtendedImageGesturePageView 中保留状态，**使用 clearGestureDetailsCache 方法清除** | false                   |
+| inPageView        | 是否使用 ExtendedImageGesturePageView 展示图片                                                               | false                   |
+| initialAlignment  | 当图片的初始化缩放大于 1.0 的时候，根据相对位置初始化图片                                                    | InitialAlignment.center |
 
 ```dart
 ExtendedImage.network(
   imageTestUrl,
   fit: BoxFit.contain,
   //enableLoadState: false,
-  mode: ExtendedImageMode.Gesture,
+  mode: ExtendedImageMode.gesture,
   initGestureConfigHandler: (state) {
     return GestureConfig(
         minScale: 0.9,
@@ -578,7 +578,7 @@ ExtendedImageGesturePageView.builder(
     Widget image = ExtendedImage.network(
       item,
       fit: BoxFit.contain,
-      mode: ExtendedImageMode.Gesture,
+      mode: ExtendedImageMode.gesture,
       gestureConfig: GestureConfig(
         inPageView: true, initialScale: 1.0,
         //you can cache gesture state even though page view page change.
