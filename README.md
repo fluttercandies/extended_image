@@ -146,7 +146,7 @@ ExtendedImageState(LoadStateChanged call back)
 | imageStreamKey               | key of image                                                                                                                                  | -       |
 | reLoadImage()                | if image load failed,you can reload image by call it                                                                                          | -       |
 | completedWidget              | return completed widget include gesture or editor                                                                                             | -       |
-| loadingProgress              | return the loading progress for newwork image (ImageChunkEvent  )                                                                             | -       |
+| loadingProgress              | return the loading progress for newwork image (ImageChunkEvent )                                                                              | -       |
 
 ```dart
 abstract class ExtendedImageState {
@@ -242,28 +242,28 @@ ExtendedImage
 | ------------------------ | ------------------------------------------------------------------------------- | ------- |
 | mode                     | image mode (none,gestrue,editor)                                                | none    |
 | initGestureConfigHandler | init GestureConfig when image is ready，for example, base on image width/height | -       |
-| onDoubleTap              | call back of double tap under ExtendedImageMode.Gesture                         | -       |
+| onDoubleTap              | call back of double tap under ExtendedImageMode.gesture                         | -       |
 
 GestureConfig
 
-| parameter         | description                                                                                                                                                      | default                 |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| minScale          | min scale                                                                                                                                                        | 0.8                     |
-| animationMinScale | the min scale for zooming then animation back to minScale when scale end                                                                                         | minScale \_ 0.8         |
-| maxScale          | max scale                                                                                                                                                        | 5.0                     |
-| animationMaxScale | the max scale for zooming then animation back to maxScale when scale end                                                                                         | maxScale \_ 1.2         |
-| speed             | speed for zoom/pan                                                                                                                                               | 1.0                     |
-| inertialSpeed     | inertial speed for zoom/pan                                                                                                                                      | 100                     |
-| cacheGesture      | save Gesture state (for example in ExtendedImageGesturePageView, gesture state will not change when scroll back),remember clearGestureDetailsCache at right time | false                   |
-| inPageView        | whether in ExtendedImageGesturePageView                                                                                                                          | false                   |
-| initialAlignment  | init image rect with alignment when initialScale > 1.0                                                                                                           | InitialAlignment.center |
+| parameter         | description                                                                                                                                                          | default                 |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| minScale          | min scale                                                                                                                                                            | 0.8                     |
+| animationMinScale | the min scale for zooming then animation back to minScale when scale end                                                                                             | minScale \_ 0.8         |
+| maxScale          | max scale                                                                                                                                                            | 5.0                     |
+| animationMaxScale | the max scale for zooming then animation back to maxScale when scale end                                                                                             | maxScale \_ 1.2         |
+| speed             | speed for zoom/pan                                                                                                                                                   | 1.0                     |
+| inertialSpeed     | inertial speed for zoom/pan                                                                                                                                          | 100                     |
+| cacheGesture      | save Gesture state (for example in ExtendedImageGesturePageView, gesture state will not change when scroll back),**remember clearGestureDetailsCache at right time** | false                   |
+| inPageView        | whether in ExtendedImageGesturePageView                                                                                                                              | false                   |
+| initialAlignment  | init image rect with alignment when initialScale > 1.0                                                                                                               | InitialAlignment.center |
 
 ```dart
 ExtendedImage.network(
   imageTestUrl,
   fit: BoxFit.contain,
   //enableLoadState: false,
-  mode: ExtendedImageMode.Gesture,
+  mode: ExtendedImageMode.gesture,
   initGestureConfigHandler: (state) {
     return GestureConfig(
         minScale: 0.9,
@@ -570,7 +570,7 @@ ExtendedImageGesturePageView.builder(
     Widget image = ExtendedImage.network(
       item,
       fit: BoxFit.contain,
-      mode: ExtendedImageMode.Gesture,
+      mode: ExtendedImageMode.gesture,
       gestureConfig: GestureConfig(
         inPageView: true, initialScale: 1.0,
         //you can cache gesture state even though page view page change.

@@ -455,7 +455,7 @@ class ExtendedImage extends StatefulWidget {
   ///init GestureConfig when image is ready.
   final InitGestureConfigHandler initGestureConfigHandler;
 
-  ///call back of double tap  under ExtendedImageMode.Gesture
+  ///call back of double tap  under ExtendedImageMode.gesture
   final DoubleTap onDoubleTap;
 
   ///whether cache in PaintingBinding.instance.imageCache
