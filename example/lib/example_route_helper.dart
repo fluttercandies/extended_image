@@ -101,7 +101,6 @@ Route<dynamic> onGenerateRouteHelper(
   if (routeResult.showStatusBar != null || routeResult.routeName != null) {
     settings = FFRouteSettings(
       name: settings.name,
-      isInitialRoute: settings.isInitialRoute,
       routeName: routeResult.routeName,
       arguments: arguments,
       showStatusBar: routeResult.showStatusBar,
@@ -148,5 +147,5 @@ class FFRouteSettings extends RouteSettings {
     String name,
     bool isInitialRoute = false,
     Object arguments,
-  }) : super(name: name, isInitialRoute: isInitialRoute, arguments: arguments);
+  }) : super(name: name, arguments: arguments);
 }

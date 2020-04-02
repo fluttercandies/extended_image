@@ -64,7 +64,6 @@ class MyApp extends StatelessWidget {
           settings = FFRouteSettings(
               arguments: settings.arguments,
               name: routeName,
-              isInitialRoute: settings.isInitialRoute,
               routeName: routeResult.routeName,
               showStatusBar: routeResult.showStatusBar);
         }
