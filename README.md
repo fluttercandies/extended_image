@@ -14,7 +14,7 @@ A powerful official extension library of image, which support placeholder(loadin
   - [Table of contents](#table-of-contents)
   - [Cache Network](#cache-network)
     - [Simple use](#simple-use)
-    - [Use Extendednetworkimageprovider](#use-extendednetworkimageprovider)
+    - [Use ExtendedNetworkImageProvider](#use-extendednetworkimageprovider)
   - [Load State](#load-state)
     - [demo code](#demo-code)
   - [Zoom Pan](#zoom-pan)
@@ -61,7 +61,7 @@ ExtendedImage.network(
 )
 ```
 
-### Use Extendednetworkimageprovider
+### Use ExtendedNetworkImageProvider
 
 [ExtendedNetworkImageProvider](https://github.com/fluttercandies/extended_image_library/blob/master/lib/src/extended_network_image_provider.dart)
 
@@ -100,7 +100,7 @@ Extended Image provide 3 states(loading,completed,failed), you can define your s
 loadStateChanged call back.
 
 loadStateChanged is not only for network, if your image need long time to load,
-you can set enableLoadState(default value is ture for network and others are false) to ture
+you can set enableLoadState(default value is true for network and others are false) to true
 
 ![img](https://github.com/fluttercandies/Flutter_Candies/blob/master/gif/extended_image/custom.gif)
 
@@ -140,13 +140,13 @@ ExtendedImageState(LoadStateChanged call back)
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
 | extendedImageInfo            | image info                                                                                                                                    | -       |
 | extendedImageLoadState       | LoadState(loading,completed,failed)                                                                                                           | -       |
-| returnLoadStateChangedWidget | if this is ture, return widget which from LoadStateChanged fucntion immediately(width/height/gesture/border/shape etc, will not effect on it) | -       |
+| returnLoadStateChangedWidget | if this is true, return widget which from LoadStateChanged function immediately(width/height/gesture/border/shape etc, will not effect on it) | -       |
 | imageProvider                | ImageProvider                                                                                                                                 | -       |
 | invertColors                 | invertColors                                                                                                                                  | -       |
 | imageStreamKey               | key of image                                                                                                                                  | -       |
 | reLoadImage()                | if image load failed,you can reload image by call it                                                                                          | -       |
 | completedWidget              | return completed widget include gesture or editor                                                                                             | -       |
-| loadingProgress              | return the loading progress for newwork image (ImageChunkEvent )                                                                              | -       |
+| loadingProgress              | return the loading progress for network image (ImageChunkEvent )                                                                              | -       |
 
 ```dart
 abstract class ExtendedImageState {
@@ -154,7 +154,7 @@ abstract class ExtendedImageState {
   ImageInfo get extendedImageInfo;
   LoadState get extendedImageLoadState;
 
-  ///return widget which from LoadStateChanged fucntion  immediately
+  ///return widget which from LoadStateChanged function immediately
   bool returnLoadStateChangedWidget;
 
   ImageProvider get imageProvider;
@@ -240,7 +240,7 @@ ExtendedImage
 
 | parameter                | description                                                                     | default |
 | ------------------------ | ------------------------------------------------------------------------------- | ------- |
-| mode                     | image mode (none,gestrue,editor)                                                | none    |
+| mode                     | image mode (none, gesture, editor)                                                | none    |
 | initGestureConfigHandler | init GestureConfig when image is ready，for example, base on image width/height | -       |
 | onDoubleTap              | call back of double tap under ExtendedImageMode.gesture                         | -       |
 
@@ -358,7 +358,7 @@ EditorConfig
 | cornerColor            | color of corner shape                                              | primaryColor                                                 |
 | lineColor              | color of crop line                                                 | scaffoldBackgroundColor.withOpacity(0.7)                     |
 | lineHeight             | height of crop line                                                | 0.6                                                          |
-| eidtorMaskColorHandler | call back of eidtor mask color base on pointerDown                 | scaffoldBackgroundColor.withOpacity(pointerdown ? 0.4 : 0.8) |
+| editorMaskColorHandler | call back of editor mask color base on pointerDown                 | scaffoldBackgroundColor.withOpacity(pointerDown ? 0.4 : 0.8) |
 | hitTestSize            | hit test region of corner and line                                 | 20.0                                                         |
 | animationDuration      | auto center animation duration                                     | Duration(milliseconds: 200)                                  |
 | tickerDuration         | duration to begin auto center animation after crop rect is changed | Duration(milliseconds: 400)                                  |
@@ -367,7 +367,7 @@ EditorConfig
 
 ### crop aspect ratio
 
-it's a double value, so it's esay for you to define by yourself.
+it's a double value, so it's easy for you to define by yourself.
 following are official values
 
 ```dart
@@ -438,7 +438,7 @@ dependencies:
   var data = state.rawImageData;
 ```
 
-- convert raw image data to image libray data.
+- convert raw image data to image library data.
 
 ```dart
   /// it costs much time and blocks ui.
@@ -616,7 +616,7 @@ ExtendedImage
 | parameter                 | description                                                                                                                                      | default |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------- |
 | enableSlideOutPage        | whether enable slide out page                                                                                                                    | false   |
-| heroBuilderForSlidingPage | build Hero only for sliding page, the transfrom of sliding page must be working on Hero,so that Hero animation wouldn't be strange when pop page | null    |
+| heroBuilderForSlidingPage | build Hero only for sliding page, the transform of sliding page must be working on Hero,so that Hero animation wouldn't be strange when pop page | null    |
 
 ### include your page in ExtendedImageSlidePage
 
@@ -791,7 +791,7 @@ to clear memory cache , call clearMemoryImageCache method.
 call saveNetworkImageToPhoto and save image with [image_picker_saver](https://github.com/cnhefang/image_picker_saver)
 
 ```dart
-///save netwrok image to photo
+///save network image to photo
 Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
   var data = await getNetworkImageData(url, useCache: useCache);
   var filePath = await ImagePickerSaver.saveFile(fileData: data);
@@ -801,10 +801,10 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 
 ## Show Crop Image
 
-get your raw image by [Load State](#Load State), and crop image by soureRect.
+get your raw image by [Load State](#Load State), and crop image by sourceRect.
 
 [ExtendedRawImage](https://github.com/fluttercandies/extended_image/blob/master/lib/src/image/extended_raw_image.dart)
-soureRect is which you want to show image rect.
+sourceRect is which you want to show image rect.
 
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/crop.gif)
 
@@ -931,5 +931,5 @@ ExtendedImage
 | parameter                   | description                                                                                    | default |
 | --------------------------- | ---------------------------------------------------------------------------------------------- | ------- |
 | enableMemoryCache           | whether cache in PaintingBinding.instance.imageCache)                                          | true    |
-| clearMemoryCacheIfFailed    | when failed to load image, whether clear memory cache.if ture, image will reload in next time. | true    |
+| clearMemoryCacheIfFailed    | when failed to load image, whether clear memory cache.if true, image will reload in next time. | true    |
 | clearMemoryCacheWhenDispose | when image is removed from the tree permanently, whether clear memory cache.                   | false   |

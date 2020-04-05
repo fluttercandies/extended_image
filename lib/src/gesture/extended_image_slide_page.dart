@@ -26,7 +26,7 @@ class ExtendedImageSlidePage extends StatefulWidget {
   final SlideScaleHandler slideScaleHandler;
 
   ///customize offset when slide page
-  final SlideOffsetHanlder slideOffsetHandler;
+  final SlideOffsetHandler slideOffsetHandler;
 
   ///call back of slide end
   ///decide whether pop page
@@ -84,7 +84,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   double _scale = 1.0;
   double get scale =>
       _backAnimationController.isAnimating ? backScaleAnimation.value : _scale;
-  bool _poping = false;
+  bool _popping = false;
 
   @override
   void initState() {
@@ -184,7 +184,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
 
       if (popPage) {
         setState(() {
-          _poping = true;
+          _popping = true;
           _isSliding = false;
         });
         Navigator.pop(context);
@@ -231,7 +231,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     }
 
     result = Container(
-      color: _poping ? Colors.transparent : pageColor,
+      color: _popping ? Colors.transparent : pageColor,
       child: result,
     );
 
@@ -245,7 +245,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
 
   void popPage() {
     setState(() {
-      _poping = true;
+      _popping = true;
     });
   }
 }

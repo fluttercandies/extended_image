@@ -442,7 +442,7 @@ class ExtendedImage extends StatefulWidget {
   ///build Hero only for sliding page
   final HeroBuilderForSlidingPage heroBuilderForSlidingPage;
 
-  /// init EidtConfig when image is ready.
+  /// init EditConfig when image is ready.
   final InitEditorConfigHandler initEditorConfigHandler;
 
   /// key of ExtendedImageEditor
@@ -462,10 +462,10 @@ class ExtendedImage extends StatefulWidget {
   final bool enableMemoryCache;
 
   ///when failed to load image, whether clear memory cache
-  ///if ture, image will reload in next time.
+  ///if true, image will reload in next time.
   final bool clearMemoryCacheIfFailed;
 
-  /// image mode (none,gestrue)
+  /// image mode (none,gesture)
   final ExtendedImageMode mode;
 
   ///you can paint anything if you want before paint image.
@@ -638,7 +638,7 @@ class ExtendedImage extends StatefulWidget {
 
   /// A Semantic description of the image.
   ///
-  /// Used to provide a description of the image to TalkBack on Andoid, and
+  /// Used to provide a description of the image to TalkBack on Android, and
   /// VoiceOver on iOS.
   final String semanticLabel;
 
@@ -695,7 +695,7 @@ class _ExtendedImageState extends State<ExtendedImage>
   void didUpdateWidget(ExtendedImage oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.image != oldWidget.image) {
-      //_cacnelNetworkImageRequest(oldWidget.image);
+      //_cancelNetworkImageRequest(oldWidget.image);
       _resolveImage();
     }
     if (widget.enableSlideOutPage != oldWidget.enableSlideOutPage) {
@@ -851,7 +851,7 @@ class _ExtendedImageState extends State<ExtendedImage>
     _isListeningToStream = false;
   }
 
-//  void _cacnelNetworkImageRequest(ImageProvider provider) {
+//  void _cancelNetworkImageRequest(ImageProvider provider) {
 //    if (provider == null) return;
 //
 //    ///cancel network request
@@ -866,7 +866,7 @@ class _ExtendedImageState extends State<ExtendedImage>
     if (widget.clearMemoryCacheWhenDispose) widget.image?.evict();
     WidgetsBinding.instance.removeObserver(this);
     _stopListeningToStream();
-    //_cacnelNetworkImageRequest(widget.image);
+    //_cancelNetworkImageRequest(widget.image);
     super.dispose();
   }
 
@@ -948,7 +948,7 @@ class _ExtendedImageState extends State<ExtendedImage>
       current = ConstrainedBox(constraints: widget.constraints, child: current);
     }
 
-    ///add for loading/falied/ unGesture image
+    ///add for loading/failed/ unGesture image
     if (_slidePageState != null &&
         !(_loadState == LoadState.completed &&
             widget.mode == ExtendedImageMode.gesture)) {

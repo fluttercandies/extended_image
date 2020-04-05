@@ -8,7 +8,7 @@ import 'package:flutter/rendering.dart';
 import '../extended_image_typedef.dart';
 import 'extended_image_slide_page.dart';
 
-bool _defaultCanScaleICmage(GestureDetails details) => true;
+bool _defaultCanScaleImage(GestureDetails details) => true;
 
 /// scale idea from https://github.com/flutter/flutter/blob/master/examples/layers/widgets/gestures.dart
 /// zoom image
@@ -20,7 +20,7 @@ class ExtendedImageGesture extends StatefulWidget {
     this.extendedImageState, {
     this.imageBuilder,
     CanScaleImage canScaleImage,
-  }) : canScaleImage = canScaleImage ?? _defaultCanScaleICmage;
+  }) : canScaleImage = canScaleImage ?? _defaultCanScaleImage;
   @override
   _ExtendedImageGestureState createState() => _ExtendedImageGestureState();
 }
