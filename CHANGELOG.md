@@ -2,7 +2,7 @@
 
 * support loading progress for network
 * public HttpClient of ExtendedNetworkImageProvider
-* public ExtendedImageGestureState for SlideOffsetHanlder/SlideEndHandler/SlideScaleHandler to get scale of image
+* public ExtendedImageGestureState for SlideOffsetHandler/SlideEndHandler/SlideScaleHandler to get scale of image
   
 ## [0.7.1]
 
@@ -145,7 +145,7 @@
 
 ## [0.3.6]
 
-* handle loadfailed when re-addListener
+* handle load failed when re-addListener
 
 ## [0.3.4]
 
@@ -187,7 +187,7 @@
 ## [0.2.3]
 
 * add enableMemoryCache parameter, whether cache in PaintingBinding.instance.imageCache
-* add clearMemoryCacheIfFailed parameter, when failed to load image, whether clear memory cache,if ture, image will reload in next time.
+* add clearMemoryCacheIfFailed parameter, when failed to load image, whether clear memory cache,if true, image will reload in next time.
 * auto cancel network request is obsolete.
 
 ## [0.2.2]

@@ -19,7 +19,7 @@
   - [目录](#%e7%9b%ae%e5%bd%95)
   - [缓存网络图片](#%e7%bc%93%e5%ad%98%e7%bd%91%e7%bb%9c%e5%9b%be%e7%89%87)
     - [简单使用](#%e7%ae%80%e5%8d%95%e4%bd%bf%e7%94%a8)
-    - [使用 Extendednetworkimageprovider](#%e4%bd%bf%e7%94%a8-extendednetworkimageprovider)
+    - [使用 ExtendedNetworkImageProvider](#%e4%bd%bf%e7%94%a8-extendednetworkimageprovider)
   - [加载状态](#%e5%8a%a0%e8%bd%bd%e7%8a%b6%e6%80%81)
     - [例子](#%e4%be%8b%e5%ad%90)
   - [缩放拖拽](#%e7%bc%a9%e6%94%be%e6%8b%96%e6%8b%bd)
@@ -66,7 +66,7 @@ ExtendedImage.network(
 )
 ```
 
-### 使用 Extendednetworkimageprovider
+### 使用 ExtendedNetworkImageProvider
 
 你也可以通过[ExtendedNetworkImageProvider](https://github.com/fluttercandies/extended_image_library/blob/master/lib/src/extended_network_image_provider.dart)，设置更多的网络请求的参数
 
@@ -157,7 +157,7 @@ abstract class ExtendedImageState {
   ImageInfo get extendedImageInfo;
   LoadState get extendedImageLoadState;
 
-  ///return widget which from LoadStateChanged fucntion  immediately
+  ///return widget which from LoadStateChanged function  immediately
   bool returnLoadStateChangedWidget;
 
   ImageProvider get imageProvider;
@@ -242,7 +242,7 @@ ExtendedImage
 
 | 参数                     | 描述                                                                  | 默认 |
 | ------------------------ | --------------------------------------------------------------------- | ---- |
-| mode                     | 图片模式，默认/手势/编辑 (none,gestrue,editor)                        | none |
+| mode                     | 图片模式，默认/手势/编辑 (none, gesture, editor)                        | none |
 | initGestureConfigHandler | 手势配置的回调(图片加载完成时).你可以根据图片的信息比如宽高，来初始化 | -    |
 | onDoubleTap              | 支持手势的时候，双击回调                                              | -    |
 
@@ -289,7 +289,7 @@ ExtendedImage.network(
 ```dart
 onDoubleTap: (ExtendedImageGestureState state) {
   ///you can use define pointerDownPosition as you can,
-  ///default value is double tap pointer down postion.
+  ///default value is double tap pointer down position.
   var pointerDownPosition = state.pointerDownPosition;
   double begin = state.gestureDetails.totalScale;
   double end;
@@ -348,7 +348,7 @@ ExtendedImage
 
 | 参数                     | 描述                                                                    | 默认 |
 | ------------------------ | ----------------------------------------------------------------------- | ---- |
-| mode                     | 图片模式，默认/手势/编辑 (none,gestrue,editor)                          | none |
+| mode                     | 图片模式，默认/手势/编辑 (none, gesture, editor)                          | none |
 | initGestureConfigHandler | 编辑器配置的回调(图片加载完成时).你可以根据图片的信息比如宽高，来初始化 | -    |
 | extendedImageEditorKey   | key of ExtendedImageEditorState 用于裁剪旋转翻转                        | -    |
 
@@ -362,7 +362,7 @@ EditorConfig
 | cornerColor            | 裁剪框四角图形的颜色                                                               | primaryColor                                                 |
 | lineColor              | 裁剪框线的颜色                                                                     | scaffoldBackgroundColor.withOpacity(0.7)                     |
 | lineHeight             | 裁剪框线的高度                                                                     | 0.6                                                          |
-| eidtorMaskColorHandler | 蒙层的颜色回调，你可以根据是否手指按下来设置不同的蒙层颜色                         | scaffoldBackgroundColor.withOpacity(pointerdown ? 0.4 : 0.8) |
+| editorMaskColorHandler | 蒙层的颜色回调，你可以根据是否手指按下来设置不同的蒙层颜色                         | scaffoldBackgroundColor.withOpacity(pointerDown ? 0.4 : 0.8) |
 | hitTestSize            | 裁剪框四角以及边线能够拖拽的区域的大小                                             | 20.0                                                         |
 | animationDuration      | 当裁剪框拖拽变化结束之后，自动适应到中间的动画的时长                               | Duration(milliseconds: 200)                                  |
 | tickerDuration         | 当裁剪框拖拽变化结束之后，多少时间才触发自动适应到中间的动画                       | Duration(milliseconds: 400)                                  |
@@ -801,7 +801,7 @@ Future<File> getCachedImageFile(String url) async {
 插件，ExtendedImage 做的只是提供网络图片的数据源
 
 ```dart
-///save netwrok image to photo
+///save network image to photo
 Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
   var data = await getNetworkImageData(url, useCache: useCache);
   var filePath = await ImagePickerSaver.saveFile(fileData: data);

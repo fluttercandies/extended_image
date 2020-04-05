@@ -46,7 +46,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
   /// details about edit
   final EditActionDetails editActionDetails;
 
-  /// details about gestrue
+  /// details about gesture
   final GestureDetails gestureDetails;
 
   ///you can paint anything if you want before paint image.

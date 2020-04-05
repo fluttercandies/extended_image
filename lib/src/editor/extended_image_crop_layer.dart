@@ -88,9 +88,9 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     final EditorConfig editConfig = widget.editorConfig;
     final Color cornerColor =
         widget.editorConfig.cornerColor ?? Theme.of(context).primaryColor;
-    final Color maskColor = widget.editorConfig.eidtorMaskColorHandler
+    final Color maskColor = widget.editorConfig.editorMaskColorHandler
             ?.call(context, _pointerDown) ??
-        defaultEidtorMaskColorHandler(context, _pointerDown);
+        defaultEditorMaskColorHandler(context, _pointerDown);
     final double gWidth = widget.editorConfig.hitTestSize;
 
     Widget result = CustomPaint(
@@ -335,7 +335,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
           centerCropRect.shift(widget.editActionDetails.layoutTopLeft);
       _doCropAutoCenterAnimation(newScreenCropRect: newScreenCropRect);
     } else {
-      result = _doWithMaxSacle(result);
+      result = _doWithMaxScale(result);
 
       if (result != null && result != cropRect && mounted) {
         setState(() {
@@ -439,7 +439,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     return result;
   }
 
-  Rect _doWithMaxSacle(Rect rect) {
+  Rect _doWithMaxScale(Rect rect) {
     var centerCropRect = getDestinationRect(
         rect: layoutRect, inputSize: rect.size, fit: widget.fit);
     var newScreenCropRect =
@@ -502,7 +502,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
         var offset = newScreenCropRect.center - oldScreenCropRect.center;
 
         /// scale then move
-        /// so we do scale frist, get the new center
+        /// so we do scale first, get the new center
         /// then move to new offset
         var newImageCenter = oldScreenCropRect.center +
             (oldScreenDestinationRect.center - oldScreenCropRect.center) *

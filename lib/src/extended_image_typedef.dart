@@ -35,7 +35,7 @@ typedef SlidePageBackgroundHandler = Color Function(
     Offset offset, Size pageSize);
 
 /// customize offset of page when slide page
-typedef SlideOffsetHanlder = Offset Function(
+typedef SlideOffsetHandler = Offset Function(
   Offset offset, {
   ExtendedImageSlidePageState state,
 });
@@ -77,12 +77,12 @@ typedef BuildGestureImage = Widget Function(GestureDetails gestureDetails);
 typedef InitEditorConfigHandler = EditorConfig Function(
     ExtendedImageState state);
 
-///get eidtor mask color base on pointerDown
-typedef EidtorMaskColorHandler = Color Function(
+///get editor mask color base on pointerDown
+typedef EditorMaskColorHandler = Color Function(
     BuildContext context, bool pointerDown);
 
 ///build Hero only for sliding page
-///the transfrom of sliding page must be working on Hero
+///the transform of sliding page must be working on Hero
 ///so that Hero animation wouldn't be strange when pop page
 typedef HeroBuilderForSlidingPage = Widget Function(Widget widget);
 
