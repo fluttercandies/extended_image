@@ -447,7 +447,7 @@ enum ActionType {
   /// horizontal and vertical move
   pan,
 
-  ///filp,rotate
+  ///flip,rotate
   edit,
 }
 
@@ -460,7 +460,7 @@ class GestureAnimation {
   Animation<Offset> _offsetAnimation;
 
   AnimationController _scaleController;
-  Animation<double> _scaletAnimation;
+  Animation<double> _scaleAnimation;
 
   GestureAnimation(TickerProvider vsync,
       {GestureOffsetAnimationCallBack offsetCallBack,
@@ -476,7 +476,7 @@ class GestureAnimation {
     if (scaleCallBack != null) {
       _scaleController = AnimationController(vsync: vsync);
       _scaleController.addListener(() {
-        scaleCallBack(_scaletAnimation.value);
+        scaleCallBack(_scaleAnimation.value);
       });
     }
   }
@@ -492,7 +492,7 @@ class GestureAnimation {
 
   void animationScale(double begin, double end, double velocity) {
     if (_scaleController == null) return;
-    _scaletAnimation =
+    _scaleAnimation =
         _scaleController.drive(Tween<double>(begin: begin, end: end));
     _scaleController
       ..value = 0.0

@@ -18,7 +18,7 @@ abstract class ExtendedImageState {
   ImageInfo get extendedImageInfo;
   LoadState get extendedImageLoadState;
 
-  ///return widget which from LoadStateChanged fucntion  immediately
+  ///return widget which from LoadStateChanged function immediately
   bool returnLoadStateChangedWidget;
 
   ImageProvider get imageProvider;

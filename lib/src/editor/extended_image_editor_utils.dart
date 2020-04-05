@@ -350,9 +350,9 @@ class EditorConfig {
   /// height of crop line
   final double lineHeight;
 
-  /// eidtor mask color base on pointerDown
-  /// default: scaffoldBackgroundColor.withOpacity(pointerdown ? 0.4 : 0.8)
-  final EidtorMaskColorHandler eidtorMaskColorHandler;
+  /// editor mask color base on pointerDown
+  /// default: scaffoldBackgroundColor.withOpacity(pointerDown ? 0.4 : 0.8)
+  final EditorMaskColorHandler editorMaskColorHandler;
 
   /// hit test region of corner and line
   final double hitTestSize;
@@ -378,7 +378,7 @@ class EditorConfig {
       this.cornerColor,
       this.lineColor,
       this.lineHeight = 0.6,
-      this.eidtorMaskColorHandler,
+      this.editorMaskColorHandler,
       this.hitTestSize = 20.0,
       this.animationDuration = const Duration(milliseconds: 200),
       this.tickerDuration = const Duration(milliseconds: 400),
@@ -467,10 +467,10 @@ Rect getDestinationRect({
   return destinationRect;
 }
 
-Color defaultEidtorMaskColorHandler(BuildContext context, bool pointerdown) {
+Color defaultEditorMaskColorHandler(BuildContext context, bool pointerDown) {
   return Theme.of(context)
       .scaffoldBackgroundColor
-      .withOpacity(pointerdown ? 0.4 : 0.8);
+      .withOpacity(pointerDown ? 0.4 : 0.8);
 }
 
 Offset rotateOffset(Offset input, Offset center, double angle) {

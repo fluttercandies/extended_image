@@ -395,7 +395,7 @@ class ExtendedRenderImage extends RenderBox {
         flipHorizontally: _flipHorizontally,
         invertColors: invertColors,
         filterQuality: _filterQuality,
-        customsourceRect: _sourceRect,
+        customSourceRect: _sourceRect,
         beforePaintImage: beforePaintImage,
         afterPaintImage: afterPaintImage,
         gestureDetails: gestureDetails,
@@ -443,7 +443,7 @@ void paintExtendedImage({
   bool flipHorizontally = false,
   bool invertColors = false,
   FilterQuality filterQuality = FilterQuality.low,
-  Rect customsourceRect,
+  Rect customSourceRect,
   //you can paint anything if you want before paint image.
   BeforePaintImage beforePaintImage,
   //you can paint anything if you want after paint image.
@@ -608,7 +608,7 @@ void paintExtendedImage({
   }
 
   if (centerSlice == null) {
-    final Rect sourceRect = customsourceRect ??
+    final Rect sourceRect = customSourceRect ??
         alignment.inscribe(sourceSize, Offset.zero & inputSize);
     for (Rect tileRect
         in _generateImageTileRects(rect, destinationRect, repeat)) {
