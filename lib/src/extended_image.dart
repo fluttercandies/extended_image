@@ -40,21 +40,21 @@ class ExtendedImage extends StatefulWidget {
     this.border,
     this.shape,
     this.borderRadius,
-    this.clipBehavior: Clip.antiAlias,
-    this.enableLoadState: false,
+    this.clipBehavior = Clip.antiAlias,
+    this.enableLoadState = false,
     this.beforePaintImage,
     this.afterPaintImage,
-    this.mode: ExtendedImageMode.none,
-    this.enableMemoryCache: true,
-    this.clearMemoryCacheIfFailed: true,
+    this.mode = ExtendedImageMode.none,
+    this.enableMemoryCache = true,
+    this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
-    this.enableSlideOutPage: false,
+    this.enableSlideOutPage = false,
     BoxConstraints constraints,
     this.extendedImageEditorKey,
     this.initEditorConfigHandler,
     this.heroBuilderForSlidingPage,
-    this.clearMemoryCacheWhenDispose: false,
+    this.clearMemoryCacheWhenDispose = false,
   })  : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
@@ -84,30 +84,30 @@ class ExtendedImage extends StatefulWidget {
     this.shape,
     this.border,
     this.borderRadius,
-    this.clipBehavior: Clip.antiAlias,
-    this.enableLoadState: true,
+    this.clipBehavior = Clip.antiAlias,
+    this.enableLoadState = true,
     this.beforePaintImage,
     this.afterPaintImage,
-    this.mode: ExtendedImageMode.none,
-    this.enableMemoryCache: true,
-    this.clearMemoryCacheIfFailed: true,
+    this.mode = ExtendedImageMode.none,
+    this.enableMemoryCache = true,
+    this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
-    this.enableSlideOutPage: false,
+    this.enableSlideOutPage = false,
     BoxConstraints constraints,
     CancellationToken cancelToken,
 //      bool autoCancel: false,
     int retries = 3,
     Duration timeLimit,
     Map<String, String> headers,
-    bool cache: true,
+    bool cache = true,
     double scale = 1.0,
-    Duration timeRetry: const Duration(milliseconds: 100),
+    Duration timeRetry = const Duration(milliseconds: 100),
     this.extendedImageEditorKey,
     this.initEditorConfigHandler,
     this.heroBuilderForSlidingPage,
-    this.clearMemoryCacheWhenDispose: false,
-    bool handleLoadingProgress: false,
+    this.clearMemoryCacheWhenDispose = false,
+    bool handleLoadingProgress = false,
   })  :
         //assert(autoCancel != null),
         image = ExtendedNetworkImageProvider(url,
@@ -166,21 +166,21 @@ class ExtendedImage extends StatefulWidget {
     this.shape,
     this.border,
     this.borderRadius,
-    this.clipBehavior: Clip.antiAlias,
-    this.enableLoadState: false,
+    this.clipBehavior = Clip.antiAlias,
+    this.enableLoadState = false,
     this.beforePaintImage,
     this.afterPaintImage,
-    this.mode: ExtendedImageMode.none,
-    this.enableMemoryCache: true,
-    this.clearMemoryCacheIfFailed: true,
+    this.mode = ExtendedImageMode.none,
+    this.enableMemoryCache = true,
+    this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
-    this.enableSlideOutPage: false,
+    this.enableSlideOutPage = false,
     BoxConstraints constraints,
     this.extendedImageEditorKey,
     this.initEditorConfigHandler,
     this.heroBuilderForSlidingPage,
-    this.clearMemoryCacheWhenDispose: false,
+    this.clearMemoryCacheWhenDispose = false,
   })  : image = ExtendedFileImageProvider(file, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -341,21 +341,21 @@ class ExtendedImage extends StatefulWidget {
     this.shape,
     this.border,
     this.borderRadius,
-    this.clipBehavior: Clip.antiAlias,
-    this.enableLoadState: false,
+    this.clipBehavior = Clip.antiAlias,
+    this.enableLoadState = false,
     this.beforePaintImage,
     this.afterPaintImage,
-    this.mode: ExtendedImageMode.none,
-    this.enableMemoryCache: true,
-    this.clearMemoryCacheIfFailed: true,
+    this.mode = ExtendedImageMode.none,
+    this.enableMemoryCache = true,
+    this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
-    this.enableSlideOutPage: false,
+    this.enableSlideOutPage = false,
     BoxConstraints constraints,
     this.extendedImageEditorKey,
     this.initEditorConfigHandler,
     this.heroBuilderForSlidingPage,
-    this.clearMemoryCacheWhenDispose: false,
+    this.clearMemoryCacheWhenDispose = false,
   })  : image = scale != null
             ? ExtendedExactAssetImageProvider(name,
                 bundle: bundle, scale: scale, package: package)
@@ -407,21 +407,21 @@ class ExtendedImage extends StatefulWidget {
     this.shape,
     this.border,
     this.borderRadius,
-    this.clipBehavior: Clip.antiAlias,
-    this.enableLoadState: false,
+    this.clipBehavior = Clip.antiAlias,
+    this.enableLoadState = false,
     this.beforePaintImage,
     this.afterPaintImage,
-    this.mode: ExtendedImageMode.none,
-    this.enableMemoryCache: true,
-    this.clearMemoryCacheIfFailed: true,
+    this.mode = ExtendedImageMode.none,
+    this.enableMemoryCache = true,
+    this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
-    this.enableSlideOutPage: false,
+    this.enableSlideOutPage = false,
     BoxConstraints constraints,
     this.extendedImageEditorKey,
     this.initEditorConfigHandler,
     this.heroBuilderForSlidingPage,
-    this.clearMemoryCacheWhenDispose: false,
+    this.clearMemoryCacheWhenDispose = false,
   })  : image = ExtendedMemoryImageProvider(bytes, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -683,10 +683,11 @@ class _ExtendedImageState extends State<ExtendedImage>
           context.findAncestorStateOfType<ExtendedImageSlidePageState>();
     }
 
-    if (TickerMode.of(context))
+    if (TickerMode.of(context)) {
       _listenToStream();
-    else
+    } else {
       _stopListeningToStream();
+    }
 
     super.didChangeDependencies();
   }
@@ -802,12 +803,13 @@ class _ExtendedImageState extends State<ExtendedImage>
   void _updateSourceStream(ImageStream newStream, {bool rebuild = false}) {
     if (_imageStream?.key == newStream?.key) return;
     //print("_updateSourceStream");
-    if (_isListeningToStream)
+    if (_isListeningToStream) {
       _imageStream.removeListener(ImageStreamListener(
         _handleImageChanged,
         onError: _loadFailed,
         onChunk: widget.handleLoadingProgress ? _handleImageChunk : null,
       ));
+    }
 
     if (!widget.gaplessPlayback || rebuild) {
       setState(() {
@@ -823,12 +825,13 @@ class _ExtendedImageState extends State<ExtendedImage>
     });
 
     _imageStream = newStream;
-    if (_isListeningToStream)
+    if (_isListeningToStream) {
       _imageStream.addListener(ImageStreamListener(
         _handleImageChanged,
         onError: _loadFailed,
         onChunk: widget.handleLoadingProgress ? _handleImageChunk : null,
       ));
+    }
   }
 
   void _listenToStream() {
@@ -923,12 +926,13 @@ class _ExtendedImageState extends State<ExtendedImage>
           );
           break;
         case BoxShape.rectangle:
-          if (widget.borderRadius != null)
+          if (widget.borderRadius != null) {
             current = ClipRRect(
               child: current,
               borderRadius: widget.borderRadius,
               clipBehavior: widget.clipBehavior,
             );
+          }
           break;
       }
     }

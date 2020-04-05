@@ -5,6 +5,7 @@
 
 import 'package:flutter/widgets.dart';
 
+import 'package:flutter_candies_demo_library/flutter_candies_demo_library_route.dart';
 import 'pages/custom_image_demo.dart';
 import 'pages/image_demo.dart';
 import 'pages/image_editor_demo.dart';
@@ -12,7 +13,6 @@ import 'pages/loading_progress.dart';
 import 'pages/main_page.dart';
 import 'pages/paint_image_demo.dart';
 import 'pages/photo_view_demo.dart';
-import 'pages/pic_swiper_page.dart';
 import 'pages/waterfall_flow_demo.dart';
 import 'pages/zoom_image_demo.dart';
 
@@ -70,7 +70,7 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
       );
     case "fluttercandies://picswiper":
       return RouteResult(
-        widget: PicSwiperPage(
+        widget: PicSwiper(
           index: arguments['index'],
           pics: arguments['pics'],
           tuChongItem: arguments['tuChongItem'],

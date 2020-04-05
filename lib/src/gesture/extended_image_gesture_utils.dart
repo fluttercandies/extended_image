@@ -25,11 +25,12 @@ class Boundary {
   bool right;
   bool bottom;
   bool top;
-  Boundary(
-      {this.left: false,
-      this.right: false,
-      this.top: false,
-      this.bottom: false});
+  Boundary({
+    this.left = false,
+    this.right = false,
+    this.top = false,
+    this.bottom = false,
+  });
 
   @override
   String toString() {
@@ -143,8 +144,8 @@ class GestureDetails {
       {this.offset,
       this.totalScale,
       GestureDetails gestureDetails,
-      this.actionType: ActionType.pan,
-      this.userOffset: true}) {
+      this.actionType = ActionType.pan,
+      this.userOffset = true}) {
     if (gestureDetails != null) {
       _computeVerticalBoundary = gestureDetails._computeVerticalBoundary;
       _computeHorizontalBoundary = gestureDetails._computeHorizontalBoundary;
@@ -217,7 +218,7 @@ class GestureDetails {
 
   Rect calculateFinalDestinationRect(Rect layoutRect, Rect destinationRect) {
     final destinationRectChanged = rawDestinationRect != destinationRect;
-  
+
     rawDestinationRect = destinationRect;
 
     var temp = offset;

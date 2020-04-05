@@ -75,8 +75,9 @@ bool doubleEqual(double value, double other) {
 /// If [value] or [other] is not finite (`NaN` or infinity), throws an [UnsupportedError].
 int doubleCompare(double value, double other,
     {double precision = precisionErrorTolerance}) {
-  if (value.isNaN || other.isNaN)
+  if (value.isNaN || other.isNaN) {
     throw UnsupportedError('Compared with Infinity or NaN');
+  }
   final n = value - other;
   if (n.abs() < precision) return 0;
   return n < 0 ? -1 : 1;

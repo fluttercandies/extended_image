@@ -212,8 +212,9 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
 
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     _layerKey.currentState.pointerDown(true);
-    if (_layerKey.currentState.isAnimating || _layerKey.currentState.isMoving)
+    if (_layerKey.currentState.isAnimating || _layerKey.currentState.isMoving) {
       return;
+    }
     var totalScale = _startingScale * details.scale;
     // min(_startingScale * details.scale, _editorConfig.maxScale);
     // totalScale=(_startingScale * details.scale).clamp(_editorConfig.minScale, _editorConfig.maxScale);
@@ -288,7 +289,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
 
   EditActionDetails get editAction => _editActionDetails;
 
-  void rotate({bool right: true}) {
+  void rotate({bool right = true}) {
     setState(() {
       _editActionDetails.rotate(
           right ? pi / 2.0 : -pi / 2.0,

@@ -148,5 +148,9 @@ class FFRouteSettings extends RouteSettings {
     String name,
     bool isInitialRoute = false,
     Object arguments,
-  }) : super(name: name, isInitialRoute: isInitialRoute, arguments: arguments);
+  }) : super(
+          name: name,
+          isInitialRoute: isInitialRoute,
+          arguments: arguments,
+        );
 }

@@ -266,8 +266,9 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
     // If we're being popped into, we also cannot be swiped until the pop above
     // it completes. This translates to our secondary animation being
     // dismissed.
-    if (route.secondaryAnimation.status != AnimationStatus.dismissed)
+    if (route.secondaryAnimation.status != AnimationStatus.dismissed) {
       return false;
+    }
     // If we're in a gesture already, we cannot start another.
     if (isPopGestureInProgress(route)) return false;
 
@@ -537,10 +538,11 @@ class _CupertinoBackGestureController<T> {
     // If the user releases the page before mid screen with sufficient velocity,
     // or after mid screen, we should animate the page out. Otherwise, the page
     // should be animated back in.
-    if (doubleCompare(velocity.abs(), _kMinFlingVelocity) >= 0)
+    if (doubleCompare(velocity.abs(), _kMinFlingVelocity) >= 0) {
       animateForward = velocity > 0 ? false : true;
-    else
+    } else {
       animateForward = controller.value > 0.5 ? true : false;
+    }
 
     if (animateForward) {
       // The closer the panel is to dismissing, the shorter the animation is.

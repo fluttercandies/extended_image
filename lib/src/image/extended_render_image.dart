@@ -169,11 +169,12 @@ class ExtendedRenderImage extends RenderBox {
   ColorFilter _colorFilter;
 
   void _updateColorFilter() {
-    if (_color == null)
+    if (_color == null) {
       _colorFilter = null;
-    else
+    } else {
       _colorFilter =
           ColorFilter.mode(_color, _colorBlendMode ?? BlendMode.srcIn);
+    }
   }
 
   /// If non-null, this color is blended with each image pixel using [colorBlendMode].
@@ -616,12 +617,12 @@ void paintExtendedImage({
     }
   } else {
     for (Rect tileRect
-        in _generateImageTileRects(rect, destinationRect, repeat))
+        in _generateImageTileRects(rect, destinationRect, repeat)) {
       canvas.drawImageNine(image, centerSlice, tileRect, paint);
+    }
   }
 
   if (needSave) canvas.restore();
-
 
   if (needClip || hasEditAction) {
     canvas.restore();
@@ -657,7 +658,8 @@ Iterable<Rect> _generateImageTileRects(
   }
 
   for (int i = startX; i <= stopX; ++i) {
-    for (int j = startY; j <= stopY; ++j)
+    for (int j = startY; j <= stopY; ++j) {
       yield fundamentalRect.shift(Offset(i * strideX, j * strideY));
+    }
   }
 }
