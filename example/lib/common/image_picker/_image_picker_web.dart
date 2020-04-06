@@ -1,5 +1,6 @@
 @JS()
 library image_saver;
+
 // ignore:avoid_web_libraries_in_flutter
 import 'dart:html';
 import 'dart:async';
@@ -17,7 +18,7 @@ class ImageSaver {
 }
 
 Future<Uint8List> pickImage() async {
-  final completer = new Completer<Uint8List>();
+  final completer = Completer<Uint8List>();
   final InputElement input = document.createElement('input');
 
   input
@@ -25,7 +26,7 @@ Future<Uint8List> pickImage() async {
     ..accept = 'image/*';
   input.onChange.listen((e) async {
     final List<File> files = input.files;
-    final reader = new FileReader();
+    final reader = FileReader();
     reader.readAsArrayBuffer(files[0]);
     reader.onError.listen((error) => completer.completeError(error));
     await reader.onLoad.first;

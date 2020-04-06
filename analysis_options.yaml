@@ -5,7 +5,7 @@ include: package:pedantic/analysis_options.yaml
 #     implicit-casts: false
 #     implicit-dynamic: true
   # exclude:
-  #   - lib/src/**.g.dart
+  #   - lib/src/**.dart
   # enable-experiment:
   #   - extension-methods
 

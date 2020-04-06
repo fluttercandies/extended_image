@@ -18,7 +18,7 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
   TuChongRepository listSourceRepository;
   @override
   void initState() {
-    listSourceRepository = new TuChongRepository();
+    listSourceRepository =  TuChongRepository();
     super.initState();
   }
 

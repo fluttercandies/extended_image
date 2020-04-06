@@ -58,10 +58,11 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
           IconButton(
             icon: Icon(Icons.done),
             onPressed: () {
-              if (kIsWeb)
+              if (kIsWeb) {
                 _cropImage(false);
-              else
+              } else {
                 _showCropDialog(context);
+              }
             },
           ),
         ],
@@ -327,7 +328,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     try {
       _cropping = true;
 
-      showBusyingDialog();
+      await showBusyingDialog();
 
       Uint8List fileData;
 
@@ -345,7 +346,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         fileData =
             await cropImageDataWithDartLibrary(state: editorKey.currentState);
       }
-      final fileFath = await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
+      final fileFath =
+          await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
       // var fileFath = await ImagePickerSaver.saveFile(fileData: fileData);
 
       msg = "save image : $fileFath";

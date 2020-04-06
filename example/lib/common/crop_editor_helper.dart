@@ -69,6 +69,7 @@ Future<List<int>> cropImageDataWithDartLibrary(
           state.widget.extendedImageState.imageWidget.image
               is ExtendedNetworkImageProvider
       ? await _loadNetwork(state.widget.extendedImageState.imageWidget.image)
+
       ///toByteData is not work on web
       ///https://github.com/flutter/flutter/issues/44908
       // (await state.image.toByteData(format: ui.ImageByteFormat.png))
@@ -102,9 +103,10 @@ Future<List<int>> cropImageDataWithDartLibrary(
   //clear orientation
   src = bakeOrientation(src);
 
-  if (editAction.needCrop)
+  if (editAction.needCrop) {
     src = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
         cropRect.width.toInt(), cropRect.height.toInt());
+  }
 
   if (editAction.needFlip) {
     Flip mode;
@@ -160,9 +162,10 @@ Future<List<int>> cropImageDataWithNativeLibrary(
 
   if (action.needCrop) option.addOption(ClipOption.fromRect(cropRect));
 
-  if (action.needFlip)
+  if (action.needFlip) {
     option.addOption(
         FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
+  }
 
   if (action.hasRotateAngle) option.addOption(RotateOption(rotateAngle));
 

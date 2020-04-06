@@ -15,8 +15,9 @@ class MyApp extends StatelessWidget {
   MyApp() {
     if (!kIsWeb) clearDiskCachedImages(duration: Duration(days: 7));
     listSourceRepository.loadData().then((result) {
-      if (listSourceRepository.length > 0)
+      if (listSourceRepository.isNotEmpty) {
         _imageTestUrl = listSourceRepository.first.imageUrl;
+      }
     });
   }
   // This widget is the root of your application.

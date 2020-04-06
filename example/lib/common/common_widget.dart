@@ -69,7 +69,7 @@ class AspectRatioWidget extends StatelessWidget {
   final double aspectRatio;
   final bool isSelected;
   AspectRatioWidget(
-      {this.aspectRatioS, this.aspectRatio, this.isSelected: false});
+      {this.aspectRatioS, this.aspectRatio, this.isSelected= false});
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
@@ -88,7 +88,7 @@ class AspectRatioPainter extends CustomPainter {
   final double aspectRatio;
   final bool isSelected;
   AspectRatioPainter(
-      {this.aspectRatioS, this.aspectRatio, this.isSelected: false});
+      {this.aspectRatioS, this.aspectRatio, this.isSelected= false});
 
   @override
   void paint(Canvas canvas, Size size) {

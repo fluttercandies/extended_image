@@ -127,7 +127,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
     Canvas canvas,
   ) {
     int numPoints = 1000;
-    List<Offset> points = new List<Offset>();
+    List<Offset> points =  List<Offset>();
     double dt = (2 * pi / numPoints);
 
     for (double t = 0; t <= 2 * pi; t += dt) {
@@ -155,7 +155,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
     double top = rect.top + ScreenUtil.instance.setWidth(400) / 2.0;
     double left = rect.left + ScreenUtil.instance.setWidth(400) / 2.0;
 
-    List<Offset> points1 = new List<Offset>();
+    List<Offset> points1 = List<Offset>();
     points.forEach((point) {
       points1.add(Offset(left + point.dx * xx, top + -point.dy * xx));
     });

@@ -261,20 +261,6 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
     );
   }
 
-  Future<bool> onLikeButtonTap(bool isLiked, TuChongItem item) {
-    ///send your request here
-    ///
-    final Completer<bool> completer = new Completer<bool>();
-    Timer(const Duration(milliseconds: 200), () {
-      item.isFavorite = !item.isFavorite;
-      item.favorites =
-          item.isFavorite ? item.favorites + 1 : item.favorites - 1;
-
-      // if your request is failed,return null,
-      completer.complete(item.isFavorite);
-    });
-    return completer.future;
-  }
 
   Future<bool> onRefresh() {
     return listSourceRepository.refresh().whenComplete(() {
