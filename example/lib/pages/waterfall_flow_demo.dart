@@ -5,10 +5,10 @@ import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 
 @FFRoute(
-    name: "fluttercandies://WaterfallFlowDemo",
-    routeName: "WaterfallFlow",
+    name: 'fluttercandies://WaterfallFlowDemo',
+    routeName: 'WaterfallFlow',
     description:
-        "show how to build loading more WaterfallFlow with ExtendedImage.")
+        'show how to build loading more WaterfallFlow with ExtendedImage.')
 class WaterfallFlowDemo extends StatefulWidget {
   @override
   _WaterfallFlowDemoState createState() => _WaterfallFlowDemoState();
@@ -34,7 +34,7 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("WaterfallFlowDemo"),
+            title: Text('WaterfallFlowDemo'),
           ),
           Expanded(child: LayoutBuilder(
             builder: (c, data) {
@@ -61,7 +61,7 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
                   //   });
                   // },
                   // viewportBuilder: (int firstIndex, int lastIndex) {
-                  //   print("viewport : [$firstIndex,$lastIndex]");
+                  //   print('viewport : [$firstIndex,$lastIndex]');
                   // },
                 ),
               );

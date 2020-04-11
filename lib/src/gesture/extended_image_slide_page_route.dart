@@ -95,7 +95,7 @@ class TransparentMaterialPageRoute<T> extends PageRoute<T> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    final Widget result = builder(context);
+    final result = builder(context);
     assert(() {
       if (result == null) {
         throw FlutterError(
@@ -114,7 +114,7 @@ class TransparentMaterialPageRoute<T> extends PageRoute<T> {
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-    final PageTransitionsTheme theme = Theme.of(context).pageTransitionsTheme;
+    final theme = Theme.of(context).pageTransitionsTheme;
     return theme.buildTransitions<T>(
         this, context, animation, secondaryAnimation, child);
   }
@@ -179,7 +179,7 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
 
   @override
   void didChangePrevious(Route<dynamic> previousRoute) {
-    final String previousTitleString =
+    final previousTitleString =
         previousRoute is CupertinoPageRoute ? previousRoute.title : null;
     if (_previousTitle == null) {
       _previousTitle = ValueNotifier<String>(previousTitleString);
@@ -329,21 +329,19 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
+    final linearTransition = isPopGestureInProgress(route);
     if (route.fullscreenDialog) {
       return CupertinoFullscreenDialogTransition(
-        animation: animation,
+        primaryRouteAnimation: animation,
+        secondaryRouteAnimation: secondaryAnimation,
         child: child,
+        linearTransition: linearTransition,
       );
     } else {
       return CupertinoPageTransition(
         primaryRouteAnimation: animation,
         secondaryRouteAnimation: secondaryAnimation,
-        // Check if the route has an animation that's currently participating
-        // in a back swipe gesture.
-        //
-        // In the middle of a back gesture drag, let the transition be linear to
-        // match finger motions.
-        linearTransition: isPopGestureInProgress(route),
+        linearTransition: linearTransition,
         child: _CupertinoBackGestureDetector<T>(
           enabledCallback: () => _isPopGestureEnabled<T>(route),
           onStartPopGesture: () => _startPopGesture<T>(route),
@@ -467,7 +465,7 @@ class _CupertinoBackGestureDetectorState<T>
     assert(debugCheckHasDirectionality(context));
     // For devices with notches, the drag area needs to be larger on the side
     // that has the notch.
-    double dragAreaWidth = Directionality.of(context) == TextDirection.ltr
+    var dragAreaWidth = Directionality.of(context) == TextDirection.ltr
         ? MediaQuery.of(context).padding.left
         : MediaQuery.of(context).padding.right;
     dragAreaWidth = max(dragAreaWidth, _kBackGestureWidth);
@@ -548,7 +546,7 @@ class _CupertinoBackGestureController<T> {
       // The closer the panel is to dismissing, the shorter the animation is.
       // We want to cap the animation time, but we want to use a linear curve
       // to determine it.
-      final int droppedPageForwardAnimationTime = min(
+      final droppedPageForwardAnimationTime = min(
         lerpDouble(
                 _kMaxDroppedSwipePageForwardAnimationTime, 0, controller.value)
             .floor(),
@@ -564,7 +562,7 @@ class _CupertinoBackGestureController<T> {
       // The popping may have finished inline if already at the target destination.
       if (controller.isAnimating) {
         // Otherwise, use a custom popping animation duration and curve.
-        final int droppedPageBackAnimationTime = lerpDouble(
+        final droppedPageBackAnimationTime = lerpDouble(
                 0, _kMaxDroppedSwipePageForwardAnimationTime, controller.value)
             .floor();
         controller.animateBack(0.0,
@@ -649,7 +647,7 @@ class CupertinoPageTransition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasDirectionality(context));
-    final TextDirection textDirection = Directionality.of(context);
+    final textDirection = Directionality.of(context);
 
     return SlideTransition(
       position: _secondaryPositionAnimation,

@@ -4,7 +4,7 @@ import 'package:extended_image_library/extended_image_library.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import "package:oktoast/oktoast.dart";
+import 'package:oktoast/oktoast.dart';
 import 'example_route.dart';
 import 'example_route_helper.dart';
 
@@ -65,7 +65,6 @@ class MyApp extends StatelessWidget {
           settings = FFRouteSettings(
               arguments: settings.arguments,
               name: routeName,
-              isInitialRoute: settings.isInitialRoute,
               routeName: routeResult.routeName,
               showStatusBar: routeResult.showStatusBar);
         }
@@ -79,14 +78,16 @@ class MyApp extends StatelessWidget {
         final platform = Theme.of(context).platform;
         switch (routeResult.pageRouteType) {
           case PageRouteType.material:
-            return MaterialPageRoute(settings: settings, builder: (c) => page);
+            return MaterialPageRoute<void>(
+                settings: settings, builder: (c) => page);
           case PageRouteType.cupertino:
-            return CupertinoPageRoute(settings: settings, builder: (c) => page);
+            return CupertinoPageRoute<void>(
+                settings: settings, builder: (c) => page);
           case PageRouteType.transparent:
             return platform == TargetPlatform.iOS
-                ? TransparentCupertinoPageRoute(
+                ? TransparentCupertinoPageRoute<void>(
                     settings: settings, builder: (c) => page)
-                : TransparentMaterialPageRoute(
+                : TransparentMaterialPageRoute<void>(
                     settings: settings, builder: (c) => page);
 //            return FFTransparentPageRoute(
 //                settings: settings,
@@ -95,8 +96,10 @@ class MyApp extends StatelessWidget {
 //                    page);
           default:
             return platform == TargetPlatform.iOS
-                ? CupertinoPageRoute(settings: settings, builder: (c) => page)
-                : MaterialPageRoute(settings: settings, builder: (c) => page);
+                ? CupertinoPageRoute<void>(
+                    settings: settings, builder: (c) => page)
+                : MaterialPageRoute<void>(
+                    settings: settings, builder: (c) => page);
         }
       },
     ));
@@ -105,4 +108,4 @@ class MyApp extends StatelessWidget {
 
 String _imageTestUrl;
 String get imageTestUrl =>
-    _imageTestUrl ?? "https://photo.tuchong.com/4870004/f/298584322.jpg";
+    _imageTestUrl ?? 'https://photo.tuchong.com/4870004/f/298584322.jpg';

@@ -8,9 +8,9 @@ import 'package:oktoast/oktoast.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 
 @FFRoute(
-    name: "fluttercandies://customimage",
-    routeName: "custom image load state",
-    description: "show image with loading,failed,animation state")
+    name: 'fluttercandies://customimage',
+    routeName: 'custom image load state',
+    description: 'show image with loading,failed,animation state')
 class CustomImageDemo extends StatefulWidget {
   @override
   _CustomImageDemoState createState() => _CustomImageDemoState();
@@ -42,14 +42,14 @@ class _CustomImageDemoState extends State<CustomImageDemo>
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("CustomImage"),
+            title: Text('CustomImage'),
           ),
           !kIsWeb
               ? RaisedButton(
-                  child: Text("clear all cache"),
+                  child: Text('clear all cache'),
                   onPressed: () {
                     clearDiskCachedImages().then((bool done) {
-                      showToast(done ? "clear succeed" : "clear failed",
+                      showToast(done ? 'clear succeed' : 'clear failed',
                           position: ToastPosition(align: Alignment.topCenter));
                     });
                   },
@@ -68,7 +68,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                     case LoadState.loading:
                       _controller.reset();
                       return Image.asset(
-                        "assets/loading.gif",
+                        'assets/loading.gif',
                         fit: BoxFit.fill,
                       );
                       break;
@@ -97,7 +97,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                           fit: StackFit.expand,
                           children: <Widget>[
                             Image.asset(
-                              "assets/failed.jpg",
+                              'assets/failed.jpg',
                               fit: BoxFit.fill,
                             ),
                             Positioned(
@@ -105,7 +105,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                               left: 0.0,
                               right: 0.0,
                               child: Text(
-                                "load image failed, click to reload",
+                                'load image failed, click to reload',
                                 textAlign: TextAlign.center,
                               ),
                             )

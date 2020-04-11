@@ -278,7 +278,7 @@ class ExtendedImageGesturePageViewState
     if (extendedImageGestureState != null) {
       var gestureDetails = extendedImageGestureState.gestureDetails;
       if (gestureDetails != null) {
-        final int currentPage = pageController.page.round();
+        final currentPage = pageController.page.round();
 //        bool pageChanging = false;
 //
 //        if (widget.scrollDirection == Axis.horizontal) {
@@ -327,8 +327,8 @@ class ExtendedImageGesturePageViewState
     var temp = details;
     if (extendedImageGestureState != null) {
       var gestureDetails = extendedImageGestureState.gestureDetails;
-      final int currentPage = pageController.page.round();
-      bool movePage = (pageController.page != currentPage);
+      final currentPage = pageController.page.round();
+      final movePage = (pageController.page != currentPage);
 
       if (!widget.canMovePage(gestureDetails)) {
         //stop
@@ -345,11 +345,11 @@ class ExtendedImageGesturePageViewState
         temp = DragEndDetails(primaryVelocity: 0.0);
 
         // get magnitude from gesture velocity
-        final double magnitude = details.velocity.pixelsPerSecond.distance;
+        final magnitude = details.velocity.pixelsPerSecond.distance;
 
         // do a significant magnitude
         if (doubleCompare(magnitude, minMagnitude) >= 0) {
-          Offset direction = details.velocity.pixelsPerSecond /
+          var direction = details.velocity.pixelsPerSecond /
               magnitude *
               (extendedImageGestureState.imageGestureConfig.inertialSpeed);
 

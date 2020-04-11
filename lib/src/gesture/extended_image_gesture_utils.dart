@@ -34,7 +34,7 @@ class Boundary {
 
   @override
   String toString() {
-    return "left:$left,right:$right,top:$top,bottom:$bottom";
+    return 'left:$left,right:$right,top:$top,bottom:$bottom';
   }
 
   @override
@@ -43,7 +43,7 @@ class Boundary {
   @override
   bool operator ==(dynamic other) {
     if (other.runtimeType != runtimeType) return false;
-    final Boundary typedOther = other;
+    final typedOther = other as Boundary;
     return left == typedOther.left &&
         right == typedOther.right &&
         top == typedOther.top &&
@@ -124,7 +124,7 @@ class GestureDetails {
   @override
   bool operator ==(dynamic other) {
     if (other.runtimeType != runtimeType) return false;
-    final GestureDetails typedOther = other;
+    final typedOther = other as GestureDetails;
     return offset == typedOther.offset &&
         totalScale == typedOther.totalScale &&
         computeVerticalBoundary == typedOther.computeVerticalBoundary &&
@@ -210,8 +210,8 @@ class GestureDetails {
   }
 
   Rect _getDestinationRect(Rect destinationRect, Offset center) {
-    final double width = destinationRect.width * totalScale;
-    final double height = destinationRect.height * totalScale;
+    final width = destinationRect.width * totalScale;
+    final height = destinationRect.height * totalScale;
     return Rect.fromLTWH(
         center.dx - width / 2.0, center.dy - height / 2.0, width, height);
   }
@@ -224,7 +224,7 @@ class GestureDetails {
     var temp = offset;
     _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
     offset = temp;
-    Rect result =
+    var result =
         _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
 
     ///first call,initial image rect with alignment
@@ -269,8 +269,8 @@ class GestureDetails {
   Rect _innerCalculateFinalDestinationRect(
       Rect layoutRect, Rect destinationRect) {
     _boundary = Boundary();
-    Offset center = _getCenter(destinationRect);
-    Rect result = _getDestinationRect(destinationRect, center);
+    final center = _getCenter(destinationRect);
+    var result = _getDestinationRect(destinationRect, center);
 
     if (_computeHorizontalBoundary) {
       //move right
@@ -322,12 +322,12 @@ class GestureDetails {
   }
 
   bool movePage(Offset delta) {
-    bool canMoveHorizontal = delta.dx != 0 &&
+    final canMoveHorizontal = delta.dx != 0 &&
         ((delta.dx < 0 && boundary.right) ||
             (delta.dx > 0 && boundary.left) ||
             !_computeHorizontalBoundary);
 
-    bool canMoveVertical = delta.dy != 0 &&
+    final canMoveVertical = delta.dy != 0 &&
         ((delta.dy < 0 && boundary.bottom) ||
             (delta.dy > 0 && boundary.top) ||
             !_computeVerticalBoundary);
@@ -429,7 +429,7 @@ class GestureConfig {
 }
 
 double roundAfter(double number, int position) {
-  double shift = pow(10, position).toDouble();
+  final shift = pow(10, position).toDouble();
   return (number * shift).roundToDouble() / shift;
 }
 
@@ -518,7 +518,7 @@ class GestureAnimation {
 
 Color defaultSlidePageBackgroundHandler(
     {Offset offset, Size pageSize, Color color, SlideAxis pageGestureAxis}) {
-  double opacity = 0.0;
+  var opacity = 0.0;
   if (pageGestureAxis == SlideAxis.both) {
     opacity = offset.distance /
         (Offset(pageSize.width, pageSize.height).distance / 2.0);
@@ -547,7 +547,7 @@ bool defaultSlideEndHandler(
 
 double defaultSlideScaleHandler(
     {Offset offset, Size pageSize, SlideAxis pageGestureAxis}) {
-  double scale = 0.0;
+  var scale = 0.0;
   if (pageGestureAxis == SlideAxis.both) {
     scale = offset.distance / Offset(pageSize.width, pageSize.height).distance;
   } else if (pageGestureAxis == SlideAxis.horizontal) {

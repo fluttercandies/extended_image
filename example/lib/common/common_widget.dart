@@ -57,7 +57,6 @@ class FlatButtonWithIcon extends FlatButton with MaterialButtonWithIconMixin {
         );
 }
 
-
 class AspectRatioItem {
   final String text;
   final double value;
@@ -69,7 +68,7 @@ class AspectRatioWidget extends StatelessWidget {
   final double aspectRatio;
   final bool isSelected;
   AspectRatioWidget(
-      {this.aspectRatioS, this.aspectRatio, this.isSelected= false});
+      {this.aspectRatioS, this.aspectRatio, this.isSelected = false});
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
@@ -88,17 +87,17 @@ class AspectRatioPainter extends CustomPainter {
   final double aspectRatio;
   final bool isSelected;
   AspectRatioPainter(
-      {this.aspectRatioS, this.aspectRatio, this.isSelected= false});
+      {this.aspectRatioS, this.aspectRatio, this.isSelected = false});
 
   @override
   void paint(Canvas canvas, Size size) {
     final Color color = isSelected ? Colors.blue : Colors.grey;
     var rect = (Offset.zero & size);
     //https://github.com/flutter/flutter/issues/49328
-    Paint paint = Paint()
+    final paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
-    final double aspectRatioResult =
+    final aspectRatioResult =
         (aspectRatio != null && aspectRatio > 0.0) ? aspectRatio : 1.0;
     canvas.drawRect(
         getDestinationRect(
@@ -107,7 +106,7 @@ class AspectRatioPainter extends CustomPainter {
             fit: BoxFit.contain),
         paint);
 
-    TextPainter textPainter = TextPainter(
+    final textPainter = TextPainter(
         text: TextSpan(
             text: aspectRatioS,
             style: TextStyle(

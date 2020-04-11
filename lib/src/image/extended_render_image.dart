@@ -379,7 +379,7 @@ class ExtendedRenderImage extends RenderBox {
     _resolve();
     assert(_resolvedAlignment != null);
     assert(_flipHorizontally != null);
-    Rect rect = offset & size;
+    var rect = offset & size;
     if (gestureDetails != null && gestureDetails.slidePageOffset != null) {
       rect = rect.shift(-gestureDetails.slidePageOffset);
     }
@@ -459,10 +459,10 @@ void paintExtendedImage({
   assert(flipHorizontally != null);
   if (rect.isEmpty) return;
 
-  Size outputSize = rect.size;
-  Size inputSize = Size(image.width.toDouble(), image.height.toDouble());
+  var outputSize = rect.size;
+  var inputSize = Size(image.width.toDouble(), image.height.toDouble());
 
-  Offset topLeft = rect.topLeft;
+  final topLeft = rect.topLeft;
 
   // if (editActionDetails != null && editActionDetails.isHalfPi) {
   //   outputSize = Size(outputSize.height, outputSize.width);
@@ -476,15 +476,14 @@ void paintExtendedImage({
   if (centerSlice != null) {
     sliceBorder = Offset(centerSlice.left + inputSize.width - centerSlice.right,
         centerSlice.top + inputSize.height - centerSlice.bottom);
-    outputSize -= sliceBorder;
-    inputSize -= sliceBorder;
+    outputSize = (outputSize - sliceBorder) as Size;
+    inputSize = (inputSize - sliceBorder) as Size;
   }
   fit ??= centerSlice == null ? BoxFit.scaleDown : BoxFit.fill;
   assert(centerSlice == null || (fit != BoxFit.none && fit != BoxFit.cover));
-  final FittedSizes fittedSizes =
-      applyBoxFit(fit, inputSize / scale, outputSize);
-  final Size sourceSize = fittedSizes.source * scale;
-  Size destinationSize = fittedSizes.destination;
+  final fittedSizes = applyBoxFit(fit, inputSize / scale, outputSize);
+  final sourceSize = fittedSizes.source * scale;
+  var destinationSize = fittedSizes.destination;
   if (centerSlice != null) {
     outputSize += sliceBorder;
     destinationSize += sliceBorder;
@@ -498,23 +497,21 @@ void paintExtendedImage({
     // output rect with the image.
     repeat = ImageRepeat.noRepeat;
   }
-  final Paint paint = Paint()..isAntiAlias = false;
+  final paint = Paint()..isAntiAlias = false;
   if (colorFilter != null) paint.colorFilter = colorFilter;
   if (sourceSize != destinationSize) {
     paint.filterQuality = filterQuality;
   }
   paint.invertColors = invertColors;
-  final double halfWidthDelta =
-      (outputSize.width - destinationSize.width) / 2.0;
-  final double halfHeightDelta =
-      (outputSize.height - destinationSize.height) / 2.0;
-  final double dx = halfWidthDelta +
+  final halfWidthDelta = (outputSize.width - destinationSize.width) / 2.0;
+  final halfHeightDelta = (outputSize.height - destinationSize.height) / 2.0;
+  final dx = halfWidthDelta +
       (flipHorizontally ? -alignment.x : alignment.x) * halfWidthDelta;
-  final double dy = halfHeightDelta + alignment.y * halfHeightDelta;
-  final Offset destinationPosition = topLeft.translate(dx, dy);
-  Rect destinationRect = destinationPosition & destinationSize;
+  final dy = halfHeightDelta + alignment.y * halfHeightDelta;
+  final destinationPosition = topLeft.translate(dx, dy);
+  var destinationRect = destinationPosition & destinationSize;
 
-  bool needClip = false;
+  var needClip = false;
 
   if (gestureDetails != null) {
     destinationRect =
@@ -533,7 +530,7 @@ void paintExtendedImage({
       canvas.clipRect(rect);
     }
   }
-  bool hasEditAction = false;
+  var hasEditAction = false;
   if (editActionDetails != null) {
     if (editActionDetails.cropRectPadding != null) {
       destinationRect = getDestinationRect(
@@ -566,7 +563,7 @@ void paintExtendedImage({
       var origin =
           editActionDetails.screenCropRect?.center ?? destinationRect.center;
 
-      final Matrix4 result = Matrix4.identity();
+      final result = Matrix4.identity();
 
       var editAction = editActionDetails;
 
@@ -598,25 +595,25 @@ void paintExtendedImage({
     if (handle) return;
   }
 
-  final bool needSave = repeat != ImageRepeat.noRepeat || flipHorizontally;
+  final needSave = repeat != ImageRepeat.noRepeat || flipHorizontally;
   if (needSave) canvas.save();
   if (repeat != ImageRepeat.noRepeat) canvas.clipRect(rect);
   if (flipHorizontally) {
-    final double dx = -(rect.left + rect.width / 2.0);
+    final dx = -(rect.left + rect.width / 2.0);
     canvas.translate(-dx, 0.0);
     canvas.scale(-1.0, 1.0);
     canvas.translate(dx, 0.0);
   }
 
   if (centerSlice == null) {
-    final Rect sourceRect = customSourceRect ??
+    final sourceRect = customSourceRect ??
         alignment.inscribe(sourceSize, Offset.zero & inputSize);
-    for (Rect tileRect
+    for (var tileRect
         in _generateImageTileRects(rect, destinationRect, repeat)) {
       canvas.drawImageRect(image, sourceRect, tileRect, paint);
     }
   } else {
-    for (Rect tileRect
+    for (var tileRect
         in _generateImageTileRects(rect, destinationRect, repeat)) {
       canvas.drawImageNine(image, centerSlice, tileRect, paint);
     }
@@ -640,12 +637,12 @@ Iterable<Rect> _generateImageTileRects(
     return;
   }
 
-  int startX = 0;
-  int startY = 0;
-  int stopX = 0;
-  int stopY = 0;
-  final double strideX = fundamentalRect.width;
-  final double strideY = fundamentalRect.height;
+  var startX = 0;
+  var startY = 0;
+  var stopX = 0;
+  var stopY = 0;
+  final strideX = fundamentalRect.width;
+  final strideY = fundamentalRect.height;
 
   if (repeat == ImageRepeat.repeat || repeat == ImageRepeat.repeatX) {
     startX = ((outputRect.left - fundamentalRect.left) / strideX).floor();
@@ -657,8 +654,8 @@ Iterable<Rect> _generateImageTileRects(
     stopY = ((outputRect.bottom - fundamentalRect.bottom) / strideY).ceil();
   }
 
-  for (int i = startX; i <= stopX; ++i) {
-    for (int j = startY; j <= stopY; ++j) {
+  for (var i = startX; i <= stopX; ++i) {
+    for (var j = startY; j <= stopY; ++j) {
       yield fundamentalRect.shift(Offset(i * strideX, j * strideY));
     }
   }

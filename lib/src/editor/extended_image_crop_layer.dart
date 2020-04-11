@@ -42,7 +42,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   Rect get layoutRect => widget.layoutRect;
 
   Rect get cropRect => widget.editActionDetails.cropRect;
-  set cropRect(value) => widget.editActionDetails.cropRect = value;
+  set cropRect(Rect value) => widget.editActionDetails.cropRect = value;
 
   bool get isAnimating => _rectTweenController?.isAnimating ?? false;
   bool get isMoving => _currentMoveType != null;
@@ -85,13 +85,13 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   @override
   Widget build(BuildContext context) {
     if (cropRect == null) return Container();
-    final EditorConfig editConfig = widget.editorConfig;
-    final Color cornerColor =
+    final editConfig = widget.editorConfig;
+    final cornerColor =
         widget.editorConfig.cornerColor ?? Theme.of(context).primaryColor;
-    final Color maskColor = widget.editorConfig.editorMaskColorHandler
+    final maskColor = widget.editorConfig.editorMaskColorHandler
             ?.call(context, _pointerDown) ??
         defaultEditorMaskColorHandler(context, _pointerDown);
-    final double gWidth = widget.editorConfig.hitTestSize;
+    final gWidth = widget.editorConfig.hitTestSize;
 
     Widget result = CustomPaint(
       painter: ExtendedImageCropLayerPainter(
@@ -271,10 +271,9 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     if (_currentMoveType != null && moveType != _currentMoveType) return;
     _currentMoveType = moveType;
 
-    final Rect layerDestinationRect =
-        widget.editActionDetails.layerDestinationRect;
-    Rect result = cropRect;
-    final double gWidth = widget.editorConfig.cornerSize.width;
+    final layerDestinationRect = widget.editActionDetails.layerDestinationRect;
+    var result = cropRect;
+    final gWidth = widget.editorConfig.cornerSize.width;
     switch (moveType) {
       case _moveType.topLeft:
       case _moveType.top:
@@ -348,10 +347,10 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   /// handle crop rect with aspectRatio
   Rect _handleAspectRatio(double gWidth, _moveType moveType, Rect result,
       Rect layerDestinationRect, Offset delta) {
-    final double aspectRatio = widget.editActionDetails.cropAspectRatio;
+    final aspectRatio = widget.editActionDetails.cropAspectRatio;
     // do with aspect ratio
     if (aspectRatio != null) {
-      final double minD = gWidth * 2;
+      final minD = gWidth * 2;
       switch (moveType) {
         case _moveType.top:
         case _moveType.bottom:
@@ -384,8 +383,8 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
                 min(result.height * aspectRatio, layerDestinationRect.width));
             height = width / aspectRatio;
           }
-          double top = result.top;
-          double left = result.left;
+          var top = result.top;
+          var left = result.left;
           switch (moveType) {
             case _moveType.topLeft:
               top = result.bottom - height;
@@ -417,9 +416,9 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   Rect _doAspectRatioH(
       double minD, Rect result, double aspectRatio, Rect layerDestinationRect,
       {bool isLeft}) {
-    double height =
+    final height =
         max(minD, min(result.width / aspectRatio, layerDestinationRect.height));
-    double width = height * aspectRatio;
+    final width = height * aspectRatio;
     var left = isLeft ? result.right - width : result.left;
     var top = result.centerRight.dy - height / 2.0;
     result = Rect.fromLTWH(left, top, width, height);
@@ -430,9 +429,9 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   Rect _doAspectRatioV(
       double minD, Rect result, double aspectRatio, Rect layerDestinationRect,
       {bool isTop}) {
-    double width =
+    final width =
         max(minD, min(result.height * aspectRatio, layerDestinationRect.width));
-    double height = width / aspectRatio;
+    final height = width / aspectRatio;
     var top = isTop ? result.bottom - height : result.top;
     var left = result.topCenter.dx - width / 2.0;
     result = Rect.fromLTWH(left, top, width, height);
@@ -575,7 +574,7 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
     //       ..color = maskColor);
     //   canvas.drawRect(cropRect, Paint()..blendMode = BlendMode.clear);
     // canvas.restore();
-    
+
     // draw mask rect instead use BlendMode.clear, web doesn't support now.
     //left
     canvas.drawRect(
@@ -642,11 +641,11 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
           linePainter);
     }
 
-    var cornerPainter = Paint()
+    final cornerPainter = Paint()
       ..color = cornerColor
       ..style = PaintingStyle.fill;
-    final double cornerWidth = cornerSize.width;
-    final double cornerHeight = cornerSize.height;
+    final cornerWidth = cornerSize.width;
+    final cornerHeight = cornerSize.height;
     canvas.drawPath(
         Path()
           ..moveTo(cropRect.left, cropRect.top)
@@ -691,7 +690,7 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    if(oldDelegate.runtimeType!=this.runtimeType) return true;
+    if (oldDelegate.runtimeType != runtimeType) return true;
     var delegate = oldDelegate as ExtendedImageCropLayerPainter;
     return cropRect != delegate.cropRect ||
         cornerSize != delegate.cornerSize ||

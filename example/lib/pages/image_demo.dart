@@ -7,10 +7,10 @@ import 'package:oktoast/oktoast.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 
 @FFRoute(
-    name: "fluttercandies://image",
-    routeName: "image",
+    name: 'fluttercandies://image',
+    routeName: 'image',
     description:
-        "cache image,save to photo Library,image border,shape,borderRadius")
+        'cache image,save to photo Library,image border,shape,borderRadius')
 class ImageDemo extends StatefulWidget {
   @override
   _ImageDemoState createState() => _ImageDemoState();
@@ -39,12 +39,12 @@ class _ImageDemoState extends State<ImageDemo> {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("ImageDemo"),
+            title: Text('ImageDemo'),
           ),
           Row(
             children: <Widget>[
               RaisedButton(
-                child: Text("BoxShape.circle"),
+                child: Text('BoxShape.circle'),
                 onPressed: () {
                   setState(() {
                     boxShape = BoxShape.circle;
@@ -55,7 +55,7 @@ class _ImageDemoState extends State<ImageDemo> {
                 child: Container(),
               ),
               RaisedButton(
-                child: Text("BoxShape.rectangle"),
+                child: Text('BoxShape.rectangle'),
                 onPressed: () {
                   setState(() {
                     boxShape = BoxShape.rectangle;
@@ -69,10 +69,10 @@ class _ImageDemoState extends State<ImageDemo> {
               kIsWeb
                   ? Container()
                   : RaisedButton(
-                      child: Text("clear all cache"),
+                      child: Text('clear all cache'),
                       onPressed: () {
                         clearDiskCachedImages().then((bool done) {
-                          showToast(done ? "clear succeed" : "clear failed",
+                          showToast(done ? 'clear succeed' : 'clear failed',
                               position:
                                   ToastPosition(align: Alignment.topCenter));
                         });
@@ -83,10 +83,10 @@ class _ImageDemoState extends State<ImageDemo> {
               ),
               !kIsWeb
                   ? RaisedButton(
-                      child: Text("save network image to photo"),
+                      child: Text('save network image to photo'),
                       onPressed: () {
                         saveNetworkImageToPhoto(url).then((bool done) {
-                          showToast(done ? "save succeed" : "save failed",
+                          showToast(done ? 'save succeed' : 'save failed',
                               position:
                                   ToastPosition(align: Alignment.topCenter));
                         });

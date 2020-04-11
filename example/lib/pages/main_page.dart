@@ -8,14 +8,14 @@ import 'package:oktoast/oktoast.dart';
 import '../example_route.dart';
 
 @FFRoute(
-  name: "fluttercandies://mainpage",
-  routeName: "MainPage",
+  name: 'fluttercandies://mainpage',
+  routeName: 'MainPage',
 )
 class MainPage extends StatelessWidget {
-  final List<RouteResult> routes = List<RouteResult>();
+  final List<RouteResult> routes = <RouteResult>[];
   MainPage() {
-    routeNames.remove("fluttercandies://picswiper");
-    routeNames.remove("fluttercandies://mainpage");
+    routeNames.remove('fluttercandies://picswiper');
+    routeNames.remove('fluttercandies://mainpage');
     routes.addAll(
         routeNames.map<RouteResult>((name) => getRouteResult(name: name)));
   }
@@ -25,7 +25,7 @@ class MainPage extends StatelessWidget {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text("ExtendedImage"),
+        title: Text('ExtendedImage'),
         actions: <Widget>[
           ButtonTheme(
             minWidth: 0.0,
@@ -68,7 +68,7 @@ class MainPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      (index + 1).toString() + "." + page.routeName,
+                      (index + 1).toString() + '.' + page.routeName,
                       //style: TextStyle(inherit: false),
                     ),
                     Text(
@@ -93,12 +93,12 @@ class MainPage extends StatelessWidget {
 
                 ///clear local cahced
                 clearDiskCachedImages().then((bool done) {
-                  showToast(done ? "clear succeed" : "clear failed",
+                  showToast(done ? 'clear succeed' : 'clear failed',
                       position: ToastPosition(align: Alignment.center));
                 });
               },
               child: Text(
-                "clear cache",
+                'clear cache',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   inherit: false,

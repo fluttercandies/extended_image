@@ -516,7 +516,7 @@ class ExtendedImage extends StatefulWidget {
   ///
   /// Applies only to boxes with rectangular shapes; ignored if [shape] is not
   /// [BoxShape.rectangle].
-  final BorderRadiusGeometry borderRadius;
+  final BorderRadius borderRadius;
 
   /// custom load state widget if you want
   final LoadStateChanged loadStateChanged;
@@ -601,7 +601,7 @@ class ExtendedImage extends StatefulWidget {
   ///    specify an [AlignmentGeometry].
   ///  * [AlignmentDirectional], like [Alignment] for specifying alignments
   ///    relative to text direction.
-  final AlignmentGeometry alignment;
+  final Alignment alignment;
 
   /// How to paint any portions of the layout bounds not covered by the image.
   final ImageRepeat repeat;
@@ -618,7 +618,7 @@ class ExtendedImage extends StatefulWidget {
   /// Whether to paint the image in the direction of the [TextDirection].
   ///
   /// If this is true, then in [TextDirection.ltr] contexts, the image will be
-  /// drawn with its origin in the top left (the "normal" painting direction for
+  /// drawn with its origin in the top left (the 'normal' painting direction for
   /// images); and in [TextDirection.rtl] contexts, the image will be drawn with
   /// a scaling factor of -1 in the horizontal direction so that the origin is
   /// in the top right.
@@ -732,11 +732,11 @@ class _ExtendedImageState extends State<ExtendedImage>
       widget.image.evict();
     }
 
-    final ImageStream newStream = widget.image.resolve(
-        createLocalImageConfiguration(context,
-            size: widget.width != null && widget.height != null
-                ? Size(widget.width, widget.height)
-                : null));
+    final newStream = widget.image.resolve(createLocalImageConfiguration(
+        context,
+        size: widget.width != null && widget.height != null
+            ? Size(widget.width, widget.height)
+            : null));
     assert(newStream != null);
 
     if (_imageInfo != null && !rebuild && _imageStream?.key == newStream?.key) {
@@ -748,8 +748,8 @@ class _ExtendedImageState extends State<ExtendedImage>
     _updateSourceStream(newStream, rebuild: rebuild);
   }
 
-  _loadFailed(dynamic exception, StackTrace stackTrace) {
-    //print("$exception");
+  void _loadFailed(dynamic exception, StackTrace stackTrace) {
+    //print('$exception');
 
 //    ImageProvider imageProvider = widget.image;
 //    if (imageProvider is ExtendedNetworkImageProvider) {
@@ -802,7 +802,7 @@ class _ExtendedImageState extends State<ExtendedImage>
   // registered).
   void _updateSourceStream(ImageStream newStream, {bool rebuild = false}) {
     if (_imageStream?.key == newStream?.key) return;
-    //print("_updateSourceStream");
+    //print('_updateSourceStream');
     if (_isListeningToStream) {
       _imageStream.removeListener(ImageStreamListener(
         _handleImageChanged,
@@ -903,7 +903,7 @@ class _ExtendedImageState extends State<ExtendedImage>
                 onTap: () {
                   reLoadImage();
                 },
-                child: Text("Failed to load image"),
+                child: Text('Failed to load image'),
               ),
             );
             break;
@@ -963,7 +963,7 @@ class _ExtendedImageState extends State<ExtendedImage>
     return Semantics(
       container: widget.semanticLabel != null,
       image: true,
-      label: widget.semanticLabel == null ? '' : widget.semanticLabel,
+      label: widget.semanticLabel ?? '',
       child: current,
     );
   }
@@ -1049,7 +1049,7 @@ class _ExtendedImageState extends State<ExtendedImage>
   Object get imageStreamKey => _imageStream?.key;
 
   @override
-  ExtendedImage get imageWidget => this.widget;
+  ExtendedImage get imageWidget => widget;
 
   @override
   Widget get completedWidget => _getCompletedWidget();

@@ -8,7 +8,7 @@ import 'dart:typed_data';
 import 'package:js/js.dart';
 
 @JS()
-external void _exportRaw(key, value);
+external void _exportRaw(String key, Uint8List value);
 
 class ImageSaver {
   static Future<String> save(String name, Uint8List fileData) async {
@@ -19,13 +19,13 @@ class ImageSaver {
 
 Future<Uint8List> pickImage() async {
   final completer = Completer<Uint8List>();
-  final InputElement input = document.createElement('input');
+  final input = document.createElement('input') as InputElement;
 
   input
     ..type = 'file'
     ..accept = 'image/*';
   input.onChange.listen((e) async {
-    final List<File> files = input.files;
+    final files = input.files;
     final reader = FileReader();
     reader.readAsArrayBuffer(files[0]);
     reader.onError.listen((error) => completer.completeError(error));

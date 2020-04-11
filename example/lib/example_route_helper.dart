@@ -96,12 +96,11 @@ Route<dynamic> onGenerateRouteHelper(
 
   final routeResult = getRouteResult(
     name: settings.name,
-    arguments: arguments,
+    arguments: arguments as Map<String, dynamic>,
   );
   if (routeResult.showStatusBar != null || routeResult.routeName != null) {
     settings = FFRouteSettings(
       name: settings.name,
-      isInitialRoute: settings.isInitialRoute,
       routeName: routeResult.routeName,
       arguments: arguments,
       showStatusBar: routeResult.showStatusBar,
@@ -116,24 +115,24 @@ Route<dynamic> onGenerateRouteHelper(
   }
 
   if (arguments is Map<String, dynamic>) {
-    RouteBuilder builder = arguments['routeBuilder'];
+    final builder = arguments['routeBuilder'] as RouteBuilder;
     if (builder != null) return builder(page);
   }
 
   switch (routeResult.pageRouteType) {
     case PageRouteType.material:
-      return MaterialPageRoute(settings: settings, builder: (_) => page);
+      return MaterialPageRoute<void>(settings: settings, builder: (_) => page);
     case PageRouteType.cupertino:
-      return CupertinoPageRoute(settings: settings, builder: (_) => page);
+      return CupertinoPageRoute<void>(settings: settings, builder: (_) => page);
     case PageRouteType.transparent:
-      return FFTransparentPageRoute(
+      return FFTransparentPageRoute<void>(
         settings: settings,
         pageBuilder: (_, __, ___) => page,
       );
     default:
       return Platform.isIOS
-          ? CupertinoPageRoute(settings: settings, builder: (_) => page)
-          : MaterialPageRoute(settings: settings, builder: (_) => page);
+          ? CupertinoPageRoute<void>(settings: settings, builder: (_) => page)
+          : MaterialPageRoute<void>(settings: settings, builder: (_) => page);
   }
 }
 
@@ -150,7 +149,6 @@ class FFRouteSettings extends RouteSettings {
     Object arguments,
   }) : super(
           name: name,
-          isInitialRoute: isInitialRoute,
           arguments: arguments,
         );
 }

@@ -8,9 +8,9 @@ import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 
 @FFRoute(
-    name: "fluttercandies://paintimage",
-    routeName: "paint image",
-    description: "show how to paint any thing before/after image is painted")
+    name: 'fluttercandies://paintimage',
+    routeName: 'paint image',
+    description: 'show how to paint any thing before/after image is painted')
 class PaintImageDemo extends StatefulWidget {
   @override
   _PaintImageDemoState createState() => _PaintImageDemoState();
@@ -31,16 +31,16 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("PaintImageDemo"),
+            title: Text('PaintImageDemo'),
           ),
           Text(
-            "you can paint anything before or after Image paint",
+            'you can paint anything before or after Image paint',
             style: TextStyle(color: Colors.grey),
           ),
           Row(
             children: <Widget>[
               RaisedButton(
-                child: Text("ClipHeart"),
+                child: Text('ClipHeart'),
                 onPressed: () {
                   setState(() {
                     paintType = PaintType.ClipHeart;
@@ -51,7 +51,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                 child: Container(),
               ),
               RaisedButton(
-                child: Text("PaintHeart"),
+                child: Text('PaintHeart'),
                 onPressed: () {
                   setState(() {
                     paintType = PaintType.PaintHeart;
@@ -95,7 +95,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                         Paint()
                           // ..colorFilter = ColorFilter.mode(
                           //     Color(0x55ea5504), BlendMode.srcIn)
-                          ..color=Color(0x55ea5504).withOpacity(0.2)
+                          ..color = Color(0x55ea5504).withOpacity(0.2)
                           ..isAntiAlias = false
                           ..filterQuality = FilterQuality.low);
 
@@ -126,19 +126,19 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
     Rect rect,
     Canvas canvas,
   ) {
-    int numPoints = 1000;
-    List<Offset> points =  List<Offset>();
-    double dt = (2 * pi / numPoints);
+    final numPoints = 1000;
+    final points = <Offset>[];
+    var dt = (2 * pi / numPoints);
 
-    for (double t = 0; t <= 2 * pi; t += dt) {
-      var oo = Offset(X(t), Y(t));
+    for (var t = 0.0; t <= 2 * pi; t += dt) {
+      var oo = Offset(doX(t), doY(t));
       // print(oo);
       points.add(oo);
     }
-    double wxmin = points[0].dx;
-    double wxmax = wxmin;
-    double wymin = points[0].dy;
-    double wymax = wymin;
+    var wxmin = points[0].dx;
+    var wxmax = wxmin;
+    var wymin = points[0].dy;
+    var wymax = wymin;
 
     points.forEach((point) {
       if (wxmin > point.dx) wxmin = point.dx;
@@ -147,15 +147,15 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
       if (wymax < point.dy) wymax = point.dy;
     });
 
-    Rect rect1 = Rect.fromLTWH(wxmin, wymin, wxmax - wxmin, wymax - wymin);
+    final rect1 = Rect.fromLTWH(wxmin, wymin, wxmax - wxmin, wymax - wymin);
 
-    double xx = ScreenUtil.instance.setWidth(400) /
+    final xx = ScreenUtil.instance.setWidth(400) /
         (max(rect1.width, rect1.height) * 1.1);
 
-    double top = rect.top + ScreenUtil.instance.setWidth(400) / 2.0;
-    double left = rect.left + ScreenUtil.instance.setWidth(400) / 2.0;
+    final top = rect.top + ScreenUtil.instance.setWidth(400) / 2.0;
+    final left = rect.left + ScreenUtil.instance.setWidth(400) / 2.0;
 
-    List<Offset> points1 = List<Offset>();
+    final points1 = <Offset>[];
     points.forEach((point) {
       points1.add(Offset(left + point.dx * xx, top + -point.dy * xx));
     });
@@ -166,12 +166,12 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
   }
 
   // The curve's parametric equations.
-  double X(double t) {
-    double sinT = sin(t);
+  double doX(double t) {
+    final sinT = sin(t);
     return (16 * sinT * sinT * sinT);
   }
 
-  double Y(double t) {
+  double doY(double t) {
     return (13 * cos(t) - 5 * cos(2 * t) - 2 * cos(3 * t) - cos(4 * t));
   }
 

@@ -53,7 +53,7 @@ enum ExtendedImageMode {
 Type typeOf<T>() => T;
 
 double clampScale(double scale, double min, double max) {
-  return scale.clamp(min, max);
+  return scale.clamp(min, max) as double;
 }
 
 /// Returns a value indicating whether two instances of Double represent the same value.

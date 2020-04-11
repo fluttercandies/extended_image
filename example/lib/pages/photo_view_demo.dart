@@ -18,9 +18,9 @@ import 'package:flutter/foundation.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 
 @FFRoute(
-    name: "fluttercandies://photoview",
-    routeName: "photo view",
-    description: "show how to zoom/pan image in page view like WeChat")
+    name: 'fluttercandies://photoview',
+    routeName: 'photo view',
+    description: 'show how to zoom/pan image in page view like WeChat')
 class PhotoViewDemo extends StatefulWidget {
   @override
   _PhotoViewDemoState createState() => _PhotoViewDemoState();
@@ -30,7 +30,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
   MyExtendedMaterialTextSelectionControls
       _myExtendedMaterialTextSelectionControls;
   final String _attachContent =
-      "[love]Extended text help you to build rich text quickly. any special text you will have with extended text.It's my pleasure to invite you to join \$FlutterCandies\$ if you want to improve flutter .[love] if you meet any problem, please let me konw @zmtzawqlp .[sun_glasses]";
+      '[love]Extended text help you to build rich text quickly. any special text you will have with extended text.It\'s my pleasure to invite you to join \$FlutterCandies\$ if you want to improve flutter .[love] if you meet any problem, please let me konw @zmtzawqlp .[sun_glasses]';
   @override
   void initState() {
     _myExtendedMaterialTextSelectionControls =
@@ -52,17 +52,17 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
 
   @override
   Widget build(BuildContext context) {
-    final double margin = ScreenUtil.instance.setWidth(22);
+    final  margin = ScreenUtil.instance.setWidth(22);
     Widget result = Material(
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("photo view demo"),
+            title: Text('photo view demo'),
           ),
           Container(
             padding: EdgeInsets.all(margin),
             child: Text(
-                "click image to show photo view, support zoom/pan image. horizontal and vertical page view are supported."),
+                'click image to show photo view, support zoom/pan image. horizontal and vertical page view are supported.'),
           ),
           Expanded(
             child: LayoutBuilder(
@@ -102,14 +102,14 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                             //   });
                             // },
                             itemBuilder: (context, item, index) {
-                              String title = item.site.name;
-                              if (title == null || title == "") {
-                                title = "Image$index";
+                              var title = item.site.name;
+                              if (title == null || title == '') {
+                                title = 'Image$index';
                               }
 
                               var content =
                                   item.content ?? (item.excerpt ?? title);
-                              content += this._attachContent;
+                              content += _attachContent;
 
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -136,7 +136,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                               return null;
                                             }
                                             return Image.asset(
-                                              "assets/avatar.jpg",
+                                              'assets/avatar.jpg',
                                               package:
                                                   'flutter_candies_demo_library',
                                             );
@@ -159,11 +159,11 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                     child: ExtendedText(
                                       content,
                                       onSpecialTextTap: (dynamic parameter) {
-                                        if (parameter.startsWith("\$")) {
+                                        if (parameter.startsWith('\$')) {
                                           launch(
-                                              "https://github.com/fluttercandies");
-                                        } else if (parameter.startsWith("@")) {
-                                          launch("mailto:zmtzawqlp@live.com");
+                                              'https://github.com/fluttercandies');
+                                        } else if (parameter.startsWith('@')) {
+                                          launch('mailto:zmtzawqlp@live.com');
                                         }
                                       },
                                       specialTextSpanBuilder:
@@ -178,7 +178,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                               children: <TextSpan>[
                                                 TextSpan(text: '  \u2026  '),
                                                 TextSpan(
-                                                    text: "more detail",
+                                                    text: 'more detail',
                                                     style: TextStyle(
                                                       color: Colors.blue,
                                                     ),
@@ -186,7 +186,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                                         TapGestureRecognizer()
                                                           ..onTap = () {
                                                             launch(
-                                                                "https://github.com/fluttercandies/extended_text");
+                                                                'https://github.com/fluttercandies/extended_text');
                                                           })
                                               ],
                                             ),

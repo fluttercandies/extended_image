@@ -5,9 +5,9 @@ import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 
 @FFRoute(
-    name: "fluttercandies://loadingprogress",
-    routeName: "loading progress",
-    description: "show how to make loading progress for network image")
+    name: 'fluttercandies://loadingprogress',
+    routeName: 'loading progress',
+    description: 'show how to make loading progress for network image')
 class LoadingProgress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class LoadingProgress extends StatelessWidget {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("loading progress demo"),
+            title: Text('loading progress demo'),
           ),
           Expanded(
             child: ExtendedImage.network(

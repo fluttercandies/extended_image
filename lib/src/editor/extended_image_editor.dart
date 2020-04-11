@@ -18,9 +18,9 @@ class ExtendedImageEditor extends StatefulWidget {
   final ExtendedImageState extendedImageState;
   ExtendedImageEditor({this.extendedImageState, Key key})
       : assert(extendedImageState.imageWidget.fit == BoxFit.contain,
-            "Make sure the image is all painted to crop,the fit of image must be BoxFit.contain"),
+            'Make sure the image is all painted to crop,the fit of image must be BoxFit.contain'),
         assert(extendedImageState.imageWidget.image is ExtendedImageProvider,
-            "Make sure the image provider is ExtendedImageProvider, we will get raw image data from it"),
+            'Make sure the image provider is ExtendedImageProvider, we will get raw image data from it'),
         super(key: key);
   @override
   ExtendedImageEditorState createState() => ExtendedImageEditorState();
@@ -41,12 +41,12 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   }
 
   void _initGestureConfig() {
-    double initialScale = _editorConfig?.initialScale;
-    double cropAspectRatio = _editorConfig?.cropAspectRatio;
+    final initialScale = _editorConfig?.initialScale;
+    final cropAspectRatio = _editorConfig?.cropAspectRatio;
     _editorConfig = widget
-            .extendedImageState.imageWidget.initEditorConfigHandler
+            ?.extendedImageState?.imageWidget?.initEditorConfigHandler
             ?.call(widget.extendedImageState) ??
-        EditActionDetails();
+        EditorConfig();
     if (cropAspectRatio != _editorConfig.cropAspectRatio) {
       _editActionDetails = null;
     }
@@ -142,7 +142,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                           widget.extendedImageState.imageWidget.alignment,
                       scale: widget.extendedImageState.extendedImageInfo.scale);
 
-                  Rect cropRect = _initCropRect(destinationRect);
+                  var cropRect = _initCropRect(destinationRect);
                   if (_editorConfig.initCropRectType ==
                           InitCropRectType.layoutRect &&
                       _editorConfig.cropAspectRatio != null &&
@@ -193,9 +193,9 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     var cropRect = _editActionDetails.getRectWithScale(rect);
 
     if (_editActionDetails.cropAspectRatio != null) {
-      final double aspectRatio = _editActionDetails.cropAspectRatio;
-      double width = cropRect.width / aspectRatio;
-      double height = min(cropRect.height, width);
+      final aspectRatio = _editActionDetails.cropAspectRatio;
+      var width = cropRect.width / aspectRatio;
+      final height = min(cropRect.height, width);
       width = height * aspectRatio;
       cropRect = Rect.fromCenter(
           center: cropRect.center, width: width, height: height);

@@ -45,8 +45,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   void _initGestureConfig() {
-    final double initialScale = _gestureConfig?.initialScale;
-    final InitialAlignment initialAlignment = _gestureConfig?.initialAlignment;
+    final initialScale = _gestureConfig?.initialScale;
+    final initialAlignment = _gestureConfig?.initialAlignment;
     _gestureConfig = widget
             .extendedImageState.imageWidget.initGestureConfigHandler
             ?.call(widget.extendedImageState) ??
@@ -143,7 +143,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
         _gestureDetails.actionType == ActionType.pan) {
       var offsetDelta = (details.focalPoint - _startingOffset);
       //print(offsetDelta);
-      bool updateGesture = false;
+      var updateGesture = false;
       if (!extendedImageSlidePageState.isSliding) {
         if (offsetDelta.dx != 0 &&
             doubleCompare(offsetDelta.dx.abs(), offsetDelta.dy.abs()) > 0) {
@@ -203,7 +203,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       return;
     }
 
-    double scale = widget.canScaleImage(_gestureDetails)
+    final scale = widget.canScaleImage(_gestureDetails)
         ? clampScale((_startingScale * details.scale * _gestureConfig.speed),
             _gestureConfig.animationMinScale, _gestureConfig.animationMaxScale)
         : _gestureDetails.totalScale;
@@ -250,9 +250,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     //animate back to maxScale if gesture exceeded the maxScale specified
     if (doubleCompare(_gestureDetails.totalScale, _gestureConfig.maxScale) >
         0) {
-      final double velocity =
-          (_gestureDetails.totalScale - _gestureConfig.maxScale) /
-              _gestureConfig.maxScale;
+      final velocity = (_gestureDetails.totalScale - _gestureConfig.maxScale) /
+          _gestureConfig.maxScale;
 
       _gestureAnimation.animationScale(
           _gestureDetails.totalScale, _gestureConfig.maxScale, velocity);
@@ -262,9 +261,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     //animate back to minScale if gesture fell smaller than the minScale specified
     if (doubleCompare(_gestureDetails.totalScale, _gestureConfig.minScale) <
         0) {
-      final double velocity =
-          (_gestureConfig.minScale - _gestureDetails.totalScale) /
-              _gestureConfig.minScale;
+      final velocity = (_gestureConfig.minScale - _gestureDetails.totalScale) /
+          _gestureConfig.minScale;
 
       _gestureAnimation.animationScale(
           _gestureDetails.totalScale, _gestureConfig.minScale, velocity);
@@ -273,11 +271,11 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
     if (_gestureDetails.actionType == ActionType.pan) {
       // get magnitude from gesture velocity
-      final double magnitude = details.velocity.pixelsPerSecond.distance;
+      final magnitude = details.velocity.pixelsPerSecond.distance;
 
       // do a significant magnitude
       if (doubleCompare(magnitude, minMagnitude) >= 0) {
-        final Offset direction = details.velocity.pixelsPerSecond /
+        final direction = details.velocity.pixelsPerSecond /
             magnitude *
             _gestureConfig.inertialSpeed;
 
@@ -411,8 +409,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 }
 
-Map<Object, GestureDetails> _gestureDetailsCache =
-    Map<Object, GestureDetails>();
+Map<Object, GestureDetails> _gestureDetailsCache = <Object, GestureDetails>{};
 
 ///clear the gesture details
 void clearGestureDetailsCache() {

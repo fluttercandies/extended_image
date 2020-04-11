@@ -211,7 +211,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   @override
   Widget build(BuildContext context) {
     _pageSize = MediaQuery.of(context).size;
-    final Color pageColor =
+    final pageColor =
         widget.slidePageBackgroundHandler?.call(offset, pageSize) ??
             defaultSlidePageBackgroundHandler(
                 offset: offset,
@@ -219,7 +219,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
                 color: Theme.of(context).dialogBackgroundColor,
                 pageGestureAxis: widget.slideAxis);
 
-    Widget result = widget.child;
+    var result = widget.child;
     if (widget.slideType == SlideType.wholePage) {
       result = Transform.translate(
         offset: offset,

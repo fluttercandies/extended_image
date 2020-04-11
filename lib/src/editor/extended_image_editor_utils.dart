@@ -34,13 +34,13 @@ class EditActionDetails {
     return null;
   }
 
-  set cropAspectRatio(value) {
+  set cropAspectRatio(double value) {
     _cropAspectRatio = value;
   }
 
   ///image
   Rect get screenDestinationRect => _screenDestinationRect;
-  set screenDestinationRect(value) => _screenDestinationRect = value;
+  set screenDestinationRect(Rect value) => _screenDestinationRect = value;
 
   bool get flipX => _flipX;
 
@@ -165,7 +165,7 @@ class EditActionDetails {
   @override
   bool operator ==(dynamic other) {
     if (other.runtimeType != runtimeType) return false;
-    final EditActionDetails typedOther = other;
+    final typedOther = other as EditActionDetails;
     return _rotateRadian == typedOther.rotateRadian &&
         _flipX == typedOther.flipX &&
         _flipY == typedOther.flipY &&
@@ -191,14 +191,17 @@ class EditActionDetails {
   Rect getFinalDestinationRect() {
     if (screenDestinationRect != null) {
       /// scale
-      final double scaleDelta = totalScale / preTotalScale;
+      final scaleDelta = totalScale / preTotalScale;
       if (scaleDelta != 1.0) {
-        Offset focalPoint = screenFocalPoint ?? _screenDestinationRect.center;
+        var focalPoint = screenFocalPoint ?? _screenDestinationRect.center;
         focalPoint = Offset(
-            focalPoint.dx.clamp(
-                _screenDestinationRect.left, _screenDestinationRect.right),
-            focalPoint.dy.clamp(
-                _screenDestinationRect.top, _screenDestinationRect.bottom));
+          focalPoint.dx
+              .clamp(_screenDestinationRect.left, _screenDestinationRect.right)
+              .toDouble(),
+          focalPoint.dy
+              .clamp(_screenDestinationRect.top, _screenDestinationRect.bottom)
+              .toDouble(),
+        );
 
         _screenDestinationRect = Rect.fromLTWH(
             focalPoint.dx -
@@ -239,7 +242,7 @@ class EditActionDetails {
 
       ///make sure that crop rect is all in image rect.
       if (screenCropRect != null) {
-        Rect rect = screenCropRect.expandToInclude(_screenDestinationRect);
+        var rect = screenCropRect.expandToInclude(_screenDestinationRect);
         if (rect != _screenDestinationRect) {
           var topSame = doubleEqual(rect.top, screenCropRect.top);
           var leftSame = doubleEqual(rect.left, screenCropRect.left);
@@ -277,8 +280,8 @@ class EditActionDetails {
   }
 
   Rect getRectWithScale(Rect rect) {
-    final double width = rect.width * totalScale;
-    final double height = rect.height * totalScale;
+    final width = rect.width * totalScale;
+    final height = rect.height * totalScale;
     var center = rect.center;
     return Rect.fromLTWH(
         center.dx - width / 2.0, center.dy - height / 2.0, width, height);
@@ -427,21 +430,20 @@ Rect getDestinationRect({
   Rect centerSlice,
   bool flipHorizontally = false,
 }) {
-  Size outputSize = rect.size;
+  var outputSize = rect.size;
 
   Offset sliceBorder;
   if (centerSlice != null) {
     sliceBorder = Offset(centerSlice.left + inputSize.width - centerSlice.right,
         centerSlice.top + inputSize.height - centerSlice.bottom);
-    outputSize -= sliceBorder;
-    inputSize -= sliceBorder;
+    outputSize = (outputSize - sliceBorder) as Size;
+    outputSize = (inputSize - sliceBorder) as Size;
   }
   fit ??= centerSlice == null ? BoxFit.scaleDown : BoxFit.fill;
   assert(centerSlice == null || (fit != BoxFit.none && fit != BoxFit.cover));
-  final FittedSizes fittedSizes =
-      applyBoxFit(fit, inputSize / scale, outputSize);
-  final Size sourceSize = fittedSizes.source * scale;
-  Size destinationSize = fittedSizes.destination;
+  final fittedSizes = applyBoxFit(fit, inputSize / scale, outputSize);
+  final sourceSize = fittedSizes.source * scale;
+  var destinationSize = fittedSizes.destination;
   if (centerSlice != null) {
     outputSize += sliceBorder;
     destinationSize += sliceBorder;
@@ -451,15 +453,13 @@ Rect getDestinationRect({
         'centerSlice was used with a BoxFit that does not guarantee that the image is fully visible.');
   }
 
-  final double halfWidthDelta =
-      (outputSize.width - destinationSize.width) / 2.0;
-  final double halfHeightDelta =
-      (outputSize.height - destinationSize.height) / 2.0;
-  final double dx = halfWidthDelta +
+  final halfWidthDelta = (outputSize.width - destinationSize.width) / 2.0;
+  final halfHeightDelta = (outputSize.height - destinationSize.height) / 2.0;
+  final dx = halfWidthDelta +
       (flipHorizontally ? -alignment.x : alignment.x) * halfWidthDelta;
-  final double dy = halfHeightDelta + alignment.y * halfHeightDelta;
-  final Offset destinationPosition = rect.topLeft.translate(dx, dy);
-  Rect destinationRect = destinationPosition & destinationSize;
+  final dy = halfHeightDelta + alignment.y * halfHeightDelta;
+  final destinationPosition = rect.topLeft.translate(dx, dy);
+  final destinationRect = destinationPosition & destinationSize;
 
   // final Rect sourceRect =
   //     centerSlice ?? alignment.inscribe(sourceSize, Offset.zero & inputSize);
