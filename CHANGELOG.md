@@ -1,4 +1,4 @@
-## [0.7.3-dev]
+## [0.7.3]
 
 * Improve:
   fix build error on high flutter sdk(> 1.6.0)

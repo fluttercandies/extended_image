@@ -152,7 +152,7 @@ class ExtendedImageGesturePageViewState
   void initState() {
     super.initState();
     _gestureAnimation = GestureAnimation(this, offsetCallBack: (Offset value) {
-      var gestureDetails = extendedImageGestureState?.gestureDetails;
+      final GestureDetails gestureDetails = extendedImageGestureState?.gestureDetails;
       if (gestureDetails != null) {
         extendedImageGestureState?.gestureDetails = GestureDetails(
             offset: value,
@@ -273,12 +273,12 @@ class ExtendedImageGesturePageViewState
   void _handleDragUpdate(DragUpdateDetails details) {
     // _drag might be null if the drag activity ended and called _disposeDrag.
     assert(_hold == null || _drag == null);
-    var delta = details.delta;
+    final Offset delta = details.delta;
 
     if (extendedImageGestureState != null) {
-      var gestureDetails = extendedImageGestureState.gestureDetails;
+      final GestureDetails gestureDetails = extendedImageGestureState.gestureDetails;
       if (gestureDetails != null) {
-        final currentPage = pageController.page.round();
+        final int currentPage = pageController.page.round();
 //        bool pageChanging = false;
 //
 //        if (widget.scrollDirection == Axis.horizontal) {
@@ -324,11 +324,11 @@ class ExtendedImageGesturePageViewState
     // _drag might be null if the drag activity ended and called _disposeDrag.
     assert(_hold == null || _drag == null);
 
-    var temp = details;
+    DragEndDetails temp = details;
     if (extendedImageGestureState != null) {
-      var gestureDetails = extendedImageGestureState.gestureDetails;
-      final currentPage = pageController.page.round();
-      final movePage = (pageController.page != currentPage);
+      final GestureDetails gestureDetails = extendedImageGestureState.gestureDetails;
+      final int currentPage = pageController.page.round();
+      final bool movePage = pageController.page != currentPage;
 
       if (!widget.canMovePage(gestureDetails)) {
         //stop
@@ -345,11 +345,11 @@ class ExtendedImageGesturePageViewState
         temp = DragEndDetails(primaryVelocity: 0.0);
 
         // get magnitude from gesture velocity
-        final magnitude = details.velocity.pixelsPerSecond.distance;
+        final double magnitude = details.velocity.pixelsPerSecond.distance;
 
         // do a significant magnitude
         if (doubleCompare(magnitude, minMagnitude) >= 0) {
-          var direction = details.velocity.pixelsPerSecond /
+          Offset direction = details.velocity.pixelsPerSecond /
               magnitude *
               (extendedImageGestureState.imageGestureConfig.inertialSpeed);
 

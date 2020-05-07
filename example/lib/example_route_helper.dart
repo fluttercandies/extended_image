@@ -12,43 +12,41 @@ import 'package:flutter/widgets.dart';
 import 'example_route.dart';
 
 class FFNavigatorObserver extends NavigatorObserver {
-  final RouteChange routeChange;
-
   FFNavigatorObserver({this.routeChange});
-
+  final RouteChange routeChange;
   @override
-  void didPop(Route route, Route previousRoute) {
+  void didPop(Route<dynamic> route, Route<dynamic> previousRoute) {
     super.didPop(route, previousRoute);
     _didRouteChange(previousRoute, route);
   }
 
   @override
-  void didPush(Route route, Route previousRoute) {
+  void didPush(Route<dynamic> route, Route<dynamic> previousRoute) {
     super.didPush(route, previousRoute);
     _didRouteChange(route, previousRoute);
   }
 
   @override
-  void didRemove(Route route, Route previousRoute) {
+  void didRemove(Route<dynamic> route, Route<dynamic> previousRoute) {
     super.didRemove(route, previousRoute);
     _didRouteChange(previousRoute, route);
   }
 
   @override
-  void didReplace({Route newRoute, Route oldRoute}) {
+  void didReplace({Route<dynamic> newRoute, Route<dynamic> oldRoute}) {
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
     _didRouteChange(newRoute, oldRoute);
   }
 
-  void _didRouteChange(Route newRoute, Route oldRoute) {
+  void _didRouteChange(Route<dynamic> newRoute, Route<dynamic> oldRoute) {
     // oldRoute may be null when route first time enter.
     routeChange?.call(newRoute, oldRoute);
   }
 }
 
 typedef RouteChange = void Function(
-  Route newRoute,
-  Route oldRoute,
+  Route<dynamic> newRoute,
+  Route<dynamic> oldRoute,
 );
 
 class FFTransparentPageRoute<T> extends PageRouteBuilder<T> {
@@ -94,7 +92,7 @@ Route<dynamic> onGenerateRouteHelper(
 }) {
   arguments ??= settings.arguments;
 
-  final routeResult = getRouteResult(
+  final RouteResult routeResult = getRouteResult(
     name: settings.name,
     arguments: arguments as Map<String, dynamic>,
   );
@@ -106,7 +104,7 @@ Route<dynamic> onGenerateRouteHelper(
       showStatusBar: routeResult.showStatusBar,
     );
   }
-  final page = routeResult.widget ?? notFoundFallback;
+  final Widget page = routeResult.widget ?? notFoundFallback;
   if (page == null) {
     throw Exception(
         '''Route "${settings.name}" returned null.Route Widget must never return null, 
@@ -115,8 +113,10 @@ Route<dynamic> onGenerateRouteHelper(
   }
 
   if (arguments is Map<String, dynamic>) {
-    final builder = arguments['routeBuilder'] as RouteBuilder;
-    if (builder != null) return builder(page);
+    final RouteBuilder builder = arguments['routeBuilder'] as RouteBuilder;
+    if (builder != null) {
+      return builder(page);
+    }
   }
 
   switch (routeResult.pageRouteType) {
@@ -136,19 +136,19 @@ Route<dynamic> onGenerateRouteHelper(
   }
 }
 
-typedef RouteBuilder = PageRoute Function(Widget page);
+typedef RouteBuilder = PageRoute<dynamic> Function(Widget page);
 
 class FFRouteSettings extends RouteSettings {
-  final String routeName;
-  final bool showStatusBar;
   const FFRouteSettings({
     this.routeName,
     this.showStatusBar,
     String name,
-    bool isInitialRoute = false,
     Object arguments,
   }) : super(
           name: name,
           arguments: arguments,
         );
+
+  final String routeName;
+  final bool showStatusBar;
 }

@@ -15,18 +15,18 @@ class ZoomImageDemo extends StatelessWidget {
     return Material(
         child: Column(children: <Widget>[
       AppBar(
-        title: Text('zoom/pan image demo'),
+        title: const Text('zoom/pan image demo'),
       ),
       Expanded(
-        child: LayoutBuilder(builder: (_, c) {
-          final size = Size(c.maxWidth, c.maxHeight);
+        child: LayoutBuilder(builder: (_, BoxConstraints c) {
+          final Size size = Size(c.maxWidth, c.maxHeight);
           return ExtendedImage.network(
             imageTestUrl,
             fit: BoxFit.contain,
             //enableLoadState: false,
             mode: ExtendedImageMode.gesture,
-            initGestureConfigHandler: (state) {
-              var initialScale = 1.0;
+            initGestureConfigHandler: (ExtendedImageState state) {
+              double initialScale = 1.0;
 
               if (state.extendedImageInfo != null &&
                   state.extendedImageInfo.image != null) {

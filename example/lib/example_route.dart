@@ -71,8 +71,11 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
     case 'fluttercandies://picswiper':
       return RouteResult(
         widget: PicSwiper(
+          //ignore: argument_type_not_assignable
           index: arguments['index'],
+          //ignore: argument_type_not_assignable
           pics: arguments['pics'],
+          //ignore: argument_type_not_assignable
           tuChongItem: arguments['tuChongItem'],
         ),
         showStatusBar: false,
@@ -86,11 +89,19 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
         description: 'show how to zoom/pan image',
       );
     default:
-      return RouteResult();
+      return const RouteResult();
   }
 }
 
 class RouteResult {
+  const RouteResult({
+    this.widget,
+    this.showStatusBar = true,
+    this.routeName = '',
+    this.pageRouteType,
+    this.description = '',
+  });
+
   /// The Widget return base on route
   final Widget widget;
 
@@ -105,19 +116,11 @@ class RouteResult {
 
   /// The description of route
   final String description;
-
-  const RouteResult({
-    this.widget,
-    this.showStatusBar = true,
-    this.routeName = '',
-    this.pageRouteType,
-    this.description = '',
-  });
 }
 
 enum PageRouteType { material, cupertino, transparent }
 
-List<String> routeNames = [
+List<String> routeNames = <String>[
   'fluttercandies://WaterfallFlowDemo',
   'fluttercandies://customimage',
   'fluttercandies://image',

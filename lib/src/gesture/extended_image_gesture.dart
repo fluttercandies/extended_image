@@ -13,14 +13,14 @@ bool _defaultCanScaleImage(GestureDetails details) => true;
 /// scale idea from https://github.com/flutter/flutter/blob/master/examples/layers/widgets/gestures.dart
 /// zoom image
 class ExtendedImageGesture extends StatefulWidget {
-  final ExtendedImageState extendedImageState;
-  final ImageBuilderForGesture imageBuilder;
-  final CanScaleImage canScaleImage;
-  ExtendedImageGesture(
+  const ExtendedImageGesture(
     this.extendedImageState, {
     this.imageBuilder,
     CanScaleImage canScaleImage,
   }) : canScaleImage = canScaleImage ?? _defaultCanScaleImage;
+  final ExtendedImageState extendedImageState;
+  final ImageBuilderForGesture imageBuilder;
+  final CanScaleImage canScaleImage;
   @override
   _ExtendedImageGestureState createState() => _ExtendedImageGestureState();
 }
@@ -45,8 +45,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   void _initGestureConfig() {
-    final initialScale = _gestureConfig?.initialScale;
-    final initialAlignment = _gestureConfig?.initialAlignment;
+    final double initialScale = _gestureConfig?.initialScale;
+    final InitialAlignment initialAlignment = _gestureConfig?.initialAlignment;
     _gestureConfig = widget
             .extendedImageState.imageWidget.initGestureConfigHandler
             ?.call(widget.extendedImageState) ??
@@ -62,7 +62,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     }
 
     if (_gestureConfig.cacheGesture) {
-      var cache =
+      final GestureDetails cache =
           _gestureDetailsCache[widget.extendedImageState.imageStreamKey];
       if (cache != null) {
         _gestureDetails = cache;
@@ -141,9 +141,9 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
         details.scale == 1.0 &&
         _gestureDetails.userOffset &&
         _gestureDetails.actionType == ActionType.pan) {
-      var offsetDelta = (details.focalPoint - _startingOffset);
+      final Offset offsetDelta = details.focalPoint - _startingOffset;
       //print(offsetDelta);
-      var updateGesture = false;
+      bool updateGesture = false;
       if (!extendedImageSlidePageState.isSliding) {
         if (offsetDelta.dx != 0 &&
             doubleCompare(offsetDelta.dx.abs(), offsetDelta.dy.abs()) > 0) {
@@ -173,7 +173,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
         updateGesture = true;
       }
 
-      var delta = (details.focalPoint - _startingOffset).distance;
+      final double delta = (details.focalPoint - _startingOffset).distance;
 //      if (widget.extendedImageGesturePageState.widget.pageGestureAxis ==
 //          PageGestureAxis.horizontal) {
 //        delta = (details.focalPoint - _startingOffset).dx;
@@ -203,8 +203,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       return;
     }
 
-    final scale = widget.canScaleImage(_gestureDetails)
-        ? clampScale((_startingScale * details.scale * _gestureConfig.speed),
+    final double scale = widget.canScaleImage(_gestureDetails)
+        ? clampScale(_startingScale * details.scale * _gestureConfig.speed,
             _gestureConfig.animationMinScale, _gestureConfig.animationMaxScale)
         : _gestureDetails.totalScale;
 
@@ -221,9 +221,9 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       return;
     }
 
-    var offset =
-        ((details.scale == 1.0 ? details.focalPoint : _startingOffset) -
-            _normalizedOffset * scale);
+    final Offset offset =
+        (details.scale == 1.0 ? details.focalPoint : _startingOffset) -
+            _normalizedOffset * scale;
 
     if (mounted &&
         (offset != _gestureDetails.offset ||
@@ -250,7 +250,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     //animate back to maxScale if gesture exceeded the maxScale specified
     if (doubleCompare(_gestureDetails.totalScale, _gestureConfig.maxScale) >
         0) {
-      final velocity = (_gestureDetails.totalScale - _gestureConfig.maxScale) /
+      final double velocity = (_gestureDetails.totalScale - _gestureConfig.maxScale) /
           _gestureConfig.maxScale;
 
       _gestureAnimation.animationScale(
@@ -261,7 +261,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     //animate back to minScale if gesture fell smaller than the minScale specified
     if (doubleCompare(_gestureDetails.totalScale, _gestureConfig.minScale) <
         0) {
-      final velocity = (_gestureConfig.minScale - _gestureDetails.totalScale) /
+      final double velocity = (_gestureConfig.minScale - _gestureDetails.totalScale) /
           _gestureConfig.minScale;
 
       _gestureAnimation.animationScale(
@@ -271,11 +271,11 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
 
     if (_gestureDetails.actionType == ActionType.pan) {
       // get magnitude from gesture velocity
-      final magnitude = details.velocity.pixelsPerSecond.distance;
+      final double magnitude = details.velocity.pixelsPerSecond.distance;
 
       // do a significant magnitude
       if (doubleCompare(magnitude, minMagnitude) >= 0) {
-        final direction = details.velocity.pixelsPerSecond /
+        final Offset direction = details.velocity.pixelsPerSecond /
             magnitude *
             _gestureConfig.inertialSpeed;
 
@@ -291,7 +291,9 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
       return;
     }
 
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
 
     setState(() {
       _gestureDetails = GestureDetails(

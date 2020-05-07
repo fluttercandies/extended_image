@@ -95,7 +95,7 @@ class TransparentMaterialPageRoute<T> extends PageRoute<T> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    final result = builder(context);
+    final Widget result = builder(context);
     assert(() {
       if (result == null) {
         throw FlutterError(
@@ -114,7 +114,7 @@ class TransparentMaterialPageRoute<T> extends PageRoute<T> {
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
-    final theme = Theme.of(context).pageTransitionsTheme;
+    final PageTransitionsTheme theme = Theme.of(context).pageTransitionsTheme;
     return theme.buildTransitions<T>(
         this, context, animation, secondaryAnimation, child);
   }
@@ -179,7 +179,7 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
 
   @override
   void didChangePrevious(Route<dynamic> previousRoute) {
-    final previousTitleString =
+    final String previousTitleString =
         previousRoute is CupertinoPageRoute ? previousRoute.title : null;
     if (_previousTitle == null) {
       _previousTitle = ValueNotifier<String>(previousTitleString);
@@ -252,17 +252,27 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
   static bool _isPopGestureEnabled<T>(PageRoute<T> route) {
     // If there's nothing to go back to, then obviously we don't support
     // the back gesture.
-    if (route.isFirst) return false;
+    if (route.isFirst) {
+      return false;
+    }
     // If the route wouldn't actually pop if we popped it, then the gesture
     // would be really confusing (or would skip internal routes), so disallow it.
-    if (route.willHandlePopInternally) return false;
+    if (route.willHandlePopInternally) {
+      return false;
+    }
     // If attempts to dismiss this route might be vetoed such as in a page
     // with forms, then do not allow the user to dismiss the route with a swipe.
-    if (route.hasScopedWillPopCallback) return false;
+    if (route.hasScopedWillPopCallback) {
+      return false;
+    }
     // Fullscreen dialogs aren't dismissible by back swipe.
-    if (route.fullscreenDialog) return false;
+    if (route.fullscreenDialog) {
+      return false;
+    }
     // If we're in an animation already, we cannot be manually swiped.
-    if (route.animation.status != AnimationStatus.completed) return false;
+    if (route.animation.status != AnimationStatus.completed) {
+      return false;
+    }
     // If we're being popped into, we also cannot be swiped until the pop above
     // it completes. This translates to our secondary animation being
     // dismissed.
@@ -270,7 +280,9 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
       return false;
     }
     // If we're in a gesture already, we cannot start another.
-    if (isPopGestureInProgress(route)) return false;
+    if (isPopGestureInProgress(route)) {
+      return false;
+    }
 
     // Looks like a back gesture would be welcome!
     return true;
@@ -329,7 +341,7 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
-    final linearTransition = isPopGestureInProgress(route);
+    final bool linearTransition = isPopGestureInProgress(route);
     if (route.fullscreenDialog) {
       return CupertinoFullscreenDialogTransition(
         primaryRouteAnimation: animation,
@@ -447,7 +459,9 @@ class _CupertinoBackGestureDetectorState<T>
   }
 
   void _handlePointerDown(PointerDownEvent event) {
-    if (widget.enabledCallback()) _recognizer.addPointer(event);
+    if (widget.enabledCallback()) {
+      _recognizer.addPointer(event);
+    }
   }
 
   double _convertToLogical(double value) {
@@ -465,7 +479,7 @@ class _CupertinoBackGestureDetectorState<T>
     assert(debugCheckHasDirectionality(context));
     // For devices with notches, the drag area needs to be larger on the side
     // that has the notch.
-    var dragAreaWidth = Directionality.of(context) == TextDirection.ltr
+    double dragAreaWidth = Directionality.of(context) == TextDirection.ltr
         ? MediaQuery.of(context).padding.left
         : MediaQuery.of(context).padding.right;
     dragAreaWidth = max(dragAreaWidth, _kBackGestureWidth);
@@ -537,16 +551,24 @@ class _CupertinoBackGestureController<T> {
     // or after mid screen, we should animate the page out. Otherwise, the page
     // should be animated back in.
     if (doubleCompare(velocity.abs(), _kMinFlingVelocity) >= 0) {
-      animateForward = velocity > 0 ? false : true;
+      if (velocity > 0) {
+        animateForward = false;
+      } else {
+        animateForward = true;
+      }
     } else {
-      animateForward = controller.value > 0.5 ? true : false;
+      if (controller.value > 0.5) {
+        animateForward = true;
+      } else {
+        animateForward = false;
+      }
     }
 
     if (animateForward) {
       // The closer the panel is to dismissing, the shorter the animation is.
       // We want to cap the animation time, but we want to use a linear curve
       // to determine it.
-      final droppedPageForwardAnimationTime = min(
+      final int droppedPageForwardAnimationTime = min(
         lerpDouble(
                 _kMaxDroppedSwipePageForwardAnimationTime, 0, controller.value)
             .floor(),
@@ -562,7 +584,7 @@ class _CupertinoBackGestureController<T> {
       // The popping may have finished inline if already at the target destination.
       if (controller.isAnimating) {
         // Otherwise, use a custom popping animation duration and curve.
-        final droppedPageBackAnimationTime = lerpDouble(
+        final int droppedPageBackAnimationTime = lerpDouble(
                 0, _kMaxDroppedSwipePageForwardAnimationTime, controller.value)
             .floor();
         controller.animateBack(0.0,
@@ -647,7 +669,7 @@ class CupertinoPageTransition extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     assert(debugCheckHasDirectionality(context));
-    final textDirection = Directionality.of(context);
+    final TextDirection textDirection = Directionality.of(context);
 
     return SlideTransition(
       position: _secondaryPositionAnimation,

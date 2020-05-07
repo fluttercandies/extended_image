@@ -5,6 +5,8 @@
 
 import 'dart:async';
 import 'dart:math';
+// ignore: implementation_imports
+import 'package:extended_text/src/selection/extended_text_selection.dart';
 import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
@@ -52,22 +54,22 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
 
   @override
   Widget build(BuildContext context) {
-    final  margin = ScreenUtil.instance.setWidth(22);
-    Widget result = Material(
+    final  double margin = ScreenUtil.instance.setWidth(22);
+    final Widget result = Material(
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text('photo view demo'),
+            title: const Text('photo view demo'),
           ),
           Container(
             padding: EdgeInsets.all(margin),
-            child: Text(
+            child: const Text(
                 'click image to show photo view, support zoom/pan image. horizontal and vertical page view are supported.'),
           ),
           Expanded(
             child: LayoutBuilder(
-              builder: (c, data) {
-                final crossAxisCount =
+              builder: (BuildContext c, BoxConstraints data) {
+                final int crossAxisCount =
                     max(data.maxWidth ~/ ScreenUtil.instance.screenWidthDp, 1);
                 return PullToRefreshNotification(
                     pullBackOnRefresh: false,
@@ -76,14 +78,14 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                     onRefresh: onRefresh,
                     child: LoadingMoreCustomScrollView(
                       showGlowLeading: false,
-                      physics: ClampingScrollPhysics(),
+                      physics: const ClampingScrollPhysics(),
                       slivers: <Widget>[
                         SliverToBoxAdapter(
-                          child: PullToRefreshContainer((info) {
+                          child: PullToRefreshContainer((PullToRefreshScrollNotificationInfo info) {
                             return PullToRefreshHeader(info, dateTimeNow);
                           }),
                         ),
-                        LoadingMoreSliverList(
+                        LoadingMoreSliverList<TuChongItem>(
                           SliverListConfig<TuChongItem>(
                             waterfallFlowDelegate: WaterfallFlowDelegate(
                               crossAxisCount: crossAxisCount,
@@ -101,13 +103,13 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                             //     }
                             //   });
                             // },
-                            itemBuilder: (context, item, index) {
-                              var title = item.site.name;
+                            itemBuilder: (BuildContext context, TuChongItem item, int index) {
+                              String title = item.site.name;
                               if (title == null || title == '') {
                                 title = 'Image$index';
                               }
 
-                              var content =
+                              String content =
                                   item.content ?? (item.excerpt ?? title);
                               content += _attachContent;
 
@@ -130,7 +132,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                               color:
                                                   Colors.grey.withOpacity(0.4),
                                               width: 1.0),
-                                          loadStateChanged: (state) {
+                                          loadStateChanged: (ExtendedImageState state) {
                                             if (state.extendedImageLoadState ==
                                                 LoadState.completed) {
                                               return null;
@@ -159,10 +161,10 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                     child: ExtendedText(
                                       content,
                                       onSpecialTextTap: (dynamic parameter) {
-                                        if (parameter.startsWith('\$')) {
+                                        if (parameter.toString().startsWith('\$')) {
                                           launch(
                                               'https://github.com/fluttercandies');
-                                        } else if (parameter.startsWith('@')) {
+                                        } else if (parameter.toString().startsWith('@')) {
                                           launch('mailto:zmtzawqlp@live.com');
                                         }
                                       },
@@ -176,7 +178,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                           ? null
                                           : OverFlowTextSpan(
                                               children: <TextSpan>[
-                                                TextSpan(text: '  \u2026  '),
+                                                const TextSpan(text: '  \u2026  '),
                                                 TextSpan(
                                                     text: 'more detail',
                                                     style: TextStyle(
@@ -238,21 +240,21 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
       //default behavior
       // child: result,
       //custom your behavior
-      builder: (states) {
+      builder: (List<ExtendedTextSelectionState> states) {
         return Listener(
           child: result,
           behavior: HitTestBehavior.translucent,
-          onPointerDown: (value) {
-            for (var state in states) {
+          onPointerDown: (PointerDownEvent value) {
+            for (final ExtendedTextSelectionState state in states) {
               if (!state.containsPosition(value.position)) {
                 //clear other selection
                 state.clearSelection();
               }
             }
           },
-          onPointerMove: (value) {
+          onPointerMove: (PointerMoveEvent value) {
             //clear other selection
-            for (var state in states) {
+            for (final ExtendedTextSelectionState state in states) {
               state.clearSelection();
             }
           },

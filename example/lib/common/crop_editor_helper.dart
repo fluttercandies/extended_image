@@ -1,7 +1,10 @@
 //import 'dart:typed_data';
 import 'dart:isolate';
 import 'dart:typed_data';
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
+// ignore: implementation_imports
+import 'package:http/src/response.dart';
 import 'package:http_client_helper/http_client_helper.dart';
 import 'package:isolate/load_balancer.dart';
 import 'package:isolate/isolate_runner.dart';
@@ -9,42 +12,45 @@ import 'package:extended_image/extended_image.dart';
 import 'package:image/image.dart';
 import 'package:image_editor/image_editor.dart';
 
-final loadBalancer = LoadBalancer.create(1, IsolateRunner.spawn);
+final Future<LoadBalancer> loadBalancer =
+    LoadBalancer.create(1, IsolateRunner.spawn);
 
 Future<dynamic> isolateDecodeImage(List<int> data) async {
-  final response = ReceivePort();
+  final ReceivePort response = ReceivePort();
   await Isolate.spawn(_isolateDecodeImage, response.sendPort);
   final dynamic sendPort = await response.first;
-  final answer = ReceivePort();
+  final ReceivePort answer = ReceivePort();
+  // ignore: always_specify_types
   sendPort.send([answer.sendPort, data]);
   return answer.first;
 }
 
 void _isolateDecodeImage(SendPort port) {
-  final rPort = ReceivePort();
+  final ReceivePort rPort = ReceivePort();
   port.send(rPort.sendPort);
   rPort.listen((dynamic message) {
-    final send = message[0] as SendPort;
-    final data = message[1] as List<int>;
+    final SendPort send = message[0] as SendPort;
+    final List<int> data = message[1] as List<int>;
     send.send(decodeImage(data));
   });
 }
 
 Future<dynamic> isolateEncodeImage(Image src) async {
-  final response = ReceivePort();
+  final ReceivePort response = ReceivePort();
   await Isolate.spawn(_isolateEncodeImage, response.sendPort);
   final dynamic sendPort = await response.first;
-  final answer = ReceivePort();
+  final ReceivePort answer = ReceivePort();
+  // ignore: always_specify_types
   sendPort.send([answer.sendPort, src]);
   return answer.first;
 }
 
 void _isolateEncodeImage(SendPort port) {
-  final rPort = ReceivePort();
+  final ReceivePort rPort = ReceivePort();
   port.send(rPort.sendPort);
   rPort.listen((dynamic message) {
-    final send = message[0] as SendPort;
-    final src = message[1] as Image;
+    final SendPort send = message[0] as SendPort;
+    final Image src = message[1] as Image;
     send.send(encodeJpg(src));
   });
 }
@@ -54,7 +60,7 @@ Future<List<int>> cropImageDataWithDartLibrary(
   print('dart library start cropping');
 
   ///crop rect base on raw image
-  final cropRect = state.getCropRect();
+  final Rect cropRect = state.getCropRect();
 
   // in web, we can't get rawImageData due to .
   // using following code to get imageCodec without download it.
@@ -64,7 +70,7 @@ Future<List<int>> cropImageDataWithDartLibrary(
   // return ui.webOnlyInstantiateImageCodecFromUrl(
   //     resolved); //
 
-  final data = kIsWeb &&
+  final Uint8List data = kIsWeb &&
           state.widget.extendedImageState.imageWidget.image
               is ExtendedNetworkImageProvider
       ? await _loadNetwork(state.widget.extendedImageState.imageWidget.image
@@ -77,9 +83,9 @@ Future<List<int>> cropImageDataWithDartLibrary(
       //     .asUint8List()
       : state.rawImageData;
 
-  final editAction = state.editAction;
+  final EditActionDetails editAction = state.editAction;
 
-  var time1 = DateTime.now();
+  final DateTime time1 = DateTime.now();
 
   /// it costs much time and blocks ui.
   //Image src = decodeImage(data);
@@ -96,7 +102,7 @@ Future<List<int>> cropImageDataWithDartLibrary(
     src = await lb.run<Image, List<int>>(decodeImage, data);
   }
 
-  var time2 = DateTime.now();
+  final DateTime time2 = DateTime.now();
 
   print('${time2.difference(time1)} : decode');
 
@@ -120,9 +126,11 @@ Future<List<int>> cropImageDataWithDartLibrary(
     src = flip(src, mode);
   }
 
-  if (editAction.hasRotateAngle) src = copyRotate(src, editAction.rotateAngle);
+  if (editAction.hasRotateAngle) {
+    src = copyRotate(src, editAction.rotateAngle);
+  }
 
-  var time3 = DateTime.now();
+  final DateTime time3 = DateTime.now();
   print('${time3.difference(time2)} : crop/flip/rotate');
 
   /// you can encode your image
@@ -140,7 +148,7 @@ Future<List<int>> cropImageDataWithDartLibrary(
     fileData = await lb.run<List<int>, Image>(encodeJpg, src);
   }
 
-  var time4 = DateTime.now();
+  final DateTime time4 = DateTime.now();
   print('${time4.difference(time3)} : encode');
   print('${time4.difference(time1)} : total time');
   return fileData;
@@ -150,27 +158,31 @@ Future<List<int>> cropImageDataWithNativeLibrary(
     {ExtendedImageEditorState state}) async {
   print('native library start cropping');
 
-  final cropRect = state.getCropRect();
-  final action = state.editAction;
+  final Rect cropRect = state.getCropRect();
+  final EditActionDetails action = state.editAction;
 
-  final rotateAngle = action.rotateAngle.toInt();
-  final flipHorizontal = action.flipY;
-  final flipVertical = action.flipX;
-  final img = state.rawImageData;
+  final int rotateAngle = action.rotateAngle.toInt();
+  final bool flipHorizontal = action.flipY;
+  final bool flipVertical = action.flipX;
+  final Uint8List img = state.rawImageData;
 
-  final option = ImageEditorOption();
+  final ImageEditorOption option = ImageEditorOption();
 
-  if (action.needCrop) option.addOption(ClipOption.fromRect(cropRect));
+  if (action.needCrop) {
+    option.addOption(ClipOption.fromRect(cropRect));
+  }
 
   if (action.needFlip) {
     option.addOption(
         FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
   }
 
-  if (action.hasRotateAngle) option.addOption(RotateOption(rotateAngle));
+  if (action.hasRotateAngle) {
+    option.addOption(RotateOption(rotateAngle));
+  }
 
-  final start = DateTime.now();
-  final result = await ImageEditor.editImage(
+  final DateTime start = DateTime.now();
+  final Uint8List result = await ImageEditor.editImage(
     image: img,
     imageEditorOption: option,
   );
@@ -182,7 +194,7 @@ Future<List<int>> cropImageDataWithNativeLibrary(
 /// it may be failed, due to Cross-domain
 Future<Uint8List> _loadNetwork(ExtendedNetworkImageProvider key) async {
   try {
-    final response = await HttpClientHelper.get(key.url,
+    final Response response = await HttpClientHelper.get(key.url,
         headers: key.headers,
         timeLimit: key.timeLimit,
         timeRetry: key.timeRetry,
@@ -191,8 +203,8 @@ Future<Uint8List> _loadNetwork(ExtendedNetworkImageProvider key) async {
     return response.bodyBytes;
   } on OperationCanceledError catch (_) {
     print('User cancel request ${key.url}.');
-    return Future.error(StateError('User cancel request ${key.url}.'));
+    return Future<Uint8List>.error(StateError('User cancel request ${key.url}.'));
   } catch (e) {
-    return Future.error(StateError('failed load ${key.url}. \n $e'));
+    return Future<Uint8List>.error(StateError('failed load ${key.url}. \n $e'));
   }
 }

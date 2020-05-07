@@ -34,13 +34,13 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text('WaterfallFlowDemo'),
+            title: const Text('WaterfallFlowDemo'),
           ),
           Expanded(child: LayoutBuilder(
-            builder: (c, data) {
-              final crossAxisCount =
+            builder: (BuildContext c, BoxConstraints data) {
+              final int crossAxisCount =
                   max(data.maxWidth ~/ (ScreenUtil.instance.screenWidthDp / 2.0), 2);
-              return LoadingMoreList(
+              return LoadingMoreList<TuChongItem>(
                 ListConfig<TuChongItem>(
                   waterfallFlowDelegate: WaterfallFlowDelegate(
                     crossAxisCount: crossAxisCount,
@@ -49,7 +49,7 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
                   ),
                   itemBuilder: buildWaterfallFlowItem,
                   sourceList: listSourceRepository,
-                  padding: EdgeInsets.all(5.0),
+                  padding: const EdgeInsets.all(5.0),
                   lastChildLayoutType: LastChildLayoutType.foot,
                   // collectGarbage: (List<int> garbages) {
                   //   ///collectGarbage

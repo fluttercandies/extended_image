@@ -40,7 +40,10 @@ class EditActionDetails {
 
   ///image
   Rect get screenDestinationRect => _screenDestinationRect;
-  set screenDestinationRect(Rect value) => _screenDestinationRect = value;
+
+  void setScreenDestinationRect(Rect value) {
+    _screenDestinationRect = value;
+  }
 
   bool get flipX => _flipX;
 
@@ -58,7 +61,7 @@ class EditActionDetails {
 
   bool get needFlip => _flipX || _flipY;
 
-  bool get isHalfPi => (_rotateRadian % (pi)) != 0;
+  bool get isHalfPi => (_rotateRadian % pi) != 0;
 
   bool get isPi => !isHalfPi && !isTwoPi;
 
@@ -75,7 +78,7 @@ class EditActionDetails {
 
   void rotate(double angle, Rect layoutRect, BoxFit fit) {
     _rotateRadian += angle;
-    _rotateRadian %= (2 * pi);
+    _rotateRadian %= 2 * pi;
     if (_flipX && _flipY && isPi) {
       _flipX = _flipY = false;
       _rotateRadian = 0.0;
@@ -86,19 +89,19 @@ class EditActionDetails {
     //     rotateRect(screenDestinationRect, screenCropRect.center, -angle);
 
     /// take care of boundary
-    var newCropRect = getDestinationRect(
+    final Rect newCropRect = getDestinationRect(
         rect: layoutRect,
         inputSize: Size(cropRect.height, cropRect.width),
         fit: fit);
 
-    var scale = newCropRect.width / cropRect.height;
+    final double scale = newCropRect.width / cropRect.height;
 
-    var newScreenDestinationRect =
+    Rect newScreenDestinationRect =
         rotateRect(screenDestinationRect, screenCropRect.center, angle);
 
-    var topLeft = screenCropRect.center -
+    final Offset topLeft = screenCropRect.center -
         (screenCropRect.center - newScreenDestinationRect.topLeft) * scale;
-    var bottomRight = screenCropRect.center +
+    final Offset bottomRight = screenCropRect.center +
         -(screenCropRect.center - newScreenDestinationRect.bottomRight) * scale;
 
     newScreenDestinationRect = Rect.fromPoints(topLeft, bottomRight);
@@ -110,7 +113,7 @@ class EditActionDetails {
   }
 
   void flip() {
-    var flipOrigin = screenCropRect?.center;
+    final Offset flipOrigin = screenCropRect?.center;
     if (isHalfPi) {
       _flipX = !_flipX;
       // _screenDestinationRect = Rect.fromLTRB(
@@ -135,9 +138,11 @@ class EditActionDetails {
 
   ///screen image rect to paint rect
   Rect paintRect(Rect rect) {
-    if (!hasEditAction) return rect;
+    if (!hasEditAction) {
+      return rect;
+    }
 
-    var flipOrigin = screenCropRect?.center;
+    final Offset flipOrigin = screenCropRect?.center;
     if (hasRotateAngle) {
       rect = rotateRect(rect, flipOrigin, -_rotateRadian);
     }
@@ -158,23 +163,25 @@ class EditActionDetails {
     return rect;
   }
 
-  @override
-  int get hashCode => hashValues(_rotateRadian, _flipX, _flipY, cropRect,
-      _layoutRect, _rawDestinationRect, _cropAspectRatio, cropRectPadding);
+  // @override
+  // int get hashCode => hashValues(_rotateRadian, _flipX, _flipY, cropRect,
+  //     _layoutRect, _rawDestinationRect, _cropAspectRatio, cropRectPadding);
 
-  @override
-  bool operator ==(dynamic other) {
-    if (other.runtimeType != runtimeType) return false;
-    final typedOther = other as EditActionDetails;
-    return _rotateRadian == typedOther.rotateRadian &&
-        _flipX == typedOther.flipX &&
-        _flipY == typedOther.flipY &&
-        cropRect == typedOther.cropRect &&
-        _layoutRect == typedOther._layoutRect &&
-        _rawDestinationRect == typedOther._rawDestinationRect &&
-        _cropAspectRatio == typedOther._cropAspectRatio &&
-        cropRectPadding != typedOther.cropRectPadding;
-  }
+  // @override
+  // bool operator ==(dynamic other) {
+  //   if (other.runtimeType != runtimeType) {
+  //     return false;
+  //   }
+  //   return other is EditActionDetails &&
+  //       _rotateRadian == other.rotateRadian &&
+  //       _flipX == other.flipX &&
+  //       _flipY == other.flipY &&
+  //       cropRect == other.cropRect &&
+  //       _layoutRect == other._layoutRect &&
+  //       _rawDestinationRect == other._rawDestinationRect &&
+  //       _cropAspectRatio == other._cropAspectRatio &&
+  //       cropRectPadding != other.cropRectPadding;
+  // }
 
   void initRect(Rect layoutRect, Rect destinationRect) {
     if (_layoutRect != layoutRect) {
@@ -191,9 +198,9 @@ class EditActionDetails {
   Rect getFinalDestinationRect() {
     if (screenDestinationRect != null) {
       /// scale
-      final scaleDelta = totalScale / preTotalScale;
+      final double scaleDelta = totalScale / preTotalScale;
       if (scaleDelta != 1.0) {
-        var focalPoint = screenFocalPoint ?? _screenDestinationRect.center;
+        Offset focalPoint = screenFocalPoint ?? _screenDestinationRect.center;
         focalPoint = Offset(
           focalPoint.dx
               .clamp(_screenDestinationRect.left, _screenDestinationRect.right)
@@ -217,13 +224,13 @@ class EditActionDetails {
       /// move
       else {
         if (_screenDestinationRect != screenCropRect) {
-          var topSame =
+          final bool topSame =
               doubleEqual(_screenDestinationRect.top, screenCropRect.top);
-          var leftSame =
+          final bool leftSame =
               doubleEqual(_screenDestinationRect.left, screenCropRect.left);
-          var bottomSame =
+          final bool bottomSame =
               doubleEqual(_screenDestinationRect.bottom, screenCropRect.bottom);
-          var rightSame =
+          final bool rightSame =
               doubleEqual(_screenDestinationRect.right, screenCropRect.right);
           if (topSame && bottomSame) {
             delta = Offset(delta.dx, 0.0);
@@ -242,12 +249,13 @@ class EditActionDetails {
 
       ///make sure that crop rect is all in image rect.
       if (screenCropRect != null) {
-        var rect = screenCropRect.expandToInclude(_screenDestinationRect);
+        Rect rect = screenCropRect.expandToInclude(_screenDestinationRect);
         if (rect != _screenDestinationRect) {
-          var topSame = doubleEqual(rect.top, screenCropRect.top);
-          var leftSame = doubleEqual(rect.left, screenCropRect.left);
-          var bottomSame = doubleEqual(rect.bottom, screenCropRect.bottom);
-          var rightSame = doubleEqual(rect.right, screenCropRect.right);
+          final bool topSame = doubleEqual(rect.top, screenCropRect.top);
+          final bool leftSame = doubleEqual(rect.left, screenCropRect.left);
+          final bool bottomSame =
+              doubleEqual(rect.bottom, screenCropRect.bottom);
+          final bool rightSame = doubleEqual(rect.right, screenCropRect.right);
 
           ///make sure that image rect keep  same aspect ratio
           if (topSame && bottomSame) {
@@ -280,9 +288,9 @@ class EditActionDetails {
   }
 
   Rect getRectWithScale(Rect rect) {
-    final width = rect.width * totalScale;
-    final height = rect.height * totalScale;
-    var center = rect.center;
+    final double width = rect.width * totalScale;
+    final double height = rect.height * totalScale;
+    final Offset center = rect.center;
     return Rect.fromLTWH(
         center.dx - width / 2.0, center.dy - height / 2.0, width, height);
   }
@@ -327,6 +335,29 @@ class EditActionDetails {
 }
 
 class EditorConfig {
+  EditorConfig(
+      {double maxScale,
+      //double initialScale,
+      this.cropRectPadding = const EdgeInsets.all(20.0),
+      this.cornerSize = const Size(30.0, 5.0),
+      this.cornerColor,
+      this.lineColor,
+      this.lineHeight = 0.6,
+      this.editorMaskColorHandler,
+      this.hitTestSize = 20.0,
+      this.animationDuration = const Duration(milliseconds: 200),
+      this.tickerDuration = const Duration(milliseconds: 400),
+      this.cropAspectRatio = CropAspectRatios.custom,
+      this.initCropRectType = InitCropRectType.imageRect})
+      : maxScale = maxScale ??= 5.0,
+        // initialScale = initialScale ??= 1.0,
+        // assert(minScale <= maxScale),
+        // assert(minScale <= initialScale && initialScale <= maxScale),
+        assert(lineHeight > 0.0),
+        assert(hitTestSize >= 0.0),
+        assert(animationDuration != null),
+        assert(tickerDuration != null);
+
   /// max scale
   final double maxScale;
 
@@ -372,29 +403,6 @@ class EditorConfig {
 
   /// init crop rect base on initial image rect or image layout rect
   final InitCropRectType initCropRectType;
-
-  EditorConfig(
-      {double maxScale,
-      //double initialScale,
-      this.cropRectPadding = const EdgeInsets.all(20.0),
-      this.cornerSize = const Size(30.0, 5.0),
-      this.cornerColor,
-      this.lineColor,
-      this.lineHeight = 0.6,
-      this.editorMaskColorHandler,
-      this.hitTestSize = 20.0,
-      this.animationDuration = const Duration(milliseconds: 200),
-      this.tickerDuration = const Duration(milliseconds: 400),
-      this.cropAspectRatio = CropAspectRatios.custom,
-      this.initCropRectType = InitCropRectType.imageRect})
-      : maxScale = maxScale ??= 5.0,
-        // initialScale = initialScale ??= 1.0,
-        // assert(minScale <= maxScale),
-        // assert(minScale <= initialScale && initialScale <= maxScale),
-        assert(lineHeight > 0.0),
-        assert(hitTestSize >= 0.0),
-        assert(animationDuration != null),
-        assert(tickerDuration != null);
 }
 
 class CropAspectRatios {
@@ -430,20 +438,21 @@ Rect getDestinationRect({
   Rect centerSlice,
   bool flipHorizontally = false,
 }) {
-  var outputSize = rect.size;
+  Size outputSize = rect.size;
 
   Offset sliceBorder;
   if (centerSlice != null) {
     sliceBorder = Offset(centerSlice.left + inputSize.width - centerSlice.right,
         centerSlice.top + inputSize.height - centerSlice.bottom);
-    outputSize = (outputSize - sliceBorder) as Size;
-    outputSize = (inputSize - sliceBorder) as Size;
+    outputSize = outputSize - sliceBorder as Size;
+    inputSize = inputSize - sliceBorder as Size;
   }
   fit ??= centerSlice == null ? BoxFit.scaleDown : BoxFit.fill;
   assert(centerSlice == null || (fit != BoxFit.none && fit != BoxFit.cover));
-  final fittedSizes = applyBoxFit(fit, inputSize / scale, outputSize);
-  final sourceSize = fittedSizes.source * scale;
-  var destinationSize = fittedSizes.destination;
+  final FittedSizes fittedSizes =
+      applyBoxFit(fit, inputSize / scale, outputSize);
+  final Size sourceSize = fittedSizes.source * scale;
+  Size destinationSize = fittedSizes.destination;
   if (centerSlice != null) {
     outputSize += sliceBorder;
     destinationSize += sliceBorder;
@@ -453,13 +462,15 @@ Rect getDestinationRect({
         'centerSlice was used with a BoxFit that does not guarantee that the image is fully visible.');
   }
 
-  final halfWidthDelta = (outputSize.width - destinationSize.width) / 2.0;
-  final halfHeightDelta = (outputSize.height - destinationSize.height) / 2.0;
-  final dx = halfWidthDelta +
+  final double halfWidthDelta =
+      (outputSize.width - destinationSize.width) / 2.0;
+  final double halfHeightDelta =
+      (outputSize.height - destinationSize.height) / 2.0;
+  final double dx = halfWidthDelta +
       (flipHorizontally ? -alignment.x : alignment.x) * halfWidthDelta;
-  final dy = halfHeightDelta + alignment.y * halfHeightDelta;
-  final destinationPosition = rect.topLeft.translate(dx, dy);
-  final destinationRect = destinationPosition & destinationSize;
+  final double dy = halfHeightDelta + alignment.y * halfHeightDelta;
+  final Offset destinationPosition = rect.topLeft.translate(dx, dy);
+  final Rect destinationRect = destinationPosition & destinationSize;
 
   // final Rect sourceRect =
   //     centerSlice ?? alignment.inscribe(sourceSize, Offset.zero & inputSize);
@@ -474,18 +485,18 @@ Color defaultEditorMaskColorHandler(BuildContext context, bool pointerDown) {
 }
 
 Offset rotateOffset(Offset input, Offset center, double angle) {
-  var x = input.dx;
-  var y = input.dy;
-  var rx0 = center.dx;
-  var ry0 = center.dy;
-  var x0 = (x - rx0) * cos(angle) - (y - ry0) * sin(angle) + rx0;
-  var y0 = (x - rx0) * sin(angle) + (y - ry0) * cos(angle) + ry0;
+  final double x = input.dx;
+  final double y = input.dy;
+  final double rx0 = center.dx;
+  final double ry0 = center.dy;
+  final double x0 = (x - rx0) * cos(angle) - (y - ry0) * sin(angle) + rx0;
+  final double y0 = (x - rx0) * sin(angle) + (y - ry0) * cos(angle) + ry0;
   return Offset(x0, y0);
 }
 
 Rect rotateRect(Rect rect, Offset center, double angle) {
-  var leftTop = rotateOffset(rect.topLeft, center, angle);
-  var bottomRight = rotateOffset(rect.bottomRight, center, angle);
+  final Offset leftTop = rotateOffset(rect.topLeft, center, angle);
+  final Offset bottomRight = rotateOffset(rect.bottomRight, center, angle);
   return Rect.fromPoints(leftTop, bottomRight);
 }
 

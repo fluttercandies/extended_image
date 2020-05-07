@@ -15,7 +15,7 @@ class LoadingProgress extends StatelessWidget {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text('loading progress demo'),
+            title: const Text('loading progress demo'),
           ),
           Expanded(
             child: ExtendedImage.network(
@@ -26,8 +26,8 @@ class LoadingProgress extends StatelessWidget {
               cache: false,
               loadStateChanged: (ExtendedImageState state) {
                 if (state.extendedImageLoadState == LoadState.loading) {
-                  final loadingProgress = state.loadingProgress;
-                  final progress = loadingProgress?.expectedTotalBytes != null
+                  final ImageChunkEvent loadingProgress = state.loadingProgress;
+                  final double progress = loadingProgress?.expectedTotalBytes != null
                       ? loadingProgress.cumulativeBytesLoaded /
                           loadingProgress.expectedTotalBytes
                       : null;
@@ -42,7 +42,7 @@ class LoadingProgress extends StatelessWidget {
                             value: progress,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10.0,
                         ),
                         Text('${((progress ?? 0.0) * 100).toInt()}%'),

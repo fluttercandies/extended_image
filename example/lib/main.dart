@@ -11,15 +11,17 @@ import 'example_route_helper.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final TuChongRepository listSourceRepository = TuChongRepository();
   MyApp() {
-    if (!kIsWeb) clearDiskCachedImages(duration: Duration(days: 7));
-    listSourceRepository.loadData().then((result) {
+    if (!kIsWeb) {
+      clearDiskCachedImages(duration: const Duration(days: 7));
+    }
+    listSourceRepository.loadData().then((bool result) {
       if (listSourceRepository.isNotEmpty) {
         _imageTestUrl = listSourceRepository.first.imageUrl;
       }
     });
   }
+  final TuChongRepository listSourceRepository = TuChongRepository();
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -30,13 +32,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      builder: (c, w) {
+      builder: (BuildContext c, Widget w) {
         ScreenUtil.init(width: 750, height: 1334, allowFontScaling: true);
         // ScreenUtil.instance =
         //     ScreenUtil(width: 750, height: 1334, allowFontScaling: true)
         //       ..init(c);
         if (!kIsWeb) {
-          final data = MediaQuery.of(c);
+          final MediaQueryData data = MediaQuery.of(c);
           return MediaQuery(
             data: data.copyWith(textScaleFactor: 1.0),
             child: w,
@@ -46,7 +48,7 @@ class MyApp extends StatelessWidget {
       },
       initialRoute: 'fluttercandies://mainpage',
       onGenerateRoute: (RouteSettings settings) {
-        var routeName = settings.name;
+        String routeName = settings.name;
         //when refresh web, route will as following
         //   /
         //   /fluttercandies:
@@ -57,8 +59,9 @@ class MyApp extends StatelessWidget {
           routeName = routeName.replaceFirst('/', '');
         }
 
-        var routeResult =
-            getRouteResult(name: routeName, arguments: settings.arguments);
+        final RouteResult routeResult = getRouteResult(
+            name: routeName,
+            arguments: settings.arguments as Map<String, dynamic>);
 
         if (routeResult.showStatusBar != null ||
             routeResult.routeName != null) {
@@ -69,26 +72,26 @@ class MyApp extends StatelessWidget {
               showStatusBar: routeResult.showStatusBar);
         }
 
-        var page = routeResult.widget ??
+        final Widget page = routeResult.widget ??
             getRouteResult(
                     name: 'fluttercandies://mainpage',
-                    arguments: settings.arguments)
+                    arguments: settings.arguments as Map<String, dynamic>)
                 .widget;
 
-        final platform = Theme.of(context).platform;
+        final TargetPlatform platform = Theme.of(context).platform;
         switch (routeResult.pageRouteType) {
           case PageRouteType.material:
             return MaterialPageRoute<void>(
-                settings: settings, builder: (c) => page);
+                settings: settings, builder: (BuildContext c) => page);
           case PageRouteType.cupertino:
             return CupertinoPageRoute<void>(
-                settings: settings, builder: (c) => page);
+                settings: settings, builder: (BuildContext c) => page);
           case PageRouteType.transparent:
             return platform == TargetPlatform.iOS
                 ? TransparentCupertinoPageRoute<void>(
-                    settings: settings, builder: (c) => page)
+                    settings: settings, builder: (BuildContext c) => page)
                 : TransparentMaterialPageRoute<void>(
-                    settings: settings, builder: (c) => page);
+                    settings: settings, builder: (BuildContext c) => page);
 //            return FFTransparentPageRoute(
 //                settings: settings,
 //                pageBuilder: (BuildContext context, Animation<double> animation,
@@ -97,9 +100,9 @@ class MyApp extends StatelessWidget {
           default:
             return platform == TargetPlatform.iOS
                 ? CupertinoPageRoute<void>(
-                    settings: settings, builder: (c) => page)
+                    settings: settings, builder: (BuildContext c) => page)
                 : MaterialPageRoute<void>(
-                    settings: settings, builder: (c) => page);
+                    settings: settings, builder: (BuildContext c) => page);
         }
       },
     ));

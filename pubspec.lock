@@ -60,10 +60,10 @@ packages:
   extended_image_library:
     dependency: "direct main"
     description:
-      name: extended_image_library
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "0.2.2"
+      path: "E:\\Flutter\\FlutterCandies\\dev\\extended_image_library"
+      relative: false
+    source: path
+    version: "0.2.3"
   flutter:
     dependency: "direct main"
     description: flutter
