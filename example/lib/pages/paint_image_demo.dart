@@ -1,16 +1,16 @@
 import 'dart:math';
-
+import 'dart:ui' as ui show Image;
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui show Image;
+
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 
 @FFRoute(
-    name: "fluttercandies://paintimage",
-    routeName: "paint image",
-    description: "show how to paint any thing before/after image is painted")
+    name: 'fluttercandies://paintimage',
+    routeName: 'paint image',
+    description: 'show how to paint any thing before/after image is painted')
 class PaintImageDemo extends StatefulWidget {
   @override
   _PaintImageDemoState createState() => _PaintImageDemoState();
@@ -26,21 +26,21 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
 
   @override
   Widget build(BuildContext context) {
-    var url = imageTestUrl;
+    final String url = imageTestUrl;
     return Material(
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("PaintImageDemo"),
+            title: const Text('PaintImageDemo'),
           ),
           Text(
-            "you can paint anything before or after Image paint",
+            'you can paint anything before or after Image paint',
             style: TextStyle(color: Colors.grey),
           ),
           Row(
             children: <Widget>[
               RaisedButton(
-                child: Text("ClipHeart"),
+                child: const Text('ClipHeart'),
                 onPressed: () {
                   setState(() {
                     paintType = PaintType.ClipHeart;
@@ -51,7 +51,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                 child: Container(),
               ),
               RaisedButton(
-                child: Text("PaintHeart"),
+                child: const Text('PaintHeart'),
                 onPressed: () {
                   setState(() {
                     paintType = PaintType.PaintHeart;
@@ -81,7 +81,9 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                 afterPaintImage:
                     (Canvas canvas, Rect rect, ui.Image image, Paint paint) {
                   if (paintType == PaintType.ClipHeart) {
-                    if (!rect.isEmpty) canvas.restore();
+                    if (!rect.isEmpty) {
+                      canvas.restore();
+                    }
                   } else if (paintType == PaintType.PaintHeart) {
                     // canvas.drawPath(
                     //     clipheart(rect, canvas),
@@ -95,7 +97,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                         Paint()
                           // ..colorFilter = ColorFilter.mode(
                           //     Color(0x55ea5504), BlendMode.srcIn)
-                          ..color=Color(0x55ea5504).withOpacity(0.2)
+                          ..color = const Color(0x55ea5504).withOpacity(0.2)
                           ..isAntiAlias = false
                           ..filterQuality = FilterQuality.low);
 
@@ -126,12 +128,12 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
     Rect rect,
     Canvas canvas,
   ) {
-    int numPoints = 1000;
-    List<Offset> points = new List<Offset>();
-    double dt = (2 * pi / numPoints);
+    const int numPoints = 1000;
+    final List<Offset> points = <Offset>[];
+    final double dt = 2 * pi / numPoints;
 
-    for (double t = 0; t <= 2 * pi; t += dt) {
-      var oo = Offset(X(t), Y(t));
+    for (double t = 0.0; t <= 2 * pi; t += dt) {
+      final Offset oo = Offset(doX(t), doY(t));
       // print(oo);
       points.add(oo);
     }
@@ -140,25 +142,35 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
     double wymin = points[0].dy;
     double wymax = wymin;
 
-    points.forEach((point) {
-      if (wxmin > point.dx) wxmin = point.dx;
-      if (wxmax < point.dx) wxmax = point.dx;
-      if (wymin > point.dy) wymin = point.dy;
-      if (wymax < point.dy) wymax = point.dy;
-    });
+    for (final Offset point in points) {
+      if (wxmin > point.dx) {
+        wxmin = point.dx;
+      }
+      if (wxmax < point.dx) {
+        wxmax = point.dx;
+      }
+      if (wymin > point.dy) {
+        wymin = point.dy;
+      }
+      if (wymax < point.dy) {
+        wymax = point.dy;
+      }
+    }
 
-    Rect rect1 = Rect.fromLTWH(wxmin, wymin, wxmax - wxmin, wymax - wymin);
+    final Rect rect1 =
+        Rect.fromLTWH(wxmin, wymin, wxmax - wxmin, wymax - wymin);
 
-    double xx = ScreenUtil.instance.setWidth(400) /
+    final double xx = ScreenUtil.instance.setWidth(400) /
         (max(rect1.width, rect1.height) * 1.1);
 
-    double top = rect.top + ScreenUtil.instance.setWidth(400) / 2.0;
-    double left = rect.left + ScreenUtil.instance.setWidth(400) / 2.0;
+    final double top = rect.top + ScreenUtil.instance.setWidth(400) / 2.0;
+    final double left = rect.left + ScreenUtil.instance.setWidth(400) / 2.0;
 
-    List<Offset> points1 = new List<Offset>();
-    points.forEach((point) {
+    final List<Offset> points1 = <Offset>[];
+    for (final Offset point in points) {
       points1.add(Offset(left + point.dx * xx, top + -point.dy * xx));
-    });
+    }
+
 //    canvas.drawPath(
 //        Path()..addPolygon(points1, true), Paint()..color = Colors.red);
 
@@ -166,13 +178,13 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
   }
 
   // The curve's parametric equations.
-  double X(double t) {
-    double sinT = sin(t);
-    return (16 * sinT * sinT * sinT);
+  double doX(double t) {
+    final double sinT = sin(t);
+    return 16 * sinT * sinT * sinT;
   }
 
-  double Y(double t) {
-    return (13 * cos(t) - 5 * cos(2 * t) - 2 * cos(3 * t) - cos(4 * t));
+  double doY(double t) {
+    return 13 * cos(t) - 5 * cos(2 * t) - 2 * cos(3 * t) - cos(4 * t);
   }
 
 //  Path pathHeart(Rect rect) {

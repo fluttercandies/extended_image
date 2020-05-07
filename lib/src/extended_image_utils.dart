@@ -53,7 +53,7 @@ enum ExtendedImageMode {
 Type typeOf<T>() => T;
 
 double clampScale(double scale, double min, double max) {
-  return scale.clamp(min, max);
+  return scale.clamp(min, max) as double;
 }
 
 /// Returns a value indicating whether two instances of Double represent the same value.
@@ -75,9 +75,12 @@ bool doubleEqual(double value, double other) {
 /// If [value] or [other] is not finite (`NaN` or infinity), throws an [UnsupportedError].
 int doubleCompare(double value, double other,
     {double precision = precisionErrorTolerance}) {
-  if (value.isNaN || other.isNaN)
+  if (value.isNaN || other.isNaN) {
     throw UnsupportedError('Compared with Infinity or NaN');
-  final n = value - other;
-  if (n.abs() < precision) return 0;
+  }
+  final double n = value - other;
+  if (n.abs() < precision) {
+    return 0;
+  }
   return n < 0 ? -1 : 1;
 }

@@ -152,7 +152,7 @@ class ExtendedImageGesturePageViewState
   void initState() {
     super.initState();
     _gestureAnimation = GestureAnimation(this, offsetCallBack: (Offset value) {
-      var gestureDetails = extendedImageGestureState?.gestureDetails;
+      final GestureDetails gestureDetails = extendedImageGestureState?.gestureDetails;
       if (gestureDetails != null) {
         extendedImageGestureState?.gestureDetails = GestureDetails(
             offset: value,
@@ -273,10 +273,10 @@ class ExtendedImageGesturePageViewState
   void _handleDragUpdate(DragUpdateDetails details) {
     // _drag might be null if the drag activity ended and called _disposeDrag.
     assert(_hold == null || _drag == null);
-    var delta = details.delta;
+    final Offset delta = details.delta;
 
     if (extendedImageGestureState != null) {
-      var gestureDetails = extendedImageGestureState.gestureDetails;
+      final GestureDetails gestureDetails = extendedImageGestureState.gestureDetails;
       if (gestureDetails != null) {
         final int currentPage = pageController.page.round();
 //        bool pageChanging = false;
@@ -324,11 +324,11 @@ class ExtendedImageGesturePageViewState
     // _drag might be null if the drag activity ended and called _disposeDrag.
     assert(_hold == null || _drag == null);
 
-    var temp = details;
+    DragEndDetails temp = details;
     if (extendedImageGestureState != null) {
-      var gestureDetails = extendedImageGestureState.gestureDetails;
+      final GestureDetails gestureDetails = extendedImageGestureState.gestureDetails;
       final int currentPage = pageController.page.round();
-      bool movePage = (pageController.page != currentPage);
+      final bool movePage = pageController.page != currentPage;
 
       if (!widget.canMovePage(gestureDetails)) {
         //stop

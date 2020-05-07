@@ -1,6 +1,8 @@
 import 'package:flutter/rendering.dart';
 
 class ExtendedImageBorderPainter extends CustomPainter {
+  ExtendedImageBorderPainter({this.border, this.shape, this.borderRadius});
+
   /// The shape to fill the background [color], [gradient], and [image] into and
   /// to cast as the [boxShadow].
   ///
@@ -30,8 +32,7 @@ class ExtendedImageBorderPainter extends CustomPainter {
   ///
   /// Applies only to boxes with rectangular shapes; ignored if [shape] is not
   /// [BoxShape.rectangle].
-  final BorderRadiusGeometry borderRadius;
-  ExtendedImageBorderPainter({this.border, this.shape, this.borderRadius});
+  final BorderRadius borderRadius;
   @override
   void paint(Canvas canvas, Size size) {
     final Rect outputRect = Rect.fromLTWH(0.0, 0.0, size.width, size.height);
@@ -68,10 +69,10 @@ class ExtendedImageBorderPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    var old = oldDelegate as ExtendedImageBorderPainter;
+    final ExtendedImageBorderPainter old = oldDelegate as ExtendedImageBorderPainter;
 
-    return this.borderRadius != old.borderRadius ||
-        this.border != old.border ||
-        this.shape != old.shape;
+    return borderRadius != old.borderRadius ||
+        border != old.border ||
+        shape != old.shape;
   }
 }

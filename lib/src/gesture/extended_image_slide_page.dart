@@ -16,6 +16,19 @@ enum SlideType {
 }
 
 class ExtendedImageSlidePage extends StatefulWidget {
+  const ExtendedImageSlidePage({
+    this.child,
+    this.slidePageBackgroundHandler,
+    this.slideScaleHandler,
+    this.slideOffsetHandler,
+    this.slideEndHandler,
+    this.slideAxis = SlideAxis.both,
+    this.resetPageDuration = const Duration(milliseconds: 500),
+    this.slideType = SlideType.onlyImage,
+    this.onSlidingPage,
+    Key key,
+  }) : super(key: key);
+
   ///The [child] contained by the ExtendedImageGesturePage.
   final Widget child;
 
@@ -44,19 +57,6 @@ class ExtendedImageSlidePage extends StatefulWidget {
 
   /// on sliding page
   final OnSlidingPage onSlidingPage;
-
-  ExtendedImageSlidePage({
-    this.child,
-    this.slidePageBackgroundHandler,
-    this.slideScaleHandler,
-    this.slideOffsetHandler,
-    this.slideEndHandler,
-    this.slideAxis: SlideAxis.both,
-    this.resetPageDuration: const Duration(milliseconds: 500),
-    this.slideType: SlideType.onlyImage,
-    this.onSlidingPage,
-    Key key,
-  }) : super(key: key);
   @override
   ExtendedImageSlidePageState createState() => ExtendedImageSlidePageState();
 }
@@ -111,7 +111,9 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   void _backAnimation() {
     if (mounted) {
       setState(() {
-        if (_backAnimationController.isCompleted) _isSliding = false;
+        if (_backAnimationController.isCompleted) {
+          _isSliding = false;
+        }
       });
     }
     if (widget.slideType == SlideType.onlyImage) {
@@ -131,7 +133,9 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   void slide(Offset value,
       {ExtendedImageGestureState extendedImageGestureState,
       ExtendedImageSlidePageHandlerState extendedImageSlidePageHandlerState}) {
-    if (_backAnimationController.isAnimating) return;
+    if (_backAnimationController.isAnimating) {
+      return;
+    }
     _extendedImageGestureState = extendedImageGestureState;
     _extendedImageSlidePageHandlerState = extendedImageSlidePageHandlerState;
     _offset += value;
@@ -172,7 +176,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
 
   void endSlide(ScaleEndDetails details) {
     if (mounted && _isSliding) {
-      var popPage = widget.slideEndHandler?.call(
+      final bool popPage = widget.slideEndHandler?.call(
             _offset,
             state: this,
             details: details,

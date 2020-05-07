@@ -1,8 +1,19 @@
+## [0.7.3+1]
+
+* remove docs.
+
+## [0.7.3]
+
+* Improve:
+  fix build error on high flutter sdk(> 1.6.0)
+  fix analysiz_options
+
 ## [0.7.2]
 
-* support loading progress for network
-* public HttpClient of ExtendedNetworkImageProvider
-* public ExtendedImageGestureState for SlideOffsetHandler/SlideEndHandler/SlideScaleHandler to get scale of image
+* Features:
+  support loading progress for network
+  public HttpClient of ExtendedNetworkImageProvider
+  public ExtendedImageGestureState for SlideOffsetHandler/SlideEndHandler/SlideScaleHandler to get scale of image
   
 ## [0.7.1]
 

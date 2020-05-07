@@ -6,26 +6,26 @@ import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 
 @FFRoute(
-    name: "fluttercandies://zoomimage",
-    routeName: "image zoom",
-    description: "show how to zoom/pan image")
+    name: 'fluttercandies://zoomimage',
+    routeName: 'image zoom',
+    description: 'show how to zoom/pan image')
 class ZoomImageDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
         child: Column(children: <Widget>[
       AppBar(
-        title: Text("zoom/pan image demo"),
+        title: const Text('zoom/pan image demo'),
       ),
       Expanded(
-        child: LayoutBuilder(builder: (_, c) {
-          Size size = Size(c.maxWidth, c.maxHeight);
+        child: LayoutBuilder(builder: (_, BoxConstraints c) {
+          final Size size = Size(c.maxWidth, c.maxHeight);
           return ExtendedImage.network(
             imageTestUrl,
             fit: BoxFit.contain,
             //enableLoadState: false,
             mode: ExtendedImageMode.gesture,
-            initGestureConfigHandler: (state) {
+            initGestureConfigHandler: (ExtendedImageState state) {
               double initialScale = 1.0;
 
               if (state.extendedImageInfo != null &&

@@ -3,14 +3,14 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
-import 'package:oktoast/oktoast.dart';
+
 
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 
 @FFRoute(
-    name: "fluttercandies://customimage",
-    routeName: "custom image load state",
-    description: "show image with loading,failed,animation state")
+    name: 'fluttercandies://customimage',
+    routeName: 'custom image load state',
+    description: 'show image with loading,failed,animation state')
 class CustomImageDemo extends StatefulWidget {
   @override
   _CustomImageDemoState createState() => _CustomImageDemoState();
@@ -23,7 +23,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
   void initState() {
     _controller = AnimationController(
         vsync: this,
-        duration: Duration(seconds: 3),
+        duration: const Duration(seconds: 3),
         lowerBound: 0.0,
         upperBound: 1.0);
     super.initState();
@@ -37,24 +37,23 @@ class _CustomImageDemoState extends State<CustomImageDemo>
 
   @override
   Widget build(BuildContext context) {
-    var url = imageTestUrl;
+    final String url = imageTestUrl;
     return Material(
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("CustomImage"),
+            title: const Text('CustomImage'),
           ),
-          !kIsWeb
-              ? RaisedButton(
-                  child: Text("clear all cache"),
-                  onPressed: () {
-                    clearDiskCachedImages().then((bool done) {
-                      showToast(done ? "clear succeed" : "clear failed",
-                          position: ToastPosition(align: Alignment.topCenter));
-                    });
-                  },
-                )
-              : Container(),
+          if (!kIsWeb)
+            RaisedButton(
+              child: const Text('clear all cache'),
+              onPressed: () {
+                clearDiskCachedImages().then((bool done) {
+                  showToast(done ? 'clear succeed' : 'clear failed',
+                      position: ToastPosition(align: Alignment.topCenter));
+                });
+              },
+            ),
           Expanded(
             child: Align(
               child: ExtendedImage.network(
@@ -68,7 +67,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                     case LoadState.loading:
                       _controller.reset();
                       return Image.asset(
-                        "assets/loading.gif",
+                        'assets/loading.gif',
                         fit: BoxFit.fill,
                       );
                       break;
@@ -97,15 +96,15 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                           fit: StackFit.expand,
                           children: <Widget>[
                             Image.asset(
-                              "assets/failed.jpg",
+                              'assets/failed.jpg',
                               fit: BoxFit.fill,
                             ),
-                            Positioned(
+                            const Positioned(
                               bottom: 0.0,
                               left: 0.0,
                               right: 0.0,
                               child: Text(
-                                "load image failed, click to reload",
+                                'load image failed, click to reload',
                                 textAlign: TextAlign.center,
                               ),
                             )

@@ -5,10 +5,10 @@ import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 
 @FFRoute(
-    name: "fluttercandies://WaterfallFlowDemo",
-    routeName: "WaterfallFlow",
+    name: 'fluttercandies://WaterfallFlowDemo',
+    routeName: 'WaterfallFlow',
     description:
-        "show how to build loading more WaterfallFlow with ExtendedImage.")
+        'show how to build loading more WaterfallFlow with ExtendedImage.')
 class WaterfallFlowDemo extends StatefulWidget {
   @override
   _WaterfallFlowDemoState createState() => _WaterfallFlowDemoState();
@@ -18,7 +18,7 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
   TuChongRepository listSourceRepository;
   @override
   void initState() {
-    listSourceRepository = new TuChongRepository();
+    listSourceRepository =  TuChongRepository();
     super.initState();
   }
 
@@ -34,13 +34,13 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("WaterfallFlowDemo"),
+            title: const Text('WaterfallFlowDemo'),
           ),
           Expanded(child: LayoutBuilder(
-            builder: (c, data) {
-              final crossAxisCount =
+            builder: (BuildContext c, BoxConstraints data) {
+              final int crossAxisCount =
                   max(data.maxWidth ~/ (ScreenUtil.instance.screenWidthDp / 2.0), 2);
-              return LoadingMoreList(
+              return LoadingMoreList<TuChongItem>(
                 ListConfig<TuChongItem>(
                   waterfallFlowDelegate: WaterfallFlowDelegate(
                     crossAxisCount: crossAxisCount,
@@ -49,7 +49,7 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
                   ),
                   itemBuilder: buildWaterfallFlowItem,
                   sourceList: listSourceRepository,
-                  padding: EdgeInsets.all(5.0),
+                  padding: const EdgeInsets.all(5.0),
                   lastChildLayoutType: LastChildLayoutType.foot,
                   // collectGarbage: (List<int> garbages) {
                   //   ///collectGarbage
@@ -61,7 +61,7 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
                   //   });
                   // },
                   // viewportBuilder: (int firstIndex, int lastIndex) {
-                  //   print("viewport : [$firstIndex,$lastIndex]");
+                  //   print('viewport : [$firstIndex,$lastIndex]');
                   // },
                 ),
               );

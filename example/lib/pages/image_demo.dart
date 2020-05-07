@@ -7,10 +7,10 @@ import 'package:oktoast/oktoast.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 
 @FFRoute(
-    name: "fluttercandies://image",
-    routeName: "image",
+    name: 'fluttercandies://image',
+    routeName: 'image',
     description:
-        "cache image,save to photo Library,image border,shape,borderRadius")
+        'cache image,save to photo Library,image border,shape,borderRadius')
 class ImageDemo extends StatefulWidget {
   @override
   _ImageDemoState createState() => _ImageDemoState();
@@ -34,17 +34,17 @@ class _ImageDemoState extends State<ImageDemo> {
 
   @override
   Widget build(BuildContext context) {
-    var url = imageTestUrl;
+    final String url = imageTestUrl;
     return Material(
       child: Column(
         children: <Widget>[
           AppBar(
-            title: Text("ImageDemo"),
+            title: const Text('ImageDemo'),
           ),
           Row(
             children: <Widget>[
               RaisedButton(
-                child: Text("BoxShape.circle"),
+                child: const Text('BoxShape.circle'),
                 onPressed: () {
                   setState(() {
                     boxShape = BoxShape.circle;
@@ -55,7 +55,7 @@ class _ImageDemoState extends State<ImageDemo> {
                 child: Container(),
               ),
               RaisedButton(
-                child: Text("BoxShape.rectangle"),
+                child: const Text('BoxShape.rectangle'),
                 onPressed: () {
                   setState(() {
                     boxShape = BoxShape.rectangle;
@@ -66,33 +66,29 @@ class _ImageDemoState extends State<ImageDemo> {
           ),
           Row(
             children: <Widget>[
-              kIsWeb
-                  ? Container()
-                  : RaisedButton(
-                      child: Text("clear all cache"),
-                      onPressed: () {
-                        clearDiskCachedImages().then((bool done) {
-                          showToast(done ? "clear succeed" : "clear failed",
-                              position:
-                                  ToastPosition(align: Alignment.topCenter));
-                        });
-                      },
-                    ),
+              if (!kIsWeb)
+                RaisedButton(
+                  child: const Text('clear all cache'),
+                  onPressed: () {
+                    clearDiskCachedImages().then((bool done) {
+                      showToast(done ? 'clear succeed' : 'clear failed',
+                          position: ToastPosition(align: Alignment.topCenter));
+                    });
+                  },
+                ),
               Expanded(
                 child: Container(),
               ),
-              !kIsWeb
-                  ? RaisedButton(
-                      child: Text("save network image to photo"),
-                      onPressed: () {
-                        saveNetworkImageToPhoto(url).then((bool done) {
-                          showToast(done ? "save succeed" : "save failed",
-                              position:
-                                  ToastPosition(align: Alignment.topCenter));
-                        });
-                      },
-                    )
-                  : Container(),
+              if (!kIsWeb)
+                RaisedButton(
+                  child: const Text('save network image to photo'),
+                  onPressed: () {
+                    saveNetworkImageToPhoto(url).then((bool done) {
+                      showToast(done ? 'save succeed' : 'save failed',
+                          position: ToastPosition(align: Alignment.topCenter));
+                    });
+                  },
+                ),
             ],
           ),
           Expanded(
@@ -105,7 +101,7 @@ class _ImageDemoState extends State<ImageDemo> {
                 cache: true,
                 border: Border.all(color: Colors.red, width: 1.0),
                 shape: boxShape,
-                borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                borderRadius: const BorderRadius.all(Radius.circular(30.0)),
                 //cancelToken: cancellationToken,
               ),
             ),

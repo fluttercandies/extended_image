@@ -4,21 +4,24 @@ import 'package:extended_image_library/extended_image_library.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import "package:oktoast/oktoast.dart";
+import 'package:oktoast/oktoast.dart';
 import 'example_route.dart';
 import 'example_route_helper.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  final TuChongRepository listSourceRepository = TuChongRepository();
   MyApp() {
-    if (!kIsWeb) clearDiskCachedImages(duration: Duration(days: 7));
-    listSourceRepository.loadData().then((result) {
-      if (listSourceRepository.length > 0)
+    if (!kIsWeb) {
+      clearDiskCachedImages(duration: const Duration(days: 7));
+    }
+    listSourceRepository.loadData().then((bool result) {
+      if (listSourceRepository.isNotEmpty) {
         _imageTestUrl = listSourceRepository.first.imageUrl;
+      }
     });
   }
+  final TuChongRepository listSourceRepository = TuChongRepository();
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -29,13 +32,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      builder: (c, w) {
+      builder: (BuildContext c, Widget w) {
         ScreenUtil.init(width: 750, height: 1334, allowFontScaling: true);
         // ScreenUtil.instance =
         //     ScreenUtil(width: 750, height: 1334, allowFontScaling: true)
         //       ..init(c);
         if (!kIsWeb) {
-          final data = MediaQuery.of(c);
+          final MediaQueryData data = MediaQuery.of(c);
           return MediaQuery(
             data: data.copyWith(textScaleFactor: 1.0),
             child: w,
@@ -45,7 +48,7 @@ class MyApp extends StatelessWidget {
       },
       initialRoute: 'fluttercandies://mainpage',
       onGenerateRoute: (RouteSettings settings) {
-        var routeName = settings.name;
+        String routeName = settings.name;
         //when refresh web, route will as following
         //   /
         //   /fluttercandies:
@@ -56,37 +59,39 @@ class MyApp extends StatelessWidget {
           routeName = routeName.replaceFirst('/', '');
         }
 
-        var routeResult =
-            getRouteResult(name: routeName, arguments: settings.arguments);
+        final RouteResult routeResult = getRouteResult(
+            name: routeName,
+            arguments: settings.arguments as Map<String, dynamic>);
 
         if (routeResult.showStatusBar != null ||
             routeResult.routeName != null) {
           settings = FFRouteSettings(
               arguments: settings.arguments,
               name: routeName,
-              isInitialRoute: settings.isInitialRoute,
               routeName: routeResult.routeName,
               showStatusBar: routeResult.showStatusBar);
         }
 
-        var page = routeResult.widget ??
+        final Widget page = routeResult.widget ??
             getRouteResult(
                     name: 'fluttercandies://mainpage',
-                    arguments: settings.arguments)
+                    arguments: settings.arguments as Map<String, dynamic>)
                 .widget;
 
-        final platform = Theme.of(context).platform;
+        final TargetPlatform platform = Theme.of(context).platform;
         switch (routeResult.pageRouteType) {
           case PageRouteType.material:
-            return MaterialPageRoute(settings: settings, builder: (c) => page);
+            return MaterialPageRoute<void>(
+                settings: settings, builder: (BuildContext c) => page);
           case PageRouteType.cupertino:
-            return CupertinoPageRoute(settings: settings, builder: (c) => page);
+            return CupertinoPageRoute<void>(
+                settings: settings, builder: (BuildContext c) => page);
           case PageRouteType.transparent:
             return platform == TargetPlatform.iOS
-                ? TransparentCupertinoPageRoute(
-                    settings: settings, builder: (c) => page)
-                : TransparentMaterialPageRoute(
-                    settings: settings, builder: (c) => page);
+                ? TransparentCupertinoPageRoute<void>(
+                    settings: settings, builder: (BuildContext c) => page)
+                : TransparentMaterialPageRoute<void>(
+                    settings: settings, builder: (BuildContext c) => page);
 //            return FFTransparentPageRoute(
 //                settings: settings,
 //                pageBuilder: (BuildContext context, Animation<double> animation,
@@ -94,8 +99,10 @@ class MyApp extends StatelessWidget {
 //                    page);
           default:
             return platform == TargetPlatform.iOS
-                ? CupertinoPageRoute(settings: settings, builder: (c) => page)
-                : MaterialPageRoute(settings: settings, builder: (c) => page);
+                ? CupertinoPageRoute<void>(
+                    settings: settings, builder: (BuildContext c) => page)
+                : MaterialPageRoute<void>(
+                    settings: settings, builder: (BuildContext c) => page);
         }
       },
     ));
@@ -104,4 +111,4 @@ class MyApp extends StatelessWidget {
 
 String _imageTestUrl;
 String get imageTestUrl =>
-    _imageTestUrl ?? "https://photo.tuchong.com/4870004/f/298584322.jpg";
+    _imageTestUrl ?? 'https://photo.tuchong.com/4870004/f/298584322.jpg';

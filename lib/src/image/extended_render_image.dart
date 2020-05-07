@@ -1,11 +1,10 @@
 import 'dart:math';
+import 'dart:ui' as ui show Image;
 import 'package:extended_image/src/editor/extended_image_editor_utils.dart';
 import 'package:extended_image/src/gesture/extended_image_gesture_utils.dart';
 import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'dart:ui' as ui show Image;
-
 import 'package:meta/meta.dart';
 
 class ExtendedRenderImage extends RenderBox {
@@ -64,7 +63,9 @@ class ExtendedRenderImage extends RenderBox {
   EditActionDetails _editActionDetails;
   EditActionDetails get editActionDetails => _editActionDetails;
   set editActionDetails(EditActionDetails value) {
-    if (value == _editActionDetails) return;
+    if (value == _editActionDetails) {
+      return;
+    }
     _editActionDetails = value;
     markNeedsPaint();
   }
@@ -72,7 +73,9 @@ class ExtendedRenderImage extends RenderBox {
   GestureDetails _gestureDetails;
   GestureDetails get gestureDetails => _gestureDetails;
   set gestureDetails(GestureDetails value) {
-    if (value == _gestureDetails) return;
+    if (value == _gestureDetails) {
+      return;
+    }
     _gestureDetails = value;
     markNeedsPaint();
   }
@@ -81,7 +84,9 @@ class ExtendedRenderImage extends RenderBox {
   BeforePaintImage _beforePaintImage;
   BeforePaintImage get beforePaintImage => _beforePaintImage;
   set beforePaintImage(BeforePaintImage value) {
-    if (value == _beforePaintImage) return;
+    if (value == _beforePaintImage) {
+      return;
+    }
     _beforePaintImage = value;
     markNeedsPaint();
   }
@@ -90,7 +95,9 @@ class ExtendedRenderImage extends RenderBox {
   AfterPaintImage _afterPaintImage;
   AfterPaintImage get afterPaintImage => _afterPaintImage;
   set afterPaintImage(AfterPaintImage value) {
-    if (value == _afterPaintImage) return;
+    if (value == _afterPaintImage) {
+      return;
+    }
     _afterPaintImage = value;
     markNeedsPaint();
   }
@@ -99,7 +106,9 @@ class ExtendedRenderImage extends RenderBox {
   Rect _sourceRect;
   Rect get sourceRect => _sourceRect;
   set sourceRect(Rect value) {
-    if (value == _sourceRect) return;
+    if (value == _sourceRect) {
+      return;
+    }
     _sourceRect = value;
     markNeedsPaint();
   }
@@ -108,7 +117,9 @@ class ExtendedRenderImage extends RenderBox {
   bool _flipHorizontally;
 
   void _resolve() {
-    if (_resolvedAlignment != null) return;
+    if (_resolvedAlignment != null) {
+      return;
+    }
     _resolvedAlignment = alignment.resolve(textDirection);
     _flipHorizontally =
         matchTextDirection && textDirection == TextDirection.rtl;
@@ -124,10 +135,14 @@ class ExtendedRenderImage extends RenderBox {
   ui.Image get image => _image;
   ui.Image _image;
   set image(ui.Image value) {
-    if (value == _image) return;
+    if (value == _image) {
+      return;
+    }
     _image = value;
     markNeedsPaint();
-    if (_width == null || _height == null) markNeedsLayout();
+    if (_width == null || _height == null) {
+      markNeedsLayout();
+    }
   }
 
   /// If non-null, requires the image to have this width.
@@ -137,7 +152,9 @@ class ExtendedRenderImage extends RenderBox {
   double get width => _width;
   double _width;
   set width(double value) {
-    if (value == _width) return;
+    if (value == _width) {
+      return;
+    }
     _width = value;
     markNeedsLayout();
   }
@@ -149,7 +166,9 @@ class ExtendedRenderImage extends RenderBox {
   double get height => _height;
   double _height;
   set height(double value) {
-    if (value == _height) return;
+    if (value == _height) {
+      return;
+    }
     _height = value;
     markNeedsLayout();
   }
@@ -161,7 +180,9 @@ class ExtendedRenderImage extends RenderBox {
   double _scale;
   set scale(double value) {
     assert(value != null);
-    if (value == _scale) return;
+    if (value == _scale) {
+      return;
+    }
     _scale = value;
     markNeedsLayout();
   }
@@ -169,18 +190,21 @@ class ExtendedRenderImage extends RenderBox {
   ColorFilter _colorFilter;
 
   void _updateColorFilter() {
-    if (_color == null)
+    if (_color == null) {
       _colorFilter = null;
-    else
+    } else {
       _colorFilter =
           ColorFilter.mode(_color, _colorBlendMode ?? BlendMode.srcIn);
+    }
   }
 
   /// If non-null, this color is blended with each image pixel using [colorBlendMode].
   Color get color => _color;
   Color _color;
   set color(Color value) {
-    if (value == _color) return;
+    if (value == _color) {
+      return;
+    }
     _color = value;
     _updateColorFilter();
     markNeedsPaint();
@@ -194,7 +218,9 @@ class ExtendedRenderImage extends RenderBox {
   FilterQuality _filterQuality;
   set filterQuality(FilterQuality value) {
     assert(value != null);
-    if (value == _filterQuality) return;
+    if (value == _filterQuality) {
+      return;
+    }
     _filterQuality = value;
     markNeedsPaint();
   }
@@ -210,7 +236,9 @@ class ExtendedRenderImage extends RenderBox {
   BlendMode get colorBlendMode => _colorBlendMode;
   BlendMode _colorBlendMode;
   set colorBlendMode(BlendMode value) {
-    if (value == _colorBlendMode) return;
+    if (value == _colorBlendMode) {
+      return;
+    }
     _colorBlendMode = value;
     _updateColorFilter();
     markNeedsPaint();
@@ -223,7 +251,9 @@ class ExtendedRenderImage extends RenderBox {
   BoxFit get fit => _fit;
   BoxFit _fit;
   set fit(BoxFit value) {
-    if (value == _fit) return;
+    if (value == _fit) {
+      return;
+    }
     _fit = value;
     markNeedsPaint();
   }
@@ -236,7 +266,9 @@ class ExtendedRenderImage extends RenderBox {
   AlignmentGeometry _alignment;
   set alignment(AlignmentGeometry value) {
     assert(value != null);
-    if (value == _alignment) return;
+    if (value == _alignment) {
+      return;
+    }
     _alignment = value;
     _markNeedResolution();
   }
@@ -246,7 +278,9 @@ class ExtendedRenderImage extends RenderBox {
   ImageRepeat _repeat;
   set repeat(ImageRepeat value) {
     assert(value != null);
-    if (value == _repeat) return;
+    if (value == _repeat) {
+      return;
+    }
     _repeat = value;
     markNeedsPaint();
   }
@@ -261,7 +295,9 @@ class ExtendedRenderImage extends RenderBox {
   Rect get centerSlice => _centerSlice;
   Rect _centerSlice;
   set centerSlice(Rect value) {
-    if (value == _centerSlice) return;
+    if (value == _centerSlice) {
+      return;
+    }
     _centerSlice = value;
     markNeedsPaint();
   }
@@ -274,7 +310,9 @@ class ExtendedRenderImage extends RenderBox {
   bool get invertColors => _invertColors;
   bool _invertColors;
   set invertColors(bool value) {
-    if (value == _invertColors) return;
+    if (value == _invertColors) {
+      return;
+    }
     _invertColors = value;
     markNeedsPaint();
   }
@@ -297,7 +335,9 @@ class ExtendedRenderImage extends RenderBox {
   bool _matchTextDirection;
   set matchTextDirection(bool value) {
     assert(value != null);
-    if (value == _matchTextDirection) return;
+    if (value == _matchTextDirection) {
+      return;
+    }
     _matchTextDirection = value;
     _markNeedResolution();
   }
@@ -310,7 +350,9 @@ class ExtendedRenderImage extends RenderBox {
   TextDirection get textDirection => _textDirection;
   TextDirection _textDirection;
   set textDirection(TextDirection value) {
-    if (_textDirection == value) return;
+    if (_textDirection == value) {
+      return;
+    }
     _textDirection = value;
     _markNeedResolution();
   }
@@ -328,7 +370,9 @@ class ExtendedRenderImage extends RenderBox {
     constraints = BoxConstraints.tightFor(width: _width, height: _height)
         .enforce(constraints);
 
-    if (_image == null) return constraints.smallest;
+    if (_image == null) {
+      return constraints.smallest;
+    }
 
     return constraints.constrainSizeAndAttemptToPreserveAspectRatio(Size(
         _image.width.toDouble() / _scale, _image.height.toDouble() / _scale));
@@ -337,7 +381,9 @@ class ExtendedRenderImage extends RenderBox {
   @override
   double computeMinIntrinsicWidth(double height) {
     assert(height >= 0.0);
-    if (_width == null && _height == null) return 0.0;
+    if (_width == null && _height == null) {
+      return 0.0;
+    }
     return _sizeForConstraints(BoxConstraints.tightForFinite(height: height))
         .width;
   }
@@ -352,7 +398,9 @@ class ExtendedRenderImage extends RenderBox {
   @override
   double computeMinIntrinsicHeight(double width) {
     assert(width >= 0.0);
-    if (_width == null && _height == null) return 0.0;
+    if (_width == null && _height == null) {
+      return 0.0;
+    }
     return _sizeForConstraints(BoxConstraints.tightForFinite(width: width))
         .height;
   }
@@ -374,7 +422,9 @@ class ExtendedRenderImage extends RenderBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
-    if (_image == null) return;
+    if (_image == null) {
+      return;
+    }
     _resolve();
     assert(_resolvedAlignment != null);
     assert(_flipHorizontally != null);
@@ -456,12 +506,14 @@ void paintExtendedImage({
   assert(alignment != null);
   assert(repeat != null);
   assert(flipHorizontally != null);
-  if (rect.isEmpty) return;
+  if (rect.isEmpty) {
+    return;
+  }
 
   Size outputSize = rect.size;
   Size inputSize = Size(image.width.toDouble(), image.height.toDouble());
 
-  Offset topLeft = rect.topLeft;
+  final Offset topLeft = rect.topLeft;
 
   // if (editActionDetails != null && editActionDetails.isHalfPi) {
   //   outputSize = Size(outputSize.height, outputSize.width);
@@ -475,8 +527,8 @@ void paintExtendedImage({
   if (centerSlice != null) {
     sliceBorder = Offset(centerSlice.left + inputSize.width - centerSlice.right,
         centerSlice.top + inputSize.height - centerSlice.bottom);
-    outputSize -= sliceBorder;
-    inputSize -= sliceBorder;
+    outputSize = outputSize - sliceBorder as Size;
+    inputSize = inputSize - sliceBorder as Size;
   }
   fit ??= centerSlice == null ? BoxFit.scaleDown : BoxFit.fill;
   assert(centerSlice == null || (fit != BoxFit.none && fit != BoxFit.cover));
@@ -498,7 +550,9 @@ void paintExtendedImage({
     repeat = ImageRepeat.noRepeat;
   }
   final Paint paint = Paint()..isAntiAlias = false;
-  if (colorFilter != null) paint.colorFilter = colorFilter;
+  if (colorFilter != null) {
+    paint.colorFilter = colorFilter;
+  }
   if (sourceSize != destinationSize) {
     paint.filterQuality = filterQuality;
   }
@@ -562,12 +616,12 @@ void paintExtendedImage({
     }
 
     if (hasEditAction) {
-      var origin =
+      final Offset origin =
           editActionDetails.screenCropRect?.center ?? destinationRect.center;
 
       final Matrix4 result = Matrix4.identity();
 
-      var editAction = editActionDetails;
+      final EditActionDetails editAction = editActionDetails;
 
       result.translate(
         origin.dx,
@@ -593,13 +647,19 @@ void paintExtendedImage({
   }
 
   if (beforePaintImage != null) {
-    var handle = beforePaintImage(canvas, destinationRect, image, paint);
-    if (handle) return;
+    final bool handle = beforePaintImage(canvas, destinationRect, image, paint);
+    if (handle) {
+      return;
+    }
   }
 
   final bool needSave = repeat != ImageRepeat.noRepeat || flipHorizontally;
-  if (needSave) canvas.save();
-  if (repeat != ImageRepeat.noRepeat) canvas.clipRect(rect);
+  if (needSave) {
+    canvas.save();
+  }
+  if (repeat != ImageRepeat.noRepeat) {
+    canvas.clipRect(rect);
+  }
   if (flipHorizontally) {
     final double dx = -(rect.left + rect.width / 2.0);
     canvas.translate(-dx, 0.0);
@@ -610,18 +670,20 @@ void paintExtendedImage({
   if (centerSlice == null) {
     final Rect sourceRect = customSourceRect ??
         alignment.inscribe(sourceSize, Offset.zero & inputSize);
-    for (Rect tileRect
+    for (final Rect tileRect
         in _generateImageTileRects(rect, destinationRect, repeat)) {
       canvas.drawImageRect(image, sourceRect, tileRect, paint);
     }
   } else {
-    for (Rect tileRect
-        in _generateImageTileRects(rect, destinationRect, repeat))
+    for (final Rect tileRect
+        in _generateImageTileRects(rect, destinationRect, repeat)) {
       canvas.drawImageNine(image, centerSlice, tileRect, paint);
+    }
   }
 
-  if (needSave) canvas.restore();
-
+  if (needSave) {
+    canvas.restore();
+  }
 
   if (needClip || hasEditAction) {
     canvas.restore();
@@ -657,7 +719,8 @@ Iterable<Rect> _generateImageTileRects(
   }
 
   for (int i = startX; i <= stopX; ++i) {
-    for (int j = startY; j <= stopY; ++j)
+    for (int j = startY; j <= stopY; ++j) {
       yield fundamentalRect.shift(Offset(i * strideX, j * strideY));
+    }
   }
 }

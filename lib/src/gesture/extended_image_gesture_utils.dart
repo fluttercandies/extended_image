@@ -1,9 +1,8 @@
 import 'dart:math';
 import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:flutter/material.dart';
-
-import 'extended_image_slide_page.dart';
 import '../extended_image_utils.dart';
+import 'extended_image_slide_page.dart';
 
 ///
 ///  extended_image_gesture_utils.dart
@@ -21,19 +20,21 @@ bool outRect(Rect rect, Rect destinationRect) {
 }
 
 class Boundary {
+  Boundary({
+    this.left = false,
+    this.right = false,
+    this.top = false,
+    this.bottom = false,
+  });
+
   bool left;
   bool right;
   bool bottom;
   bool top;
-  Boundary(
-      {this.left: false,
-      this.right: false,
-      this.top: false,
-      this.bottom: false});
 
   @override
   String toString() {
-    return "left:$left,right:$right,top:$top,bottom:$bottom";
+    return 'left:$left,right:$right,top:$top,bottom:$bottom';
   }
 
   @override
@@ -41,12 +42,14 @@ class Boundary {
 
   @override
   bool operator ==(dynamic other) {
-    if (other.runtimeType != runtimeType) return false;
-    final Boundary typedOther = other;
-    return left == typedOther.left &&
-        right == typedOther.right &&
-        top == typedOther.top &&
-        bottom == typedOther.bottom;
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+    return other is Boundary &&
+        left == other.left &&
+        right == other.right &&
+        top == other.top &&
+        bottom == other.bottom;
   }
 }
 
@@ -75,6 +78,27 @@ abstract class ExtendedImageGestureState {
 }
 
 class GestureDetails {
+  GestureDetails(
+      {this.offset,
+      this.totalScale,
+      GestureDetails gestureDetails,
+      this.actionType = ActionType.pan,
+      this.userOffset = true}) {
+    if (gestureDetails != null) {
+      _computeVerticalBoundary = gestureDetails._computeVerticalBoundary;
+      _computeHorizontalBoundary = gestureDetails._computeHorizontalBoundary;
+      _center = gestureDetails._center;
+      layoutRect = gestureDetails.layoutRect;
+      destinationRect = gestureDetails.destinationRect;
+
+      ///zoom end will call twice
+      /// zoom end
+      /// zoom start
+      /// zoom update
+      /// zoom end
+    }
+  }
+
   ///scale center delta
   Offset offset;
 
@@ -107,6 +131,9 @@ class GestureDetails {
 
   InitialAlignment initialAlignment;
 
+  ///slide page offset
+  Offset slidePageOffset;
+
   @override
   int get hashCode => hashValues(
       offset,
@@ -122,42 +149,21 @@ class GestureDetails {
 
   @override
   bool operator ==(dynamic other) {
-    if (other.runtimeType != runtimeType) return false;
-    final GestureDetails typedOther = other;
-    return offset == typedOther.offset &&
-        totalScale == typedOther.totalScale &&
-        computeVerticalBoundary == typedOther.computeVerticalBoundary &&
-        computeHorizontalBoundary == typedOther.computeHorizontalBoundary &&
-        boundary == typedOther.boundary &&
-        actionType == typedOther.actionType &&
-        userOffset == typedOther.userOffset &&
-        layoutRect == typedOther.layoutRect &&
-        destinationRect == typedOther.destinationRect &&
-        _center == typedOther._center;
-  }
-
-  ///slide page offset
-  Offset slidePageOffset;
-
-  GestureDetails(
-      {this.offset,
-      this.totalScale,
-      GestureDetails gestureDetails,
-      this.actionType: ActionType.pan,
-      this.userOffset: true}) {
-    if (gestureDetails != null) {
-      _computeVerticalBoundary = gestureDetails._computeVerticalBoundary;
-      _computeHorizontalBoundary = gestureDetails._computeHorizontalBoundary;
-      _center = gestureDetails._center;
-      layoutRect = gestureDetails.layoutRect;
-      destinationRect = gestureDetails.destinationRect;
-
-      ///zoom end will call twice
-      /// zoom end
-      /// zoom start
-      /// zoom update
-      /// zoom end
+    if (other.runtimeType != runtimeType) {
+      return false;
     }
+
+    return other is GestureDetails &&
+        offset == other.offset &&
+        totalScale == other.totalScale &&
+        computeVerticalBoundary == other.computeVerticalBoundary &&
+        computeHorizontalBoundary == other.computeHorizontalBoundary &&
+        boundary == other.boundary &&
+        actionType == other.actionType &&
+        userOffset == other.userOffset &&
+        layoutRect == other.layoutRect &&
+        destinationRect == other.destinationRect &&
+        _center == other._center;
   }
 
   Offset _getCenter(Rect destinationRect) {
@@ -216,11 +222,11 @@ class GestureDetails {
   }
 
   Rect calculateFinalDestinationRect(Rect layoutRect, Rect destinationRect) {
-    final destinationRectChanged = rawDestinationRect != destinationRect;
-  
+    final bool destinationRectChanged = rawDestinationRect != destinationRect;
+
     rawDestinationRect = destinationRect;
 
-    var temp = offset;
+    final Offset temp = offset;
     _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
     offset = temp;
     Rect result =
@@ -268,7 +274,7 @@ class GestureDetails {
   Rect _innerCalculateFinalDestinationRect(
       Rect layoutRect, Rect destinationRect) {
     _boundary = Boundary();
-    Offset center = _getCenter(destinationRect);
+    final Offset center = _getCenter(destinationRect);
     Rect result = _getDestinationRect(destinationRect, center);
 
     if (_computeHorizontalBoundary) {
@@ -321,12 +327,12 @@ class GestureDetails {
   }
 
   bool movePage(Offset delta) {
-    bool canMoveHorizontal = delta.dx != 0 &&
+    final bool canMoveHorizontal = delta.dx != 0 &&
         ((delta.dx < 0 && boundary.right) ||
             (delta.dx > 0 && boundary.left) ||
             !_computeHorizontalBoundary);
 
-    bool canMoveVertical = delta.dy != 0 &&
+    final bool canMoveVertical = delta.dy != 0 &&
         ((delta.dy < 0 && boundary.bottom) ||
             (delta.dy > 0 && boundary.top) ||
             !_computeVerticalBoundary);
@@ -367,6 +373,33 @@ enum InitialAlignment {
 }
 
 class GestureConfig {
+  GestureConfig({
+    double minScale,
+    double maxScale,
+    double speed,
+    bool cacheGesture,
+    double inertialSpeed,
+    double initialScale,
+    bool inPageView,
+    double animationMinScale,
+    double animationMaxScale,
+    this.initialAlignment = InitialAlignment.center,
+  })  : minScale = minScale ??= 0.8,
+        maxScale = maxScale ??= 5.0,
+        speed = speed ??= 1.0,
+        cacheGesture = cacheGesture ?? false,
+        inertialSpeed = inertialSpeed ??= 100.0,
+        initialScale = initialScale ??= 1.0,
+        inPageView = inPageView ?? false,
+        animationMinScale = animationMinScale ??= minScale * 0.8,
+        animationMaxScale = animationMaxScale ??= maxScale * 1.2,
+        assert(minScale <= maxScale),
+        assert(animationMinScale <= animationMaxScale),
+        assert(animationMinScale <= minScale),
+        assert(animationMaxScale >= maxScale),
+        assert(minScale <= initialScale && initialScale <= maxScale),
+        assert(speed > 0),
+        assert(inertialSpeed > 0);
   //the min scale for zooming then animation back to minScale when scale end
   final double animationMinScale;
   //min scale
@@ -397,38 +430,10 @@ class GestureConfig {
   /// init image rect with alignment when initialScale > 1.0
   /// see https://github.com/fluttercandies/extended_image/issues/66
   final InitialAlignment initialAlignment;
-
-  GestureConfig({
-    double minScale,
-    double maxScale,
-    double speed,
-    bool cacheGesture,
-    double inertialSpeed,
-    double initialScale,
-    bool inPageView,
-    double animationMinScale,
-    double animationMaxScale,
-    this.initialAlignment = InitialAlignment.center,
-  })  : minScale = minScale ??= 0.8,
-        maxScale = maxScale ??= 5.0,
-        speed = speed ??= 1.0,
-        cacheGesture = cacheGesture ?? false,
-        inertialSpeed = inertialSpeed ??= 100.0,
-        initialScale = initialScale ??= 1.0,
-        inPageView = inPageView ?? false,
-        animationMinScale = animationMinScale ??= minScale * 0.8,
-        animationMaxScale = animationMaxScale ??= maxScale * 1.2,
-        assert(minScale <= maxScale),
-        assert(animationMinScale <= animationMaxScale),
-        assert(animationMinScale <= minScale),
-        assert(animationMaxScale >= maxScale),
-        assert(minScale <= initialScale && initialScale <= maxScale),
-        assert(speed > 0),
-        assert(inertialSpeed > 0);
 }
 
 double roundAfter(double number, int position) {
-  double shift = pow(10, position).toDouble();
+  final double shift = pow(10, position).toDouble();
   return (number * shift).roundToDouble() / shift;
 }
 
@@ -456,12 +461,6 @@ const double velocity = minMagnitude / 1000.0;
 const double minGesturePageDelta = 5.0;
 
 class GestureAnimation {
-  AnimationController _offsetController;
-  Animation<Offset> _offsetAnimation;
-
-  AnimationController _scaleController;
-  Animation<double> _scaleAnimation;
-
   GestureAnimation(TickerProvider vsync,
       {GestureOffsetAnimationCallBack offsetCallBack,
       GestureScaleAnimationCallBack scaleCallBack}) {
@@ -481,8 +480,16 @@ class GestureAnimation {
     }
   }
 
+  AnimationController _offsetController;
+  Animation<Offset> _offsetAnimation;
+
+  AnimationController _scaleController;
+  Animation<double> _scaleAnimation;
+
   void animationOffset(Offset begin, Offset end) {
-    if (_offsetController == null) return;
+    if (_offsetController == null) {
+      return;
+    }
     _offsetAnimation =
         _offsetController.drive(Tween<Offset>(begin: begin, end: end));
     _offsetController
@@ -491,7 +498,9 @@ class GestureAnimation {
   }
 
   void animationScale(double begin, double end, double velocity) {
-    if (_scaleController == null) return;
+    if (_scaleController == null) {
+      return;
+    }
     _scaleAnimation =
         _scaleController.drive(Tween<double>(begin: begin, end: end));
     _scaleController
@@ -531,7 +540,7 @@ Color defaultSlidePageBackgroundHandler(
 
 bool defaultSlideEndHandler(
     {Offset offset, Size pageSize, SlideAxis pageGestureAxis}) {
-  final parameter = 6;
+  const int parameter = 6;
   if (pageGestureAxis == SlideAxis.both) {
     return doubleCompare(offset.distance,
             Offset(pageSize.width, pageSize.height).distance / parameter) >

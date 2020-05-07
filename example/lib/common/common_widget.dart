@@ -57,19 +57,18 @@ class FlatButtonWithIcon extends FlatButton with MaterialButtonWithIconMixin {
         );
 }
 
-
 class AspectRatioItem {
+  AspectRatioItem({this.value, this.text});
   final String text;
   final double value;
-  AspectRatioItem({this.value, this.text});
 }
 
 class AspectRatioWidget extends StatelessWidget {
+  const AspectRatioWidget(
+      {this.aspectRatioS, this.aspectRatio, this.isSelected = false});
   final String aspectRatioS;
   final double aspectRatio;
   final bool isSelected;
-  AspectRatioWidget(
-      {this.aspectRatioS, this.aspectRatio, this.isSelected: false});
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
@@ -84,36 +83,34 @@ class AspectRatioWidget extends StatelessWidget {
 }
 
 class AspectRatioPainter extends CustomPainter {
+  AspectRatioPainter(
+      {this.aspectRatioS, this.aspectRatio, this.isSelected = false});
   final String aspectRatioS;
   final double aspectRatio;
   final bool isSelected;
-  AspectRatioPainter(
-      {this.aspectRatioS, this.aspectRatio, this.isSelected: false});
-
   @override
   void paint(Canvas canvas, Size size) {
     final Color color = isSelected ? Colors.blue : Colors.grey;
-    var rect = (Offset.zero & size);
+    final Rect rect = Offset.zero & size;
     //https://github.com/flutter/flutter/issues/49328
-    Paint paint = Paint()
+    final Paint paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
     final double aspectRatioResult =
         (aspectRatio != null && aspectRatio > 0.0) ? aspectRatio : 1.0;
     canvas.drawRect(
         getDestinationRect(
-            rect: EdgeInsets.all(10.0).deflateRect(rect),
+            rect: const EdgeInsets.all(10.0).deflateRect(rect),
             inputSize: Size(aspectRatioResult * 100, 100.0),
             fit: BoxFit.contain),
         paint);
 
-    TextPainter textPainter = TextPainter(
+    final TextPainter textPainter = TextPainter(
         text: TextSpan(
             text: aspectRatioS,
             style: TextStyle(
-              color: (color.computeLuminance() < 0.5
-                  ? Colors.white
-                  : Colors.black),
+              color:
+                  color.computeLuminance() < 0.5 ? Colors.white : Colors.black,
               fontSize: 16.0,
             )),
         textDirection: TextDirection.ltr,
@@ -128,9 +125,9 @@ class AspectRatioPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    var oldOne = oldDelegate as AspectRatioPainter;
-    return oldOne.isSelected != isSelected ||
-        oldOne.aspectRatioS != aspectRatioS ||
-        oldOne.aspectRatio != aspectRatio;
+    return oldDelegate is AspectRatioPainter &&
+        (oldDelegate.isSelected != isSelected ||
+            oldDelegate.aspectRatioS != aspectRatioS ||
+            oldDelegate.aspectRatio != aspectRatio);
   }
 }
