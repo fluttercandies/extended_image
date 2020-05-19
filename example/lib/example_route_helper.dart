@@ -13,7 +13,9 @@ import 'example_route.dart';
 
 class FFNavigatorObserver extends NavigatorObserver {
   FFNavigatorObserver({this.routeChange});
+
   final RouteChange routeChange;
+
   @override
   void didPop(Route<dynamic> route, Route<dynamic> previousRoute) {
     super.didPop(route, previousRoute);
@@ -45,9 +47,7 @@ class FFNavigatorObserver extends NavigatorObserver {
 }
 
 typedef RouteChange = void Function(
-  Route<dynamic> newRoute,
-  Route<dynamic> oldRoute,
-);
+    Route<dynamic> newRoute, Route<dynamic> oldRoute);
 
 class FFTransparentPageRoute<T> extends PageRouteBuilder<T> {
   FFTransparentPageRoute({
@@ -100,16 +100,17 @@ Route<dynamic> onGenerateRouteHelper(
     settings = FFRouteSettings(
       name: settings.name,
       routeName: routeResult.routeName,
-      arguments: arguments,
+      arguments: arguments as Map<String, dynamic>,
       showStatusBar: routeResult.showStatusBar,
     );
   }
   final Widget page = routeResult.widget ?? notFoundFallback;
   if (page == null) {
     throw Exception(
-        '''Route "${settings.name}" returned null.Route Widget must never return null, 
+      '''Route "${settings.name}" returned null. Route Widget must never return null, 
           maybe the reason is that route name did not match with right path.
-          You can use parameter[notFoundFallback] to avoid this ugly error.''');
+          You can use parameter[notFoundFallback] to avoid this ugly error.''',
+    );
   }
 
   if (arguments is Map<String, dynamic>) {
@@ -121,18 +122,35 @@ Route<dynamic> onGenerateRouteHelper(
 
   switch (routeResult.pageRouteType) {
     case PageRouteType.material:
-      return MaterialPageRoute<void>(settings: settings, builder: (_) => page);
-    case PageRouteType.cupertino:
-      return CupertinoPageRoute<void>(settings: settings, builder: (_) => page);
-    case PageRouteType.transparent:
-      return FFTransparentPageRoute<void>(
+      return MaterialPageRoute<dynamic>(
         settings: settings,
-        pageBuilder: (_, __, ___) => page,
+        builder: (BuildContext _) => page,
+      );
+    case PageRouteType.cupertino:
+      return CupertinoPageRoute<dynamic>(
+        settings: settings,
+        builder: (BuildContext _) => page,
+      );
+    case PageRouteType.transparent:
+      return FFTransparentPageRoute<dynamic>(
+        settings: settings,
+        pageBuilder: (
+          BuildContext _,
+          Animation<double> __,
+          Animation<double> ___,
+        ) =>
+            page,
       );
     default:
       return Platform.isIOS
-          ? CupertinoPageRoute<void>(settings: settings, builder: (_) => page)
-          : MaterialPageRoute<void>(settings: settings, builder: (_) => page);
+          ? CupertinoPageRoute<dynamic>(
+              settings: settings,
+              builder: (BuildContext _) => page,
+            )
+          : MaterialPageRoute<dynamic>(
+              settings: settings,
+              builder: (BuildContext _) => page,
+            );
   }
 }
 
