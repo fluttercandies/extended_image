@@ -19,8 +19,11 @@ final PageMetrics _testPageMetrics = PageMetrics(
   viewportFraction: 1.0,
 );
 
-/// whether should move page
+/// whether we can move to previous/next page only for Image
 bool _defaultCanMovePage(GestureDetails gestureDetails) => true;
+
+/// whether should scoll page
+bool _defaultCanScrollPage(GestureDetails gestureDetails) => true;
 
 ///page view to support gesture for image
 class ExtendedImageGesturePageView extends StatefulWidget {
@@ -34,12 +37,14 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     this.onPageChanged,
     List<Widget> children = const <Widget>[],
     CanMovePage canMovePage,
+    CanScrollPage canScrollPage,
   })  : controller = controller ?? _defaultPageController,
         childrenDelegate = SliverChildListDelegate(children),
         physics = physics != null
             ? _defaultScrollPhysics.applyTo(physics)
             : _defaultScrollPhysics,
         canMovePage = canMovePage ?? _defaultCanMovePage,
+        canScrollPage = canScrollPage ?? _defaultCanScrollPage,
         super(key: key);
 
   /// Creates a scrollable list that works page by page using widgets that are
@@ -65,6 +70,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     @required IndexedWidgetBuilder itemBuilder,
     int itemCount,
     CanMovePage canMovePage,
+    CanScrollPage canScrollPage,
   })  : controller = controller ?? _defaultPageController,
         childrenDelegate =
             SliverChildBuilderDelegate(itemBuilder, childCount: itemCount),
@@ -72,6 +78,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
             ? _defaultScrollPhysics.applyTo(physics)
             : _defaultScrollPhysics,
         canMovePage = canMovePage ?? _defaultCanMovePage,
+        canScrollPage = canScrollPage ?? _defaultCanScrollPage,
         super(key: key);
 
   /// Creates a scrollable list that works page by page with a custom child
@@ -85,14 +92,19 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     this.pageSnapping = true,
     this.onPageChanged,
     CanMovePage canMovePage,
+    CanScrollPage canScrollPage,
     @required this.childrenDelegate,
   })  : assert(childrenDelegate != null),
         controller = controller ?? _defaultPageController,
         physics = _defaultScrollPhysics,
         canMovePage = canMovePage ?? _defaultCanMovePage,
+        canScrollPage = canScrollPage ?? _defaultCanScrollPage,
         super(key: key);
 
-  ///whether we can move to previous/next page only for Image
+  ///Whether we can scroll page
+  final CanScrollPage canScrollPage;
+
+  ///Whether we can move to previous/next page only for Image
   final CanMovePage canMovePage;
 
   /// The axis along which the page view scrolls.
@@ -298,6 +310,9 @@ class ExtendedImageGesturePageViewState
     // _drag might be null if the drag activity ended and called _disposeDrag.
     assert(_hold == null || _drag == null);
     final Offset delta = details.delta;
+    if (!widget.canScrollPage(extendedImageGestureState?.gestureDetails)) {
+      return;
+    }
 
     if (extendedImageGestureState != null) {
       final GestureDetails gestureDetails =
@@ -348,7 +363,10 @@ class ExtendedImageGesturePageViewState
   void _handleDragEnd(DragEndDetails details) {
     // _drag might be null if the drag activity ended and called _disposeDrag.
     assert(_hold == null || _drag == null);
-
+    if (!widget.canScrollPage(extendedImageGestureState?.gestureDetails)) {
+      _drag.end(DragEndDetails(primaryVelocity: 0.0));
+      return;
+    }
     DragEndDetails temp = details;
     if (extendedImageGestureState != null) {
       final GestureDetails gestureDetails =
@@ -391,7 +409,7 @@ class ExtendedImageGesturePageViewState
       }
     }
 
-    _drag?.end(temp);
+    _drag.end(temp);
 
     assert(_drag == null);
   }

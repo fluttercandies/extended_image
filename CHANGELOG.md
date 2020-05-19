@@ -1,4 +1,9 @@
-## [0.7.4+1]
+## [0.8.0]
+
+* Features:
+  Add call back [CanScrollPage] for ExtendedImageGesturePageView. 
+
+## [0.7.4]
 
 * Issues:
   Fix ScrollPhysics is not working for ExtendedImageGesturePageView
