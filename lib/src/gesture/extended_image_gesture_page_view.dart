@@ -262,12 +262,14 @@ class ExtendedImageGesturePageViewState
       key: widget.key,
     );
 
-    result = RawGestureDetector(
-      gestures: _gestureRecognizers,
-      behavior: HitTestBehavior.opaque,
-      child: result,
-    );
-
+    if (widget.physics.parent == null ||
+        widget.physics.parent.shouldAcceptUserOffset(_testPageMetrics)) {
+      result = RawGestureDetector(
+        gestures: _gestureRecognizers,
+        behavior: HitTestBehavior.opaque,
+        child: result,
+      );
+    }
     return result;
   }
 
