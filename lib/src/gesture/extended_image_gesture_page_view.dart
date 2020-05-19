@@ -10,6 +10,15 @@ final PageController _defaultPageController = PageController();
 //const PageScrollPhysics _kPagePhysics = PageScrollPhysics();
 const ScrollPhysics _defaultScrollPhysics = NeverScrollableScrollPhysics();
 
+final PageMetrics _testPageMetrics = PageMetrics(
+  axisDirection: AxisDirection.down,
+  minScrollExtent: 0,
+  maxScrollExtent: 10,
+  pixels: 5,
+  viewportDimension: 10,
+  viewportFraction: 1.0,
+);
+
 /// whether should move page
 bool _defaultCanMovePage(GestureDetails gestureDetails) => true;
 
@@ -83,6 +92,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
         canMovePage = canMovePage ?? _defaultCanMovePage,
         super(key: key);
 
+  ///whether we can move to previous/next page only for Image
   final CanMovePage canMovePage;
 
   /// The axis along which the page view scrolls.
@@ -152,7 +162,8 @@ class ExtendedImageGesturePageViewState
   void initState() {
     super.initState();
     _gestureAnimation = GestureAnimation(this, offsetCallBack: (Offset value) {
-      final GestureDetails gestureDetails = extendedImageGestureState?.gestureDetails;
+      final GestureDetails gestureDetails =
+          extendedImageGestureState?.gestureDetails;
       if (gestureDetails != null) {
         extendedImageGestureState?.gestureDetails = GestureDetails(
             offset: value,
@@ -165,47 +176,58 @@ class ExtendedImageGesturePageViewState
 
   void _initGestureRecognizers({ExtendedImageGesturePageView oldWidget}) {
     if (oldWidget == null ||
-        oldWidget.scrollDirection != widget.scrollDirection) {
-      switch (widget.scrollDirection) {
-        case Axis.vertical:
-          _gestureRecognizers = <Type, GestureRecognizerFactory>{
-            VerticalDragGestureRecognizer: GestureRecognizerFactoryWithHandlers<
-                VerticalDragGestureRecognizer>(
-              () => VerticalDragGestureRecognizer(),
-              (VerticalDragGestureRecognizer instance) {
-                instance
-                  ..onDown = _handleDragDown
-                  ..onStart = _handleDragStart
-                  ..onUpdate = _handleDragUpdate
-                  ..onEnd = _handleDragEnd
-                  ..onCancel = _handleDragCancel
-                  ..minFlingDistance = widget.physics?.minFlingDistance
-                  ..minFlingVelocity = widget.physics?.minFlingVelocity
-                  ..maxFlingVelocity = widget.physics?.maxFlingVelocity;
-              },
-            ),
-          };
-          break;
-        case Axis.horizontal:
-          _gestureRecognizers = <Type, GestureRecognizerFactory>{
-            HorizontalDragGestureRecognizer:
-                GestureRecognizerFactoryWithHandlers<
-                    HorizontalDragGestureRecognizer>(
-              () => HorizontalDragGestureRecognizer(),
-              (HorizontalDragGestureRecognizer instance) {
-                instance
-                  ..onDown = _handleDragDown
-                  ..onStart = _handleDragStart
-                  ..onUpdate = _handleDragUpdate
-                  ..onEnd = _handleDragEnd
-                  ..onCancel = _handleDragCancel
-                  ..minFlingDistance = widget.physics?.minFlingDistance
-                  ..minFlingVelocity = widget.physics?.minFlingVelocity
-                  ..maxFlingVelocity = widget.physics?.maxFlingVelocity;
-              },
-            ),
-          };
-          break;
+        oldWidget.scrollDirection != widget.scrollDirection ||
+        oldWidget.physics.parent != widget.physics.parent) {
+      bool canMove = true;
+
+      ///user's physics
+      if (widget.physics.parent != null) {
+        canMove =
+            widget.physics.parent.shouldAcceptUserOffset(_testPageMetrics);
+      }
+      if (canMove) {
+        switch (widget.scrollDirection) {
+          case Axis.vertical:
+            _gestureRecognizers = <Type, GestureRecognizerFactory>{
+              VerticalDragGestureRecognizer:
+                  GestureRecognizerFactoryWithHandlers<
+                      VerticalDragGestureRecognizer>(
+                () => VerticalDragGestureRecognizer(),
+                (VerticalDragGestureRecognizer instance) {
+                  instance
+                    ..onDown = _handleDragDown
+                    ..onStart = _handleDragStart
+                    ..onUpdate = _handleDragUpdate
+                    ..onEnd = _handleDragEnd
+                    ..onCancel = _handleDragCancel
+                    ..minFlingDistance = widget.physics?.minFlingDistance
+                    ..minFlingVelocity = widget.physics?.minFlingVelocity
+                    ..maxFlingVelocity = widget.physics?.maxFlingVelocity;
+                },
+              ),
+            };
+            break;
+          case Axis.horizontal:
+            _gestureRecognizers = <Type, GestureRecognizerFactory>{
+              HorizontalDragGestureRecognizer:
+                  GestureRecognizerFactoryWithHandlers<
+                      HorizontalDragGestureRecognizer>(
+                () => HorizontalDragGestureRecognizer(),
+                (HorizontalDragGestureRecognizer instance) {
+                  instance
+                    ..onDown = _handleDragDown
+                    ..onStart = _handleDragStart
+                    ..onUpdate = _handleDragUpdate
+                    ..onEnd = _handleDragEnd
+                    ..onCancel = _handleDragCancel
+                    ..minFlingDistance = widget.physics?.minFlingDistance
+                    ..minFlingVelocity = widget.physics?.minFlingVelocity
+                    ..maxFlingVelocity = widget.physics?.maxFlingVelocity;
+                },
+              ),
+            };
+            break;
+        }
       }
     }
   }
@@ -276,7 +298,8 @@ class ExtendedImageGesturePageViewState
     final Offset delta = details.delta;
 
     if (extendedImageGestureState != null) {
-      final GestureDetails gestureDetails = extendedImageGestureState.gestureDetails;
+      final GestureDetails gestureDetails =
+          extendedImageGestureState.gestureDetails;
       if (gestureDetails != null) {
         final int currentPage = pageController.page.round();
 //        bool pageChanging = false;
@@ -326,7 +349,8 @@ class ExtendedImageGesturePageViewState
 
     DragEndDetails temp = details;
     if (extendedImageGestureState != null) {
-      final GestureDetails gestureDetails = extendedImageGestureState.gestureDetails;
+      final GestureDetails gestureDetails =
+          extendedImageGestureState.gestureDetails;
       final int currentPage = pageController.page.round();
       final bool movePage = pageController.page != currentPage;
 
