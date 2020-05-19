@@ -1,3 +1,8 @@
+## [0.7.4]
+
+* Issues:
+  Fix ScrollPhysics is not working for ExtendedImageGesturePageView
+  
 ## [0.7.3+1]
 
 * remove docs.
