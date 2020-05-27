@@ -41,5 +41,12 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSAppTransportSecurity</key>
+    <dict>
+	  <key>NSAllowsArbitraryLoads</key>
+      <true/>
+     </dict>
+     <key>NSPhotoLibraryUsageDescription</key>
+      <string>need Album permissions</string>
 </dict>
 </plist>
