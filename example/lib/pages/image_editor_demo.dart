@@ -332,7 +332,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     try {
       _cropping = true;
 
-      await showBusyingDialog();
+      //await showBusyingDialog();
 
       Uint8List fileData;
 
@@ -367,7 +367,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
   Uint8List _memoryImage;
   Future<void> _getImage() async {
-    _memoryImage = await pickImage();
+    _memoryImage = await pickImage(context);
     setState(() {
       editorKey.currentState.reset();
     });

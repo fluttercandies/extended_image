@@ -6,6 +6,7 @@ import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 import 'package:oktoast/oktoast.dart';
 
 import '../example_route.dart';
+import '../example_routes.dart' as example_routes;
 
 @FFRoute(
   name: 'fluttercandies://mainpage',
@@ -13,12 +14,14 @@ import '../example_route.dart';
 )
 class MainPage extends StatelessWidget {
   MainPage() {
+    routeNames.addAll(example_routes.routeNames);
     routeNames.remove('fluttercandies://picswiper');
     routeNames.remove('fluttercandies://mainpage');
     routes.addAll(routeNames
         .map<RouteResult>((String name) => getRouteResult(name: name)));
   }
   final List<RouteResult> routes = <RouteResult>[];
+  final List<String> routeNames=<String>[];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,7 +85,7 @@ class MainPage extends StatelessWidget {
                 },
               ));
         },
-        itemCount: routeNames.length,
+        itemCount: routes.length,
       ),
       floatingActionButton: kIsWeb
           ? null
