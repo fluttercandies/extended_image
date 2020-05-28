@@ -1,9 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 //import 'package:image_picker/image_picker.dart' as picker;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
-import 'package:image_picker_saver/image_picker_saver.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 Future<Uint8List> pickImage(BuildContext context) async {
@@ -31,7 +31,10 @@ Future<Uint8List> pickImage(BuildContext context) async {
 
 class ImageSaver {
   static Future<String> save(String name, Uint8List fileData) async {
-    return await ImagePickerSaver.saveFile(fileData: fileData);
+    final AssetEntity imageEntity =
+        await PhotoManager.editor.saveImage(fileData);
+    final File file = await imageEntity.file;
+    return file.path;
   }
 }
 
