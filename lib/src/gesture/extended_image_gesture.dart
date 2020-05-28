@@ -17,16 +17,18 @@ class ExtendedImageGesture extends StatefulWidget {
     this.extendedImageState, {
     this.imageBuilder,
     CanScaleImage canScaleImage,
-  }) : canScaleImage = canScaleImage ?? _defaultCanScaleImage;
+    Key key,
+  })  : canScaleImage = canScaleImage ?? _defaultCanScaleImage,
+        super(key: key);
   final ExtendedImageState extendedImageState;
   final ImageBuilderForGesture imageBuilder;
   final CanScaleImage canScaleImage;
   @override
-  _ExtendedImageGestureState createState() => _ExtendedImageGestureState();
+  ExtendedImageGestureState createState() => ExtendedImageGestureState();
 }
 
-class _ExtendedImageGestureState extends State<ExtendedImageGesture>
-    with TickerProviderStateMixin, ExtendedImageGestureState {
+class ExtendedImageGestureState extends State<ExtendedImageGesture>
+    with TickerProviderStateMixin {
   ///details for gesture
   GestureDetails _gestureDetails;
   Offset _normalizedOffset;
@@ -250,8 +252,9 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     //animate back to maxScale if gesture exceeded the maxScale specified
     if (doubleCompare(_gestureDetails.totalScale, _gestureConfig.maxScale) >
         0) {
-      final double velocity = (_gestureDetails.totalScale - _gestureConfig.maxScale) /
-          _gestureConfig.maxScale;
+      final double velocity =
+          (_gestureDetails.totalScale - _gestureConfig.maxScale) /
+              _gestureConfig.maxScale;
 
       _gestureAnimation.animationScale(
           _gestureDetails.totalScale, _gestureConfig.maxScale, velocity);
@@ -261,8 +264,9 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     //animate back to minScale if gesture fell smaller than the minScale specified
     if (doubleCompare(_gestureDetails.totalScale, _gestureConfig.minScale) <
         0) {
-      final double velocity = (_gestureConfig.minScale - _gestureDetails.totalScale) /
-          _gestureConfig.minScale;
+      final double velocity =
+          (_gestureConfig.minScale - _gestureDetails.totalScale) /
+              _gestureConfig.minScale;
 
       _gestureAnimation.animationScale(
           _gestureDetails.totalScale, _gestureConfig.minScale, velocity);
@@ -371,9 +375,7 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     return image;
   }
 
-  @override
   GestureDetails get gestureDetails => _gestureDetails;
-  @override
   set gestureDetails(GestureDetails value) {
     if (mounted) {
       setState(() {
@@ -382,10 +384,8 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     }
   }
 
-  @override
   GestureConfig get imageGestureConfig => _gestureConfig;
 
-  @override
   void handleDoubleTap({double scale, Offset doubleTapPosition}) {
     doubleTapPosition ??= _pointerDownPosition;
     scale ??= _gestureConfig.initialScale;
@@ -398,14 +398,28 @@ class _ExtendedImageGestureState extends State<ExtendedImageGesture>
     }
   }
 
-  @override
   Offset get pointerDownPosition => _pointerDownPosition;
 
-  @override
   void slide() {
     if (mounted) {
       setState(() {
         _gestureDetails.slidePageOffset = extendedImageSlidePageState?.offset;
+      });
+    }
+  }
+
+  void reset() {
+    if (mounted) {
+      setState(() {
+        _gestureConfig = widget
+                .extendedImageState.imageWidget.initGestureConfigHandler
+                ?.call(widget.extendedImageState) ??
+            GestureConfig();
+
+        _gestureDetails = GestureDetails(
+          totalScale: _gestureConfig.initialScale,
+          offset: Offset.zero,
+        )..initialAlignment = _gestureConfig.initialAlignment;
       });
     }
   }

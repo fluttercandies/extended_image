@@ -242,9 +242,11 @@ ExtendedImage
 
 | 参数                     | 描述                                                                  | 默认 |
 | ------------------------ | --------------------------------------------------------------------- | ---- |
-| mode                     | 图片模式，默认/手势/编辑 (none, gesture, editor)                        | none |
+| mode                     | 图片模式，默认/手势/编辑 (none, gesture, editor)                      | none |
 | initGestureConfigHandler | 手势配置的回调(图片加载完成时).你可以根据图片的信息比如宽高，来初始化 | -    |
 | onDoubleTap              | 支持手势的时候，双击回调                                              | -    |
+| extendedImageGestureKey  | 你可以通过这个key来手动控制缩放和平移                                 | -    |
+
 
 GestureConfig
 
@@ -348,7 +350,7 @@ ExtendedImage
 
 | 参数                     | 描述                                                                    | 默认 |
 | ------------------------ | ----------------------------------------------------------------------- | ---- |
-| mode                     | 图片模式，默认/手势/编辑 (none, gesture, editor)                          | none |
+| mode                     | 图片模式，默认/手势/编辑 (none, gesture, editor)                        | none |
 | initGestureConfigHandler | 编辑器配置的回调(图片加载完成时).你可以根据图片的信息比如宽高，来初始化 | -    |
 | extendedImageEditorKey   | key of ExtendedImageEditorState 用于裁剪旋转翻转                        | -    |
 

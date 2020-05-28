@@ -10,7 +10,7 @@ A powerful official extension library of image, which support placeholder(loadin
 
 ## Table of contents
 
-- [extended_image](#extendedimage)
+- [extended_image](#extended_image)
   - [Table of contents](#table-of-contents)
   - [Cache Network](#cache-network)
     - [Simple use](#simple-use)
@@ -240,9 +240,10 @@ ExtendedImage
 
 | parameter                | description                                                                     | default |
 | ------------------------ | ------------------------------------------------------------------------------- | ------- |
-| mode                     | image mode (none, gesture, editor)                                                | none    |
+| mode                     | image mode (none, gesture, editor)                                              | none    |
 | initGestureConfigHandler | init GestureConfig when image is ready，for example, base on image width/height | -       |
 | onDoubleTap              | call back of double tap under ExtendedImageMode.gesture                         | -       |
+| extendedImageGestureKey  | you can handle zoom/pan by using this key manually                              | -       |
 
 GestureConfig
 

@@ -55,6 +55,7 @@ class ExtendedImage extends StatefulWidget {
     this.initEditorConfigHandler,
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose = false,
+    this.extendedImageGestureKey,
   })  : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
@@ -108,9 +109,16 @@ class ExtendedImage extends StatefulWidget {
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose = false,
     this.handleLoadingProgress = false,
+    int cacheWidth,
+    int cacheHeight,
+    this.extendedImageGestureKey,
   })  :
         //assert(autoCancel != null),
-        image = ExtendedNetworkImageProvider(url,
+        image = ResizeImage.resizeIfNeeded(
+          cacheWidth,
+          cacheHeight,
+          ExtendedNetworkImageProvider(
+            url,
             scale: scale,
             headers: headers,
             cache: cache,
@@ -118,12 +126,16 @@ class ExtendedImage extends StatefulWidget {
 //            autoCancel: autoCancel,
             retries: retries,
             timeRetry: timeRetry,
-            timeLimit: timeLimit),
+            timeLimit: timeLimit,
+          ),
+        ),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
+        assert(cacheWidth == null || cacheWidth > 0),
+        assert(cacheHeight == null || cacheHeight > 0),
         super(key: key);
 
   /// Creates a widget that displays an [ImageStream] obtained from a [File].
@@ -180,6 +192,7 @@ class ExtendedImage extends StatefulWidget {
     this.initEditorConfigHandler,
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose = false,
+    this.extendedImageGestureKey,
   })  : image = ExtendedFileImageProvider(file, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -355,6 +368,7 @@ class ExtendedImage extends StatefulWidget {
     this.initEditorConfigHandler,
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose = false,
+    this.extendedImageGestureKey,
   })  : image = scale != null
             ? ExtendedExactAssetImageProvider(name,
                 bundle: bundle, scale: scale, package: package)
@@ -421,6 +435,7 @@ class ExtendedImage extends StatefulWidget {
     this.initEditorConfigHandler,
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose = false,
+    this.extendedImageGestureKey,
   })  : image = ExtendedMemoryImageProvider(bytes, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -431,6 +446,9 @@ class ExtendedImage extends StatefulWidget {
             : constraints,
         handleLoadingProgress = false,
         super(key: key);
+
+  /// key of ExtendedImageGesture
+  final Key extendedImageGestureKey;
 
   /// whether handle loading progress for network
   final bool handleLoadingProgress;
@@ -982,7 +1000,10 @@ class _ExtendedImageState extends State<ExtendedImage>
   Widget _getCompletedWidget() {
     Widget current;
     if (widget.mode == ExtendedImageMode.gesture) {
-      current = ExtendedImageGesture(this);
+      current = ExtendedImageGesture(
+        this,
+        key: widget.extendedImageGestureKey,
+      );
     } else if (widget.mode == ExtendedImageMode.editor) {
       current = ExtendedImageEditor(
         extendedImageState: this,

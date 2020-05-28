@@ -64,19 +64,6 @@ class Boundary {
 //  vertical
 //}
 
-abstract class ExtendedImageGestureState {
-  GestureDetails get gestureDetails;
-  set gestureDetails(GestureDetails value);
-
-  GestureConfig get imageGestureConfig;
-
-  Offset get pointerDownPosition;
-
-  void handleDoubleTap({double scale, Offset doubleTapPosition});
-
-  void slide();
-}
-
 class GestureDetails {
   GestureDetails(
       {this.offset,
