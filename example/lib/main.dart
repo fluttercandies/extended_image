@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
-import 'example_route.dart';
 import 'example_route_helper.dart';
 
 void main() => runApp(MyApp());
