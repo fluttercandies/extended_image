@@ -1,3 +1,9 @@
+## [0.9.0]
+
+* Features:
+  Add cacheHeight and cacheWidth params for ExtendedImage.network. 
+  Add Key extendedImageGestureKey for ExtendedImageGesture.
+
 ## [0.8.0]
 
 * Features:

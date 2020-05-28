@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 
 import 'editor/extended_image_editor_utils.dart';
+import 'gesture/extended_image_gesture.dart';
 import 'gesture/extended_image_slide_page.dart';
 
 ///

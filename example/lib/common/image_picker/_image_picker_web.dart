@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:html';
 
 import 'dart:typed_data';
+import 'package:flutter/widgets.dart';
 import 'package:js/js.dart';
 
 @JS()
@@ -18,7 +19,7 @@ class ImageSaver {
   }
 }
 
-Future<Uint8List> pickImage() async {
+Future<Uint8List> pickImage(BuildContext context) async {
   final Completer<Uint8List> completer = Completer<Uint8List>();
   final InputElement input = document.createElement('input') as InputElement;
 
