@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
+import 'example_route.dart';
 import 'example_route_helper.dart';
 
 void main() => runApp(MyApp());
@@ -54,7 +55,10 @@ class MyApp extends StatelessWidget {
         //   /fluttercandies://mainpage
         if (kIsWeb && settings.name.startsWith('/')) {
           return onGenerateRouteHelper(
-              settings.copyWith(name: settings.name.replaceFirst('/', '')));
+            settings.copyWith(name: settings.name.replaceFirst('/', '')),
+            notFoundFallback:
+                getRouteResult(name: 'fluttercandies://mainpage').widget,
+          );
         }
         return onGenerateRouteHelper(settings);
       },

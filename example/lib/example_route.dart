@@ -21,6 +21,7 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
   switch (name) {
     case 'fluttercandies://WaterfallFlowDemo':
       return RouteResult(
+        name: name,
         widget: WaterfallFlowDemo(),
         routeName: 'WaterfallFlow',
         description:
@@ -28,12 +29,14 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
       );
     case 'fluttercandies://customimage':
       return RouteResult(
+        name: name,
         widget: CustomImageDemo(),
         routeName: 'custom image load state',
         description: 'show image with loading,failed,animation state',
       );
     case 'fluttercandies://image':
       return RouteResult(
+        name: name,
         widget: ImageDemo(),
         routeName: 'image',
         description:
@@ -41,23 +44,27 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
       );
     case 'fluttercandies://imageeditor':
       return RouteResult(
+        name: name,
         widget: ImageEditorDemo(),
         routeName: 'image editor',
         description: 'crop,rotate and flip with image editor',
       );
     case 'fluttercandies://loadingprogress':
       return RouteResult(
+        name: name,
         widget: LoadingProgress(),
         routeName: 'loading progress',
         description: 'show how to make loading progress for network image',
       );
     case 'fluttercandies://mainpage':
       return RouteResult(
+        name: name,
         widget: MainPage(),
         routeName: 'MainPage',
       );
     case 'fluttercandies://paintimage':
       return RouteResult(
+        name: name,
         widget: PaintImageDemo(),
         routeName: 'paint image',
         description:
@@ -65,12 +72,14 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
       );
     case 'fluttercandies://photoview':
       return RouteResult(
+        name: name,
         widget: PhotoViewDemo(),
         routeName: 'photo view',
         description: 'show how to zoom/pan image in page view like WeChat',
       );
     case 'fluttercandies://picswiper':
       return RouteResult(
+        name: name,
         widget: PicSwiper(
           index: arguments['index'],
           pics: arguments['pics'],
@@ -82,17 +91,19 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
       );
     case 'fluttercandies://zoomimage':
       return RouteResult(
+        name: name,
         widget: ZoomImageDemo(),
         routeName: 'image zoom',
         description: 'show how to zoom/pan image',
       );
     default:
-      return const RouteResult();
+      return const RouteResult(name: 'flutterCandies://notfound');
   }
 }
 
 class RouteResult {
   const RouteResult({
+    @required this.name,
     this.widget,
     this.showStatusBar = true,
     this.routeName = '',
@@ -100,6 +111,11 @@ class RouteResult {
     this.description = '',
     this.exts,
   });
+
+  /// The name of the route (e.g., "/settings").
+  ///
+  /// If null, the route is anonymous.
+  final String name;
 
   /// The Widget return base on route
   final Widget widget;
