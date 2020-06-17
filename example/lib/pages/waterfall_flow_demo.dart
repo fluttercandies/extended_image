@@ -18,7 +18,7 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
   TuChongRepository listSourceRepository;
   @override
   void initState() {
-    listSourceRepository =  TuChongRepository();
+    listSourceRepository = TuChongRepository();
     super.initState();
   }
 
@@ -38,11 +38,13 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
           ),
           Expanded(child: LayoutBuilder(
             builder: (BuildContext c, BoxConstraints data) {
-              final int crossAxisCount =
-                  max(data.maxWidth ~/ (ScreenUtil.instance.screenWidthDp / 2.0), 2);
+              final int crossAxisCount = max(
+                  data.maxWidth ~/ (ScreenUtil.instance.screenWidthDp / 2.0),
+                  2);
               return LoadingMoreList<TuChongItem>(
                 ListConfig<TuChongItem>(
-                  waterfallFlowDelegate: WaterfallFlowDelegate(
+                  extendedListDelegate:
+                      SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
                     crossAxisCount: crossAxisCount,
                     crossAxisSpacing: 5,
                     mainAxisSpacing: 5,
