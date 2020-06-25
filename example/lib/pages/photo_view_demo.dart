@@ -54,7 +54,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
 
   @override
   Widget build(BuildContext context) {
-    final  double margin = ScreenUtil.instance.setWidth(22);
+    final double margin = ScreenUtil.instance.setWidth(22);
     final Widget result = Material(
       child: Column(
         children: <Widget>[
@@ -81,13 +81,15 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                       physics: const ClampingScrollPhysics(),
                       slivers: <Widget>[
                         SliverToBoxAdapter(
-                          child: PullToRefreshContainer((PullToRefreshScrollNotificationInfo info) {
+                          child: PullToRefreshContainer(
+                              (PullToRefreshScrollNotificationInfo info) {
                             return PullToRefreshHeader(info, dateTimeNow);
                           }),
                         ),
                         LoadingMoreSliverList<TuChongItem>(
                           SliverListConfig<TuChongItem>(
-                            extendedListDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
+                            extendedListDelegate:
+                                SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
                               crossAxisCount: crossAxisCount,
                               crossAxisSpacing: 5,
                               mainAxisSpacing: 5,
@@ -103,7 +105,8 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                             //     }
                             //   });
                             // },
-                            itemBuilder: (BuildContext context, TuChongItem item, int index) {
+                            itemBuilder: (BuildContext context,
+                                TuChongItem item, int index) {
                               String title = item.site.name;
                               if (title == null || title == '') {
                                 title = 'Image$index';
@@ -132,7 +135,8 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                               color:
                                                   Colors.grey.withOpacity(0.4),
                                               width: 1.0),
-                                          loadStateChanged: (ExtendedImageState state) {
+                                          loadStateChanged:
+                                              (ExtendedImageState state) {
                                             if (state.extendedImageLoadState ==
                                                 LoadState.completed) {
                                               return null;
@@ -161,10 +165,14 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                     child: ExtendedText(
                                       content,
                                       onSpecialTextTap: (dynamic parameter) {
-                                        if (parameter.toString().startsWith('\$')) {
+                                        if (parameter
+                                            .toString()
+                                            .startsWith('\$')) {
                                           launch(
                                               'https://github.com/fluttercandies');
-                                        } else if (parameter.toString().startsWith('@')) {
+                                        } else if (parameter
+                                            .toString()
+                                            .startsWith('@')) {
                                           launch('mailto:zmtzawqlp@live.com');
                                         }
                                       },
@@ -174,23 +182,25 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                       style: TextStyle(
                                           fontSize: 14, color: Colors.grey),
                                       maxLines: 10,
-                                      overFlowTextSpan: kIsWeb
+                                      overFlowWidget: kIsWeb
                                           ? null
-                                          : OverFlowTextSpan(
-                                              children: <TextSpan>[
-                                                const TextSpan(text: '  \u2026  '),
-                                                TextSpan(
-                                                    text: 'more detail',
-                                                    style: TextStyle(
-                                                      color: Colors.blue,
-                                                    ),
-                                                    recognizer:
-                                                        TapGestureRecognizer()
-                                                          ..onTap = () {
-                                                            launch(
-                                                                'https://github.com/fluttercandies/extended_text');
-                                                          })
-                                              ],
+                                          : TextOverflowWidget(
+                                              //maxHeight: double.infinity,
+                                              //align: TextOverflowAlign.right,
+                                              //fixedOffset: Offset.zero,
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  const Text('\u2026 '),
+                                                  RaisedButton(
+                                                    child: const Text('more'),
+                                                    onPressed: () {
+                                                      launch(
+                                                          'https://github.com/fluttercandies/extended_text');
+                                                    },
+                                                  )
+                                                ],
+                                              ),
                                             ),
                                       selectionEnabled: true,
                                       textSelectionControls:
@@ -262,7 +272,6 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
       },
     );
   }
-
 
   Future<bool> onRefresh() {
     return listSourceRepository.refresh().whenComplete(() {
