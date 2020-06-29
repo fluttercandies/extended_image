@@ -16,7 +16,7 @@ dependencies:
   flutter:
     sdk: flutter
   loading_more_list: ^3.0.0
-  extended_text: any
+  extended_text: ^3.0.0
   # image_picker_saver: 0.1.0
   # image_picker: 0.4.12+1
   # image_picker: 0.6.1+4

@@ -182,7 +182,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                       style: TextStyle(
                                           fontSize: 14, color: Colors.grey),
                                       maxLines: 10,
-                                      overFlowWidget: kIsWeb
+                                      overflowWidget: kIsWeb
                                           ? null
                                           : TextOverflowWidget(
                                               //maxHeight: double.infinity,
