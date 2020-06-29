@@ -1,0 +1,1 @@
+{"_info":"// This is a generated file; do not edit or check into version control.","dependencyGraph":[{"name":"path_provider","dependencies":["path_provider_macos","path_provider_linux"]},{"name":"path_provider_linux","dependencies":[]},{"name":"path_provider_macos","dependencies":[]}]}

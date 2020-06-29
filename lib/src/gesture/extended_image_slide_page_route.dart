@@ -344,10 +344,8 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
     final bool linearTransition = isPopGestureInProgress(route);
     if (route.fullscreenDialog) {
       return CupertinoFullscreenDialogTransition(
-        primaryRouteAnimation: animation,
-        secondaryRouteAnimation: secondaryAnimation,
+        animation: animation,
         child: child,
-        linearTransition: linearTransition,
       );
     } else {
       return CupertinoPageTransition(
