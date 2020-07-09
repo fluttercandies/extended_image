@@ -934,3 +934,7 @@ ExtendedImage
 | enableMemoryCache           | whether cache in PaintingBinding.instance.imageCache)                                          | true    |
 | clearMemoryCacheIfFailed    | when failed to load image, whether clear memory cache.if true, image will reload in next time. | true    |
 | clearMemoryCacheWhenDispose | when image is removed from the tree permanently, whether clear memory cache.                   | false   |
+
+## ☕️Buy me a coffee
+
+![img](http://zmtzawqlp.gitee.io/my_images/images/qrcode.png)
