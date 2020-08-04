@@ -1,11 +1,12 @@
 name: extended_image
 description: Official extension image, support placeholder(loading)/ failed state, cache network, zoom/pan, photo view, slide out page, editor(crop,rotate,flip), painting etc.
-version: 0.9.0
+version: 1.0.0
 author: zmtzawqlp <zmtzawqlp@live.com>
 homepage: https://github.com/fluttercandies/extended_image
 
 environment:
   sdk: ">=2.6.0 <3.0.0"
+  flutter: ">=1.17.0"
 
 dependencies:
   flutter:

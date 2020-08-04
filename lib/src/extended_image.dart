@@ -680,12 +680,14 @@ class _ExtendedImageState extends State<ExtendedImage>
   ImageChunkEvent _loadingProgress;
   int _frameNumber;
   bool _wasSynchronouslyLoaded;
+  DisposableBuildContext<State<ExtendedImage>> _scrollAwareContext;
 
   @override
   void initState() {
     returnLoadStateChangedWidget = false;
     _loadState = LoadState.loading;
     WidgetsBinding.instance.addObserver(this);
+    _scrollAwareContext = DisposableBuildContext<State<ExtendedImage>>(this);
     super.initState();
   }
 
@@ -749,7 +751,12 @@ class _ExtendedImageState extends State<ExtendedImage>
       widget.image.evict();
     }
 
-    final ImageStream newStream = widget.image.resolve(
+    final ScrollAwareImageProvider provider = ScrollAwareImageProvider<dynamic>(
+      context: _scrollAwareContext,
+      imageProvider: widget.image,
+    );
+
+    final ImageStream newStream = provider.resolve(
         createLocalImageConfiguration(context,
             size: widget.width != null && widget.height != null
                 ? Size(widget.width, widget.height)
@@ -894,6 +901,7 @@ class _ExtendedImageState extends State<ExtendedImage>
     }
     WidgetsBinding.instance.removeObserver(this);
     _stopListeningToStream();
+    _scrollAwareContext.dispose();
     //_cancelNetworkImageRequest(widget.image);
     super.dispose();
   }

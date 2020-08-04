@@ -1,3 +1,14 @@
+
+
+## [1.0.0]
+
+* Improve:
+
+  Merge from [Defer image decoding when scrolling fast](https://github.com/flutter/flutter/pull/49389).
+  
+*  Flutter sdk minimum version limit to 1.17.0.
+    
+
 ## [0.9.0]
 
 * Features:
@@ -98,7 +109,7 @@
   Add InitCropRectType(imageRect,layoutRect) for EditorConfig to define init crop rect base on initial image rect or image layout rect.
 * Breaking Change:
   Make sure the image is all painted to crop,the fit of image must be BoxFit.contain.
-    
+  
 ## [0.6.1]
 
 * Issues:
