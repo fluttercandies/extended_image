@@ -28,7 +28,8 @@ class MainPage extends StatelessWidget {
             .where((RouteResult element) => element.exts != null)
             .map<DemoRouteResult>((RouteResult e) => DemoRouteResult(e))
             .toList()
-              ..sort((DemoRouteResult a, DemoRouteResult b) => b.group.compareTo(a.group)),
+              ..sort((DemoRouteResult a, DemoRouteResult b) =>
+                  b.group.compareTo(a.group)),
         (DemoRouteResult x) => x.group));
   }
   final Map<String, List<DemoRouteResult>> routesGroup =
@@ -139,7 +140,9 @@ class MainPage extends StatelessWidget {
 )
 class DemoGroupPage extends StatelessWidget {
   DemoGroupPage({MapEntry<String, List<DemoRouteResult>> keyValue})
-      : routes = keyValue.value..sort((DemoRouteResult a, DemoRouteResult b) => a.order.compareTo(b.order)),
+      : routes = keyValue.value
+          ..sort((DemoRouteResult a, DemoRouteResult b) =>
+              a.order.compareTo(b.order)),
         group = keyValue.key;
   final List<DemoRouteResult> routes;
   final String group;
