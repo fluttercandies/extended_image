@@ -1,16 +1,21 @@
 import 'dart:math';
 import 'dart:ui' as ui show Image;
+import 'package:example/common/utils/screen_util.dart';
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
 import 'package:ff_annotation_route/ff_annotation_route.dart';
-import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 
 @FFRoute(
-    name: 'fluttercandies://paintimage',
-    routeName: 'paint image',
-    description: 'show how to paint any thing before/after image is painted')
+  name: 'fluttercandies://paintimage',
+  routeName: 'Paint image',
+  description: 'Paint any thing before or after raw image is painted.',
+  exts: <String, dynamic>{
+    'group': 'Simple',
+    'order': 3,
+  },
+)
 class PaintImageDemo extends StatefulWidget {
   @override
   _PaintImageDemoState createState() => _PaintImageDemoState();
@@ -33,7 +38,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
           AppBar(
             title: const Text('PaintImageDemo'),
           ),
-          Text(
+          const Text(
             'you can paint anything before or after Image paint',
             style: TextStyle(color: Colors.grey),
           ),
@@ -85,35 +90,12 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                       canvas.restore();
                     }
                   } else if (paintType == PaintType.PaintHeart) {
-                    // canvas.drawPath(
-                    //     clipheart(rect, canvas),
-                    //     Paint()
-                    //       ..colorFilter = ColorFilter.mode(
-                    //           Color(0x55ea5504), BlendMode.srcIn)
-                    //       ..isAntiAlias = false
-                    //       ..filterQuality = FilterQuality.low);
                     canvas.drawPath(
                         clipheart(rect, canvas),
                         Paint()
-                          // ..colorFilter = ColorFilter.mode(
-                          //     Color(0x55ea5504), BlendMode.srcIn)
                           ..color = const Color(0x55ea5504).withOpacity(0.2)
                           ..isAntiAlias = false
                           ..filterQuality = FilterQuality.low);
-
-//                    canvas.drawImageRect(
-//                        image,
-//                        Rect.fromLTWH(0.0, y, imageWidth, imageHeight - y),
-//                        Rect.fromLTWH(
-//                            rect.left,
-//                            rect.top + y / imageHeight * size.height,
-//                            size.width,
-//                            (imageHeight - y) / imageHeight * size.height),
-//                        Paint()
-//                          ..colorFilter = ColorFilter.mode(
-//                              Color(0x22ea5504), BlendMode.srcIn)
-//                          ..isAntiAlias = false
-//                          ..filterQuality = FilterQuality.low);
                   }
                 },
               ),
@@ -134,7 +116,6 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
 
     for (double t = 0.0; t <= 2 * pi; t += dt) {
       final Offset oo = Offset(doX(t), doY(t));
-      // print(oo);
       points.add(oo);
     }
     double wxmin = points[0].dx;
@@ -171,9 +152,6 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
       points1.add(Offset(left + point.dx * xx, top + -point.dy * xx));
     }
 
-//    canvas.drawPath(
-//        Path()..addPolygon(points1, true), Paint()..color = Colors.red);
-
     return Path()..addPolygon(points1, false);
   }
 
@@ -186,23 +164,6 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
   double doY(double t) {
     return 13 * cos(t) - 5 * cos(2 * t) - 2 * cos(3 * t) - cos(4 * t);
   }
-
-//  Path pathHeart(Rect rect) {
-//    final double width = rect.width;
-//    final double height = rect.height;
-//    Path path = new Path();
-//    path.moveTo(width / 2, height / 4);
-//    path.cubicTo((width * 6) / 7, height / 9, (width * 13) / 13,
-//        (height * 2) / 5, width / 2, (height * 7) / 12);
-//    //canvas.drawPath(path, _paint);
-//
-//    Path path2 = new Path();
-//    path2.moveTo(width / 2, height / 4);
-//    path2.cubicTo(width / 7, height / 9, width / 21, (height * 2) / 5,
-//        width / 2, (height * 7) / 12);
-//    //canvas.drawPath(path2, _paint);
-//    //path.
-//  }
 }
 
 enum PaintType { ClipHeart, PaintHeart }

@@ -5,6 +5,8 @@
 const List<String> routeNames = <String>[
   'fluttercandies://WaterfallFlowDemo',
   'fluttercandies://customimage',
+  'fluttercandies://demogrouppage',
+  'fluttercandies://extendedImageGesturePageView',
   'fluttercandies://image',
   'fluttercandies://imageeditor',
   'fluttercandies://loadingprogress',
@@ -12,91 +14,134 @@ const List<String> routeNames = <String>[
   'fluttercandies://paintimage',
   'fluttercandies://photoview',
   'fluttercandies://picswiper',
-  'fluttercandies://zoomimage'
+  'fluttercandies://simpleimageeditor',
+  'fluttercandies://slidepage',
+  'fluttercandies://slidepageitem',
+  'fluttercandies://zoomimage',
 ];
 
 class Routes {
   const Routes._();
 
-  /// "show how to build loading more WaterfallFlow with ExtendedImage."
+  /// 'WaterfallFlow with ExtendedImage.'
   ///
-  /// [name] : fluttercandies://WaterfallFlowDemo
+  /// [name] : 'fluttercandies://WaterfallFlowDemo'
   ///
-  /// [routeName] : WaterfallFlow
+  /// [routeName] : 'WaterfallFlow'
   ///
-  /// [description] : "show how to build loading more WaterfallFlow with ExtendedImage."
+  /// [description] : 'WaterfallFlow with ExtendedImage.'
+  ///
+  /// [exts] : {group: Complex, order: 0}
   static const String fluttercandiesWaterfallFlowDemo =
       'fluttercandies://WaterfallFlowDemo';
 
-  /// "show image with loading,failed,animation state"
+  /// 'Custom state for loading, failed and completed.'
   ///
-  /// [name] : fluttercandies://customimage
+  /// [name] : 'fluttercandies://customimage'
   ///
-  /// [routeName] : custom image load state
+  /// [routeName] : 'Custom load state'
   ///
-  /// [description] : "show image with loading,failed,animation state"
+  /// [description] : 'Custom state for loading, failed and completed.'
+  ///
+  /// [exts] : {group: Simple, order: 1}
   static const String fluttercandiesCustomimage =
       'fluttercandies://customimage';
 
-  /// "cache image,save to photo Library,image border,shape,borderRadius"
+  /// 'DemoGroupPage'
   ///
-  /// [name] : fluttercandies://image
+  /// [name] : 'fluttercandies://demogrouppage'
   ///
-  /// [routeName] : image
+  /// [routeName] : 'DemoGroupPage'
   ///
-  /// [description] : "cache image,save to photo Library,image border,shape,borderRadius"
+  /// [arguments] : [keyValue]
+  ///
+  /// [argumentTypes] : [List<DemoRouteResult>]
+  static const String fluttercandiesDemogrouppage =
+      'fluttercandies://demogrouppage';
+
+  /// 'Simple demo for ExtendedImageGesturePageView.'
+  ///
+  /// [name] : 'fluttercandies://extendedImageGesturePageView'
+  ///
+  /// [routeName] : 'ExtendedImageGesturePageView'
+  ///
+  /// [description] : 'Simple demo for ExtendedImageGesturePageView.'
+  ///
+  /// [showStatusBar] : false
+  ///
+  /// [exts] : {group: Simple, order: 7}
+  static const String fluttercandiesExtendedImageGesturePageView =
+      'fluttercandies://extendedImageGesturePageView';
+
+  /// 'Cached image with border,shape,borderRadius.'
+  ///
+  /// [name] : 'fluttercandies://image'
+  ///
+  /// [routeName] : 'Image'
+  ///
+  /// [description] : 'Cached image with border,shape,borderRadius.'
+  ///
+  /// [exts] : {group: Simple, order: 0}
   static const String fluttercandiesImage = 'fluttercandies://image';
 
-  /// "crop,rotate and flip with image editor"
+  /// 'Crop,rotate and flip with image editor.'
   ///
-  /// [name] : fluttercandies://imageeditor
+  /// [name] : 'fluttercandies://imageeditor'
   ///
-  /// [routeName] : image editor
+  /// [routeName] : 'ImageEditor'
   ///
-  /// [description] : "crop,rotate and flip with image editor"
+  /// [description] : 'Crop,rotate and flip with image editor.'
+  ///
+  /// [exts] : {group: Complex, order: 1}
   static const String fluttercandiesImageeditor =
       'fluttercandies://imageeditor';
 
-  /// "show how to make loading progress for network image"
+  /// 'Loading progress for network image.'
   ///
-  /// [name] : fluttercandies://loadingprogress
+  /// [name] : 'fluttercandies://loadingprogress'
   ///
-  /// [routeName] : loading progress
+  /// [routeName] : 'Loading progress'
   ///
-  /// [description] : "show how to make loading progress for network image"
+  /// [description] : 'Loading progress for network image.'
+  ///
+  /// [exts] : {group: Simple, order: 2}
   static const String fluttercandiesLoadingprogress =
       'fluttercandies://loadingprogress';
 
-  /// MainPage
+  /// 'MainPage'
   ///
-  /// [name] : fluttercandies://mainpage
+  /// [name] : 'fluttercandies://mainpage'
   ///
-  /// [routeName] : MainPage
+  /// [routeName] : 'MainPage'
   static const String fluttercandiesMainpage = 'fluttercandies://mainpage';
 
-  /// "show how to paint any thing before/after image is painted"
+  /// 'Paint any thing before or after raw image is painted.'
   ///
-  /// [name] : fluttercandies://paintimage
+  /// [name] : 'fluttercandies://paintimage'
   ///
-  /// [routeName] : paint image
+  /// [routeName] : 'Paint image'
   ///
-  /// [description] : "show how to paint any thing before/after image is painted"
+  /// [description] : 'Paint any thing before or after raw image is painted.'
+  ///
+  /// [exts] : {group: Simple, order: 3}
   static const String fluttercandiesPaintimage = 'fluttercandies://paintimage';
 
-  /// "show how to zoom/pan image in page view like WeChat"
+  /// 'Complex demo for photo view.'
   ///
-  /// [name] : fluttercandies://photoview
+  /// [name] : 'fluttercandies://photoview'
   ///
-  /// [routeName] : photo view
+  /// [routeName] : 'PhotoView'
   ///
-  /// [description] : "show how to zoom/pan image in page view like WeChat"
+  /// [description] : 'Complex demo for photo view.'
+  ///
+  /// [exts] : {group: Complex, order: 2}
   static const String fluttercandiesPhotoview = 'fluttercandies://photoview';
 
-  /// PicSwiper
+  /// 'PicSwiper'
   ///
-  /// [name] : fluttercandies://picswiper
+  /// [name] : 'fluttercandies://picswiper'
   ///
-  /// [routeName] : PicSwiper
+  /// [routeName] : 'PicSwiper'
   ///
   /// [arguments] : [index, pics, tuChongItem]
   ///
@@ -105,12 +150,53 @@ class Routes {
   /// [pageRouteType] : PageRouteType.transparent
   static const String fluttercandiesPicswiper = 'fluttercandies://picswiper';
 
-  /// "show how to zoom/pan image"
+  /// 'Crop with image editor.'
   ///
-  /// [name] : fluttercandies://zoomimage
+  /// [name] : 'fluttercandies://simpleimageeditor'
   ///
-  /// [routeName] : image zoom
+  /// [routeName] : 'ImageEditor'
   ///
-  /// [description] : "show how to zoom/pan image"
+  /// [description] : 'Crop with image editor.'
+  ///
+  /// [exts] : {group: Simple, order: 6}
+  static const String fluttercandiesSimpleimageeditor =
+      'fluttercandies://simpleimageeditor';
+
+  /// 'Simple demo for.'
+  ///
+  /// [name] : 'fluttercandies://slidepage'
+  ///
+  /// [routeName] : 'SlidePage'
+  ///
+  /// [description] : 'Simple demo for.'
+  ///
+  /// [exts] : {group: Simple, order: 5}
+  static const String fluttercandiesSlidepage = 'fluttercandies://slidepage';
+
+  /// 'Simple demo for.'
+  ///
+  /// [name] : 'fluttercandies://slidepageitem'
+  ///
+  /// [routeName] : 'SlidePageItem'
+  ///
+  /// [description] : 'Simple demo for.'
+  ///
+  /// [arguments] : [url]
+  ///
+  /// [argumentTypes] : [String]
+  ///
+  /// [pageRouteType] : PageRouteType.transparent
+  static const String fluttercandiesSlidepageitem =
+      'fluttercandies://slidepageitem';
+
+  /// 'Zoom and Pan.'
+  ///
+  /// [name] : 'fluttercandies://zoomimage'
+  ///
+  /// [routeName] : 'ImageZoom'
+  ///
+  /// [description] : 'Zoom and Pan.'
+  ///
+  /// [exts] : {group: Simple, order: 4}
   static const String fluttercandiesZoomimage = 'fluttercandies://zoomimage';
 }

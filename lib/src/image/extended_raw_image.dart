@@ -37,11 +37,18 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
     this.afterPaintImage,
     this.gestureDetails,
     this.editActionDetails,
-  })  : assert(scale != null),
+    this.isAntiAlias = false,
+  })  : assert(isAntiAlias != null),
+        assert(scale != null),
         assert(alignment != null),
         assert(repeat != null),
         assert(matchTextDirection != null),
         super(key: key);
+
+  /// Whether to paint the image with anti-aliasing.
+  ///
+  /// Anti-aliasing alleviates the sawtooth artifact when the image is rotated.
+  final bool isAntiAlias;
 
   /// details about edit
   final EditActionDetails editActionDetails;
@@ -176,27 +183,29 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
     assert((!matchTextDirection && alignment is Alignment) ||
         debugCheckHasDirectionality(context));
     return ExtendedRenderImage(
-        image: image,
-        width: width,
-        height: height,
-        scale: scale,
-        color: color,
-        colorBlendMode: colorBlendMode,
-        fit: fit,
-        alignment: alignment,
-        repeat: repeat,
-        centerSlice: centerSlice,
-        matchTextDirection: matchTextDirection,
-        textDirection: matchTextDirection || alignment is! Alignment
-            ? Directionality.of(context)
-            : null,
-        invertColors: invertColors,
-        filterQuality: filterQuality,
-        sourceRect: sourceRect,
-        beforePaintImage: beforePaintImage,
-        afterPaintImage: afterPaintImage,
-        gestureDetails: gestureDetails,
-        editActionDetails: editActionDetails);
+      image: image,
+      width: width,
+      height: height,
+      scale: scale,
+      color: color,
+      colorBlendMode: colorBlendMode,
+      fit: fit,
+      alignment: alignment,
+      repeat: repeat,
+      centerSlice: centerSlice,
+      matchTextDirection: matchTextDirection,
+      textDirection: matchTextDirection || alignment is! Alignment
+          ? Directionality.of(context)
+          : null,
+      invertColors: invertColors,
+      filterQuality: filterQuality,
+      sourceRect: sourceRect,
+      beforePaintImage: beforePaintImage,
+      afterPaintImage: afterPaintImage,
+      gestureDetails: gestureDetails,
+      editActionDetails: editActionDetails,
+      isAntiAlias: isAntiAlias,
+    );
   }
 
   @override
@@ -223,7 +232,8 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
       ..beforePaintImage = beforePaintImage
       ..sourceRect = sourceRect
       ..gestureDetails = gestureDetails
-      ..editActionDetails = editActionDetails;
+      ..editActionDetails = editActionDetails
+      ..isAntiAlias = isAntiAlias;
   }
 
   @override

@@ -3,7 +3,6 @@ import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/gesture/extended_image_gesture_utils.dart';
 import 'package:flutter/material.dart';
 
-
 import 'editor/extended_image_editor_utils.dart';
 import 'gesture/extended_image_gesture.dart';
 import 'gesture/extended_image_slide_page.dart';
@@ -91,9 +90,11 @@ typedef EditorMaskColorHandler = Color Function(
 ///so that Hero animation wouldn't be strange when pop page
 typedef HeroBuilderForSlidingPage = Widget Function(Widget widget);
 
-
 ///build image for gesture, we can handle custom Widget about gesture
 typedef ImageBuilderForGesture = Widget Function(Widget image);
 
 ///whether should scale image
 typedef CanScaleImage = bool Function(GestureDetails details);
+
+///Call when GestureDetails is changed
+typedef GestureDetailsIsChanged = void Function(GestureDetails details);

@@ -541,7 +541,7 @@ output is raw image data, you can use it to save or any other thing.
   );
 ```
 
-[more detail](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_editor_helper.dart)
+[more detail](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/utils/crop_editor_helper.dart)
 
 ## Photo View
 
@@ -722,9 +722,9 @@ you should push page with TransparentMaterialPageRoute/TransparentCupertinoPageR
   );
 ```
 
-[Slide Out Page Demo Code 1](https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/crop_image.dart)
+[Slide Out Page Demo Code 1](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/crop_image.dart)
 
-[Slide Out Page Demo Code 2](https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/pic_swiper.dart)
+[Slide Out Page Demo Code 2](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/pic_swiper.dart)
 
 ## Border BorderRadius Shape
 
@@ -865,8 +865,8 @@ ExtendedImage
   );
 ```
 
-see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/paint_image_demo.dart)
-and [push to refresh header which is used in crop image demo]https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/push_to_refresh_header.dart)
+see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/simple/paint_image_demo.dart)
+and [push to refresh header which is used in crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/push_to_refresh_header.dart)
 
 ## WaterfallFlow
 
@@ -934,7 +934,3 @@ ExtendedImage
 | enableMemoryCache           | whether cache in PaintingBinding.instance.imageCache)                                          | true    |
 | clearMemoryCacheIfFailed    | when failed to load image, whether clear memory cache.if true, image will reload in next time. | true    |
 | clearMemoryCacheWhenDispose | when image is removed from the tree permanently, whether clear memory cache.                   | false   |
-
-## ☕️Buy me a coffee
-
-![img](http://zmtzawqlp.gitee.io/my_images/images/qrcode.png)

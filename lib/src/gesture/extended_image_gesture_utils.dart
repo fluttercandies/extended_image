@@ -371,6 +371,7 @@ class GestureConfig {
     double animationMinScale,
     double animationMaxScale,
     this.initialAlignment = InitialAlignment.center,
+    this.gestureDetailsIsChanged,
   })  : minScale = minScale ??= 0.8,
         maxScale = maxScale ??= 5.0,
         speed = speed ??= 1.0,
@@ -387,6 +388,10 @@ class GestureConfig {
         assert(minScale <= initialScale && initialScale <= maxScale),
         assert(speed > 0),
         assert(inertialSpeed > 0);
+
+  ///Call when GestureDetails is changed
+  final GestureDetailsIsChanged gestureDetailsIsChanged;
+
   //the min scale for zooming then animation back to minScale when scale end
   final double animationMinScale;
   //min scale

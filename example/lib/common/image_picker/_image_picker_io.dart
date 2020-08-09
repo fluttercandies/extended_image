@@ -3,7 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 //import 'package:image_picker/image_picker.dart' as picker;
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 Future<Uint8List> pickImage(BuildContext context) async {
@@ -38,7 +38,7 @@ class ImageSaver {
   }
 }
 
-class PickerTextDelegate implements TextDelegate {
+class PickerTextDelegate implements AssetsPickerTextDelegate {
   factory PickerTextDelegate() => _instance;
 
   PickerTextDelegate._internal();

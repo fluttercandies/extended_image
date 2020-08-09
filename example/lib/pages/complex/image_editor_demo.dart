@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:example/common/common_widget.dart';
-import 'package:example/common/crop_editor_helper.dart';
 import 'package:example/common/image_picker/image_picker.dart';
+import 'package:example/common/utils/crop_editor_helper.dart';
+import 'package:example/common/utils/screen_util.dart';
+import 'package:example/common/widget/common_widget.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
-import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -18,9 +18,14 @@ import 'package:url_launcher/url_launcher.dart';
 ///  create by zmtzawqlp on 2019/8/22
 ///
 @FFRoute(
-    name: 'fluttercandies://imageeditor',
-    routeName: 'image editor',
-    description: 'crop,rotate and flip with image editor')
+  name: 'fluttercandies://imageeditor',
+  routeName: 'ImageEditor',
+  description: 'Crop,rotate and flip with image editor.',
+  exts: <String, dynamic>{
+    'group': 'Complex',
+    'order': 1,
+  },
+)
 class ImageEditorDemo extends StatefulWidget {
   @override
   _ImageEditorDemoState createState() => _ImageEditorDemoState();
@@ -53,11 +58,11 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         title: const Text('image editor demo'),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.photo_library),
+            icon: const Icon(Icons.photo_library),
             onPressed: _getImage,
           ),
           IconButton(
-            icon: Icon(Icons.done),
+            icon: const Icon(Icons.done),
             onPressed: () {
               if (kIsWeb) {
                 _cropImage(false);
@@ -111,7 +116,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               FlatButtonWithIcon(
-                icon: Icon(Icons.crop),
+                icon: const Icon(Icons.crop),
                 label: const Text(
                   'Crop',
                   style: TextStyle(fontSize: 10.0),
@@ -158,7 +163,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 },
               ),
               FlatButtonWithIcon(
-                icon: Icon(Icons.flip),
+                icon: const Icon(Icons.flip),
                 label: const Text(
                   'Flip',
                   style: TextStyle(fontSize: 10.0),
@@ -169,7 +174,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 },
               ),
               FlatButtonWithIcon(
-                icon: Icon(Icons.rotate_left),
+                icon: const Icon(Icons.rotate_left),
                 label: const Text(
                   'Rotate Left',
                   style: TextStyle(fontSize: 8.0),
@@ -180,7 +185,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 },
               ),
               FlatButtonWithIcon(
-                icon: Icon(Icons.rotate_right),
+                icon: const Icon(Icons.rotate_right),
                 label: const Text(
                   'Rotate Right',
                   style: TextStyle(fontSize: 8.0),
@@ -191,7 +196,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 },
               ),
               FlatButtonWithIcon(
-                icon: Icon(Icons.restore),
+                icon: const Icon(Icons.restore),
                 label: const Text(
                   'Reset',
                   style: TextStyle(fontSize: 10.0),
@@ -226,7 +231,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Text(
+                        const Text(
                           'select library to crop',
                           style: TextStyle(
                               fontSize: 24.0, fontWeight: FontWeight.bold),
@@ -239,7 +244,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             children: <TextSpan>[
                               TextSpan(
                                   text: 'Image',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.blue,
                                       decorationStyle:
                                           TextDecorationStyle.solid,
@@ -260,7 +265,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             children: <TextSpan>[
                               TextSpan(
                                   text: 'ImageEditor',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.blue,
                                       decorationStyle:
                                           TextDecorationStyle.solid,
@@ -284,7 +289,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
                             OutlineButton(
-                              child: Text(
+                              child: const Text(
                                 'Dart',
                                 style: TextStyle(
                                   color: Colors.blue,
@@ -298,7 +303,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                                   borderRadius: BorderRadius.circular(10.0)),
                             ),
                             OutlineButton(
-                              child: Text(
+                              child: const Text(
                                 'Native',
                                 style: TextStyle(
                                   color: Colors.blue,
@@ -338,8 +343,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
       /// native library
       if (useNative) {
-        fileData =
-            Uint8List.fromList(await cropImageDataWithNativeLibrary(state: editorKey.currentState));
+        fileData = Uint8List.fromList(await cropImageDataWithNativeLibrary(
+            state: editorKey.currentState));
       } else {
         ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
         ///it will block showBusyingDialog
@@ -347,8 +352,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         //await Future.delayed(Duration(milliseconds: 200));
 
         ///if you don't want to block ui, use compute/isolate,but it costs more time.
-        fileData =
-             Uint8List.fromList(await cropImageDataWithDartLibrary(state: editorKey.currentState));
+        fileData = Uint8List.fromList(
+            await cropImageDataWithDartLibrary(state: editorKey.currentState));
       }
       final String fileFath =
           await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
@@ -368,8 +373,11 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   Uint8List _memoryImage;
   Future<void> _getImage() async {
     _memoryImage = await pickImage(context);
-    setState(() {
-      editorKey.currentState.reset();
+    //when back to current page, may be editorKey.currentState is not ready.
+    Future<void>.delayed(const Duration(milliseconds: 200), () {
+      setState(() {
+        editorKey.currentState.reset();
+      });
     });
   }
 }

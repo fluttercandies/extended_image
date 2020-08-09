@@ -1,3 +1,4 @@
+import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:flutter/material.dart';
 import '../extended_image_utils.dart';
 import 'extended_image_gesture_utils.dart';
@@ -9,9 +10,13 @@ import 'extended_image_slide_page.dart';
 
 /// for loading/failed widget
 class ExtendedImageSlidePageHandler extends StatefulWidget {
-  const ExtendedImageSlidePageHandler(this.child, this.extendedImageSlidePageState);
+  const ExtendedImageSlidePageHandler(this.child,
+      this.extendedImageSlidePageState, this.heroBuilderForSlidingPage);
   final Widget child;
   final ExtendedImageSlidePageState extendedImageSlidePageState;
+
+  ///build Hero only for sliding page
+  final HeroBuilderForSlidingPage heroBuilderForSlidingPage;
   @override
   ExtendedImageSlidePageHandlerState createState() =>
       ExtendedImageSlidePageHandlerState();
@@ -29,11 +34,14 @@ class ExtendedImageSlidePageHandlerState
       child: widget.child,
       behavior: HitTestBehavior.translucent,
     );
-
+    if (widget.extendedImageSlidePageState != null) {
+      result = widget.heroBuilderForSlidingPage?.call(result) ?? result;
+    }
     if (widget.extendedImageSlidePageState != null &&
         widget.extendedImageSlidePageState.widget.slideType ==
             SlideType.onlyImage) {
-      final ExtendedImageSlidePageState extendedImageSlidePageState = widget.extendedImageSlidePageState;
+      final ExtendedImageSlidePageState extendedImageSlidePageState =
+          widget.extendedImageSlidePageState;
       result = Transform.translate(
         offset: extendedImageSlidePageState.offset,
         child: Transform.scale(

@@ -11,16 +11,13 @@ version: 1.0.0+1
 
 environment:
   sdk: ">=2.6.0 <3.0.0"
-
+  flutter: ">=1.20.0"
 dependencies:
   flutter:
     sdk: flutter
   loading_more_list: ^3.0.0
-  extended_text: ^3.0.0
-  # image_picker_saver: 0.1.0
-  # image_picker: 0.4.12+1
-  # image_picker: 0.6.1+4
-  wechat_assets_picker: any
+  extended_text: ^4.0.0
+  wechat_assets_picker: 4.1.0+4
   image: ^2.1.4
   image_editor: ^0.1.2
   isolate: ^2.0.2
@@ -28,9 +25,14 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   js: ^0.6.1+1
-  flutter_candies_demo_library:
-    git:
-        url: https://github.com/fluttercandies/flutter_candies_demo_library.git
+  http_client_helper: any
+  pull_to_refresh_notification: any
+  like_button: any
+  photo_manager: 0.5.7
+  url_launcher: 5.3.0
+  intl: any
+  oktoast: ^2.1.4
+
 dependency_overrides:
   extended_image:
     path: ../

@@ -1,4 +1,5 @@
-import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
+import 'package:example/common/data/tu_chong_repository.dart';
+import 'package:example/common/utils/screen_util.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'example_route.dart';
 import 'example_route_helper.dart';
+import 'example_routes.dart';
 
 void main() => runApp(MyApp());
 
@@ -46,7 +48,7 @@ class MyApp extends StatelessWidget {
         }
         return w;
       },
-      initialRoute: 'fluttercandies://mainpage',
+      initialRoute: Routes.fluttercandiesMainpage,
       onGenerateRoute: (RouteSettings settings) {
         //when refresh web, route will as following
         //   /
@@ -57,7 +59,7 @@ class MyApp extends StatelessWidget {
           return onGenerateRouteHelper(
             settings.copyWith(name: settings.name.replaceFirst('/', '')),
             notFoundFallback:
-                getRouteResult(name: 'fluttercandies://mainpage').widget,
+                getRouteResult(name: Routes.fluttercandiesMainpage).widget,
           );
         }
         return onGenerateRouteHelper(settings);

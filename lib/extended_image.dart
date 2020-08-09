@@ -2,7 +2,6 @@ library extended_image;
 
 export 'package:extended_image_library/extended_image_library.dart';
 
-
 export 'src/editor/extended_image_editor.dart';
 export 'src/editor/extended_image_editor_utils.dart';
 

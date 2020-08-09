@@ -5,9 +5,14 @@
 
 import 'dart:async';
 import 'dart:math';
-// ignore: implementation_imports
-import 'package:extended_text/src/selection/extended_text_selection.dart';
-import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
+import 'package:example/common/data/tu_chong_repository.dart';
+import 'package:example/common/data/tu_chong_source.dart';
+import 'package:example/common/text/my_extended_text_selection_controls.dart';
+import 'package:example/common/text/my_special_text_span_builder.dart';
+import 'package:example/common/utils/screen_util.dart';
+import 'package:example/common/widget/item_builder.dart';
+import 'package:example/common/widget/pic_grid_view.dart';
+import 'package:example/common/widget/push_to_refresh_header.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:flutter/gestures.dart';
@@ -20,9 +25,14 @@ import 'package:flutter/foundation.dart';
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 
 @FFRoute(
-    name: 'fluttercandies://photoview',
-    routeName: 'photo view',
-    description: 'show how to zoom/pan image in page view like WeChat')
+  name: 'fluttercandies://photoview',
+  routeName: 'PhotoView',
+  description: 'Complex demo for photo view.',
+  exts: <String, dynamic>{
+    'group': 'Complex',
+    'order': 2,
+  },
+)
 class PhotoViewDemo extends StatefulWidget {
   @override
   _PhotoViewDemoState createState() => _PhotoViewDemoState();
@@ -143,8 +153,6 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                             }
                                             return Image.asset(
                                               'assets/avatar.jpg',
-                                              package:
-                                                  'flutter_candies_demo_library',
                                             );
                                           },
                                         ),
@@ -179,7 +187,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                       specialTextSpanBuilder:
                                           MySpecialTextSpanBuilder(),
                                       //overflow: ExtendedTextOverflow.ellipsis,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 14, color: Colors.grey),
                                       maxLines: 10,
                                       overflowWidget: kIsWeb

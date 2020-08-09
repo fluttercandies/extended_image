@@ -1,16 +1,21 @@
+import 'package:example/common/utils/screen_util.dart';
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
-
 
 import 'package:ff_annotation_route/ff_annotation_route.dart';
+import 'package:oktoast/oktoast.dart';
 
 @FFRoute(
-    name: 'fluttercandies://customimage',
-    routeName: 'custom image load state',
-    description: 'show image with loading,failed,animation state')
+  name: 'fluttercandies://customimage',
+  routeName: 'Custom load state',
+  description: 'Custom state for loading, failed and completed.',
+  exts: <String, dynamic>{
+    'group': 'Simple',
+    'order': 1,
+  },
+)
 class CustomImageDemo extends StatefulWidget {
   @override
   _CustomImageDemoState createState() => _CustomImageDemoState();
@@ -50,17 +55,18 @@ class _CustomImageDemoState extends State<CustomImageDemo>
               onPressed: () {
                 clearDiskCachedImages().then((bool done) {
                   showToast(done ? 'clear succeed' : 'clear failed',
-                      position: ToastPosition(align: Alignment.topCenter));
+                      position:
+                          const ToastPosition(align: Alignment.topCenter));
                 });
               },
             ),
           Expanded(
-            child: Align(
+            child: Container(
+              margin: const EdgeInsets.all(20),
+              alignment: Alignment.center,
               child: ExtendedImage.network(
                 url,
-                width: ScreenUtil.instance.setWidth(600),
-                height: ScreenUtil.instance.setWidth(400),
-                fit: BoxFit.fill,
+                fit: BoxFit.contain,
                 cache: true,
                 loadStateChanged: (ExtendedImageState state) {
                   switch (state.extendedImageLoadState) {

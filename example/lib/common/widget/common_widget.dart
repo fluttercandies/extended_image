@@ -1,7 +1,7 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_candies_demo_library/flutter_candies_demo_library.dart';
+import 'package:example/common/utils/screen_util.dart';
 
 class FlatButtonWithIcon extends FlatButton with MaterialButtonWithIconMixin {
   FlatButtonWithIcon({

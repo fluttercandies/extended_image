@@ -1,5 +1,6 @@
 import 'dart:io' show File;
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:extended_image/src/extended_image_border_painter.dart';
 import 'package:extended_image/src/gesture/extended_image_gesture.dart';
@@ -56,6 +57,7 @@ class ExtendedImage extends StatefulWidget {
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose = false,
     this.extendedImageGestureKey,
+    this.isAntiAlias = false,
   })  : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
@@ -97,7 +99,6 @@ class ExtendedImage extends StatefulWidget {
     this.enableSlideOutPage = false,
     BoxConstraints constraints,
     CancellationToken cancelToken,
-//      bool autoCancel: false,
     int retries = 3,
     Duration timeLimit,
     Map<String, String> headers,
@@ -109,11 +110,13 @@ class ExtendedImage extends StatefulWidget {
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose = false,
     this.handleLoadingProgress = false,
+    this.extendedImageGestureKey,
     int cacheWidth,
     int cacheHeight,
-    this.extendedImageGestureKey,
-  })  :
-        //assert(autoCancel != null),
+    this.isAntiAlias = false,
+  })  : assert(cacheWidth == null || cacheWidth > 0),
+        assert(cacheHeight == null || cacheHeight > 0),
+        assert(isAntiAlias != null),
         image = ResizeImage.resizeIfNeeded(
           cacheWidth,
           cacheHeight,
@@ -123,7 +126,6 @@ class ExtendedImage extends StatefulWidget {
             headers: headers,
             cache: cache,
             cancelToken: cancelToken,
-//            autoCancel: autoCancel,
             retries: retries,
             timeRetry: timeRetry,
             timeLimit: timeLimit,
@@ -193,7 +195,20 @@ class ExtendedImage extends StatefulWidget {
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose = false,
     this.extendedImageGestureKey,
-  })  : image = ExtendedFileImageProvider(file, scale: scale),
+    int cacheWidth,
+    int cacheHeight,
+    this.isAntiAlias = false,
+  })  : assert(cacheWidth == null || cacheWidth > 0),
+        assert(cacheHeight == null || cacheHeight > 0),
+        assert(isAntiAlias != null),
+        image = ResizeImage.resizeIfNeeded(
+          cacheWidth,
+          cacheHeight,
+          ExtendedFileImageProvider(
+            file,
+            scale: scale,
+          ),
+        ),
         assert(alignment != null),
         assert(repeat != null),
         assert(filterQuality != null),
@@ -369,11 +384,20 @@ class ExtendedImage extends StatefulWidget {
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose = false,
     this.extendedImageGestureKey,
-  })  : image = scale != null
-            ? ExtendedExactAssetImageProvider(name,
-                bundle: bundle, scale: scale, package: package)
-            : ExtendedAssetImageProvider(name,
-                bundle: bundle, package: package),
+    int cacheWidth,
+    int cacheHeight,
+    this.isAntiAlias = false,
+  })  : assert(cacheWidth == null || cacheWidth > 0),
+        assert(cacheHeight == null || cacheHeight > 0),
+        assert(isAntiAlias != null),
+        image = ResizeImage.resizeIfNeeded(
+            cacheWidth,
+            cacheHeight,
+            scale != null
+                ? ExtendedExactAssetImageProvider(name,
+                    bundle: bundle, scale: scale, package: package)
+                : ExtendedAssetImageProvider(name,
+                    bundle: bundle, package: package)),
         assert(alignment != null),
         assert(repeat != null),
         assert(matchTextDirection != null),
@@ -436,7 +460,20 @@ class ExtendedImage extends StatefulWidget {
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose = false,
     this.extendedImageGestureKey,
-  })  : image = ExtendedMemoryImageProvider(bytes, scale: scale),
+    int cacheWidth,
+    int cacheHeight,
+    this.isAntiAlias = false,
+  })  : assert(cacheWidth == null || cacheWidth > 0),
+        assert(cacheHeight == null || cacheHeight > 0),
+        assert(isAntiAlias != null),
+        image = ResizeImage.resizeIfNeeded(
+          cacheWidth,
+          cacheHeight,
+          ExtendedMemoryImageProvider(
+            bytes,
+            scale: scale,
+          ),
+        ),
         assert(alignment != null),
         assert(repeat != null),
         assert(matchTextDirection != null),
@@ -665,6 +702,10 @@ class ExtendedImage extends StatefulWidget {
   /// application.
   final bool excludeFromSemantics;
 
+  /// Whether to paint the image with anti-aliasing.
+  ///
+  /// Anti-aliasing alleviates the sawtooth artifact when the image is rotated.
+  final bool isAntiAlias;
   @override
   _ExtendedImageState createState() => _ExtendedImageState();
 }
@@ -991,7 +1032,11 @@ class _ExtendedImageState extends State<ExtendedImage>
     if (_slidePageState != null &&
         !(_loadState == LoadState.completed &&
             widget.mode == ExtendedImageMode.gesture)) {
-      current = ExtendedImageSlidePageHandler(current, _slidePageState);
+      current = ExtendedImageSlidePageHandler(
+        current,
+        _slidePageState,
+        widget.heroBuilderForSlidingPage,
+      );
     }
 
     if (widget.excludeFromSemantics) {
@@ -1050,6 +1095,7 @@ class _ExtendedImageState extends State<ExtendedImage>
       centerSlice: widget.centerSlice,
       matchTextDirection: widget.matchTextDirection,
       invertColors: _invertColors,
+      isAntiAlias: widget.isAntiAlias,
       filterQuality: widget.filterQuality,
       beforePaintImage: widget.beforePaintImage,
       afterPaintImage: widget.afterPaintImage,

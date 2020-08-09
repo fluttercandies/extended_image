@@ -76,25 +76,17 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     );
 
     _gestureAnimation = GestureAnimation(this, offsetCallBack: (Offset value) {
-      if (mounted) {
-        setState(() {
-          _gestureDetails = GestureDetails(
-              offset: value,
-              totalScale: _gestureDetails.totalScale,
-              gestureDetails: _gestureDetails);
-        });
-      }
+      gestureDetails = GestureDetails(
+          offset: value,
+          totalScale: _gestureDetails.totalScale,
+          gestureDetails: _gestureDetails);
     }, scaleCallBack: (double scale) {
-      if (mounted) {
-        setState(() {
-          _gestureDetails = GestureDetails(
-              offset: _gestureDetails.offset,
-              totalScale: scale,
-              gestureDetails: _gestureDetails,
-              actionType: ActionType.zoom,
-              userOffset: false);
-        });
-      }
+      gestureDetails = GestureDetails(
+          offset: _gestureDetails.offset,
+          totalScale: scale,
+          gestureDetails: _gestureDetails,
+          actionType: ActionType.zoom,
+          userOffset: false);
     });
   }
 
@@ -230,14 +222,11 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     if (mounted &&
         (offset != _gestureDetails.offset ||
             scale != _gestureDetails.totalScale)) {
-      setState(() {
-        _gestureDetails = GestureDetails(
-            offset: offset,
-            totalScale: scale,
-            gestureDetails: _gestureDetails,
-            actionType:
-                details.scale != 1.0 ? ActionType.zoom : ActionType.pan);
-      });
+      gestureDetails = GestureDetails(
+          offset: offset,
+          totalScale: scale,
+          gestureDetails: _gestureDetails,
+          actionType: details.scale != 1.0 ? ActionType.zoom : ActionType.pan);
     }
   }
 
@@ -299,12 +288,10 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       return;
     }
 
-    setState(() {
-      _gestureDetails = GestureDetails(
-        offset: Offset.zero,
-        totalScale: _gestureConfig.initialScale,
-      );
-    });
+    gestureDetails = GestureDetails(
+      offset: Offset.zero,
+      totalScale: _gestureConfig.initialScale,
+    );
   }
 
   void _handlePointerDown(PointerDownEvent pointerDownEvent) {
@@ -380,6 +367,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     if (mounted) {
       setState(() {
         _gestureDetails = value;
+        _gestureConfig?.gestureDetailsIsChanged?.call(_gestureDetails);
       });
     }
   }
@@ -409,19 +397,15 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   void reset() {
-    if (mounted) {
-      setState(() {
-        _gestureConfig = widget
-                .extendedImageState.imageWidget.initGestureConfigHandler
-                ?.call(widget.extendedImageState) ??
-            GestureConfig();
+    _gestureConfig = widget
+            .extendedImageState.imageWidget.initGestureConfigHandler
+            ?.call(widget.extendedImageState) ??
+        GestureConfig();
 
-        _gestureDetails = GestureDetails(
-          totalScale: _gestureConfig.initialScale,
-          offset: Offset.zero,
-        )..initialAlignment = _gestureConfig.initialAlignment;
-      });
-    }
+    gestureDetails = GestureDetails(
+      totalScale: _gestureConfig.initialScale,
+      offset: Offset.zero,
+    )..initialAlignment = _gestureConfig.initialAlignment;
   }
 }
 

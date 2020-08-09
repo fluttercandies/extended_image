@@ -33,11 +33,13 @@ class ExtendedRenderImage extends RenderBox {
     BeforePaintImage beforePaintImage,
     GestureDetails gestureDetails,
     EditActionDetails editActionDetails,
+    bool isAntiAlias = false,
   })  : assert(scale != null),
         assert(repeat != null),
         assert(alignment != null),
         assert(filterQuality != null),
         assert(matchTextDirection != null),
+        assert(isAntiAlias != null),
         _image = image,
         _width = width,
         _height = height,
@@ -357,6 +359,20 @@ class ExtendedRenderImage extends RenderBox {
     _markNeedResolution();
   }
 
+  /// Whether to paint the image with anti-aliasing.
+  ///
+  /// Anti-aliasing alleviates the sawtooth artifact when the image is rotated.
+  bool get isAntiAlias => _isAntiAlias;
+  bool _isAntiAlias;
+  set isAntiAlias(bool value) {
+    if (_isAntiAlias == value) {
+      return;
+    }
+    assert(value != null);
+    _isAntiAlias = value;
+    markNeedsPaint();
+  }
+
   /// Find a size for the render image within the given constraints.
   ///
   ///  - The dimensions of the RenderImage must fit within the constraints.
@@ -500,12 +516,14 @@ void paintExtendedImage({
   AfterPaintImage afterPaintImage,
   GestureDetails gestureDetails,
   EditActionDetails editActionDetails,
+  bool isAntiAlias = false,
 }) {
   assert(canvas != null);
   assert(image != null);
   assert(alignment != null);
   assert(repeat != null);
   assert(flipHorizontally != null);
+  assert(isAntiAlias != null);
   if (rect.isEmpty) {
     return;
   }
@@ -549,7 +567,7 @@ void paintExtendedImage({
     // output rect with the image.
     repeat = ImageRepeat.noRepeat;
   }
-  final Paint paint = Paint()..isAntiAlias = false;
+  final Paint paint = Paint()..isAntiAlias = isAntiAlias;
   if (colorFilter != null) {
     paint.colorFilter = colorFilter;
   }

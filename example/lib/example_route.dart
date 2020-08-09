@@ -5,16 +5,19 @@
 
 import 'package:flutter/widgets.dart';
 
-import 'package:flutter_candies_demo_library/flutter_candies_demo_library_route.dart';
-import 'pages/custom_image_demo.dart';
-import 'pages/image_demo.dart';
-import 'pages/image_editor_demo.dart';
-import 'pages/loading_progress.dart';
+import 'common/widget/pic_swiper.dart';
+import 'pages/complex/image_editor_demo.dart';
+import 'pages/complex/photo_view_demo.dart';
+import 'pages/complex/waterfall_flow_demo.dart';
 import 'pages/main_page.dart';
-import 'pages/paint_image_demo.dart';
-import 'pages/photo_view_demo.dart';
-import 'pages/waterfall_flow_demo.dart';
-import 'pages/zoom_image_demo.dart';
+import 'pages/simple/custom_image_demo.dart';
+import 'pages/simple/image_demo.dart';
+import 'pages/simple/image_editor_demo.dart';
+import 'pages/simple/loading_progress.dart';
+import 'pages/simple/paint_image_demo.dart';
+import 'pages/simple/photo_view_demo.dart';
+import 'pages/simple/slide_page_demo.dart';
+import 'pages/simple/zoom_image_demo.dart';
 
 // ignore_for_file: argument_type_not_assignable
 RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
@@ -24,37 +27,57 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
         name: name,
         widget: WaterfallFlowDemo(),
         routeName: 'WaterfallFlow',
-        description:
-            'show how to build loading more WaterfallFlow with ExtendedImage.',
+        description: 'WaterfallFlow with ExtendedImage.',
+        exts: <String, dynamic>{'group': 'Complex', 'order': 0},
       );
     case 'fluttercandies://customimage':
       return RouteResult(
         name: name,
         widget: CustomImageDemo(),
-        routeName: 'custom image load state',
-        description: 'show image with loading,failed,animation state',
+        routeName: 'Custom load state',
+        description: 'Custom state for loading, failed and completed.',
+        exts: <String, dynamic>{'group': 'Simple', 'order': 1},
+      );
+    case 'fluttercandies://demogrouppage':
+      return RouteResult(
+        name: name,
+        widget: DemoGroupPage(
+          keyValue: arguments['keyValue'],
+        ),
+        routeName: 'DemoGroupPage',
+      );
+    case 'fluttercandies://extendedImageGesturePageView':
+      return RouteResult(
+        name: name,
+        widget: SimplePhotoViewDemo(),
+        showStatusBar: false,
+        routeName: 'ExtendedImageGesturePageView',
+        description: 'Simple demo for ExtendedImageGesturePageView.',
+        exts: <String, dynamic>{'group': 'Simple', 'order': 7},
       );
     case 'fluttercandies://image':
       return RouteResult(
         name: name,
         widget: ImageDemo(),
-        routeName: 'image',
-        description:
-            'cache image,save to photo Library,image border,shape,borderRadius',
+        routeName: 'Image',
+        description: 'Cached image with border,shape,borderRadius.',
+        exts: <String, dynamic>{'group': 'Simple', 'order': 0},
       );
     case 'fluttercandies://imageeditor':
       return RouteResult(
         name: name,
         widget: ImageEditorDemo(),
-        routeName: 'image editor',
-        description: 'crop,rotate and flip with image editor',
+        routeName: 'ImageEditor',
+        description: 'Crop,rotate and flip with image editor.',
+        exts: <String, dynamic>{'group': 'Complex', 'order': 1},
       );
     case 'fluttercandies://loadingprogress':
       return RouteResult(
         name: name,
         widget: LoadingProgress(),
-        routeName: 'loading progress',
-        description: 'show how to make loading progress for network image',
+        routeName: 'Loading progress',
+        description: 'Loading progress for network image.',
+        exts: <String, dynamic>{'group': 'Simple', 'order': 2},
       );
     case 'fluttercandies://mainpage':
       return RouteResult(
@@ -66,16 +89,17 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
       return RouteResult(
         name: name,
         widget: PaintImageDemo(),
-        routeName: 'paint image',
-        description:
-            'show how to paint any thing before/after image is painted',
+        routeName: 'Paint image',
+        description: 'Paint any thing before or after raw image is painted.',
+        exts: <String, dynamic>{'group': 'Simple', 'order': 3},
       );
     case 'fluttercandies://photoview':
       return RouteResult(
         name: name,
         widget: PhotoViewDemo(),
-        routeName: 'photo view',
-        description: 'show how to zoom/pan image in page view like WeChat',
+        routeName: 'PhotoView',
+        description: 'Complex demo for photo view.',
+        exts: <String, dynamic>{'group': 'Complex', 'order': 2},
       );
     case 'fluttercandies://picswiper':
       return RouteResult(
@@ -89,12 +113,39 @@ RouteResult getRouteResult({String name, Map<String, dynamic> arguments}) {
         routeName: 'PicSwiper',
         pageRouteType: PageRouteType.transparent,
       );
+    case 'fluttercandies://simpleimageeditor':
+      return RouteResult(
+        name: name,
+        widget: SimpleImageEditor(),
+        routeName: 'ImageEditor',
+        description: 'Crop with image editor.',
+        exts: <String, dynamic>{'group': 'Simple', 'order': 6},
+      );
+    case 'fluttercandies://slidepage':
+      return RouteResult(
+        name: name,
+        widget: SlidePageDemo(),
+        routeName: 'SlidePage',
+        description: 'Simple demo for.',
+        exts: <String, dynamic>{'group': 'Simple', 'order': 5},
+      );
+    case 'fluttercandies://slidepageitem':
+      return RouteResult(
+        name: name,
+        widget: SlidePage(
+          url: arguments['url'],
+        ),
+        routeName: 'SlidePageItem',
+        pageRouteType: PageRouteType.transparent,
+        description: 'Simple demo for.',
+      );
     case 'fluttercandies://zoomimage':
       return RouteResult(
         name: name,
         widget: ZoomImageDemo(),
-        routeName: 'image zoom',
-        description: 'show how to zoom/pan image',
+        routeName: 'ImageZoom',
+        description: 'Zoom and Pan.',
+        exts: <String, dynamic>{'group': 'Simple', 'order': 4},
       );
     default:
       return const RouteResult(name: 'flutterCandies://notfound');
