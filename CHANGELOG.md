@@ -1,19 +1,44 @@
+
+## [1.1.1]
+
+* Issues:
+  Fix issue that slide offset is not right.
+
+## [1.1.0]
+
+* Features:
+  Add cacheHeight and cacheWidth params for all constructors.
+  Add isAntiAlias parameter.
+  Add GestureDetailsIsChanged call back for GestureConfig(#214).
+
+* Improve:
+  More demo.
+
+## [1.0.0]
+
+* Improve:
+
+  Merge from [Defer image decoding when scrolling fast](https://github.com/flutter/flutter/pull/49389).
+
+*  Flutter sdk minimum version limit to 1.17.0.
+
+
 ## [0.9.0]
 
 * Features:
-  Add cacheHeight and cacheWidth params for ExtendedImage.network. 
+  Add cacheHeight and cacheWidth params for ExtendedImage.network.
   Add Key extendedImageGestureKey for ExtendedImageGesture.
 
 ## [0.8.0]
 
 * Features:
-  Add call back [CanScrollPage] for ExtendedImageGesturePageView. 
+  Add call back [CanScrollPage] for ExtendedImageGesturePageView.
 
 ## [0.7.4]
 
 * Issues:
   Fix ScrollPhysics is not working for ExtendedImageGesturePageView
-  
+
 ## [0.7.3+1]
 
 * remove docs.
@@ -30,11 +55,11 @@
   support loading progress for network
   public HttpClient of ExtendedNetworkImageProvider
   public ExtendedImageGestureState for SlideOffsetHandler/SlideEndHandler/SlideScaleHandler to get scale of image
-  
+
 ## [0.7.1]
 
 * Improve:
-  scale parameter of method(handleDoubleTap) is support animationMinScale and animationMaxScale now.  
+  scale parameter of method(handleDoubleTap) is support animationMinScale and animationMaxScale now.
 
 ## [0.7.0]
 
@@ -42,7 +67,7 @@
   Support web.
   Add clearMemoryCacheWhenDispose parameter that whether clear memory cache when image is disposed.
 * Issues:
-  Fix animationMinScale and animationMaxScale are not working for gif.  
+  Fix animationMinScale and animationMaxScale are not working for gif.
   Fix scale parameter of method(handleDoubleTap) is beyond minScale and maxScale.
 
 ## [0.6.9]
@@ -74,14 +99,14 @@
 * Features:
   Add completedWidget for ExtendedImageState, it is include gesture or editor, so that you would't miss them
 * Improve:
-  Improve documents about Load State 
+  Improve documents about Load State
 
 ## [0.6.4]
 
 * Issues:
   Fix issue that rawImageData can't be cached for ExtendedExactAssetImageProvider/ExtendedAssetImageProvider.
 * Improve:
-  Add demo about ImageEditor with native library, it's faster. 
+  Add demo about ImageEditor with native library, it's faster.
 
 ## [0.6.3]
 
@@ -98,7 +123,7 @@
   Add InitCropRectType(imageRect,layoutRect) for EditorConfig to define init crop rect base on initial image rect or image layout rect.
 * Breaking Change:
   Make sure the image is all painted to crop,the fit of image must be BoxFit.contain.
-    
+
 ## [0.6.1]
 
 * Issues:
@@ -108,16 +133,16 @@
 
 * Issues:
   Fix issue about strange behaviour at slide out page
-  
+
 ## [0.5.9]
 
 * Add HeroBuilderForSlidingPage call back to fix strange hero animation
-  
+
 ## [0.5.8]
 
 * Features:
   Support to crop,rotate,flip image
-  
+
 ## [0.5.6]
 
 * Add key for ExtendedImageSlidePage
@@ -125,13 +150,13 @@
 ## [0.5.5]
 
 * Features:
-  Add call back [CanMovePage] for ExtendedImageGesturePageView. [related issue](https://github.com/fluttercandies/extended_image/issues/32) 
-  
+  Add call back [CanMovePage] for ExtendedImageGesturePageView. [related issue](https://github.com/fluttercandies/extended_image/issues/32)
+
 ## [0.5.4]
 
 * Issues:
   Fix issue about borderRadius and border
-  Fix demo error about extended_text 
+  Fix demo error about extended_text
 
 ## [0.5.3]
 
@@ -141,7 +166,7 @@
 
 * Features:
   Add call back [onSlidingPage] when is sliding page, you can change other widgets state in page.[ExtendedImageSlidePage]
-* Add [enableSlideOutPage] parameter to define whether enable slide out page. [ExtendedImage]  
+* Add [enableSlideOutPage] parameter to define whether enable slide out page. [ExtendedImage]
 
 ## [0.4.3]
 
@@ -150,14 +175,14 @@
 
 * Issues:
   Fix issue about slide page.
-  
-* Features: 
+
+* Features:
   Support to slide page at loading/failed state
 
 ## [0.4.2]
 
 * add README-ZH.md
-  
+
 ## [0.4.1]
 
 * add SlideType to support slide only image or whole page[ExtendedImageSlidePage]
