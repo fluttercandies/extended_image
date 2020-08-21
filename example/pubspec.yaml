@@ -32,6 +32,7 @@ dependencies:
   url_launcher: 5.3.0
   intl: any
   oktoast: ^2.1.4
+  extended_sliver: ^1.0.1
 
 dependency_overrides:
   extended_image:

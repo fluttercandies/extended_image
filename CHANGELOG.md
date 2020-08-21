@@ -1,4 +1,9 @@
 
+## [1.1.1]
+
+* Issues:
+  Fix issue that slide offset is not right.
+
 ## [1.1.0]
 
 * Features:

@@ -139,11 +139,13 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     }
     _extendedImageGestureState = extendedImageGestureState;
     _extendedImageSlidePageHandlerState = extendedImageSlidePageHandlerState;
-    _offset += value;
+
     if (widget.slideAxis == SlideAxis.horizontal) {
       _offset += Offset(value.dx, 0.0);
     } else if (widget.slideAxis == SlideAxis.vertical) {
       _offset += Offset(0.0, value.dy);
+    } else {
+      _offset += value;
     }
     _offset = widget.slideOffsetHandler?.call(
           _offset,
