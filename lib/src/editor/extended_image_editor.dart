@@ -32,6 +32,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   EditorConfig _editorConfig;
   double _startingScale;
   Offset _startingOffset;
+  double _detailsScale = 1.0;
   final GlobalKey<ExtendedImageCropLayerState> _layerKey =
       GlobalKey<ExtendedImageCropLayerState>();
   @override
@@ -208,6 +209,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     _startingOffset = details.focalPoint;
     _editActionDetails.screenFocalPoint = details.focalPoint;
     _startingScale = _editActionDetails.totalScale;
+    _detailsScale = 1.0;
   }
 
   void _handleScaleUpdate(ScaleUpdateDetails details) {
@@ -216,26 +218,25 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       return;
     }
     double totalScale = _startingScale * details.scale;
-    // min(_startingScale * details.scale, _editorConfig.maxScale);
-    // totalScale=(_startingScale * details.scale).clamp(_editorConfig.minScale, _editorConfig.maxScale);
     final Offset delta = details.focalPoint - _startingOffset;
-    final double scaleDelta = totalScale / _editActionDetails.preTotalScale;
-    _startingOffset = details.focalPoint;
+    final double scaleDelta = details.scale / _detailsScale;
+    final bool zoomOut = scaleDelta < 1;
+    final bool zoomIn = scaleDelta > 1;
 
+    _detailsScale = details.scale;
+
+    _startingOffset = details.focalPoint;
     //no more zoom
-    if (details.scale != 1.0 &&
-        (
-            // (_editActionDetails.totalScale == _editorConfig.minScale &&
-            //       totalScale <= _editActionDetails.totalScale) ||
-            doubleEqual(
-                    _editActionDetails.totalScale, _editorConfig.maxScale) &&
-                doubleCompare(totalScale, _editActionDetails.totalScale) >=
-                    0)) {
+    if ((_editActionDetails.reachCropRectEdge && zoomOut) ||
+        doubleEqual(_editActionDetails.totalScale, _editorConfig.maxScale) &&
+            zoomIn) {
+      //correct _startingScale
+      //details.scale was not calcuated at the moment
+      _startingScale = _editActionDetails.totalScale / details.scale;
       return;
     }
 
     totalScale = min(totalScale, _editorConfig.maxScale);
-    //  totalScale.clamp(_editorConfig.minScale, _editorConfig.maxScale);
 
     if (mounted && (scaleDelta != 1.0 || delta != Offset.zero)) {
       setState(() {
