@@ -53,9 +53,9 @@ class Routes {
   ///
   /// [routeName] : 'DemoGroupPage'
   ///
-  /// [arguments] : [keyValue]
+  /// [constructors] :
   ///
-  /// [argumentTypes] : [List<DemoRouteResult>]
+  /// DemoGroupPage : [MapEntry<String, List<DemoRouteResult>> keyValue]
   static const String fluttercandiesDemogrouppage =
       'fluttercandies://demogrouppage';
 
@@ -113,6 +113,10 @@ class Routes {
   /// [name] : 'fluttercandies://mainpage'
   ///
   /// [routeName] : 'MainPage'
+  ///
+  /// [constructors] :
+  ///
+  /// MainPage : []
   static const String fluttercandiesMainpage = 'fluttercandies://mainpage';
 
   /// 'Paint any thing before or after raw image is painted.'
@@ -143,7 +147,9 @@ class Routes {
   ///
   /// [routeName] : 'PicSwiper'
   ///
-  /// [arguments] : [index, pics, tuChongItem]
+  /// [constructors] :
+  ///
+  /// PicSwiper : [int index, List<PicSwiperItem> pics, TuChongItem tuChongItem]
   ///
   /// [showStatusBar] : false
   ///
@@ -173,17 +179,17 @@ class Routes {
   /// [exts] : {group: Simple, order: 5}
   static const String fluttercandiesSlidepage = 'fluttercandies://slidepage';
 
-  /// 'Simple demo for.'
+  /// 'Simple demo for Sliding.'
   ///
   /// [name] : 'fluttercandies://slidepageitem'
   ///
   /// [routeName] : 'SlidePageItem'
   ///
-  /// [description] : 'Simple demo for.'
+  /// [description] : 'Simple demo for Sliding.'
   ///
-  /// [arguments] : [url]
+  /// [constructors] :
   ///
-  /// [argumentTypes] : [String]
+  /// SlidePage : [String url]
   ///
   /// [pageRouteType] : PageRouteType.transparent
   static const String fluttercandiesSlidepageitem =

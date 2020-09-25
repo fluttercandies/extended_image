@@ -23,11 +23,15 @@ const String attachContent =
 typedef DoubleClickAnimationListener = void Function();
 
 @FFRoute(
-    name: 'fluttercandies://picswiper',
-    routeName: 'PicSwiper',
-    argumentNames: <String>['index', 'pics', 'tuChongItem'],
-    showStatusBar: false,
-    pageRouteType: PageRouteType.transparent)
+  name: 'fluttercandies://picswiper',
+  routeName: 'PicSwiper',
+  showStatusBar: false,
+  pageRouteType: PageRouteType.transparent,
+  argumentImports: <String>[
+    'import \'common/data/tu_chong_source.dart\';',
+    'import \'common/model/pic_swiper_item.dart\';'
+  ],
+)
 class PicSwiper extends StatefulWidget {
   const PicSwiper({
     this.index,

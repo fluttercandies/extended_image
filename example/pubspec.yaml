@@ -17,7 +17,7 @@ dependencies:
     sdk: flutter
   loading_more_list: ^3.0.0
   extended_text: ^4.0.0
-  wechat_assets_picker: 4.1.0+4
+  wechat_assets_picker: ^4.1.0+4
   image: ^2.1.4
   image_editor: ^0.1.2
   isolate: ^2.0.2
@@ -41,7 +41,7 @@ dependency_overrides:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  ff_annotation_route: any
+  ff_annotation_route: ^4.0.2
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 

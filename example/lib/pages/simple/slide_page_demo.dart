@@ -73,9 +73,7 @@ class _SlidePageDemoState extends State<SlidePageDemo> {
 @FFRoute(
   name: 'fluttercandies://slidepageitem',
   routeName: 'SlidePageItem',
-  description: 'Simple demo for.',
-  argumentNames: <String>['url'],
-  argumentTypes: <String>['String'],
+  description: 'Simple demo for Sliding.',
   pageRouteType: PageRouteType.transparent,
 )
 class SlidePage extends StatefulWidget {
