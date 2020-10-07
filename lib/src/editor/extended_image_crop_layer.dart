@@ -22,18 +22,20 @@ enum _moveType {
 }
 
 class ExtendedImageCropLayer extends StatefulWidget {
-  const ExtendedImageCropLayer(
-      {this.editActionDetails,
-      this.layoutRect,
-      this.editorConfig,
-      Key key,
-      this.fit})
-      : super(key: key);
+  const ExtendedImageCropLayer({
+    this.editActionDetails,
+    this.layoutRect,
+    this.editorConfig,
+    Key key,
+    this.fit,
+    this.cornerPainter,
+  }) : super(key: key);
 
   final EditActionDetails editActionDetails;
   final EditorConfig editorConfig;
   final Rect layoutRect;
   final BoxFit fit;
+  final ExtendedImageCropLayerCornerPainter cornerPainter;
   @override
   ExtendedImageCropLayerState createState() => ExtendedImageCropLayerState();
 }
@@ -89,8 +91,22 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       return Container();
     }
     final EditorConfig editConfig = widget.editorConfig;
-    final Color cornerColor =
-        widget.editorConfig.cornerColor ?? Theme.of(context).primaryColor;
+    ExtendedImageCropLayerCornerPainter cornerPainter;
+    if (widget.editorConfig.cornerPainter == null) {
+      cornerPainter = ExtendedImageCropLayerPainterNinetyDegreesCorner(
+        color: Theme.of(context).primaryColor,
+      );
+    } else {
+      cornerPainter = widget.editorConfig.cornerPainter.cornerColor == null
+          ? widget.editorConfig.cornerPainter
+              .copyWith(color: Theme.of(context).primaryColor)
+          : widget.editorConfig.cornerPainter;
+    }
+    // TODO: replace "(widget.editorConfig.cornerColor ?? widget.cornerPainter.cornerColor)" with "widget.cornerPainter.cornerColor". So as not to break backward compatibility, temporarily will save [widget.editorConfig.cornerColor] property.
+    // Property [cornerColor] after v1.1.2 was marked as deprecated.
+    final Color cornerColor = (widget.editorConfig.cornerColor ??
+            widget.cornerPainter?.cornerColor) ??
+        Theme.of(context).primaryColor;
     final Color maskColor = widget.editorConfig.editorMaskColorHandler
             ?.call(context, _pointerDown) ??
         defaultEditorMaskColorHandler(context, _pointerDown);
@@ -99,8 +115,15 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     final Widget result = CustomPaint(
       painter: ExtendedImageCropLayerPainter(
           cropRect: cropRect,
+          cornerPainter: cornerPainter,
+          // TODO: remove [cornerColor] property. After v1.1.2 was marked as deprecated.
           cornerColor: cornerColor,
-          cornerSize: editConfig.cornerSize,
+          // TODO: remove [cornerSize] property. After v1.1.2 was marked as deprecated.
+          // So as not to break backward compatibility, temporarily will save [widget.editorConfig.cornerSize] property.
+          cornerSize: editConfig.cornerSize ??
+              (cornerPainter is ExtendedImageCropLayerPainterNinetyDegreesCorner
+                  ? cornerPainter.cornerSize
+                  : null),
           lineColor: editConfig.lineColor ??
               Theme.of(context).scaffoldBackgroundColor.withOpacity(0.7),
           lineHeight: editConfig.lineHeight,
@@ -543,14 +566,18 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 }
 
 class ExtendedImageCropLayerPainter extends CustomPainter {
-  ExtendedImageCropLayerPainter(
-      {@required this.cropRect,
-      this.lineColor,
-      this.cornerColor,
-      this.cornerSize,
-      this.lineHeight,
-      this.maskColor,
-      this.pointerDown});
+  ExtendedImageCropLayerPainter({
+    @required this.cropRect,
+    this.lineColor,
+    @Deprecated('Use cornerPainter instead. The feature was deprecated after v1.1.2.')
+        this.cornerColor,
+    @Deprecated('Use cornerPainter instead. The feature was deprecated after v1.1.2.')
+        this.cornerSize,
+    this.lineHeight,
+    this.maskColor,
+    this.pointerDown,
+    this.cornerPainter,
+  });
 
   final Rect cropRect;
   //size of corner shape
@@ -572,6 +599,9 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
   //whether pointer is down
   final bool pointerDown;
 
+  //Corner painter
+  final ExtendedImageCropLayerCornerPainter cornerPainter;
+
   @override
   void paint(Canvas canvas, Size size) {
     final Rect rect = Offset.zero & size;
@@ -591,6 +621,7 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
 
     // draw mask rect instead use BlendMode.clear, web doesn't support now.
     //left
+
     canvas.drawRect(
         Offset.zero & Size(cropRect.left, rect.height),
         Paint()
@@ -655,51 +686,11 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
           linePainter);
     }
 
-    final Paint cornerPainter = Paint()
-      ..color = cornerColor
+    final Paint defaultCornerPainter = Paint()
+      ..color = cornerPainter.cornerColor
       ..style = PaintingStyle.fill;
-    final double cornerWidth = cornerSize.width;
-    final double cornerHeight = cornerSize.height;
-    canvas.drawPath(
-        Path()
-          ..moveTo(cropRect.left, cropRect.top)
-          ..lineTo(cropRect.left + cornerWidth, cropRect.top)
-          ..lineTo(cropRect.left + cornerWidth, cropRect.top + cornerHeight)
-          ..lineTo(cropRect.left + cornerHeight, cropRect.top + cornerHeight)
-          ..lineTo(cropRect.left + cornerHeight, cropRect.top + cornerWidth)
-          ..lineTo(cropRect.left, cropRect.top + cornerWidth),
-        cornerPainter);
 
-    canvas.drawPath(
-        Path()
-          ..moveTo(cropRect.left, cropRect.bottom)
-          ..lineTo(cropRect.left + cornerWidth, cropRect.bottom)
-          ..lineTo(cropRect.left + cornerWidth, cropRect.bottom - cornerHeight)
-          ..lineTo(cropRect.left + cornerHeight, cropRect.bottom - cornerHeight)
-          ..lineTo(cropRect.left + cornerHeight, cropRect.bottom - cornerWidth)
-          ..lineTo(cropRect.left, cropRect.bottom - cornerWidth),
-        cornerPainter);
-
-    canvas.drawPath(
-        Path()
-          ..moveTo(cropRect.right, cropRect.top)
-          ..lineTo(cropRect.right - cornerWidth, cropRect.top)
-          ..lineTo(cropRect.right - cornerWidth, cropRect.top + cornerHeight)
-          ..lineTo(cropRect.right - cornerHeight, cropRect.top + cornerHeight)
-          ..lineTo(cropRect.right - cornerHeight, cropRect.top + cornerWidth)
-          ..lineTo(cropRect.right, cropRect.top + cornerWidth),
-        cornerPainter);
-
-    canvas.drawPath(
-        Path()
-          ..moveTo(cropRect.right, cropRect.bottom)
-          ..lineTo(cropRect.right - cornerWidth, cropRect.bottom)
-          ..lineTo(cropRect.right - cornerWidth, cropRect.bottom - cornerHeight)
-          ..lineTo(
-              cropRect.right - cornerHeight, cropRect.bottom - cornerHeight)
-          ..lineTo(cropRect.right - cornerHeight, cropRect.bottom - cornerWidth)
-          ..lineTo(cropRect.right, cropRect.bottom - cornerWidth),
-        cornerPainter);
+    cornerPainter.drawCorners(canvas, cropRect, defaultCornerPainter);
   }
 
   @override
@@ -714,6 +705,7 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
         lineColor != delegate.lineColor ||
         lineHeight != delegate.lineHeight ||
         maskColor != delegate.maskColor ||
+        cornerPainter != delegate.cornerPainter ||
         cornerColor != delegate.cornerColor ||
         pointerDown != delegate.pointerDown;
   }
