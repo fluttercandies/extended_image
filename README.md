@@ -21,6 +21,7 @@ A powerful official extension library of image, which support placeholder(loadin
     - [double tap animation](#double-tap-animation)
   - [Editor](#editor)
     - [crop aspect ratio](#crop-aspect-ratio)
+    - [corner painter](#corner-painter)
     - [crop,flip,reset](#cropflipreset)
     - [crop data](#crop-data)
       - [dart library(stable)](#dart-librarystable)
@@ -395,6 +396,48 @@ class CropAspectRatios {
 
   /// ratio of width and height is 16 : 9
   static const double ratio16_9 = 16.0 / 9.0;
+}
+```
+
+### corner painter
+
+With `cornerPainter` property you can customize crop layout corners.
+By default is active `ExtendedImageCropLayerPainterNinetyDegreesCorner`. You can pass alternatively `ExtendedImageCropLayerPainterCircleCorner` or extend class `ExtendedImageCropLayerCornerPainter` and create your own corner painter.
+For example this is code for `ExtendedImageCropLayerPainterCircleCorner`:
+
+```dart
+class ExtendedImageCropLayerPainterCircleCorner
+    extends ExtendedImageCropLayerCornerPainter {
+  const ExtendedImageCropLayerPainterCircleCorner({
+    this.color,
+    this.radius = 5.0,
+  }) : super(color);
+
+  // color of corner shape
+  // default theme primaryColor
+  final Color color;
+
+  // radius of corner circle
+  final double radius;
+
+  @override
+  ExtendedImageCropLayerPainterCircleCorner copyWith(
+          {Color color, double radius}) =>
+      ExtendedImageCropLayerPainterCircleCorner(
+          color: color ?? this.color, radius: radius ?? this.radius);
+
+  @override
+  void drawCorners(Canvas canvas, Rect cropRect, Paint defautlPainter) {
+    defautlPainter.color = color;
+    canvas.drawCircle(
+        Offset(cropRect.left, cropRect.top), radius, defautlPainter);
+    canvas.drawCircle(
+        Offset(cropRect.right, cropRect.top), radius, defautlPainter);
+    canvas.drawCircle(
+        Offset(cropRect.left, cropRect.bottom), radius, defautlPainter);
+    canvas.drawCircle(
+        Offset(cropRect.right, cropRect.bottom), radius, defautlPainter);
+  }
 }
 ```
 
