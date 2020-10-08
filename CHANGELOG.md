@@ -1,3 +1,9 @@
+## 1.1.3
+
+* Features:
+  Add posibility to draw custom crop layout corners
+  Add corner shape(ExtendedImageCropLayerPainterCircleCorner())
+
 ## 1.1.2
 
 * Issues:

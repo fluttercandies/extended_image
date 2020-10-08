@@ -355,8 +355,8 @@ EditorConfig
 | ---------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------ |
 | maxScale               | max scale of zoom                                                  | 5.0                                                          |
 | cropRectPadding        | the padding between crop rect and image layout rect.               | EdgeInsets.all(20.0)                                         |
-| cornerSize             | size of corner shape                                               | Size(30.0, 5.0)                                              |
-| cornerColor            | color of corner shape                                              | primaryColor                                                 |
+| cornerSize             | size of corner shape  (DEPRECATED! Use cornerPainter)              | Size(30.0, 5.0)                                              |
+| cornerColor            | color of corner shape (DEPRECATED! Use cornerPainter)              | primaryColor                                                 |
 | lineColor              | color of crop line                                                 | scaffoldBackgroundColor.withOpacity(0.7)                     |
 | lineHeight             | height of crop line                                                | 0.6                                                          |
 | editorMaskColorHandler | call back of editor mask color base on pointerDown                 | scaffoldBackgroundColor.withOpacity(pointerDown ? 0.4 : 0.8) |
@@ -365,6 +365,7 @@ EditorConfig
 | tickerDuration         | duration to begin auto center animation after crop rect is changed | Duration(milliseconds: 400)                                  |
 | cropAspectRatio        | aspect ratio of crop rect                                          | null(custom)                                                 |
 | initCropRectType       | init crop rect base on initial image rect or image layout rect     | imageRect                                                    |
+| cornerPainter          | corner shape                                                       | ExtendedImageCropLayerPainterNinetyDegreesCorner()           |
 
 ### crop aspect ratio
 
