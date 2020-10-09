@@ -102,7 +102,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
               .copyWith(color: Theme.of(context).primaryColor)
           : widget.editorConfig.cornerPainter;
     }
-    // TODO: replace "(widget.editorConfig.cornerColor ?? widget.cornerPainter.cornerColor)" with "widget.cornerPainter.cornerColor". So as not to break backward compatibility, temporarily will save [widget.editorConfig.cornerColor] property.
+    // TODO(radomir9720): replace "(widget.editorConfig.cornerColor ?? widget.cornerPainter.cornerColor)" with "widget.cornerPainter.cornerColor". So as not to break backward compatibility, temporarily will save [widget.editorConfig.cornerColor] property.
     // Property [cornerColor] after v1.1.2 was marked as deprecated.
     final Color cornerColor = (widget.editorConfig.cornerColor ??
             widget.cornerPainter?.cornerColor) ??
@@ -116,10 +116,12 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       painter: ExtendedImageCropLayerPainter(
           cropRect: cropRect,
           cornerPainter: cornerPainter,
-          // TODO: remove [cornerColor] property. After v1.1.2 was marked as deprecated.
+          // TODO(radomir9720): remove [cornerColor] property. After v1.1.2 was marked as deprecated.
+          // ignore: deprecated_member_use_from_same_package
           cornerColor: cornerColor,
-          // TODO: remove [cornerSize] property. After v1.1.2 was marked as deprecated.
+          // TODO(radomir9720): remove [cornerSize] property. After v1.1.2 was marked as deprecated.
           // So as not to break backward compatibility, temporarily will save [widget.editorConfig.cornerSize] property.
+          // ignore: deprecated_member_use_from_same_package
           cornerSize: editConfig.cornerSize ??
               (cornerPainter is ExtendedImageCropLayerPainterNinetyDegreesCorner
                   ? cornerPainter.cornerSize
@@ -567,11 +569,14 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
 class ExtendedImageCropLayerPainter extends CustomPainter {
   ExtendedImageCropLayerPainter({
-    @required this.cropRect,
+    @required
+        this.cropRect,
     this.lineColor,
     @Deprecated('Use cornerPainter instead. The feature was deprecated after v1.1.2.')
+        // ignore: deprecated_member_use_from_same_package
         this.cornerColor,
     @Deprecated('Use cornerPainter instead. The feature was deprecated after v1.1.2.')
+        // ignore: deprecated_member_use_from_same_package
         this.cornerSize,
     this.lineHeight,
     this.maskColor,
