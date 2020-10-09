@@ -350,8 +350,10 @@ class EditorConfig {
     //double initialScale,
     this.cropRectPadding = const EdgeInsets.all(20.0),
     @Deprecated('Use cornerPainter instead. The feature was deprecated after v1.1.2.')
+        // ignore: deprecated_member_use_from_same_package
         this.cornerSize = const Size(30.0, 5.0),
     @Deprecated('Use cornerPainter instead. The feature was deprecated after v1.1.2.')
+        // ignore: deprecated_member_use_from_same_package
         this.cornerColor,
     this.lineColor,
     this.lineHeight = 0.6,

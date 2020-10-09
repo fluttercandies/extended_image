@@ -7,6 +7,7 @@ import 'package:example/common/utils/crop_editor_helper.dart';
 import 'package:example/common/utils/screen_util.dart';
 import 'package:example/common/widget/common_widget.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,9 @@ class ImageEditorDemo extends StatefulWidget {
 class _ImageEditorDemoState extends State<ImageEditorDemo> {
   final GlobalKey<ExtendedImageEditorState> editorKey =
       GlobalKey<ExtendedImageEditorState>();
+  final GlobalKey<PopupMenuButtonState<ExtendedImageCropLayerCornerPainter>>
+      popupMenuKey =
+      GlobalKey<PopupMenuButtonState<ExtendedImageCropLayerCornerPainter>>();
   final List<AspectRatioItem> _aspectRatios = <AspectRatioItem>[
     AspectRatioItem(text: 'custom', value: CropAspectRatios.custom),
     AspectRatioItem(text: 'original', value: CropAspectRatios.original),
@@ -46,21 +50,12 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   AspectRatioItem _aspectRatio;
   bool _cropping = false;
 
-  final Map<String, ExtendedImageCropLayerCornerPainter> cornerPainters =
-      <String, ExtendedImageCropLayerCornerPainter>{
-    'ExtendedImageCropLayerPainterNinetyDegreesCorner':
-        const ExtendedImageCropLayerPainterNinetyDegreesCorner(),
-    'ExtendedImageCropLayerPainterCircleCorner':
-        const ExtendedImageCropLayerPainterCircleCorner(),
-  };
-
-  String _activeCornerPainter;
+  ExtendedImageCropLayerCornerPainter _cornerPainter;
 
   @override
   void initState() {
     _aspectRatio = _aspectRatios.first;
-    _activeCornerPainter = cornerPainters.keys.first;
-
+    _cornerPainter = const ExtendedImageCropLayerPainterNinetyDegreesCorner();
     super.initState();
   }
 
@@ -86,63 +81,43 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
           ),
         ],
       ),
-      body: Column(
-        children: <Widget>[
-              Expanded(
-                child: _memoryImage != null
-                    ? ExtendedImage.memory(
-                        _memoryImage,
-                        fit: BoxFit.contain,
-                        mode: ExtendedImageMode.editor,
-                        enableLoadState: true,
-                        extendedImageEditorKey: editorKey,
-                        initEditorConfigHandler: (ExtendedImageState state) {
-                          return EditorConfig(
-                              maxScale: 8.0,
-                              cropRectPadding: const EdgeInsets.all(20.0),
-                              hitTestSize: 20.0,
-                              cornerPainter:
-                                  cornerPainters[_activeCornerPainter],
-                              initCropRectType: InitCropRectType.imageRect,
-                              cropAspectRatio: _aspectRatio.value);
-                        },
-                      )
-                    : ExtendedImage.asset(
-                        'assets/image.jpg',
-                        fit: BoxFit.contain,
-                        mode: ExtendedImageMode.editor,
-                        enableLoadState: true,
-                        extendedImageEditorKey: editorKey,
-                        initEditorConfigHandler: (ExtendedImageState state) {
-                          return EditorConfig(
-                              maxScale: 8.0,
-                              cropRectPadding: const EdgeInsets.all(20.0),
-                              hitTestSize: 20.0,
-                              cornerPainter:
-                                  cornerPainters[_activeCornerPainter],
-                              initCropRectType: InitCropRectType.imageRect,
-                              cropAspectRatio: _aspectRatio.value);
-                        },
-                      ),
-              ),
-            ] +
-            cornerPainters.keys
-                .map(
-                  (String e) => CheckboxListTile(
-                    value: _activeCornerPainter == e,
-                    // selected: activeCornerPainter == e,
-                    onChanged: (bool val) {
-                      if (val) {
-                        _activeCornerPainter = e;
-                      }
-                      setState(() {});
-                    },
-                    title: Text(e),
-                  ),
+      body: Column(children: <Widget>[
+        Expanded(
+          child: _memoryImage != null
+              ? ExtendedImage.memory(
+                  _memoryImage,
+                  fit: BoxFit.contain,
+                  mode: ExtendedImageMode.editor,
+                  enableLoadState: true,
+                  extendedImageEditorKey: editorKey,
+                  initEditorConfigHandler: (ExtendedImageState state) {
+                    return EditorConfig(
+                        maxScale: 8.0,
+                        cropRectPadding: const EdgeInsets.all(20.0),
+                        hitTestSize: 20.0,
+                        cornerPainter: _cornerPainter,
+                        initCropRectType: InitCropRectType.imageRect,
+                        cropAspectRatio: _aspectRatio.value);
+                  },
                 )
-                .cast<Widget>()
-                .toList(),
-      ),
+              : ExtendedImage.asset(
+                  'assets/image.jpg',
+                  fit: BoxFit.contain,
+                  mode: ExtendedImageMode.editor,
+                  enableLoadState: true,
+                  extendedImageEditorKey: editorKey,
+                  initEditorConfigHandler: (ExtendedImageState state) {
+                    return EditorConfig(
+                        maxScale: 8.0,
+                        cropRectPadding: const EdgeInsets.all(20.0),
+                        hitTestSize: 20.0,
+                        cornerPainter: _cornerPainter,
+                        initCropRectType: InitCropRectType.imageRect,
+                        cropAspectRatio: _aspectRatio.value);
+                  },
+                ),
+        ),
+      ]),
       bottomNavigationBar: BottomAppBar(
         color: Colors.lightBlue,
         shape: const CircularNotchedRectangle(),
@@ -230,6 +205,68 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 textColor: Colors.white,
                 onPressed: () {
                   editorKey.currentState.rotate(right: true);
+                },
+              ),
+              FlatButtonWithIcon(
+                icon: const Icon(Icons.rounded_corner_sharp),
+                label: PopupMenuButton<ExtendedImageCropLayerCornerPainter>(
+                  key: popupMenuKey,
+                  enabled: false,
+                  offset: const Offset(100, -300),
+                  child: const Text(
+                    'Corner',
+                    style: TextStyle(fontSize: 8.0),
+                  ),
+                  initialValue: _cornerPainter,
+                  itemBuilder: (BuildContext context) {
+                    return <
+                        PopupMenuEntry<ExtendedImageCropLayerCornerPainter>>[
+                      PopupMenuItem<ExtendedImageCropLayerCornerPainter>(
+                        child: Row(
+                          children: const <Widget>[
+                            Icon(
+                              Icons.rounded_corner_sharp,
+                              color: Colors.blue,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text('NinetyDegrees'),
+                          ],
+                        ),
+                        value:
+                            const ExtendedImageCropLayerPainterNinetyDegreesCorner(),
+                      ),
+                      const PopupMenuDivider(),
+                      PopupMenuItem<ExtendedImageCropLayerCornerPainter>(
+                        child: Row(
+                          children: const <Widget>[
+                            Icon(
+                              Icons.circle,
+                              color: Colors.blue,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text('Circle'),
+                          ],
+                        ),
+                        value:
+                            const ExtendedImageCropLayerPainterCircleCorner(),
+                      ),
+                    ];
+                  },
+                  onSelected: (ExtendedImageCropLayerCornerPainter value) {
+                    if (_cornerPainter != value) {
+                      setState(() {
+                        _cornerPainter = value;
+                      });
+                    }
+                  },
+                ),
+                textColor: Colors.white,
+                onPressed: () {
+                  popupMenuKey.currentState.showButtonMenu();
                 },
               ),
               FlatButtonWithIcon(

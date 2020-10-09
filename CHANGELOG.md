@@ -1,4 +1,4 @@
-## 1.1.3
+## 1.2.0
 
 * Features:
   Add posibility to draw custom crop layout corners

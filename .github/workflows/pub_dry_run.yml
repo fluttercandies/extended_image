@@ -1,8 +1,6 @@
-name: Pub Publish plugin
+name: Pub Publish dry run
 
-on:
-  release:
-    types: [published]
+on: [push]
 
 jobs:
   publish:
@@ -18,4 +16,4 @@ jobs:
           credential: ${{ secrets.CREDENTIAL_JSON }}
           flutter_package: true
           skip_test: true
-          dry_run: false
+          dry_run: true

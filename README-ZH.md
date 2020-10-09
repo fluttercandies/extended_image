@@ -404,6 +404,48 @@ class CropAspectRatios {
 }
 ```
 
+### 四角图形画笔
+
+使用 `cornerPainter` 来定制四角图形.
+默认的为 `ExtendedImageCropLayerPainterNinetyDegreesCorner`. 你可以使用`ExtendedImageCropLayerPainterCircleCorner` 或者继承 `ExtendedImageCropLayerCornerPainter` 来定义你的自定义四角图形.
+下面是 `ExtendedImageCropLayerPainterCircleCorner` 的演示代码:
+
+```dart
+class ExtendedImageCropLayerPainterCircleCorner
+    extends ExtendedImageCropLayerCornerPainter {
+  const ExtendedImageCropLayerPainterCircleCorner({
+    this.color,
+    this.radius = 5.0,
+  }) : super(color);
+
+  // color of corner shape
+  // default theme primaryColor
+  final Color color;
+
+  // radius of corner circle
+  final double radius;
+
+  @override
+  ExtendedImageCropLayerPainterCircleCorner copyWith(
+          {Color color, double radius}) =>
+      ExtendedImageCropLayerPainterCircleCorner(
+          color: color ?? this.color, radius: radius ?? this.radius);
+
+  @override
+  void drawCorners(Canvas canvas, Rect cropRect, Paint defautlPainter) {
+    defautlPainter.color = color;
+    canvas.drawCircle(
+        Offset(cropRect.left, cropRect.top), radius, defautlPainter);
+    canvas.drawCircle(
+        Offset(cropRect.right, cropRect.top), radius, defautlPainter);
+    canvas.drawCircle(
+        Offset(cropRect.left, cropRect.bottom), radius, defautlPainter);
+    canvas.drawCircle(
+        Offset(cropRect.right, cropRect.bottom), radius, defautlPainter);
+  }
+}
+```
+
 ### 旋转,翻转,重置
 
 - 定义 key，以方便操作 ExtendedImageEditorState

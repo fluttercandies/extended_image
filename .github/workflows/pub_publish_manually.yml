@@ -1,8 +1,6 @@
 name: Pub Publish plugin
 
-on:
-  release:
-    types: [published]
+on: workflow_dispatch
 
 jobs:
   publish:
