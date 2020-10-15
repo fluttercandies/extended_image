@@ -429,13 +429,13 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         fileData = Uint8List.fromList(
             await cropImageDataWithDartLibrary(state: editorKey.currentState));
       }
-      final String fileFath =
+      final String filePath =
           await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
-      // var fileFath = await ImagePickerSaver.saveFile(fileData: fileData);
+      // var filePath = await ImagePickerSaver.saveFile(fileData: fileData);
 
-      msg = 'save image : $fileFath';
+      msg = 'save image : $filePath';
     } catch (e, stack) {
-      msg = 'save faild: $e\n $stack';
+      msg = 'save failed: $e\n $stack';
       print(msg);
     }
 
