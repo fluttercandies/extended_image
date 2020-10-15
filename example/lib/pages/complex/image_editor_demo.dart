@@ -435,7 +435,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
       msg = 'save image : $filePath';
     } catch (e, stack) {
-      msg = 'save faild: $e\n $stack';
+      msg = 'save failed: $e\n $stack';
       print(msg);
     }
 
