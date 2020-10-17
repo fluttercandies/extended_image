@@ -776,9 +776,9 @@ class _ExtendedImageState extends State<ExtendedImage>
     setState(() {
       _loadState = LoadState.failed;
     });
-    if (kDebugMode) {
-      print(exception);
-    }
+    // if (kDebugMode) {
+    //   print(exception);
+    // }
     if (!widget.enableMemoryCache || widget.clearMemoryCacheIfFailed) {
       widget.image.evict();
     }

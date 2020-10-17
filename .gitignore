@@ -10,6 +10,8 @@ pubspec.lock
 
 example/pubspec.lock
 
+example/.packages
+
 .flutter-plugins
 
 flutter_export_environment.sh

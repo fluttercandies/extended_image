@@ -364,7 +364,9 @@ class EditorConfig {
     this.cropAspectRatio = CropAspectRatios.custom,
     this.initCropRectType = InitCropRectType.imageRect,
     this.cornerPainter,
+    double speed,
   })  : maxScale = maxScale ??= 5.0,
+        speed = speed ?? 1.0,
         // initialScale = initialScale ??= 1.0,
         // assert(minScale <= maxScale),
         // assert(minScale <= initialScale && initialScale <= maxScale),
@@ -424,6 +426,9 @@ class EditorConfig {
   /// or extend class [ExtendedImageCropLayerCornerPainter]
   /// and create your own corner painter.
   final ExtendedImageCropLayerCornerPainter cornerPainter;
+
+  //speed for zoom/pan
+  final double speed;
 }
 
 class CropAspectRatios {

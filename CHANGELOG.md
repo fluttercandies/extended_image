@@ -1,3 +1,8 @@
+## 1.3.0
+
+* Features:
+  Support zoom with mouse wheel.
+
 ## 1.2.0
 
 * Features:
