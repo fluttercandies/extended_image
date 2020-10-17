@@ -215,9 +215,10 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       return;
     }
 
-    final Offset offset =
-        (details.scale == 1.0 ? details.focalPoint : _startingOffset) -
-            _normalizedOffset * scale;
+    final Offset offset = (details.scale == 1.0
+            ? details.focalPoint * _gestureConfig.speed
+            : _startingOffset) -
+        _normalizedOffset * scale;
 
     if (mounted &&
         (offset != _gestureDetails.offset ||
@@ -357,6 +358,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     image = Listener(
       child: image,
       onPointerDown: _handlePointerDown,
+      onPointerSignal: _handlePointerSignal,
     );
 
     return image;
@@ -406,6 +408,19 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       totalScale: _gestureConfig.initialScale,
       offset: Offset.zero,
     )..initialAlignment = _gestureConfig.initialAlignment;
+  }
+
+  void _handlePointerSignal(PointerSignalEvent event) {
+    if (event is PointerScrollEvent && event.kind == PointerDeviceKind.mouse) {
+      _handleScaleStart(ScaleStartDetails(focalPoint: event.position));
+      final double dy = event.scrollDelta.dy;
+      final double dx = event.scrollDelta.dx;
+      _handleScaleUpdate(ScaleUpdateDetails(
+          focalPoint: event.position,
+          scale: 1.0 +
+              (dy.abs() > dx.abs() ? dy : dx) * _gestureConfig.speed / 1000.0));
+      _handleScaleEnd(ScaleEndDetails());
+    }
   }
 }
 

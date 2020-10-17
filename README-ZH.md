@@ -986,7 +986,3 @@ ExtendedImage
 | enableMemoryCache           | 是否缓存到内存                           | true  |
 | clearMemoryCacheIfFailed    | 如果图片加载失败，是否清掉内存缓存       | true  |
 | clearMemoryCacheWhenDispose | 如果图片从 tree 中移除，是否清掉内存缓存 | false |
-
-## ☕️Buy me a coffee
-
-![img](http://zmtzawqlp.gitee.io/my_images/images/qrcode.png)
