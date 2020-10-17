@@ -1,7 +1,12 @@
-## 1.2.1-dev
+## 1.3.1-dev
 
 * SDK:
   Fix sdk breaking change (1.24)
+
+## 1.3.0
+
+* Features:
+  Support zoom with mouse wheel.
 
 ## 1.2.0
 

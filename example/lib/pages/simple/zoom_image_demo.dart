@@ -52,7 +52,7 @@ class ZoomImageDemo extends StatelessWidget {
                   inPageView: false,
                   initialAlignment: InitialAlignment.center,
                   gestureDetailsIsChanged: (GestureDetails details) {
-                    print(details.totalScale);
+                    //print(details.totalScale);
                   },
                 );
               },
