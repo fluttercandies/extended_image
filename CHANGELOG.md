@@ -1,3 +1,8 @@
+## 1.2.1-dev
+
+* SDK:
+  Fix sdk breaking change (1.24)
+
 ## 1.2.0
 
 * Features:
@@ -7,7 +12,7 @@
 ## 1.1.2
 
 * Issues:
-  Fix issue that flickering when zooming out(#235). 
+  Fix issue that flickering when zooming out(#235).
 
 ## 1.1.1
 
