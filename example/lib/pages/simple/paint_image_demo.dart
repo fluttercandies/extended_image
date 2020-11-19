@@ -1,9 +1,10 @@
 import 'dart:math';
-import 'dart:ui' as ui show Image;
+import 'dart:ui' as ui show Image, Path;
 import 'package:example/common/utils/screen_util.dart';
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+//import 'dart:ui';
 
 import 'package:ff_annotation_route/ff_annotation_route.dart';
 
@@ -106,7 +107,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
     );
   }
 
-  Path clipheart(
+  ui.Path clipheart(
     Rect rect,
     Canvas canvas,
   ) {
@@ -152,7 +153,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
       points1.add(Offset(left + point.dx * xx, top + -point.dy * xx));
     }
 
-    return Path()..addPolygon(points1, false);
+    return ui.Path()..addPolygon(points1, false);
   }
 
   // The curve's parametric equations.
