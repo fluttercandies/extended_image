@@ -365,6 +365,7 @@ class EditorConfig {
     this.initCropRectType = InitCropRectType.imageRect,
     this.cornerPainter,
     double speed,
+    this.editorCropLayerPainterHandler,
   })  : maxScale = maxScale ??= 5.0,
         speed = speed ?? 1.0,
         // initialScale = initialScale ??= 1.0,
@@ -429,6 +430,8 @@ class EditorConfig {
 
   //speed for zoom/pan
   final double speed;
+
+  final EditorCropLayerPainterHandler editorCropLayerPainterHandler;
 }
 
 class CropAspectRatios {

@@ -98,3 +98,5 @@ typedef CanScaleImage = bool Function(GestureDetails details);
 
 ///Call when GestureDetails is changed
 typedef GestureDetailsIsChanged = void Function(GestureDetails details);
+
+typedef EditorCropLayerPainterHandler = CustomPainter Function(Rect cropRect, bool pointerDown);

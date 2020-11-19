@@ -113,7 +113,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     final double gWidth = widget.editorConfig.hitTestSize;
 
     final Widget result = CustomPaint(
-      painter: ExtendedImageCropLayerPainter(
+      painter: editConfig.editorCropLayerPainterHandler?.call(cropRect, _pointerDown)??ExtendedImageCropLayerPainter(
           cropRect: cropRect,
           cornerPainter: cornerPainter,
           // TODO(radomir9720): remove [cornerColor] property. After v1.1.2 was marked as deprecated.
