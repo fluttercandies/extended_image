@@ -348,6 +348,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     image = widget.imageBuilder?.call(image) ?? image;
 
     image = GestureDetector(
+      behavior: HitTestBehavior.translucent,
       onScaleStart: _handleScaleStart,
       onScaleUpdate: _handleScaleUpdate,
       onScaleEnd: _handleScaleEnd,
