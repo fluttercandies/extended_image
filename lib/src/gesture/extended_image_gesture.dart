@@ -357,6 +357,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     );
 
     image = Listener(
+      behavior: HitTestBehavior.translucent,
       child: image,
       onPointerDown: _handlePointerDown,
       onPointerSignal: _handlePointerSignal,
