@@ -1,3 +1,8 @@
+## 1.4.0
+
+* Improve:
+  Add hitTestBehavior for GestureConfig and EditorConfig. #271
+
 ## 1.3.0
 
 * Features:

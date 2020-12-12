@@ -365,6 +365,7 @@ class EditorConfig {
     this.initCropRectType = InitCropRectType.imageRect,
     this.cornerPainter,
     double speed,
+    this.hitTestBehavior = HitTestBehavior.deferToChild,
   })  : maxScale = maxScale ??= 5.0,
         speed = speed ?? 1.0,
         // initialScale = initialScale ??= 1.0,
@@ -374,6 +375,9 @@ class EditorConfig {
         assert(hitTestSize >= 0.0),
         assert(animationDuration != null),
         assert(tickerDuration != null);
+
+  /// How to behave during hit tests.
+  final HitTestBehavior hitTestBehavior;
 
   /// max scale
   final double maxScale;
