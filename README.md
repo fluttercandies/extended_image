@@ -248,17 +248,18 @@ ExtendedImage
 
 GestureConfig
 
-| parameter         | description                                                                                                                                                          | default                 |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| minScale          | min scale                                                                                                                                                            | 0.8                     |
-| animationMinScale | the min scale for zooming then animation back to minScale when scale end                                                                                             | minScale \_ 0.8         |
-| maxScale          | max scale                                                                                                                                                            | 5.0                     |
-| animationMaxScale | the max scale for zooming then animation back to maxScale when scale end                                                                                             | maxScale \_ 1.2         |
-| speed             | speed for zoom/pan                                                                                                                                                   | 1.0                     |
-| inertialSpeed     | inertial speed for zoom/pan                                                                                                                                          | 100                     |
-| cacheGesture      | save Gesture state (for example in ExtendedImageGesturePageView, gesture state will not change when scroll back),**remember clearGestureDetailsCache at right time** | false                   |
-| inPageView        | whether in ExtendedImageGesturePageView                                                                                                                              | false                   |
-| initialAlignment  | init image rect with alignment when initialScale > 1.0                                                                                                               | InitialAlignment.center |
+| parameter         | description                                                                                                                                                          | default                      |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| minScale          | min scale                                                                                                                                                            | 0.8                          |
+| animationMinScale | the min scale for zooming then animation back to minScale when scale end                                                                                             | minScale \_ 0.8              |
+| maxScale          | max scale                                                                                                                                                            | 5.0                          |
+| animationMaxScale | the max scale for zooming then animation back to maxScale when scale end                                                                                             | maxScale \_ 1.2              |
+| speed             | speed for zoom/pan                                                                                                                                                   | 1.0                          |
+| inertialSpeed     | inertial speed for zoom/pan                                                                                                                                          | 100                          |
+| cacheGesture      | save Gesture state (for example in ExtendedImageGesturePageView, gesture state will not change when scroll back),**remember clearGestureDetailsCache at right time** | false                        |
+| inPageView        | whether in ExtendedImageGesturePageView                                                                                                                              | false                        |
+| initialAlignment  | init image rect with alignment when initialScale > 1.0                                                                                                               | InitialAlignment.center      |
+| hitTestBehavior   | How to behave during hit tests                                                                                                                                       | HitTestBehavior.deferToChild |
 
 ```dart
 ExtendedImage.network(
@@ -367,6 +368,7 @@ EditorConfig
 | cropAspectRatio        | aspect ratio of crop rect                                          | null(custom)                                                 |
 | initCropRectType       | init crop rect base on initial image rect or image layout rect     | imageRect                                                    |
 | cornerPainter          | corner shape                                                       | ExtendedImageCropLayerPainterNinetyDegreesCorner()           |
+| hitTestBehavior        | How to behave during hit tests                                     | HitTestBehavior.deferToChild                                 |
 
 ### crop aspect ratio
 

@@ -353,12 +353,14 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       onScaleEnd: _handleScaleEnd,
       onDoubleTap: _handleDoubleTap,
       child: image,
+      behavior: _gestureConfig?.hitTestBehavior,
     );
 
     image = Listener(
       child: image,
       onPointerDown: _handlePointerDown,
       onPointerSignal: _handlePointerSignal,
+      behavior: _gestureConfig?.hitTestBehavior,
     );
 
     return image;

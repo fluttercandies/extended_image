@@ -1,8 +1,17 @@
+## 1.5.0-dev
+
+* Improve:
+  Public handleLoadingProgress for default constructor of ExtendedImage. #274
+
+## 1.4.0-dev
+
+* Improve:
+  Add hitTestBehavior for GestureConfig and EditorConfig. #271
+
 ## 1.3.1-dev
 
 * SDK:
   Fix sdk breaking change (1.24)
-
 ## 1.3.0
 
 * Features:
