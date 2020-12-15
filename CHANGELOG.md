@@ -1,3 +1,8 @@
+## 1.5.0
+
+* Improve:
+  Public handleLoadingProgress for default constructor of ExtendedImage. #274
+
 ## 1.4.0
 
 * Improve:
