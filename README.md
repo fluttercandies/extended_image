@@ -814,13 +814,13 @@ to clear disk cached with specific url, call clearDiskCachedImage method.
 ```dart
 /// clear the disk cache image then return if it succeed.
 ///  <param name="url">clear specific one</param>
-Future<bool> clearDiskCachedImage(String url) async {
+Future<bool> clearDiskCachedImage(String url)
 ```
 
-get the local cached image file
+get the local cached image file path
 
 ```dart
-Future<File> getCachedImageFile(String url) async {
+Future<String> getCachedImageFilePath(String url)
 ```
 
 to clear memory cache , call clearMemoryImageCache method.

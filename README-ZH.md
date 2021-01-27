@@ -827,7 +827,7 @@ Future<bool> clearDiskCachedImage(String url) async {
 根据 url 获取缓存图片文件
 
 ```dart
-Future<File> getCachedImageFile(String url) async {
+Future<String> getCachedImageFilePath(String url)
 ```
 
 清除内存缓存，可以调用 clearMemoryImageCache 方法
