@@ -1,4 +1,3 @@
-import 'dart:io' show File;
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -158,7 +157,7 @@ class ExtendedImage extends StatefulWidget {
   ///
   /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
   ExtendedImage.file(
-    File file, {
+    Object file, {
     Key key,
     double scale = 1.0,
     this.semanticLabel,
