@@ -1,3 +1,8 @@
+## 1.6.0-dev
+
+* Improve:
+  Public ExtendedImageSlidePageHandler for slide other widget. #298
+
 ## 1.5.0-dev
 
 * Improve:

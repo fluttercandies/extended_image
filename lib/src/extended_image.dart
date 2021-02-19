@@ -1032,9 +1032,9 @@ class _ExtendedImageState extends State<ExtendedImage>
         !(_loadState == LoadState.completed &&
             widget.mode == ExtendedImageMode.gesture)) {
       current = ExtendedImageSlidePageHandler(
-        current,
-        _slidePageState,
-        widget.heroBuilderForSlidingPage,
+        child: current,
+        extendedImageSlidePageState: _slidePageState,
+        heroBuilderForSlidingPage: widget.heroBuilderForSlidingPage,
       );
     }
 
