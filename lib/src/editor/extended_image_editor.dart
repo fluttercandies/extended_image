@@ -107,9 +107,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     Widget result = GestureDetector(
         onScaleStart: _handleScaleStart,
         onScaleUpdate: _handleScaleUpdate,
-        behavior: HitTestBehavior.translucent,
+        behavior: _editorConfig?.hitTestBehavior,
         child: Stack(
-          overflow: Overflow.clip,
           children: <Widget>[
             Positioned(
               child: image,
@@ -189,6 +188,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       // onPointerCancel: (_) {
       //   pointerDown(false);
       // },
+      behavior: _editorConfig?.hitTestBehavior,
     );
     return result;
   }

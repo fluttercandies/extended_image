@@ -248,17 +248,18 @@ ExtendedImage
 
 GestureConfig
 
-| parameter         | description                                                                                                                                                          | default                 |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
-| minScale          | min scale                                                                                                                                                            | 0.8                     |
-| animationMinScale | the min scale for zooming then animation back to minScale when scale end                                                                                             | minScale \_ 0.8         |
-| maxScale          | max scale                                                                                                                                                            | 5.0                     |
-| animationMaxScale | the max scale for zooming then animation back to maxScale when scale end                                                                                             | maxScale \_ 1.2         |
-| speed             | speed for zoom/pan                                                                                                                                                   | 1.0                     |
-| inertialSpeed     | inertial speed for zoom/pan                                                                                                                                          | 100                     |
-| cacheGesture      | save Gesture state (for example in ExtendedImageGesturePageView, gesture state will not change when scroll back),**remember clearGestureDetailsCache at right time** | false                   |
-| inPageView        | whether in ExtendedImageGesturePageView                                                                                                                              | false                   |
-| initialAlignment  | init image rect with alignment when initialScale > 1.0                                                                                                               | InitialAlignment.center |
+| parameter         | description                                                                                                                                                          | default                      |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| minScale          | min scale                                                                                                                                                            | 0.8                          |
+| animationMinScale | the min scale for zooming then animation back to minScale when scale end                                                                                             | minScale \_ 0.8              |
+| maxScale          | max scale                                                                                                                                                            | 5.0                          |
+| animationMaxScale | the max scale for zooming then animation back to maxScale when scale end                                                                                             | maxScale \_ 1.2              |
+| speed             | speed for zoom/pan                                                                                                                                                   | 1.0                          |
+| inertialSpeed     | inertial speed for zoom/pan                                                                                                                                          | 100                          |
+| cacheGesture      | save Gesture state (for example in ExtendedImageGesturePageView, gesture state will not change when scroll back),**remember clearGestureDetailsCache at right time** | false                        |
+| inPageView        | whether in ExtendedImageGesturePageView                                                                                                                              | false                        |
+| initialAlignment  | init image rect with alignment when initialScale > 1.0                                                                                                               | InitialAlignment.center      |
+| hitTestBehavior   | How to behave during hit tests                                                                                                                                       | HitTestBehavior.deferToChild |
 
 ```dart
 ExtendedImage.network(
@@ -367,6 +368,7 @@ EditorConfig
 | cropAspectRatio        | aspect ratio of crop rect                                          | null(custom)                                                 |
 | initCropRectType       | init crop rect base on initial image rect or image layout rect     | imageRect                                                    |
 | cornerPainter          | corner shape                                                       | ExtendedImageCropLayerPainterNinetyDegreesCorner()           |
+| hitTestBehavior        | How to behave during hit tests                                     | HitTestBehavior.deferToChild                                 |
 
 ### crop aspect ratio
 
@@ -585,7 +587,7 @@ output is raw image data, you can use it to save or any other thing.
   );
 ```
 
-[more detail](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_editor_helper.dart)
+[more detail](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/utils/crop_editor_helper.dart)
 
 ## Photo View
 
@@ -766,9 +768,9 @@ you should push page with TransparentMaterialPageRoute/TransparentCupertinoPageR
   );
 ```
 
-[Slide Out Page Demo Code 1](https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/crop_image.dart)
+[Slide Out Page Demo Code 1](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/crop_image.dart)
 
-[Slide Out Page Demo Code 2](https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/pic_swiper.dart)
+[Slide Out Page Demo Code 2](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/pic_swiper.dart)
 
 ## Border BorderRadius Shape
 
@@ -909,8 +911,8 @@ ExtendedImage
   );
 ```
 
-see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/paint_image_demo.dart)
-and [push to refresh header which is used in crop image demo]https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/push_to_refresh_header.dart)
+see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/simple/paint_image_demo.dart)
+and [push to refresh header which is used in crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/push_to_refresh_header.dart)
 
 ## WaterfallFlow
 

@@ -371,6 +371,8 @@ class GestureConfig {
     double animationMinScale,
     double animationMaxScale,
     this.initialAlignment = InitialAlignment.center,
+    this.gestureDetailsIsChanged,
+    this.hitTestBehavior = HitTestBehavior.deferToChild,
   })  : minScale = minScale ??= 0.8,
         maxScale = maxScale ??= 5.0,
         speed = speed ??= 1.0,
@@ -387,31 +389,39 @@ class GestureConfig {
         assert(minScale <= initialScale && initialScale <= maxScale),
         assert(speed > 0),
         assert(inertialSpeed > 0);
-  //the min scale for zooming then animation back to minScale when scale end
+
+  /// How to behave during hit tests.
+  final HitTestBehavior hitTestBehavior;
+
+  /// Call when GestureDetails is changed
+  final GestureDetailsIsChanged gestureDetailsIsChanged;
+
+  /// the min scale for zooming then animation back to minScale when scale end
   final double animationMinScale;
   //min scale
   final double minScale;
 
-  //the max scale for zooming then animation back to maxScale when scale end
+  /// the max scale for zooming then animation back to maxScale when scale end
   final double animationMaxScale;
-  //max scale
+
+  /// max scale
   final double maxScale;
 
-  //speed for zoom/pan
+  /// speed for zoom/pan
   final double speed;
 
-  ///save Gesture state (for example in page view, so that the state will not change when scroll back),
-  ///remember clearGestureDetailsCache  at right time
+  /// save Gesture state (for example in page view, so that the state will not change when scroll back),
+  /// remember clearGestureDetailsCache  at right time
   final bool cacheGesture;
 
-  ///whether in page view
+  /// whether in page view
   final bool inPageView;
 
   /// final double magnitude = details.velocity.pixelsPerSecond.distance;
-  ///final Offset direction = details.velocity.pixelsPerSecond / magnitude * _gestureConfig.inertialSpeed;
+  /// final Offset direction = details.velocity.pixelsPerSecond / magnitude * _gestureConfig.inertialSpeed;
   final double inertialSpeed;
 
-  ///initial scale of image
+  /// initial scale of image
   final double initialScale;
 
   /// init image rect with alignment when initialScale > 1.0
@@ -424,22 +434,14 @@ double roundAfter(double number, int position) {
   return (number * shift).roundToDouble() / shift;
 }
 
-// enum GestureState {
-//   ///zoom in/ zoom out
-//   zoom,
-
-//   /// horizontal and vertical move
-//   pan,
-// }
-
 enum ActionType {
-  ///zoom in/ zoom out
+  /// zoom in/ zoom out
   zoom,
 
   /// horizontal and vertical move
   pan,
 
-  ///flip,rotate
+  /// flip,rotate
   edit,
 }
 

@@ -1,3 +1,17 @@
+## 1.6.0
+
+* Improve:
+  Public ExtendedImageSlidePageHandler for slide other widget. #298
+## 1.5.0
+
+* Improve:
+  Public handleLoadingProgress for default constructor of ExtendedImage. #274
+
+## 1.4.0
+
+* Improve:
+  Add hitTestBehavior for GestureConfig and EditorConfig. #271
+
 ## 1.3.0
 
 * Features:
@@ -12,7 +26,7 @@
 ## 1.1.2
 
 * Issues:
-  Fix issue that flickering when zooming out(#235). 
+  Fix issue that flickering when zooming out(#235).
 
 ## 1.1.1
 

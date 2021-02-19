@@ -250,17 +250,18 @@ ExtendedImage
 
 GestureConfig
 
-| 参数              | 描述                                                                                                         | 默认值                  |
-| ----------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------- |
-| minScale          | 缩放最小值                                                                                                   | 0.8                     |
-| animationMinScale | 缩放动画最小值，当缩放结束时回到 minScale 值                                                                 | minScale \* 0.8         |
-| maxScale          | 缩放最大值                                                                                                   | 5.0                     |
-| animationMaxScale | 缩放动画最大值，当缩放结束时回到 maxScale 值                                                                 | maxScale \* 1.2         |
-| speed             | 缩放拖拽速度，与用户操作成正比                                                                               | 1.0                     |
-| inertialSpeed     | 拖拽惯性速度，与惯性速度成正比                                                                               | 100                     |
-| cacheGesture      | 是否缓存手势状态，可用于 ExtendedImageGesturePageView 中保留状态，**使用 clearGestureDetailsCache 方法清除** | false                   |
-| inPageView        | 是否使用 ExtendedImageGesturePageView 展示图片                                                               | false                   |
-| initialAlignment  | 当图片的初始化缩放大于 1.0 的时候，根据相对位置初始化图片                                                    | InitialAlignment.center |
+| 参数              | 描述                                                                                                         | 默认值                       |
+| ----------------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------- |
+| minScale          | 缩放最小值                                                                                                   | 0.8                          |
+| animationMinScale | 缩放动画最小值，当缩放结束时回到 minScale 值                                                                 | minScale \* 0.8              |
+| maxScale          | 缩放最大值                                                                                                   | 5.0                          |
+| animationMaxScale | 缩放动画最大值，当缩放结束时回到 maxScale 值                                                                 | maxScale \* 1.2              |
+| speed             | 缩放拖拽速度，与用户操作成正比                                                                               | 1.0                          |
+| inertialSpeed     | 拖拽惯性速度，与惯性速度成正比                                                                               | 100                          |
+| cacheGesture      | 是否缓存手势状态，可用于 ExtendedImageGesturePageView 中保留状态，**使用 clearGestureDetailsCache 方法清除** | false                        |
+| inPageView        | 是否使用 ExtendedImageGesturePageView 展示图片                                                               | false                        |
+| initialAlignment  | 当图片的初始化缩放大于 1.0 的时候，根据相对位置初始化图片                                                    | InitialAlignment.center      |
+| hitTestBehavior   | 设置hittest的行为                                                                                            | HitTestBehavior.deferToChild |
 
 ```dart
 ExtendedImage.network(
@@ -370,7 +371,7 @@ EditorConfig
 | tickerDuration         | 当裁剪框拖拽变化结束之后，多少时间才触发自动适应到中间的动画                       | Duration(milliseconds: 400)                                  |
 | cropAspectRatio        | 裁剪框的宽高比                                                                     | null(无宽高比)                                               |
 | initCropRectType       | 剪切框的初始化类型(根据图片初始化区域或者图片的 layout 区域)                       | imageRect                                                    |
-
+| hitTestBehavior        | 设置hittest的行为                                                                  | HitTestBehavior.deferToChild                                 |
 ### 裁剪框的宽高比
 
 这是一个 double 类型，你可以自定义裁剪框的宽高比。
@@ -589,7 +590,7 @@ dependencies:
   );
 ```
 
-[more detail](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/crop_editor_helper.dart)
+[more detail](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/utils/crop_editor_helper.dart)
 
 ## 图片浏览
 
@@ -774,9 +775,9 @@ double defaultSlideScaleHandler(
   );
 ```
 
-[滑动退出页面相关代码演示 1](https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/crop_image.dart)
+[滑动退出页面相关代码演示 1](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/crop_image.dart)
 
-[滑动退出页面相关代码演示 2](https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/pic_swiper.dart)
+[滑动退出页面相关代码演示 2](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/pic_swiper.dart)
 
 ## Border BorderRadius Shape
 
@@ -917,8 +918,8 @@ ExtendedImage
 ```
 
 在例子中可以看到把图片 Clip 成了一个桃心，你也可以根据你的要求，做出不同的 Clip
-[绘制例子](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/paint_image_demo.dart)
-[下拉刷新头当中，也使用了这个技巧](https://github.com/fluttercandies/flutter_candies_demo_library/blob/master/lib/src/widget/push_to_refresh_header.dart)
+[绘制例子](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/simple/paint_image_demo.dart)
+[下拉刷新头当中，也使用了这个技巧](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/push_to_refresh_header.dart)
 
 ## 瀑布流
 
