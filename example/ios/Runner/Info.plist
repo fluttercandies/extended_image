@@ -40,17 +40,6 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>	
-<key>NSAppTransportSecurity</key>
-<dict>
-	<key>NSAllowsArbitraryLoads</key>
-  <true/>
-</dict>
-<key>NSPhotoLibraryUsageDescription</key>
-<string>Replace with your permission description.</string>	
+	<false/>
 </dict>
 </plist>
-
-
-
-

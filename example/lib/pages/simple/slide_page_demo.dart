@@ -23,7 +23,7 @@ class _SlidePageDemoState extends State<SlidePageDemo> {
     'https://photo.tuchong.com/17325605/f/641585173.jpg',
     'https://photo.tuchong.com/3541468/f/256561232.jpg',
     'https://photo.tuchong.com/16709139/f/278778447.jpg',
-    'https://photo.tuchong.com/15195571/f/233361383.jpg',
+    'This is an video',
     'https://photo.tuchong.com/5040418/f/43305517.jpg',
     'https://photo.tuchong.com/3019649/f/302699092.jpg'
   ];
@@ -48,10 +48,15 @@ class _SlidePageDemoState extends State<SlidePageDemo> {
                 aspectRatio: 1.0,
                 child: Hero(
                   tag: url,
-                  child: ExtendedImage.network(
-                    url,
-                    fit: BoxFit.cover,
-                  ),
+                  child: url == 'This is an video'
+                      ? Container(
+                          alignment: Alignment.center,
+                          child: const Text('This is an video'),
+                        )
+                      : ExtendedImage.network(
+                          url,
+                          fit: BoxFit.cover,
+                        ),
                 ),
               ),
               onTap: () {
@@ -94,28 +99,58 @@ class _SlidePageState extends State<SlidePage> {
       child: ExtendedImageSlidePage(
         key: slidePagekey,
         child: GestureDetector(
-          child: ExtendedImage.network(
-            widget.url,
-            enableSlideOutPage: true,
+          child: widget.url == 'This is an video'
+              ? ExtendedImageSlidePageHandler(
+                  child: Material(
+                    child: Container(
+                      alignment: Alignment.center,
+                      color: Colors.yellow,
+                      child: const Text('This is an video'),
+                    ),
+                  ),
 
-            ///make hero better when slide out
-            heroBuilderForSlidingPage: (Widget result) {
-              return Hero(
-                tag: widget.url,
-                child: result,
-                flightShuttleBuilder: (BuildContext flightContext,
-                    Animation<double> animation,
-                    HeroFlightDirection flightDirection,
-                    BuildContext fromHeroContext,
-                    BuildContext toHeroContext) {
-                  final Hero hero = (flightDirection == HeroFlightDirection.pop
-                      ? fromHeroContext.widget
-                      : toHeroContext.widget) as Hero;
-                  return hero.child;
-                },
-              );
-            },
-          ),
+                  ///make hero better when slide out
+                  heroBuilderForSlidingPage: (Widget result) {
+                    return Hero(
+                      tag: widget.url,
+                      child: result,
+                      flightShuttleBuilder: (BuildContext flightContext,
+                          Animation<double> animation,
+                          HeroFlightDirection flightDirection,
+                          BuildContext fromHeroContext,
+                          BuildContext toHeroContext) {
+                        final Hero hero =
+                            (flightDirection == HeroFlightDirection.pop
+                                ? fromHeroContext.widget
+                                : toHeroContext.widget) as Hero;
+                        return hero.child;
+                      },
+                    );
+                  },
+                )
+              : ExtendedImage.network(
+                  widget.url,
+                  enableSlideOutPage: true,
+
+                  ///make hero better when slide out
+                  heroBuilderForSlidingPage: (Widget result) {
+                    return Hero(
+                      tag: widget.url,
+                      child: result,
+                      flightShuttleBuilder: (BuildContext flightContext,
+                          Animation<double> animation,
+                          HeroFlightDirection flightDirection,
+                          BuildContext fromHeroContext,
+                          BuildContext toHeroContext) {
+                        final Hero hero =
+                            (flightDirection == HeroFlightDirection.pop
+                                ? fromHeroContext.widget
+                                : toHeroContext.widget) as Hero;
+                        return hero.child;
+                      },
+                    );
+                  },
+                ),
           onTap: () {
             slidePagekey.currentState.popPage();
             Navigator.pop(context);

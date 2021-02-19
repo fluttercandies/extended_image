@@ -1,3 +1,7 @@
+## 1.6.0
+
+* Improve:
+  Public ExtendedImageSlidePageHandler for slide other widget. #298
 ## 1.5.0
 
 * Improve:
@@ -22,7 +26,7 @@
 ## 1.1.2
 
 * Issues:
-  Fix issue that flickering when zooming out(#235). 
+  Fix issue that flickering when zooming out(#235).
 
 ## 1.1.1
 
