@@ -1,3 +1,7 @@
+## 2.0.0-nullsafety.1
+
+* Migrato to non-nullable by default.
+
 ## 1.6.0
 
 * Improve:
