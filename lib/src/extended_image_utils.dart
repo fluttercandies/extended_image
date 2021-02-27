@@ -4,56 +4,51 @@ import 'package:flutter/material.dart';
 import 'extended_image.dart';
 import 'gesture/extended_image_slide_page.dart';
 
-enum LoadState {
-  //loading
-  loading,
-  //completed
-  completed,
-  //failed
-  failed
-}
+enum LoadState { loading, completed, failed }
 
 abstract class ExtendedImageState {
   void reLoadImage();
-  ImageInfo get extendedImageInfo;
+
+  ImageInfo? get extendedImageInfo;
+
   LoadState get extendedImageLoadState;
 
-  ///return widget which from LoadStateChanged function immediately
-  bool returnLoadStateChangedWidget;
+  /// Return widget which from LoadStateChanged function immediately
+  late bool returnLoadStateChangedWidget;
 
   ImageProvider get imageProvider;
 
   bool get invertColors;
 
-  Object get imageStreamKey;
+  Object? get imageStreamKey;
 
   ExtendedImage get imageWidget;
 
   Widget get completedWidget;
 
-  ImageChunkEvent get loadingProgress;
+  ImageChunkEvent? get loadingProgress;
 
-  int get frameNumber;
+  int? get frameNumber;
 
   bool get wasSynchronouslyLoaded;
 
-  ExtendedImageSlidePageState get slidePageState;
+  ExtendedImageSlidePageState? get slidePageState;
 }
 
 enum ExtendedImageMode {
-  //just show image
+  // Just show image
   none,
-  //support be to zoom,scroll
+  // Support be to zoom, scroll
   gesture,
-  //support be to crop,rotate,flip
+  // Support be to crop, rotate, flip
   editor
 }
 
-///get type from T
+/// Get type from T
 Type typeOf<T>() => T;
 
 double clampScale(double scale, double min, double max) {
-  return scale.clamp(min, max) as double;
+  return scale.clamp(min, max);
 }
 
 /// Returns a value indicating whether two instances of Double represent the same value.
@@ -73,8 +68,11 @@ bool doubleEqual(double value, double other) {
 /// [value] greater than [other] will return `1`
 ///
 /// If [value] or [other] is not finite (`NaN` or infinity), throws an [UnsupportedError].
-int doubleCompare(double value, double other,
-    {double precision = precisionErrorTolerance}) {
+int doubleCompare(
+  double value,
+  double other, {
+  double precision = precisionErrorTolerance,
+}) {
   if (value.isNaN || other.isNaN) {
     throw UnsupportedError('Compared with Infinity or NaN');
   }

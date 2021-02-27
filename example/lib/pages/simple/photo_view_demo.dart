@@ -37,6 +37,7 @@ class _SimplePhotoViewDemoState extends State<SimplePhotoViewDemo> {
         controller: PageController(
           initialPage: 0,
         ),
+        itemCount: images.length,
         itemBuilder: (BuildContext context, int index) {
           return ExtendedImage.network(
             images[index],

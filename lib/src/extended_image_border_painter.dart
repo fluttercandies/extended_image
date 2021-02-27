@@ -1,7 +1,11 @@
 import 'package:flutter/rendering.dart';
 
 class ExtendedImageBorderPainter extends CustomPainter {
-  ExtendedImageBorderPainter({this.border, this.shape, this.borderRadius});
+  const ExtendedImageBorderPainter({
+    this.border,
+    this.shape,
+    this.borderRadius,
+  });
 
   /// The shape to fill the background [color], [gradient], and [image] into and
   /// to cast as the [boxShadow].
@@ -14,7 +18,7 @@ class ExtendedImageBorderPainter extends CustomPainter {
   /// different [ShapeBorder]s; in particular, [CircleBorder] instead of
   /// [BoxShape.circle] and [RoundedRectangleBorder] instead of
   /// [BoxShape.rectangle].
-  final BoxShape shape;
+  final BoxShape? shape;
 
   /// A border to draw above the background [color], [gradient], or [image].
   ///
@@ -26,13 +30,14 @@ class ExtendedImageBorderPainter extends CustomPainter {
   /// Use [BoxBorder] objects to describe borders that should flip their left
   /// and right edges based on whether the text is being read left-to-right or
   /// right-to-left.
-  final BoxBorder border;
+  final BoxBorder? border;
 
   /// If non-null, the corners of this box are rounded by this [BorderRadius].
   ///
   /// Applies only to boxes with rectangular shapes; ignored if [shape] is not
   /// [BoxShape.rectangle].
-  final BorderRadius borderRadius;
+  final BorderRadius? borderRadius;
+
   @override
   void paint(Canvas canvas, Size size) {
     final Rect outputRect = Rect.fromLTWH(0.0, 0.0, size.width, size.height);
@@ -56,13 +61,18 @@ class ExtendedImageBorderPainter extends CustomPainter {
 //
 //    if (clipPath != null) canvas.restore();
 
-    switch (shape) {
+    final BoxShape _shape = shape ?? BoxShape.rectangle;
+    switch (_shape) {
       case BoxShape.circle:
-        border.paint(canvas, outputRect, shape: shape);
+        border?.paint(canvas, outputRect, shape: _shape);
         break;
       case BoxShape.rectangle:
-        border.paint(canvas, outputRect,
-            shape: shape, borderRadius: borderRadius);
+        border?.paint(
+          canvas,
+          outputRect,
+          shape: _shape,
+          borderRadius: borderRadius,
+        );
         break;
     }
   }

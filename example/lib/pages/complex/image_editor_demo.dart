@@ -54,9 +54,11 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
   @override
   void initState() {
-    _aspectRatio = _aspectRatios.first;
-    _cornerPainter = const ExtendedImageCropLayerPainterNinetyDegreesCorner();
     super.initState();
+    _aspectRatio = _aspectRatios.first;
+    _cornerPainter = const ExtendedImageCropLayerPainterNinetyDegreesCorner(
+      color: Colors.red,
+    );
   }
 
   @override
@@ -92,12 +94,13 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                   extendedImageEditorKey: editorKey,
                   initEditorConfigHandler: (ExtendedImageState state) {
                     return EditorConfig(
-                        maxScale: 8.0,
-                        cropRectPadding: const EdgeInsets.all(20.0),
-                        hitTestSize: 20.0,
-                        cornerPainter: _cornerPainter,
-                        initCropRectType: InitCropRectType.imageRect,
-                        cropAspectRatio: _aspectRatio.value);
+                      maxScale: 8.0,
+                      cropRectPadding: const EdgeInsets.all(20.0),
+                      hitTestSize: 20.0,
+                      cornerPainter: _cornerPainter,
+                      initCropRectType: InitCropRectType.imageRect,
+                      cropAspectRatio: _aspectRatio.value,
+                    );
                   },
                 )
               : ExtendedImage.asset(
@@ -108,12 +111,13 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                   extendedImageEditorKey: editorKey,
                   initEditorConfigHandler: (ExtendedImageState state) {
                     return EditorConfig(
-                        maxScale: 8.0,
-                        cropRectPadding: const EdgeInsets.all(20.0),
-                        hitTestSize: 20.0,
-                        cornerPainter: _cornerPainter,
-                        initCropRectType: InitCropRectType.imageRect,
-                        cropAspectRatio: _aspectRatio.value);
+                      maxScale: 8.0,
+                      cropRectPadding: const EdgeInsets.all(20.0),
+                      hitTestSize: 20.0,
+                      cornerPainter: _cornerPainter,
+                      initCropRectType: InitCropRectType.imageRect,
+                      cropAspectRatio: _aspectRatio.value,
+                    );
                   },
                 ),
         ),
@@ -235,7 +239,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                           ],
                         ),
                         value:
-                            const ExtendedImageCropLayerPainterNinetyDegreesCorner(),
+                            const ExtendedImageCropLayerPainterNinetyDegreesCorner(
+                          color: Colors.red,
+                        ),
                       ),
                       const PopupMenuDivider(),
                       PopupMenuItem<ExtendedImageCropLayerCornerPainter>(
@@ -251,8 +257,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             Text('Circle'),
                           ],
                         ),
-                        value:
-                            const ExtendedImageCropLayerPainterCircleCorner(),
+                        value: const ExtendedImageCropLayerPainterCircleCorner(
+                          color: Colors.red,
+                        ),
                       ),
                     ];
                   },
@@ -445,6 +452,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   }
 
   Uint8List _memoryImage;
+
   Future<void> _getImage() async {
     _memoryImage = await pickImage(context);
     //when back to current page, may be editorKey.currentState is not ready.

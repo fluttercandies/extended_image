@@ -12,7 +12,7 @@ import 'gesture/extended_image_slide_page.dart';
 ///  create by zmtzawqlp on 2019/4/3
 ///
 
-typedef LoadStateChanged = Widget Function(ExtendedImageState state);
+typedef LoadStateChanged = Widget? Function(ExtendedImageState state);
 
 ///[rect] is render size
 ///if return true, it will not paint original image,
@@ -57,16 +57,17 @@ typedef SlideScaleHandler = double Function(
 
 ///init GestureConfig when image is ready.
 typedef InitGestureConfigHandler = GestureConfig Function(
-    ExtendedImageState state);
+  ExtendedImageState state,
+);
 
 ///on sliding page
 typedef OnSlidingPage = void Function(ExtendedImageSlidePageState state);
 
 ///whether we can move to previous/next page only for Image
-typedef CanMovePage = bool Function(GestureDetails gestureDetails);
+typedef CanMovePage = bool Function(GestureDetails? gestureDetails);
 
 ///whether we can scroll page
-typedef CanScrollPage = bool Function(GestureDetails gestureDetails);
+typedef CanScrollPage = bool Function(GestureDetails? gestureDetails);
 
 ///return initial destination rect
 typedef InitDestinationRect = void Function(Rect initialDestinationRect);
@@ -97,4 +98,4 @@ typedef ImageBuilderForGesture = Widget Function(Widget image);
 typedef CanScaleImage = bool Function(GestureDetails details);
 
 ///Call when GestureDetails is changed
-typedef GestureDetailsIsChanged = void Function(GestureDetails details);
+typedef GestureDetailsIsChanged = void Function(GestureDetails? details);

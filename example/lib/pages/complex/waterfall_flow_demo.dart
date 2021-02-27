@@ -21,10 +21,11 @@ class WaterfallFlowDemo extends StatefulWidget {
 
 class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
   TuChongRepository listSourceRepository;
+
   @override
   void initState() {
-    listSourceRepository = TuChongRepository();
     super.initState();
+    listSourceRepository = TuChongRepository();
   }
 
   @override

@@ -18,7 +18,8 @@ enum SlideType {
 
 class ExtendedImageSlidePage extends StatefulWidget {
   const ExtendedImageSlidePage({
-    this.child,
+    Key? key,
+    required this.child,
     this.slidePageBackgroundHandler,
     this.slideScaleHandler,
     this.slideOffsetHandler,
@@ -27,27 +28,25 @@ class ExtendedImageSlidePage extends StatefulWidget {
     this.resetPageDuration = const Duration(milliseconds: 500),
     this.slideType = SlideType.onlyImage,
     this.onSlidingPage,
-    Key key,
   }) : super(key: key);
 
-  ///The [child] contained by the ExtendedImageGesturePage.
+  /// The [child] contained by the ExtendedImageGesturePage.
   final Widget child;
 
-  ///builder background when slide page
-  final SlidePageBackgroundHandler slidePageBackgroundHandler;
+  /// Builder background when slide page.
+  final SlidePageBackgroundHandler? slidePageBackgroundHandler;
 
-  ///customize scale of page when slide page
-  final SlideScaleHandler slideScaleHandler;
+  /// Customize scale of page when slide page
+  final SlideScaleHandler? slideScaleHandler;
 
-  ///customize offset when slide page
-  final SlideOffsetHandler slideOffsetHandler;
+  /// Customize offset when slide page.
+  final SlideOffsetHandler? slideOffsetHandler;
 
-  ///call back of slide end
-  ///decide whether pop page
-  final SlideEndHandler slideEndHandler;
+  /// Callback of slide end. Decide whether pop page
+  final SlideEndHandler? slideEndHandler;
 
-  ///axis of slide
-  ///both,horizontal,vertical
+  /// Axis of slide
+  /// both,horizontal,vertical
   final SlideAxis slideAxis;
 
   ///reset page position when slide end(not pop page)
@@ -57,7 +56,8 @@ class ExtendedImageSlidePage extends StatefulWidget {
   final SlideType slideType;
 
   /// on sliding page
-  final OnSlidingPage onSlidingPage;
+  final OnSlidingPage? onSlidingPage;
+
   @override
   ExtendedImageSlidePageState createState() => ExtendedImageSlidePageState();
 }
@@ -66,23 +66,31 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     with SingleTickerProviderStateMixin {
   bool _isSliding = false;
 
-  ///whether is sliding page
   bool get isSliding => _isSliding;
 
-  Size _pageSize;
-  Size get pageSize => _pageSize ?? context.size;
+  Size? _pageSize;
 
-  AnimationController _backAnimationController;
+  Size get pageSize => _pageSize ?? context.size!;
+
+  late AnimationController _backAnimationController = AnimationController(
+    vsync: this,
+    duration: widget.resetPageDuration,
+  );
+
   AnimationController get backAnimationController => _backAnimationController;
-  Animation<Offset> _backOffsetAnimation;
+  late Animation<Offset> _backOffsetAnimation;
+
   Animation<Offset> get backOffsetAnimation => _backOffsetAnimation;
-  Animation<double> _backScaleAnimation;
+  late Animation<double> _backScaleAnimation;
+
   Animation<double> get backScaleAnimation => _backScaleAnimation;
   Offset _offset = Offset.zero;
+
   Offset get offset => _backAnimationController.isAnimating
       ? _backOffsetAnimation.value
       : _offset;
   double _scale = 1.0;
+
   double get scale =>
       _backAnimationController.isAnimating ? backScaleAnimation.value : _scale;
   bool _popping = false;
@@ -90,25 +98,28 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   @override
   void initState() {
     super.initState();
-    _backAnimationController =
-        AnimationController(vsync: this, duration: widget.resetPageDuration);
     _backAnimationController.addListener(_backAnimation);
   }
 
   @override
   void didUpdateWidget(ExtendedImageSlidePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
     if (oldWidget.resetPageDuration != widget.resetPageDuration) {
       _backAnimationController.stop();
       _backAnimationController.dispose();
-      _backAnimationController =
-          AnimationController(vsync: this, duration: widget.resetPageDuration);
+      _backAnimationController = AnimationController(
+        vsync: this,
+        duration: widget.resetPageDuration,
+      );
     }
-    super.didUpdateWidget(oldWidget);
   }
 
-  ExtendedImageGestureState _extendedImageGestureState;
-  ExtendedImageGestureState get imageGestureState => _extendedImageGestureState;
-  ExtendedImageSlidePageHandlerState _extendedImageSlidePageHandlerState;
+  ExtendedImageGestureState? _extendedImageGestureState;
+
+  ExtendedImageGestureState? get imageGestureState =>
+      _extendedImageGestureState;
+  ExtendedImageSlidePageHandlerState? _extendedImageSlidePageHandlerState;
+
   void _backAnimation() {
     if (mounted) {
       setState(() {
@@ -132,8 +143,8 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   }
 
   void slide(Offset value,
-      {ExtendedImageGestureState extendedImageGestureState,
-      ExtendedImageSlidePageHandlerState extendedImageSlidePageHandlerState}) {
+      {ExtendedImageGestureState? extendedImageGestureState,
+      ExtendedImageSlidePageHandlerState? extendedImageSlidePageHandlerState}) {
     if (_backAnimationController.isAnimating) {
       return;
     }
@@ -185,9 +196,10 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
             details: details,
           ) ??
           defaultSlideEndHandler(
-              offset: _offset,
-              pageSize: _pageSize,
-              pageGestureAxis: widget.slideAxis);
+            offset: _offset,
+            pageSize: pageSize,
+            pageGestureAxis: widget.slideAxis,
+          );
 
       if (popPage) {
         setState(() {
@@ -221,10 +233,11 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     final Color pageColor =
         widget.slidePageBackgroundHandler?.call(offset, pageSize) ??
             defaultSlidePageBackgroundHandler(
-                offset: offset,
-                pageSize: pageSize,
-                color: Theme.of(context).dialogBackgroundColor,
-                pageGestureAxis: widget.slideAxis);
+              offset: offset,
+              pageSize: pageSize,
+              color: Theme.of(context).dialogBackgroundColor,
+              pageGestureAxis: widget.slideAxis,
+            );
 
     Widget result = widget.child;
     if (widget.slideType == SlideType.wholePage) {

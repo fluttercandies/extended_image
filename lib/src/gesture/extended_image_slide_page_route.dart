@@ -41,8 +41,8 @@ class TransparentMaterialPageRoute<T> extends PageRoute<T> {
   /// The values of [builder], [maintainState], and [fullScreenDialog] must not
   /// be null.
   TransparentMaterialPageRoute({
-    @required this.builder,
-    RouteSettings settings,
+    required this.builder,
+    RouteSettings? settings,
     this.maintainState = true,
     bool fullscreenDialog = false,
   })  : assert(builder != null),
@@ -65,10 +65,10 @@ class TransparentMaterialPageRoute<T> extends PageRoute<T> {
   Duration get transitionDuration => const Duration(milliseconds: 300);
 
   @override
-  Color get barrierColor => null;
+  Color? get barrierColor => null;
 
   @override
-  String get barrierLabel => null;
+  String? get barrierLabel => null;
 
   @override
   bool canTransitionFrom(TransitionRoute<dynamic> previousRoute) {
@@ -95,12 +95,13 @@ class TransparentMaterialPageRoute<T> extends PageRoute<T> {
     Animation<double> animation,
     Animation<double> secondaryAnimation,
   ) {
-    final Widget result = builder(context);
+    final Widget? result = builder(context);
     assert(() {
       if (result == null) {
         throw FlutterError(
-            'The builder for route "${settings.name}" returned null.\n'
-            'Route builders must never return null.');
+          'The builder for route "${settings.name}" returned null.\n'
+          'Route builders must never return null.',
+        );
       }
       return true;
     }());
@@ -112,11 +113,20 @@ class TransparentMaterialPageRoute<T> extends PageRoute<T> {
   }
 
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     final PageTransitionsTheme theme = Theme.of(context).pageTransitionsTheme;
     return theme.buildTransitions<T>(
-        this, context, animation, secondaryAnimation, child);
+      this,
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    );
   }
 
   @override
@@ -129,9 +139,9 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
   /// The [builder], [maintainState], and [fullscreenDialog] arguments must not
   /// be null.
   TransparentCupertinoPageRoute({
-    @required this.builder,
+    required this.builder,
     this.title,
-    RouteSettings settings,
+    RouteSettings? settings,
     this.maintainState = true,
     bool fullscreenDialog = false,
   })  : assert(builder != null),
@@ -151,9 +161,9 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
   /// Used to auto-populate [CupertinoNavigationBar] and
   /// [CupertinoSliverNavigationBar]'s `middle`/`largeTitle` widgets when
   /// one is not manually supplied.
-  final String title;
+  final String? title;
 
-  ValueNotifier<String> _previousTitle;
+  ValueNotifier<String?>? _previousTitle;
 
   /// The title string of the previous [CupertinoPageRoute].
   ///
@@ -169,22 +179,24 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
   ///
   ///  * [ValueListenableBuilder], which can be used to listen and rebuild
   ///    widgets based on a ValueListenable.
-  ValueListenable<String> get previousTitle {
+  ValueListenable<String?> get previousTitle {
     assert(
       _previousTitle != null,
       'Cannot read the previousTitle for a route that has not yet been installed',
     );
-    return _previousTitle;
+    return _previousTitle!;
   }
 
   @override
-  void didChangePrevious(Route<dynamic> previousRoute) {
-    final String previousTitleString =
-        previousRoute is CupertinoPageRoute ? previousRoute.title : null;
+  void didChangePrevious(Route<dynamic>? previousRoute) {
+    final String? previousTitleString =
+        previousRoute is TransparentCupertinoPageRoute?
+            ? previousRoute?.title
+            : null;
     if (_previousTitle == null) {
-      _previousTitle = ValueNotifier<String>(previousTitleString);
+      _previousTitle = ValueNotifier<String?>(previousTitleString);
     } else {
-      _previousTitle.value = previousTitleString;
+      _previousTitle!.value = previousTitleString;
     }
     super.didChangePrevious(previousRoute);
   }
@@ -197,10 +209,10 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
   Duration get transitionDuration => const Duration(milliseconds: 400);
 
   @override
-  Color get barrierColor => null;
+  Color? get barrierColor => null;
 
   @override
-  String get barrierLabel => null;
+  String? get barrierLabel => null;
 
   @override
   bool canTransitionFrom(TransitionRoute<dynamic> previousRoute) {
@@ -225,7 +237,7 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
   ///  * [popGestureEnabled], which returns true if a user-triggered pop gesture
   ///    would be allowed.
   static bool isPopGestureInProgress(PageRoute<dynamic> route) {
-    return route.navigator.userGestureInProgress;
+    return route.navigator!.userGestureInProgress;
   }
 
   /// True if an iOS-style back swipe pop gesture is currently underway for this route.
@@ -270,13 +282,13 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
       return false;
     }
     // If we're in an animation already, we cannot be manually swiped.
-    if (route.animation.status != AnimationStatus.completed) {
+    if (route.animation!.status != AnimationStatus.completed) {
       return false;
     }
     // If we're being popped into, we also cannot be swiped until the pop above
     // it completes. This translates to our secondary animation being
     // dismissed.
-    if (route.secondaryAnimation.status != AnimationStatus.dismissed) {
+    if (route.secondaryAnimation!.status != AnimationStatus.dismissed) {
       return false;
     }
     // If we're in a gesture already, we cannot start another.
@@ -289,18 +301,28 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
   }
 
   @override
-  Widget buildPage(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation) {
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    final Widget child = builder(context);
     final Widget result = Semantics(
       scopesRoute: true,
       explicitChildNodes: true,
-      child: builder(context),
+      child: child,
     );
     assert(() {
-      if (result == null) {
-        throw FlutterError(
-            'The builder for route "${settings.name}" returned null.\n'
-            'Route builders must never return null.');
+      // `child` has a non-nullable return type, but might be null when
+      // running with weak checking, so we need to null check it anyway (and
+      // ignore the warning that the null-handling logic is dead code).
+      if (child == null) {
+        // ignore: dead_code
+        throw FlutterError.fromParts(<DiagnosticsNode>[
+          ErrorSummary(
+              'The builder for route "${settings.name}" returned null.'),
+          ErrorDescription('Route builders must never return null.'),
+        ]);
       }
       return true;
     }());
@@ -311,12 +333,13 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
   // gesture is detected. The returned controller handles all of the subsequent
   // drag events.
   static _CupertinoBackGestureController<T> _startPopGesture<T>(
-      PageRoute<T> route) {
+    PageRoute<T> route,
+  ) {
     assert(_isPopGestureEnabled(route));
 
     return _CupertinoBackGestureController<T>(
-      navigator: route.navigator,
-      controller: route.controller, // protected access
+      navigator: route.navigator!,
+      controller: route.controller!, // protected access
     );
   }
 
@@ -387,11 +410,11 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
 /// detector is associated.
 class _CupertinoBackGestureDetector<T> extends StatefulWidget {
   const _CupertinoBackGestureDetector({
-    Key key,
-    @required this.enabledCallback,
-    @required this.onStartPopGesture,
-    @required this.child,
-  })  : assert(enabledCallback != null),
+    Key? key,
+    required this.enabledCallback,
+    required this.onStartPopGesture,
+    required this.child,
+  })   : assert(enabledCallback != null),
         assert(onStartPopGesture != null),
         assert(child != null),
         super(key: key);
@@ -409,9 +432,9 @@ class _CupertinoBackGestureDetector<T> extends StatefulWidget {
 
 class _CupertinoBackGestureDetectorState<T>
     extends State<_CupertinoBackGestureDetector<T>> {
-  _CupertinoBackGestureController<T> _backGestureController;
+  _CupertinoBackGestureController<T>? _backGestureController;
 
-  HorizontalDragGestureRecognizer _recognizer;
+  late HorizontalDragGestureRecognizer _recognizer;
 
   @override
   void initState() {
@@ -438,15 +461,19 @@ class _CupertinoBackGestureDetectorState<T>
   void _handleDragUpdate(DragUpdateDetails details) {
     assert(mounted);
     assert(_backGestureController != null);
-    _backGestureController.dragUpdate(
-        _convertToLogical(details.primaryDelta / context.size.width));
+    _backGestureController!.dragUpdate(
+      _convertToLogical(details.primaryDelta! / context.size!.width),
+    );
   }
 
   void _handleDragEnd(DragEndDetails details) {
     assert(mounted);
     assert(_backGestureController != null);
-    _backGestureController.dragEnd(_convertToLogical(
-        details.velocity.pixelsPerSecond.dx / context.size.width));
+    _backGestureController!.dragEnd(
+      _convertToLogical(
+        details.velocity.pixelsPerSecond.dx / context.size!.width,
+      ),
+    );
     _backGestureController = null;
   }
 
@@ -471,7 +498,6 @@ class _CupertinoBackGestureDetectorState<T>
       case TextDirection.ltr:
         return value;
     }
-    return null;
   }
 
   @override
@@ -519,9 +545,9 @@ class _CupertinoBackGestureController<T> {
   ///
   /// The [navigator] and [controller] arguments must not be null.
   _CupertinoBackGestureController({
-    @required this.navigator,
-    @required this.controller,
-  })  : assert(navigator != null),
+    required this.navigator,
+    required this.controller,
+  })   : assert(navigator != null),
         assert(controller != null) {
     navigator.didStartUserGesture();
   }
@@ -570,13 +596,18 @@ class _CupertinoBackGestureController<T> {
       // to determine it.
       final int droppedPageForwardAnimationTime = min(
         lerpDouble(
-                _kMaxDroppedSwipePageForwardAnimationTime, 0, controller.value)
+          _kMaxDroppedSwipePageForwardAnimationTime,
+          0,
+          controller.value,
+        )!
             .floor(),
         _kMaxPageBackAnimationTime,
       );
-      controller.animateTo(1.0,
-          duration: Duration(milliseconds: droppedPageForwardAnimationTime),
-          curve: animationCurve);
+      controller.animateTo(
+        1.0,
+        duration: Duration(milliseconds: droppedPageForwardAnimationTime),
+        curve: animationCurve,
+      );
     } else {
       // This route is destined to pop at this point. Reuse navigator's pop.
       navigator.pop();
@@ -585,11 +616,16 @@ class _CupertinoBackGestureController<T> {
       if (controller.isAnimating) {
         // Otherwise, use a custom popping animation duration and curve.
         final int droppedPageBackAnimationTime = lerpDouble(
-                0, _kMaxDroppedSwipePageForwardAnimationTime, controller.value)
+          0,
+          _kMaxDroppedSwipePageForwardAnimationTime,
+          controller.value,
+        )!
             .floor();
-        controller.animateBack(0.0,
-            duration: Duration(milliseconds: droppedPageBackAnimationTime),
-            curve: animationCurve);
+        controller.animateBack(
+          0.0,
+          duration: Duration(milliseconds: droppedPageBackAnimationTime),
+          curve: animationCurve,
+        );
       }
     }
 
@@ -597,7 +633,7 @@ class _CupertinoBackGestureController<T> {
       // Keep the userGestureInProgress in true state so we don't change the
       // curve of the page transition mid-flight since CupertinoPageTransition
       // depends on userGestureInProgress.
-      AnimationStatusListener animationStatusCallback;
+      late AnimationStatusListener animationStatusCallback;
       animationStatusCallback = (AnimationStatus status) {
         navigator.didStopUserGesture();
         controller.removeStatusListener(animationStatusCallback);
@@ -619,12 +655,12 @@ class CupertinoPageTransition extends StatelessWidget {
   ///  * `linearTransition` is whether to perform primary transition linearly.
   ///    Used to precisely track back gesture drags.
   CupertinoPageTransition({
-    Key key,
-    @required Animation<double> primaryRouteAnimation,
-    @required Animation<double> secondaryRouteAnimation,
-    @required this.child,
-    @required bool linearTransition,
-  })  : assert(linearTransition != null),
+    Key? key,
+    required Animation<double> primaryRouteAnimation,
+    required Animation<double> secondaryRouteAnimation,
+    required this.child,
+    required bool linearTransition,
+  })   : assert(linearTransition != null),
         _primaryPositionAnimation = (linearTransition
                 ? primaryRouteAnimation
                 : CurvedAnimation(
@@ -659,8 +695,10 @@ class CupertinoPageTransition extends StatelessWidget {
 
   // When this page is coming in to cover another page.
   final Animation<Offset> _primaryPositionAnimation;
+
   // When this page is becoming covered by another page.
   final Animation<Offset> _secondaryPositionAnimation;
+
   //final Animation<Decoration> _primaryShadowAnimation;
 
   /// The widget below this widget in the tree.

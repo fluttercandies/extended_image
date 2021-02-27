@@ -1,11 +1,14 @@
+import 'dart:developer' as developer;
 import 'dart:math';
 import 'dart:ui' as ui show Image;
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:extended_image/src/editor/extended_image_editor_utils.dart';
 import 'package:extended_image/src/gesture/extended_image_gesture_utils.dart';
 import 'package:extended_image/src/extended_image_typedef.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:meta/meta.dart';
 
 class ExtendedRenderImage extends RenderBox {
   /// Creates a render box that displays an image.
@@ -14,25 +17,26 @@ class ExtendedRenderImage extends RenderBox {
   /// must not be null. The [textDirection] argument must not be null if
   /// [alignment] will need resolving or if [matchTextDirection] is true.
   ExtendedRenderImage({
-    ui.Image image,
-    double width,
-    double height,
+    ui.Image? image,
+    this.debugImageLabel,
+    double? width,
+    double? height,
     double scale = 1.0,
-    Color color,
-    BlendMode colorBlendMode,
-    BoxFit fit,
+    Color? color,
+    BlendMode? colorBlendMode,
+    BoxFit? fit,
     AlignmentGeometry alignment = Alignment.center,
     ImageRepeat repeat = ImageRepeat.noRepeat,
-    Rect centerSlice,
+    Rect? centerSlice,
     bool matchTextDirection = false,
-    TextDirection textDirection,
+    TextDirection? textDirection,
     bool invertColors = false,
     FilterQuality filterQuality = FilterQuality.low,
-    Rect sourceRect,
-    AfterPaintImage afterPaintImage,
-    BeforePaintImage beforePaintImage,
-    GestureDetails gestureDetails,
-    EditActionDetails editActionDetails,
+    Rect? sourceRect,
+    AfterPaintImage? afterPaintImage,
+    BeforePaintImage? beforePaintImage,
+    GestureDetails? gestureDetails,
+    EditActionDetails? editActionDetails,
     bool isAntiAlias = false,
   })  : assert(scale != null),
         assert(repeat != null),
@@ -53,6 +57,7 @@ class ExtendedRenderImage extends RenderBox {
         _matchTextDirection = matchTextDirection,
         _invertColors = invertColors,
         _textDirection = textDirection,
+        _isAntiAlias = isAntiAlias,
         _filterQuality = filterQuality,
         _sourceRect = sourceRect,
         _beforePaintImage = beforePaintImage,
@@ -62,9 +67,11 @@ class ExtendedRenderImage extends RenderBox {
     _updateColorFilter();
   }
 
-  EditActionDetails _editActionDetails;
-  EditActionDetails get editActionDetails => _editActionDetails;
-  set editActionDetails(EditActionDetails value) {
+  EditActionDetails? _editActionDetails;
+
+  EditActionDetails? get editActionDetails => _editActionDetails;
+
+  set editActionDetails(EditActionDetails? value) {
     if (value == _editActionDetails) {
       return;
     }
@@ -72,9 +79,11 @@ class ExtendedRenderImage extends RenderBox {
     markNeedsPaint();
   }
 
-  GestureDetails _gestureDetails;
-  GestureDetails get gestureDetails => _gestureDetails;
-  set gestureDetails(GestureDetails value) {
+  GestureDetails? _gestureDetails;
+
+  GestureDetails? get gestureDetails => _gestureDetails;
+
+  set gestureDetails(GestureDetails? value) {
     if (value == _gestureDetails) {
       return;
     }
@@ -83,9 +92,11 @@ class ExtendedRenderImage extends RenderBox {
   }
 
   ///you can paint anything if you want before paint image.
-  BeforePaintImage _beforePaintImage;
-  BeforePaintImage get beforePaintImage => _beforePaintImage;
-  set beforePaintImage(BeforePaintImage value) {
+  BeforePaintImage? _beforePaintImage;
+
+  BeforePaintImage? get beforePaintImage => _beforePaintImage;
+
+  set beforePaintImage(BeforePaintImage? value) {
     if (value == _beforePaintImage) {
       return;
     }
@@ -94,9 +105,11 @@ class ExtendedRenderImage extends RenderBox {
   }
 
   ///you can paint anything if you want after paint image.
-  AfterPaintImage _afterPaintImage;
-  AfterPaintImage get afterPaintImage => _afterPaintImage;
-  set afterPaintImage(AfterPaintImage value) {
+  AfterPaintImage? _afterPaintImage;
+
+  AfterPaintImage? get afterPaintImage => _afterPaintImage;
+
+  set afterPaintImage(AfterPaintImage? value) {
     if (value == _afterPaintImage) {
       return;
     }
@@ -105,9 +118,11 @@ class ExtendedRenderImage extends RenderBox {
   }
 
   ///input rect, you can use this to crop image.
-  Rect _sourceRect;
-  Rect get sourceRect => _sourceRect;
-  set sourceRect(Rect value) {
+  Rect? _sourceRect;
+
+  Rect? get sourceRect => _sourceRect;
+
+  set sourceRect(Rect? value) {
     if (value == _sourceRect) {
       return;
     }
@@ -115,8 +130,8 @@ class ExtendedRenderImage extends RenderBox {
     markNeedsPaint();
   }
 
-  Alignment _resolvedAlignment;
-  bool _flipHorizontally;
+  Alignment? _resolvedAlignment;
+  bool? _flipHorizontally;
 
   void _resolve() {
     if (_resolvedAlignment != null) {
@@ -134,9 +149,10 @@ class ExtendedRenderImage extends RenderBox {
   }
 
   /// The image to display.
-  ui.Image get image => _image;
-  ui.Image _image;
-  set image(ui.Image value) {
+  ui.Image? get image => _image;
+  ui.Image? _image;
+
+  set image(ui.Image? value) {
     if (value == _image) {
       return;
     }
@@ -147,13 +163,17 @@ class ExtendedRenderImage extends RenderBox {
     }
   }
 
+  /// A string used to identify the source of the image.
+  String? debugImageLabel;
+
   /// If non-null, requires the image to have this width.
   ///
   /// If null, the image will pick a size that best preserves its intrinsic
   /// aspect ratio.
-  double get width => _width;
-  double _width;
-  set width(double value) {
+  double? get width => _width;
+  double? _width;
+
+  set width(double? value) {
     if (value == _width) {
       return;
     }
@@ -165,9 +185,10 @@ class ExtendedRenderImage extends RenderBox {
   ///
   /// If null, the image will pick a size that best preserves its intrinsic
   /// aspect ratio.
-  double get height => _height;
-  double _height;
-  set height(double value) {
+  double? get height => _height;
+  double? _height;
+
+  set height(double? value) {
     if (value == _height) {
       return;
     }
@@ -180,6 +201,7 @@ class ExtendedRenderImage extends RenderBox {
   /// Used when determining the best display size for the image.
   double get scale => _scale;
   double _scale;
+
   set scale(double value) {
     assert(value != null);
     if (value == _scale) {
@@ -189,24 +211,22 @@ class ExtendedRenderImage extends RenderBox {
     markNeedsLayout();
   }
 
-  ColorFilter _colorFilter;
+  ColorFilter? _colorFilter;
 
   void _updateColorFilter() {
-    if (_color == null) {
+    if (_color == null)
       _colorFilter = null;
-    } else {
+    else
       _colorFilter =
-          ColorFilter.mode(_color, _colorBlendMode ?? BlendMode.srcIn);
-    }
+          ColorFilter.mode(_color!, _colorBlendMode ?? BlendMode.srcIn);
   }
 
   /// If non-null, this color is blended with each image pixel using [colorBlendMode].
-  Color get color => _color;
-  Color _color;
-  set color(Color value) {
-    if (value == _color) {
-      return;
-    }
+  Color? get color => _color;
+  Color? _color;
+
+  set color(Color? value) {
+    if (value == _color) return;
     _color = value;
     _updateColorFilter();
     markNeedsPaint();
@@ -218,6 +238,7 @@ class ExtendedRenderImage extends RenderBox {
   /// to nearest-neighbor.
   FilterQuality get filterQuality => _filterQuality;
   FilterQuality _filterQuality;
+
   set filterQuality(FilterQuality value) {
     assert(value != null);
     if (value == _filterQuality) {
@@ -235,12 +256,11 @@ class ExtendedRenderImage extends RenderBox {
   /// See also:
   ///
   ///  * [BlendMode], which includes an illustration of the effect of each blend mode.
-  BlendMode get colorBlendMode => _colorBlendMode;
-  BlendMode _colorBlendMode;
-  set colorBlendMode(BlendMode value) {
-    if (value == _colorBlendMode) {
-      return;
-    }
+  BlendMode? get colorBlendMode => _colorBlendMode;
+  BlendMode? _colorBlendMode;
+
+  set colorBlendMode(BlendMode? value) {
+    if (value == _colorBlendMode) return;
     _colorBlendMode = value;
     _updateColorFilter();
     markNeedsPaint();
@@ -250,12 +270,11 @@ class ExtendedRenderImage extends RenderBox {
   ///
   /// The default varies based on the other fields. See the discussion at
   /// [paintImage].
-  BoxFit get fit => _fit;
-  BoxFit _fit;
-  set fit(BoxFit value) {
-    if (value == _fit) {
-      return;
-    }
+  BoxFit? get fit => _fit;
+  BoxFit? _fit;
+
+  set fit(BoxFit? value) {
+    if (value == _fit) return;
     _fit = value;
     markNeedsPaint();
   }
@@ -266,6 +285,7 @@ class ExtendedRenderImage extends RenderBox {
   /// not be null.
   AlignmentGeometry get alignment => _alignment;
   AlignmentGeometry _alignment;
+
   set alignment(AlignmentGeometry value) {
     assert(value != null);
     if (value == _alignment) {
@@ -278,6 +298,7 @@ class ExtendedRenderImage extends RenderBox {
   /// How to repeat this image if it doesn't fill its layout bounds.
   ImageRepeat get repeat => _repeat;
   ImageRepeat _repeat;
+
   set repeat(ImageRepeat value) {
     assert(value != null);
     if (value == _repeat) {
@@ -294,9 +315,10 @@ class ExtendedRenderImage extends RenderBox {
   /// region of the image above and below the center slice will be stretched
   /// only horizontally and the region of the image to the left and right of
   /// the center slice will be stretched only vertically.
-  Rect get centerSlice => _centerSlice;
-  Rect _centerSlice;
-  set centerSlice(Rect value) {
+  Rect? get centerSlice => _centerSlice;
+  Rect? _centerSlice;
+
+  set centerSlice(Rect? value) {
     if (value == _centerSlice) {
       return;
     }
@@ -311,6 +333,7 @@ class ExtendedRenderImage extends RenderBox {
   /// after it. This is primarily used for implementing smart invert on iOS.
   bool get invertColors => _invertColors;
   bool _invertColors;
+
   set invertColors(bool value) {
     if (value == _invertColors) {
       return;
@@ -335,6 +358,7 @@ class ExtendedRenderImage extends RenderBox {
   /// If this is set to true, [textDirection] must not be null.
   bool get matchTextDirection => _matchTextDirection;
   bool _matchTextDirection;
+
   set matchTextDirection(bool value) {
     assert(value != null);
     if (value == _matchTextDirection) {
@@ -349,9 +373,10 @@ class ExtendedRenderImage extends RenderBox {
   /// This may be changed to null, but only after the [alignment] and
   /// [matchTextDirection] properties have been changed to values that do not
   /// depend on the direction.
-  TextDirection get textDirection => _textDirection;
-  TextDirection _textDirection;
-  set textDirection(TextDirection value) {
+  TextDirection? get textDirection => _textDirection;
+  TextDirection? _textDirection;
+
+  set textDirection(TextDirection? value) {
     if (_textDirection == value) {
       return;
     }
@@ -364,6 +389,7 @@ class ExtendedRenderImage extends RenderBox {
   /// Anti-aliasing alleviates the sawtooth artifact when the image is rotated.
   bool get isAntiAlias => _isAntiAlias;
   bool _isAntiAlias;
+
   set isAntiAlias(bool value) {
     if (_isAntiAlias == value) {
       return;
@@ -383,15 +409,19 @@ class ExtendedRenderImage extends RenderBox {
   Size _sizeForConstraints(BoxConstraints constraints) {
     // Folds the given |width| and |height| into |constraints| so they can all
     // be treated uniformly.
-    constraints = BoxConstraints.tightFor(width: _width, height: _height)
-        .enforce(constraints);
+    constraints = BoxConstraints.tightFor(
+      width: _width,
+      height: _height,
+    ).enforce(constraints);
 
-    if (_image == null) {
-      return constraints.smallest;
-    }
+    if (_image == null) return constraints.smallest;
 
-    return constraints.constrainSizeAndAttemptToPreserveAspectRatio(Size(
-        _image.width.toDouble() / _scale, _image.height.toDouble() / _scale));
+    return constraints.constrainSizeAndAttemptToPreserveAspectRatio(
+      Size(
+        _image!.width.toDouble() / _scale,
+        _image!.height.toDouble() / _scale,
+      ),
+    );
   }
 
   @override
@@ -445,27 +475,28 @@ class ExtendedRenderImage extends RenderBox {
     assert(_resolvedAlignment != null);
     assert(_flipHorizontally != null);
     Rect rect = offset & size;
-    if (gestureDetails != null && gestureDetails.slidePageOffset != null) {
-      rect = rect.shift(-gestureDetails.slidePageOffset);
+    if (gestureDetails != null && gestureDetails!.slidePageOffset != null) {
+      rect = rect.shift(-gestureDetails!.slidePageOffset!);
     }
     paintExtendedImage(
-        canvas: context.canvas,
-        rect: rect,
-        image: _image,
-        scale: _scale,
-        colorFilter: _colorFilter,
-        fit: _fit,
-        alignment: _resolvedAlignment,
-        centerSlice: _centerSlice,
-        repeat: _repeat,
-        flipHorizontally: _flipHorizontally,
-        invertColors: invertColors,
-        filterQuality: _filterQuality,
-        customSourceRect: _sourceRect,
-        beforePaintImage: beforePaintImage,
-        afterPaintImage: afterPaintImage,
-        gestureDetails: gestureDetails,
-        editActionDetails: editActionDetails);
+      canvas: context.canvas,
+      rect: rect,
+      image: _image!,
+      scale: _scale,
+      colorFilter: _colorFilter,
+      fit: _fit,
+      alignment: _resolvedAlignment!,
+      centerSlice: _centerSlice,
+      repeat: _repeat,
+      flipHorizontally: _flipHorizontally!,
+      invertColors: invertColors,
+      filterQuality: _filterQuality,
+      customSourceRect: _sourceRect,
+      beforePaintImage: beforePaintImage,
+      afterPaintImage: afterPaintImage,
+      gestureDetails: gestureDetails,
+      editActionDetails: editActionDetails,
+    );
   }
 
   @override
@@ -496,26 +527,46 @@ class ExtendedRenderImage extends RenderBox {
   }
 }
 
+/// Used by [paintImage] to report image sizes drawn at the end of the frame.
+Map<String, ImageSizeInfo> _pendingImageSizeInfo = <String, ImageSizeInfo>{};
+
+/// [ImageSizeInfo]s that were reported on the last frame.
+///
+/// Used to prevent duplicative reports from frame to frame.
+Set<ImageSizeInfo> _lastFrameImageSizeInfo = <ImageSizeInfo>{};
+
+/// Flushes inter-frame tracking of image size information from [paintImage].
+///
+/// Has no effect if asserts are disabled.
+@visibleForTesting
+void debugFlushLastFrameImageSizeInfo() {
+  assert(() {
+    _lastFrameImageSizeInfo = <ImageSizeInfo>{};
+    return true;
+  }());
+}
+
 void paintExtendedImage({
-  @required Canvas canvas,
-  @required Rect rect,
-  @required ui.Image image,
+  required Canvas canvas,
+  required Rect rect,
+  required ui.Image image,
+  String? debugImageLabel,
   double scale = 1.0,
-  ColorFilter colorFilter,
-  BoxFit fit,
+  ColorFilter? colorFilter,
+  BoxFit? fit,
   Alignment alignment = Alignment.center,
-  Rect centerSlice,
+  Rect? centerSlice,
   ImageRepeat repeat = ImageRepeat.noRepeat,
   bool flipHorizontally = false,
   bool invertColors = false,
   FilterQuality filterQuality = FilterQuality.low,
-  Rect customSourceRect,
+  Rect? customSourceRect,
   //you can paint anything if you want before paint image.
-  BeforePaintImage beforePaintImage,
+  BeforePaintImage? beforePaintImage,
   //you can paint anything if you want after paint image.
-  AfterPaintImage afterPaintImage,
-  GestureDetails gestureDetails,
-  EditActionDetails editActionDetails,
+  AfterPaintImage? afterPaintImage,
+  GestureDetails? gestureDetails,
+  EditActionDetails? editActionDetails,
   bool isAntiAlias = false,
 }) {
   assert(canvas != null);
@@ -524,6 +575,12 @@ void paintExtendedImage({
   assert(repeat != null);
   assert(flipHorizontally != null);
   assert(isAntiAlias != null);
+  assert(
+    image.debugGetOpenHandleStackTraces()?.isNotEmpty ?? true,
+    'Cannot paint an image that is disposed.\n'
+    'The caller of paintImage is expected to wait to dispose the image until '
+    'after painting has completed.',
+  );
   if (rect.isEmpty) {
     return;
   }
@@ -541,7 +598,7 @@ void paintExtendedImage({
   //       .topLeft;
   // }
 
-  Offset sliceBorder;
+  Offset? sliceBorder;
   if (centerSlice != null) {
     sliceBorder = Offset(centerSlice.left + inputSize.width - centerSlice.right,
         centerSlice.top + inputSize.height - centerSlice.bottom);
@@ -555,12 +612,14 @@ void paintExtendedImage({
   final Size sourceSize = fittedSizes.source * scale;
   Size destinationSize = fittedSizes.destination;
   if (centerSlice != null) {
-    outputSize += sliceBorder;
+    outputSize += sliceBorder!;
     destinationSize += sliceBorder;
     // We don't have the ability to draw a subset of the image at the same time
     // as we apply a nine-patch stretch.
-    assert(sourceSize == inputSize,
-        'centerSlice was used with a BoxFit that does not guarantee that the image is fully visible.');
+    assert(
+      sourceSize == inputSize,
+      'centerSlice was used with a BoxFit that does not guarantee that the image is fully visible.',
+    );
   }
   if (repeat != ImageRepeat.noRepeat && destinationSize == outputSize) {
     // There's no need to repeat the image because we're exactly filling the
@@ -588,17 +647,17 @@ void paintExtendedImage({
   bool needClip = false;
 
   if (gestureDetails != null) {
-    destinationRect =
-        gestureDetails.calculateFinalDestinationRect(rect, destinationRect);
+    destinationRect = gestureDetails.calculateFinalDestinationRect(
+      rect,
+      destinationRect,
+    );
 
     ///outside and need clip
     needClip = outRect(rect, destinationRect);
-
     if (gestureDetails.slidePageOffset != null) {
-      destinationRect = destinationRect.shift(gestureDetails.slidePageOffset);
-      rect = rect.shift(gestureDetails.slidePageOffset);
+      destinationRect = destinationRect.shift(gestureDetails.slidePageOffset!);
+      rect = rect.shift(gestureDetails.slidePageOffset!);
     }
-
     if (needClip) {
       canvas.save();
       canvas.clipRect(rect);
@@ -608,24 +667,21 @@ void paintExtendedImage({
   if (editActionDetails != null) {
     if (editActionDetails.cropRectPadding != null) {
       destinationRect = getDestinationRect(
-          inputSize: inputSize,
-          rect: editActionDetails.cropRectPadding.deflateRect(rect),
-          fit: fit,
-          flipHorizontally: false,
-          scale: scale,
-          centerSlice: centerSlice,
-          alignment: alignment);
+        inputSize: inputSize,
+        rect: editActionDetails.cropRectPadding!.deflateRect(rect),
+        fit: fit,
+        flipHorizontally: false,
+        scale: scale,
+        centerSlice: centerSlice,
+        alignment: alignment,
+      );
     }
-
     editActionDetails.initRect(rect, destinationRect);
-
     destinationRect = editActionDetails.getFinalDestinationRect();
 
     ///outside and need clip
     needClip = outRect(rect, destinationRect);
-
     hasEditAction = editActionDetails.hasEditAction;
-
     if (needClip || hasEditAction) {
       canvas.save();
       if (needClip) {
@@ -636,31 +692,118 @@ void paintExtendedImage({
     if (hasEditAction) {
       final Offset origin =
           editActionDetails.screenCropRect?.center ?? destinationRect.center;
-
       final Matrix4 result = Matrix4.identity();
-
       final EditActionDetails editAction = editActionDetails;
-
       result.translate(
         origin.dx,
         origin.dy,
       );
-
       if (editAction.hasRotateAngle) {
         result.multiply(Matrix4.rotationZ(editAction.rotateRadian));
       }
-
       if (editAction.flipY) {
         result.multiply(Matrix4.rotationY(pi));
       }
-
       if (editAction.flipX) {
         result.multiply(Matrix4.rotationX(pi));
       }
-
       result.translate(-origin.dx, -origin.dy);
       canvas.transform(result.storage);
       destinationRect = editAction.paintRect(destinationRect);
+    }
+  }
+
+  // Set to true if we added a saveLayer to the canvas to invert/flip the image.
+  bool invertedCanvas = false;
+  // Output size and destination rect are fully calculated.
+  if (!kReleaseMode) {
+    final ImageSizeInfo sizeInfo = ImageSizeInfo(
+      // Some ImageProvider implementations may not have given this.
+      source:
+          debugImageLabel ?? '<Unknown Image(${image.width}×${image.height})>',
+      imageSize: Size(image.width.toDouble(), image.height.toDouble()),
+      displaySize: outputSize,
+    );
+    assert(() {
+      if (debugInvertOversizedImages &&
+          sizeInfo.decodedSizeInBytes >
+              sizeInfo.displaySizeInBytes + debugImageOverheadAllowance) {
+        final int overheadInKilobytes =
+            (sizeInfo.decodedSizeInBytes - sizeInfo.displaySizeInBytes) ~/ 1024;
+        final int outputWidth = outputSize.width.toInt();
+        final int outputHeight = outputSize.height.toInt();
+        FlutterError.reportError(FlutterErrorDetails(
+          exception: 'Image $debugImageLabel has a display size of '
+              '$outputWidth×$outputHeight but a decode size of '
+              '${image.width}×${image.height}, which uses an additional '
+              '${overheadInKilobytes}kb.\n\n'
+              'Consider resizing the asset ahead of time, supplying a cacheWidth '
+              'parameter of $outputWidth, a cacheHeight parameter of '
+              '$outputHeight, or using a ResizeImage.',
+          library: 'painting library',
+          context: ErrorDescription('while painting an image'),
+        ));
+        // Invert the colors of the canvas.
+        canvas.saveLayer(
+          destinationRect,
+          Paint()
+            ..colorFilter = const ColorFilter.matrix(<double>[
+              -1,
+              0,
+              0,
+              0,
+              255,
+              0,
+              -1,
+              0,
+              0,
+              255,
+              0,
+              0,
+              -1,
+              0,
+              255,
+              0,
+              0,
+              0,
+              1,
+              0,
+            ]),
+        );
+        // Flip the canvas vertically.
+        final double dy = -(rect.top + rect.height / 2.0);
+        canvas.translate(0.0, -dy);
+        canvas.scale(1.0, -1.0);
+        canvas.translate(0.0, dy);
+        invertedCanvas = true;
+      }
+      return true;
+    }());
+    // Avoid emitting events that are the same as those emitted in the last frame.
+    if (!_lastFrameImageSizeInfo.contains(sizeInfo)) {
+      final ImageSizeInfo? existingSizeInfo =
+          _pendingImageSizeInfo[sizeInfo.source];
+      if (existingSizeInfo == null ||
+          existingSizeInfo.displaySizeInBytes < sizeInfo.displaySizeInBytes) {
+        _pendingImageSizeInfo[sizeInfo.source!] = sizeInfo;
+      }
+      if (debugOnPaintImage != null) {
+        debugOnPaintImage!(sizeInfo);
+      }
+      SchedulerBinding.instance!.addPostFrameCallback((Duration timeStamp) {
+        _lastFrameImageSizeInfo = _pendingImageSizeInfo.values.toSet();
+        if (_pendingImageSizeInfo.isEmpty) {
+          return;
+        }
+        developer.postEvent(
+          'Flutter.ImageSizesForFrame',
+          <String, Object>{
+            for (ImageSizeInfo imageSizeInfo in _pendingImageSizeInfo.values)
+              imageSizeInfo.source!: imageSizeInfo.toJson()
+          },
+        );
+        _pendingImageSizeInfo = <String, ImageSizeInfo>{};
+      });
     }
   }
 
@@ -698,15 +841,12 @@ void paintExtendedImage({
       canvas.drawImageNine(image, centerSlice, tileRect, paint);
     }
   }
-
   if (needSave) {
     canvas.restore();
   }
-
-  if (needClip || hasEditAction) {
+  if (needClip || hasEditAction || invertedCanvas) {
     canvas.restore();
   }
-
   if (afterPaintImage != null) {
     afterPaintImage(canvas, destinationRect, image, paint);
   }

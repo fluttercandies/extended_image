@@ -2,8 +2,7 @@
 // Generated file. Do not edit.
 //
 
-// ignore: unused_import
-import 'dart:ui';
+// ignore_for_file: lines_longer_than_80_chars
 
 import 'package:url_launcher_web/url_launcher_web.dart';
 import 'package:video_player_web/video_player_web.dart';
@@ -11,8 +10,8 @@ import 'package:video_player_web/video_player_web.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
 // ignore: public_member_api_docs
-void registerPlugins(PluginRegistry registry) {
-  UrlLauncherPlugin.registerWith(registry.registrarFor(UrlLauncherPlugin));
-  VideoPlayerPlugin.registerWith(registry.registrarFor(VideoPlayerPlugin));
-  registry.registerMessageHandler();
+void registerPlugins(Registrar registrar) {
+  UrlLauncherPlugin.registerWith(registrar);
+  VideoPlayerPlugin.registerWith(registrar);
+  registrar.registerMessageHandler();
 }
