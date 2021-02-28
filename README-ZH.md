@@ -405,45 +405,34 @@ class CropAspectRatios {
 }
 ```
 
-### 四角图形画笔
+### 裁剪图层 Painter
 
-使用 `cornerPainter` 来定制四角图形.
-默认的为 `ExtendedImageCropLayerPainterNinetyDegreesCorner`. 你可以使用`ExtendedImageCropLayerPainterCircleCorner` 或者继承 `ExtendedImageCropLayerCornerPainter` 来定义你的自定义四角图形.
-下面是 `ExtendedImageCropLayerPainterCircleCorner` 的演示代码:
+你现在可以通过覆写 [EditorConfig.editorCropLayerPainter] 里面的方法来自定裁剪图层.
 
 ```dart
-class ExtendedImageCropLayerPainterCircleCorner
-    extends ExtendedImageCropLayerCornerPainter {
-  const ExtendedImageCropLayerPainterCircleCorner({
-    this.color,
-    this.radius = 5.0,
-  }) : super(color);
-
-  // color of corner shape
-  // default theme primaryColor
-  final Color color;
-
-  // radius of corner circle
-  final double radius;
-
-  @override
-  ExtendedImageCropLayerPainterCircleCorner copyWith(
-          {Color color, double radius}) =>
-      ExtendedImageCropLayerPainterCircleCorner(
-          color: color ?? this.color, radius: radius ?? this.radius);
-
-  @override
-  void drawCorners(Canvas canvas, Rect cropRect, Paint defautlPainter) {
-    defautlPainter.color = color;
-    canvas.drawCircle(
-        Offset(cropRect.left, cropRect.top), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.right, cropRect.top), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.left, cropRect.bottom), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.right, cropRect.bottom), radius, defautlPainter);
+class EditorCropLayerPainter {
+  const EditorCropLayerPainter();
+  void paint(Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+    paintMask(canvas, size, painter);
+    paintLines(canvas, size, painter);
+    paintCorners(canvas, size, painter);
   }
+
+  /// draw crop layer corners
+  void paintCorners(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+  }
+
+  /// draw crop layer lines
+  void paintMask(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+  }
+  
+
+  /// draw crop layer lines
+  void paintLines(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+  } 
 }
 ```
 

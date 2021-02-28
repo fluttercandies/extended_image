@@ -4,7 +4,10 @@
   Add cacheKey for NetworkProvider. #288
   Web capability at pub.dev.
   Add change event for editor. #300
-  Don't deprecate cornerSize and cornerColor
+
+* Breaking change:
+  Use [EditorCropLayerPainter] instead of [ExtendedImageCropLayerCornerPainter]
+  
 ## 1.6.0
 
 * Improve:

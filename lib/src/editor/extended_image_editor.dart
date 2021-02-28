@@ -44,7 +44,6 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   }
 
   void _initGestureConfig() {
-    final double initialScale = _editorConfig?.initialScale;
     final double cropAspectRatio = _editorConfig?.cropAspectRatio;
     _editorConfig = widget
             ?.extendedImageState?.imageWidget?.initEditorConfigHandler
@@ -54,14 +53,11 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       _editActionDetails = null;
     }
 
-    if (_editActionDetails == null ||
-        initialScale != _editorConfig.initialScale) {
-      _editActionDetails = EditActionDetails()
-        ..delta = Offset.zero
-        ..totalScale = _editorConfig.initialScale
-        ..preTotalScale = _editorConfig.initialScale
-        ..cropRectPadding = _editorConfig.cropRectPadding;
-    }
+    _editActionDetails ??= EditActionDetails()
+      ..delta = Offset.zero
+      ..totalScale = 1.0
+      ..preTotalScale = 1.0
+      ..cropRectPadding = _editorConfig.cropRectPadding;
 
     if (widget.extendedImageState?.extendedImageInfo?.image != null) {
       _editActionDetails.originalAspectRatio =

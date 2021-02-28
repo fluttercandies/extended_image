@@ -89,19 +89,9 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       return Container();
     }
     final EditorConfig editConfig = widget.editorConfig;
-    ExtendedImageCropLayerCornerPainter cornerPainter;
     final Color primaryColor = Theme.of(context).primaryColor;
-    if (widget.editorConfig.cornerPainter == null) {
-      cornerPainter = ExtendedImageCropLayerPainterNinetyDegreesCorner(
-        color: primaryColor,
-      );
-    } else {
-      cornerPainter = widget.editorConfig.cornerPainter.cornerColor == null
-          ? widget.editorConfig.cornerPainter.copyWith(color: primaryColor)
-          : widget.editorConfig.cornerPainter;
-    }
 
-    final Color cornerColor = cornerPainter.cornerColor;
+    final Color cornerColor = editConfig.cornerColor ?? primaryColor;
 
     final Color maskColor = widget.editorConfig.editorMaskColorHandler
             ?.call(context, _pointerDown) ??
@@ -111,12 +101,9 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     final Widget result = CustomPaint(
       painter: ExtendedImageCropLayerPainter(
           cropRect: cropRect,
-          cornerPainter: cornerPainter,
+          cropLayerPainter: editConfig.cropLayerPainter,
           cornerColor: cornerColor,
-          cornerSize: editConfig.cornerSize ??
-              (cornerPainter is ExtendedImageCropLayerPainterNinetyDegreesCorner
-                  ? cornerPainter.cornerSize
-                  : null),
+          cornerSize: editConfig.cornerSize,
           lineColor: editConfig.lineColor ??
               Theme.of(context).scaffoldBackgroundColor.withOpacity(0.7),
           lineHeight: editConfig.lineHeight,
@@ -555,149 +542,5 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
         widget.editActionDetails.preTotalScale = totalScale;
       });
     }
-  }
-}
-
-class ExtendedImageCropLayerPainter extends CustomPainter {
-  ExtendedImageCropLayerPainter({
-    @required this.cropRect,
-    this.lineColor,
-    this.cornerColor,
-    this.cornerSize,
-    this.lineHeight,
-    this.maskColor,
-    this.pointerDown,
-    this.cornerPainter,
-  });
-
-  final Rect cropRect;
-  //size of corner shape
-  final Size cornerSize;
-
-  //color of corner shape
-  //default theme primaryColor
-  final Color cornerColor;
-
-  // color of crop line
-  final Color lineColor;
-
-  //height of crop line
-  final double lineHeight;
-
-  //color of mask
-  final Color maskColor;
-
-  //whether pointer is down
-  final bool pointerDown;
-
-  //Corner painter
-  final ExtendedImageCropLayerCornerPainter cornerPainter;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Rect rect = Offset.zero & size;
-    final Paint linePainter = Paint()
-      ..color = lineColor
-      ..strokeWidth = lineHeight
-      ..style = PaintingStyle.stroke;
-
-    // canvas.saveLayer(rect, Paint());
-    // canvas.drawRect(
-    //     rect,
-    //     Paint()
-    //       ..style = PaintingStyle.fill
-    //       ..color = maskColor);
-    //   canvas.drawRect(cropRect, Paint()..blendMode = BlendMode.clear);
-    // canvas.restore();
-
-    // draw mask rect instead use BlendMode.clear, web doesn't support now.
-    //left
-
-    canvas.drawRect(
-        Offset.zero & Size(cropRect.left, rect.height),
-        Paint()
-          ..style = PaintingStyle.fill
-          ..color = maskColor);
-    //top
-    canvas.drawRect(
-        Offset(cropRect.left, 0.0) & Size(cropRect.width, cropRect.top),
-        Paint()
-          ..style = PaintingStyle.fill
-          ..color = maskColor);
-    //right
-    canvas.drawRect(
-        Offset(cropRect.right, 0.0) &
-            Size(rect.width - cropRect.right, rect.height),
-        Paint()
-          ..style = PaintingStyle.fill
-          ..color = maskColor);
-    //bottom
-    canvas.drawRect(
-        Offset(cropRect.left, cropRect.bottom) &
-            Size(cropRect.width, rect.height - cropRect.bottom),
-        Paint()
-          ..style = PaintingStyle.fill
-          ..color = maskColor);
-
-    canvas.drawRect(cropRect, linePainter);
-
-    if (pointerDown) {
-      canvas.drawLine(
-          Offset((cropRect.right - cropRect.left) / 3.0 + cropRect.left,
-              cropRect.top),
-          Offset((cropRect.right - cropRect.left) / 3.0 + cropRect.left,
-              cropRect.bottom),
-          linePainter);
-
-      canvas.drawLine(
-          Offset((cropRect.right - cropRect.left) / 3.0 * 2.0 + cropRect.left,
-              cropRect.top),
-          Offset((cropRect.right - cropRect.left) / 3.0 * 2.0 + cropRect.left,
-              cropRect.bottom),
-          linePainter);
-
-      canvas.drawLine(
-          Offset(
-            cropRect.left,
-            (cropRect.bottom - cropRect.top) / 3.0 + cropRect.top,
-          ),
-          Offset(
-            cropRect.right,
-            (cropRect.bottom - cropRect.top) / 3.0 + cropRect.top,
-          ),
-          linePainter);
-
-      canvas.drawLine(
-          Offset(cropRect.left,
-              (cropRect.bottom - cropRect.top) / 3.0 * 2.0 + cropRect.top),
-          Offset(
-            cropRect.right,
-            (cropRect.bottom - cropRect.top) / 3.0 * 2.0 + cropRect.top,
-          ),
-          linePainter);
-    }
-
-    final Paint defaultCornerPainter = Paint()
-      ..color = cornerPainter.cornerColor
-      ..style = PaintingStyle.fill;
-
-    cornerPainter.drawCorners(canvas, cropRect, defaultCornerPainter);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    if (oldDelegate.runtimeType != runtimeType) {
-      return true;
-    }
-    final ExtendedImageCropLayerPainter delegate =
-        oldDelegate as ExtendedImageCropLayerPainter;
-    return cropRect != delegate.cropRect ||
-        cornerSize != delegate.cornerSize ||
-        lineColor != delegate.lineColor ||
-        lineHeight != delegate.lineHeight ||
-        maskColor != delegate.maskColor ||
-        cornerPainter != delegate.cornerPainter ||
-        cornerColor != delegate.cornerColor ||
-        pointerDown != delegate.pointerDown;
   }
 }

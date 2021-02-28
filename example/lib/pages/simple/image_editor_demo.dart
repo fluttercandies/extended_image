@@ -46,7 +46,7 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
               initCropRectType: InitCropRectType.imageRect,
               cropAspectRatio: CropAspectRatios.ratio4_3,
               editActionDetailsIsChanged: (EditActionDetails details) {
-                //print(details.totalScale);
+                //print(details?.totalScale);
               });
         },
       ),

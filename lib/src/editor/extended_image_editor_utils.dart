@@ -358,7 +358,7 @@ class EditorConfig {
     this.tickerDuration = const Duration(milliseconds: 400),
     this.cropAspectRatio = CropAspectRatios.custom,
     this.initCropRectType = InitCropRectType.imageRect,
-    this.cornerPainter,
+    this.cropLayerPainter = const EditorCropLayerPainter(),
     double speed,
     this.hitTestBehavior = HitTestBehavior.deferToChild,
     this.editActionDetailsIsChanged,
@@ -370,7 +370,8 @@ class EditorConfig {
         assert(lineHeight > 0.0),
         assert(hitTestSize >= 0.0),
         assert(animationDuration != null),
-        assert(tickerDuration != null);
+        assert(tickerDuration != null),
+        assert(cropLayerPainter != null);
 
   /// Call when EditActionDetails is changed
   final EditActionDetailsIsChanged editActionDetailsIsChanged;
@@ -380,11 +381,6 @@ class EditorConfig {
 
   /// max scale
   final double maxScale;
-
-  /// initial scale of image
-  /// it refer to initial image rect and crop rect
-  /// it's not good to compute，make it 1.0 for now
-  final double initialScale = 1.0;
 
   /// padding of crop rect to layout rect
   /// it's refer to initial image rect and crop rect
@@ -426,13 +422,10 @@ class EditorConfig {
   /// init crop rect base on initial image rect or image layout rect
   final InitCropRectType initCropRectType;
 
-  /// Corner painter. By default is active [ExtendedImageCropLayerPainterNinetyDegreesCorner].
-  /// You can pass alternatively [ExtendedImageCropLayerPainterCircleCorner]
-  /// or extend class [ExtendedImageCropLayerCornerPainter]
-  /// and create your own corner painter.
-  final ExtendedImageCropLayerCornerPainter cornerPainter;
+  /// custom crop layer
+  final EditorCropLayerPainter cropLayerPainter;
 
-  //speed for zoom/pan
+  /// speed for zoom/pan
   final double speed;
 }
 
@@ -538,78 +531,24 @@ enum InitCropRectType {
   layoutRect
 }
 
-abstract class ExtendedImageCropLayerCornerPainter {
-  const ExtendedImageCropLayerCornerPainter(this.cornerColor);
-
-  void drawCorners(Canvas canvas, Rect cropRect, Paint defautlPainter);
-
-  ExtendedImageCropLayerCornerPainter copyWith({Color color}) => null;
-
-  // color of corner shape
-  // default theme primaryColor
-  final Color cornerColor;
-}
-
-class ExtendedImageCropLayerPainterCircleCorner
-    extends ExtendedImageCropLayerCornerPainter {
-  const ExtendedImageCropLayerPainterCircleCorner({
-    this.color,
-    this.radius = 5.0,
-  }) : super(color);
-
-  // color of corner shape
-  // default theme primaryColor
-  final Color color;
-
-  // radius of corner circle
-  final double radius;
-
-  @override
-  ExtendedImageCropLayerPainterCircleCorner copyWith(
-          {Color color, double radius}) =>
-      ExtendedImageCropLayerPainterCircleCorner(
-          color: color ?? this.color, radius: radius ?? this.radius);
-
-  @override
-  void drawCorners(Canvas canvas, Rect cropRect, Paint defautlPainter) {
-    defautlPainter.color = color;
-    canvas.drawCircle(
-        Offset(cropRect.left, cropRect.top), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.right, cropRect.top), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.left, cropRect.bottom), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.right, cropRect.bottom), radius, defautlPainter);
+class EditorCropLayerPainter {
+  const EditorCropLayerPainter();
+  void paint(Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+    paintMask(canvas, size, painter);
+    paintLines(canvas, size, painter);
+    paintCorners(canvas, size, painter);
   }
-}
 
-class ExtendedImageCropLayerPainterNinetyDegreesCorner
-    extends ExtendedImageCropLayerCornerPainter {
-  const ExtendedImageCropLayerPainterNinetyDegreesCorner({
-    this.color,
-    this.cornerSize = const Size(30.0, 5.0),
-  }) : super(color);
-
-  // color of corner shape
-  // default theme primaryColor
-  final Color color;
-
-  //size of corner shape
-  final Size cornerSize;
-
-  @override
-  ExtendedImageCropLayerPainterNinetyDegreesCorner copyWith(
-          {Color color, Size cornerSize}) =>
-      ExtendedImageCropLayerPainterNinetyDegreesCorner(
-          color: color ?? this.color,
-          cornerSize: cornerSize ?? this.cornerSize);
-
-  @override
-  void drawCorners(Canvas canvas, Rect cropRect, Paint defautlPainter) {
+  /// draw crop layer corners
+  void paintCorners(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+    final Rect cropRect = painter.cropRect;
+    final Size cornerSize = painter.cornerSize;
     final double cornerWidth = cornerSize.width;
     final double cornerHeight = cornerSize.height;
-    defautlPainter.color = color;
+    final Paint paint = Paint()
+      ..color = painter.cornerColor
+      ..style = PaintingStyle.fill;
 
     canvas.drawPath(
         Path()
@@ -619,7 +558,7 @@ class ExtendedImageCropLayerPainterNinetyDegreesCorner
           ..lineTo(cropRect.left + cornerHeight, cropRect.top + cornerHeight)
           ..lineTo(cropRect.left + cornerHeight, cropRect.top + cornerWidth)
           ..lineTo(cropRect.left, cropRect.top + cornerWidth),
-        defautlPainter);
+        paint);
 
     canvas.drawPath(
         Path()
@@ -629,7 +568,7 @@ class ExtendedImageCropLayerPainterNinetyDegreesCorner
           ..lineTo(cropRect.left + cornerHeight, cropRect.bottom - cornerHeight)
           ..lineTo(cropRect.left + cornerHeight, cropRect.bottom - cornerWidth)
           ..lineTo(cropRect.left, cropRect.bottom - cornerWidth),
-        defautlPainter);
+        paint);
 
     canvas.drawPath(
         Path()
@@ -639,7 +578,7 @@ class ExtendedImageCropLayerPainterNinetyDegreesCorner
           ..lineTo(cropRect.right - cornerHeight, cropRect.top + cornerHeight)
           ..lineTo(cropRect.right - cornerHeight, cropRect.top + cornerWidth)
           ..lineTo(cropRect.right, cropRect.top + cornerWidth),
-        defautlPainter);
+        paint);
 
     canvas.drawPath(
         Path()
@@ -650,6 +589,161 @@ class ExtendedImageCropLayerPainterNinetyDegreesCorner
               cropRect.right - cornerHeight, cropRect.bottom - cornerHeight)
           ..lineTo(cropRect.right - cornerHeight, cropRect.bottom - cornerWidth)
           ..lineTo(cropRect.right, cropRect.bottom - cornerWidth),
-        defautlPainter);
+        paint);
+  }
+
+  /// draw crop layer lines
+  void paintMask(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+    final Rect rect = Offset.zero & size;
+    final Rect cropRect = painter.cropRect;
+    final Color maskColor = painter.maskColor;
+    // canvas.saveLayer(rect, Paint());
+    // canvas.drawRect(
+    //     rect,
+    //     Paint()
+    //       ..style = PaintingStyle.fill
+    //       ..color = maskColor);
+    //   canvas.drawRect(cropRect, Paint()..blendMode = BlendMode.clear);
+    // canvas.restore();
+
+    // draw mask rect instead use BlendMode.clear, web doesn't support now.
+    //left
+
+    canvas.drawRect(
+        Offset.zero & Size(cropRect.left, rect.height),
+        Paint()
+          ..style = PaintingStyle.fill
+          ..color = maskColor);
+    //top
+    canvas.drawRect(
+        Offset(cropRect.left, 0.0) & Size(cropRect.width, cropRect.top),
+        Paint()
+          ..style = PaintingStyle.fill
+          ..color = maskColor);
+    //right
+    canvas.drawRect(
+        Offset(cropRect.right, 0.0) &
+            Size(rect.width - cropRect.right, rect.height),
+        Paint()
+          ..style = PaintingStyle.fill
+          ..color = maskColor);
+    //bottom
+    canvas.drawRect(
+        Offset(cropRect.left, cropRect.bottom) &
+            Size(cropRect.width, rect.height - cropRect.bottom),
+        Paint()
+          ..style = PaintingStyle.fill
+          ..color = maskColor);
+  }
+
+  /// draw crop layer lines
+  void paintLines(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+    final Color lineColor = painter.lineColor;
+    final double lineHeight = painter.lineHeight;
+    final Rect cropRect = painter.cropRect;
+    final bool pointerDown = painter.pointerDown;
+    final Paint linePainter = Paint()
+      ..color = lineColor
+      ..strokeWidth = lineHeight
+      ..style = PaintingStyle.stroke;
+    canvas.drawRect(cropRect, linePainter);
+
+    if (pointerDown) {
+      canvas.drawLine(
+          Offset((cropRect.right - cropRect.left) / 3.0 + cropRect.left,
+              cropRect.top),
+          Offset((cropRect.right - cropRect.left) / 3.0 + cropRect.left,
+              cropRect.bottom),
+          linePainter);
+
+      canvas.drawLine(
+          Offset((cropRect.right - cropRect.left) / 3.0 * 2.0 + cropRect.left,
+              cropRect.top),
+          Offset((cropRect.right - cropRect.left) / 3.0 * 2.0 + cropRect.left,
+              cropRect.bottom),
+          linePainter);
+
+      canvas.drawLine(
+          Offset(
+            cropRect.left,
+            (cropRect.bottom - cropRect.top) / 3.0 + cropRect.top,
+          ),
+          Offset(
+            cropRect.right,
+            (cropRect.bottom - cropRect.top) / 3.0 + cropRect.top,
+          ),
+          linePainter);
+
+      canvas.drawLine(
+          Offset(cropRect.left,
+              (cropRect.bottom - cropRect.top) / 3.0 * 2.0 + cropRect.top),
+          Offset(
+            cropRect.right,
+            (cropRect.bottom - cropRect.top) / 3.0 * 2.0 + cropRect.top,
+          ),
+          linePainter);
+    }
+  }
+}
+
+class ExtendedImageCropLayerPainter extends CustomPainter {
+  ExtendedImageCropLayerPainter({
+    @required this.cropRect,
+    @required this.cropLayerPainter,
+    @required this.lineColor,
+    @required this.cornerColor,
+    @required this.cornerSize,
+    @required this.lineHeight,
+    @required this.maskColor,
+    @required this.pointerDown,
+  });
+
+  /// The rect of crop layer
+  final Rect cropRect;
+
+  /// The size of corner shape
+  final Size cornerSize;
+
+  // The color of corner shape
+  // default theme primaryColor
+  final Color cornerColor;
+
+  /// The color of crop line
+  final Color lineColor;
+
+  /// The height of crop line
+  final double lineHeight;
+
+  /// The color of mask
+  final Color maskColor;
+
+  /// Whether pointer is down
+  final bool pointerDown;
+
+  /// The crop Layer painter for Editor
+  final EditorCropLayerPainter cropLayerPainter;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    cropLayerPainter.paint(canvas, size, this);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    if (oldDelegate.runtimeType != runtimeType) {
+      return true;
+    }
+    final ExtendedImageCropLayerPainter delegate =
+        oldDelegate as ExtendedImageCropLayerPainter;
+    return cropRect != delegate.cropRect ||
+        cornerSize != delegate.cornerSize ||
+        lineColor != delegate.lineColor ||
+        lineHeight != delegate.lineHeight ||
+        maskColor != delegate.maskColor ||
+        cropLayerPainter != delegate.cropLayerPainter ||
+        cornerColor != delegate.cornerColor ||
+        pointerDown != delegate.pointerDown;
   }
 }

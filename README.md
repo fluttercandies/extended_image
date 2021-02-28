@@ -21,7 +21,7 @@ A powerful official extension library of image, which support placeholder(loadin
     - [double tap animation](#double-tap-animation)
   - [Editor](#editor)
     - [crop aspect ratio](#crop-aspect-ratio)
-    - [corner painter](#corner-painter)
+    - [crop layer painter](#crop-layer-painter)
     - [crop,flip,reset](#cropflipreset)
     - [crop data](#crop-data)
       - [dart library(stable)](#dart-librarystable)
@@ -401,45 +401,34 @@ class CropAspectRatios {
 }
 ```
 
-### corner painter
+### crop layer painter
 
-With `cornerPainter` property you can customize crop layout corners.
-By default is active `ExtendedImageCropLayerPainterNinetyDegreesCorner`. You can pass alternatively `ExtendedImageCropLayerPainterCircleCorner` or extend class `ExtendedImageCropLayerCornerPainter` and create your own corner painter.
-For example this is code for `ExtendedImageCropLayerPainterCircleCorner`:
+you can define your crop layer by override [EditorConfig.editorCropLayerPainter].
 
 ```dart
-class ExtendedImageCropLayerPainterCircleCorner
-    extends ExtendedImageCropLayerCornerPainter {
-  const ExtendedImageCropLayerPainterCircleCorner({
-    this.color,
-    this.radius = 5.0,
-  }) : super(color);
-
-  // color of corner shape
-  // default theme primaryColor
-  final Color color;
-
-  // radius of corner circle
-  final double radius;
-
-  @override
-  ExtendedImageCropLayerPainterCircleCorner copyWith(
-          {Color color, double radius}) =>
-      ExtendedImageCropLayerPainterCircleCorner(
-          color: color ?? this.color, radius: radius ?? this.radius);
-
-  @override
-  void drawCorners(Canvas canvas, Rect cropRect, Paint defautlPainter) {
-    defautlPainter.color = color;
-    canvas.drawCircle(
-        Offset(cropRect.left, cropRect.top), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.right, cropRect.top), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.left, cropRect.bottom), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.right, cropRect.bottom), radius, defautlPainter);
+class EditorCropLayerPainter {
+  const EditorCropLayerPainter();
+  void paint(Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+    paintMask(canvas, size, painter);
+    paintLines(canvas, size, painter);
+    paintCorners(canvas, size, painter);
   }
+
+  /// draw crop layer corners
+  void paintCorners(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+  }
+
+  /// draw crop layer lines
+  void paintMask(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+  }
+  
+
+  /// draw crop layer lines
+  void paintLines(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+  } 
 }
 ```
 
