@@ -7,11 +7,11 @@ import 'package:example/common/utils/crop_editor_helper.dart';
 import 'package:example/common/utils/screen_util.dart';
 import 'package:example/common/widget/common_widget.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 

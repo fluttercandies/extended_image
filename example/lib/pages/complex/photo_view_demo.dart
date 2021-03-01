@@ -22,7 +22,7 @@ import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/foundation.dart';
 
-import 'package:ff_annotation_route/ff_annotation_route.dart';
+import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 
 @FFRoute(
   name: 'fluttercandies://photoview',

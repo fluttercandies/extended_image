@@ -1,7 +1,15 @@
+## 2.0.0
+
+* Improve:
+  Add cacheKey for NetworkProvider. #288
+  Web capability at pub.dev.
+  Add change event for editor. #300
+  Don't deprecate cornerSize and cornerColor
 ## 1.6.0
 
 * Improve:
   Public ExtendedImageSlidePageHandler for slide other widget. #298
+
 ## 1.5.0
 
 * Improve:

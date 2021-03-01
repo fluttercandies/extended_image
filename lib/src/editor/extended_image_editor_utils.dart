@@ -347,14 +347,9 @@ class EditActionDetails {
 class EditorConfig {
   EditorConfig({
     double maxScale,
-    //double initialScale,
     this.cropRectPadding = const EdgeInsets.all(20.0),
-    @Deprecated('Use cornerPainter instead. The feature was deprecated after v1.1.2.')
-        // ignore: deprecated_member_use_from_same_package
-        this.cornerSize = const Size(30.0, 5.0),
-    @Deprecated('Use cornerPainter instead. The feature was deprecated after v1.1.2.')
-        // ignore: deprecated_member_use_from_same_package
-        this.cornerColor,
+    this.cornerSize = const Size(30.0, 5.0),
+    this.cornerColor,
     this.lineColor,
     this.lineHeight = 0.6,
     this.editorMaskColorHandler,
@@ -366,6 +361,7 @@ class EditorConfig {
     this.cornerPainter,
     double speed,
     this.hitTestBehavior = HitTestBehavior.deferToChild,
+    this.editActionDetailsIsChanged,
   })  : maxScale = maxScale ??= 5.0,
         speed = speed ?? 1.0,
         // initialScale = initialScale ??= 1.0,
@@ -375,6 +371,9 @@ class EditorConfig {
         assert(hitTestSize >= 0.0),
         assert(animationDuration != null),
         assert(tickerDuration != null);
+
+  /// Call when EditActionDetails is changed
+  final EditActionDetailsIsChanged editActionDetailsIsChanged;
 
   /// How to behave during hit tests.
   final HitTestBehavior hitTestBehavior;
@@ -392,10 +391,12 @@ class EditorConfig {
   final EdgeInsets cropRectPadding;
 
   /// size of corner shape
+
   final Size cornerSize;
 
   /// color of corner shape
   /// default: primaryColor
+  /// use [cornerPainter.cornerColor]
   final Color cornerColor;
 
   /// color of crop line
@@ -544,7 +545,7 @@ abstract class ExtendedImageCropLayerCornerPainter {
 
   ExtendedImageCropLayerCornerPainter copyWith({Color color}) => null;
 
-  //color of corner shape
+  // color of corner shape
   // default theme primaryColor
   final Color cornerColor;
 }

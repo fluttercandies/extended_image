@@ -249,6 +249,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
         ///if we have shift offset, we should clear delta.
         ///we should += delta in case miss delta
         _editActionDetails.delta += delta;
+        _editorConfig?.editActionDetailsIsChanged?.call(_editActionDetails);
       });
     }
   }
@@ -301,6 +302,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   ui.Image get image => widget.extendedImageState.extendedImageInfo?.image;
 
   Uint8List get rawImageData =>
+      // ignore: always_specify_types
       (widget.extendedImageState?.imageWidget?.image as ExtendedImageProvider)
           .rawImageData;
 
@@ -309,15 +311,18 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   void rotate({bool right = true}) {
     setState(() {
       _editActionDetails.rotate(
-          right ? pi / 2.0 : -pi / 2.0,
-          _layerKey.currentState.layoutRect,
-          widget.extendedImageState.imageWidget.fit);
+        right ? pi / 2.0 : -pi / 2.0,
+        _layerKey.currentState.layoutRect,
+        widget.extendedImageState.imageWidget.fit,
+      );
+      _editorConfig?.editActionDetailsIsChanged?.call(_editActionDetails);
     });
   }
 
   void flip() {
     setState(() {
       _editActionDetails.flip();
+      _editorConfig?.editActionDetailsIsChanged?.call(_editActionDetails);
     });
   }
 
@@ -326,6 +331,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       _editorConfig = null;
       _editActionDetails = null;
       _initGestureConfig();
+      _editorConfig?.editActionDetailsIsChanged?.call(_editActionDetails);
     });
   }
 }

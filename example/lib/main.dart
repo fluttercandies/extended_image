@@ -2,12 +2,12 @@ import 'package:example/common/data/tu_chong_repository.dart';
 import 'package:example/common/utils/screen_util.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';
+import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'example_route.dart';
-import 'example_route_helper.dart';
 import 'example_routes.dart';
 
 void main() => runApp(MyApp());
@@ -50,21 +50,44 @@ class MyApp extends StatelessWidget {
       },
       initialRoute: Routes.fluttercandiesMainpage,
       onGenerateRoute: (RouteSettings settings) {
-        //when refresh web, route will as following
-        //   /
-        //   /fluttercandies:
-        //   /fluttercandies:/
-        //   /fluttercandies://mainpage
-        if (kIsWeb && settings.name.startsWith('/')) {
-          return onGenerateRouteHelper(
-            settings.copyWith(name: settings.name.replaceFirst('/', '')),
-            notFoundFallback:
-                getRouteResult(name: Routes.fluttercandiesMainpage).widget,
-          );
-        }
-        return onGenerateRouteHelper(settings);
+        return onGenerateRoute(
+          settings: settings,
+          getRouteSettings: getRouteSettings,
+          // routeSettingsWrapper: (FFRouteSettings ffRouteSettings) {
+          //   if (ffRouteSettings.name == Routes.fluttercandiesMainpage ||
+          //       ffRouteSettings.name == Routes.fluttercandiesDemogrouppage) {
+          //     return ffRouteSettings;
+          //   }
+          //   return ffRouteSettings.copyWith(
+          //       widget: CommonWidget(
+          //     child: ffRouteSettings.widget,
+          //     title: ffRouteSettings.routeName,
+          //   ));
+          // },
+        );
       },
     ));
+  }
+}
+
+class CommonWidget extends StatelessWidget {
+  const CommonWidget({
+    this.child,
+    this.title,
+  });
+  final Widget child;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          title,
+        ),
+      ),
+      body: child,
+    );
   }
 }
 

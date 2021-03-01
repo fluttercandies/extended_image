@@ -3,7 +3,7 @@ import 'package:example/common/data/tu_chong_source.dart';
 import 'package:example/common/widget/item_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_more_list/loading_more_list.dart';
-import 'package:ff_annotation_route/ff_annotation_route.dart';
+import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 
 @FFRoute(
   name: 'fluttercandies://WaterfallFlowDemo',

@@ -33,7 +33,8 @@ dependencies:
   intl: any
   oktoast: ^2.1.4
   extended_sliver: ^1.0.1
-
+  ff_annotation_route_core: any
+  ff_annotation_route_library: any
 dependency_overrides:
   extended_image:
     path: ../
@@ -41,7 +42,6 @@ dependency_overrides:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  ff_annotation_route: ^4.0.2
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 
