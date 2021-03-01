@@ -44,7 +44,16 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   final GlobalKey<ExtendedImageCropLayerState> _layerKey =
       GlobalKey<ExtendedImageCropLayerState>();
 
-  late EditActionDetails _editActionDetails;
+  EditActionDetails? _editActionDetails;
+
+  EditActionDetails get editAction => _editActionDetails!;
+
+  ui.Image? get image => widget.extendedImageState.extendedImageInfo?.image;
+
+  Uint8List? get rawImageData =>
+      (widget.extendedImageState.imageWidget.image as ExtendedImageProvider)
+          .rawImageData;
+
   late EditorConfig _editorConfig;
   late double _startingScale;
   late Offset _startingOffset;
@@ -53,35 +62,36 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   @override
   void initState() {
     super.initState();
-    _initGestureConfig(isInitialize: true);
+    _initGestureConfig();
   }
 
-  void _initGestureConfig({bool isInitialize = false}) {
+  void _initGestureConfig() {
     _editorConfig = widget
             .extendedImageState.imageWidget.initEditorConfigHandler
             ?.call(widget.extendedImageState) ??
         EditorConfig();
-    if (isInitialize) {
-      _updateEditActionDetails();
-    }
-
-    final double? initialScale = _editorConfig.initialScale;
+    final double initialScale = _editorConfig.initialScale;
     final double? cropAspectRatio = _editorConfig.cropAspectRatio;
-    if (cropAspectRatio != _editorConfig.cropAspectRatio ||
-        initialScale != _editorConfig.initialScale) {
-      _updateEditActionDetails();
+    if (cropAspectRatio != _editorConfig.cropAspectRatio) {
+      _editActionDetails = null;
     }
 
-    if (widget.extendedImageState.extendedImageInfo?.image != null) {
-      _editActionDetails.originalAspectRatio =
-          widget.extendedImageState.extendedImageInfo!.image.width /
-              widget.extendedImageState.extendedImageInfo!.image.height;
+    if (_editActionDetails == null ||
+        initialScale != _editorConfig.initialScale) {
+      _editActionDetails = EditActionDetails()
+        ..delta = Offset.zero
+        ..totalScale = _editorConfig.initialScale
+        ..preTotalScale = _editorConfig.initialScale
+        ..cropRectPadding = _editorConfig.cropRectPadding;
     }
-    _editActionDetails.cropAspectRatio = _editorConfig.cropAspectRatio;
+
+    if (image != null) {
+      editAction.originalAspectRatio = image!.width / image!.height;
+    }
+    editAction.cropAspectRatio = _editorConfig.cropAspectRatio;
     if (_editorConfig.cropAspectRatio != null &&
         _editorConfig.cropAspectRatio! <= 0) {
-      _editActionDetails.cropAspectRatio =
-          _editActionDetails.originalAspectRatio;
+      editAction.cropAspectRatio = editAction.originalAspectRatio;
     }
   }
 
@@ -91,19 +101,11 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     _initGestureConfig();
   }
 
-  void _updateEditActionDetails() {
-    _editActionDetails = EditActionDetails()
-      ..delta = Offset.zero
-      ..totalScale = _editorConfig.initialScale
-      ..preTotalScale = _editorConfig.initialScale
-      ..cropRectPadding = _editorConfig.cropRectPadding;
-  }
-
   @override
   Widget build(BuildContext context) {
     final ExtendedImage extendedImage = widget.extendedImageState.imageWidget;
-    final Widget image = ExtendedRawImage(
-      image: widget.extendedImageState.extendedImageInfo?.image,
+    final Widget child = ExtendedRawImage(
+      image: image,
       width: extendedImage.width,
       height: extendedImage.height,
       scale: widget.extendedImageState.extendedImageInfo?.scale ?? 1.0,
@@ -127,7 +129,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       behavior: _editorConfig.hitTestBehavior,
       child: Stack(
         children: <Widget>[
-          Positioned.fill(child: image),
+          Positioned.fill(child: child),
           Positioned.fill(
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
@@ -137,14 +139,12 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                 if (padding != null) {
                   layoutRect = padding.deflateRect(layoutRect);
                 }
-                if (_editActionDetails.cropRect == null) {
+                if (editAction.cropRect == null) {
                   final Rect destinationRect = getDestinationRect(
                     rect: layoutRect,
                     inputSize: Size(
-                      widget.extendedImageState.extendedImageInfo!.image.width
-                          .toDouble(),
-                      widget.extendedImageState.extendedImageInfo!.image.height
-                          .toDouble(),
+                      image!.width.toDouble(),
+                      image!.height.toDouble(),
                     ),
                     flipHorizontally: false,
                     fit: widget.extendedImageState.imageWidget.fit,
@@ -160,7 +160,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                       _editorConfig.cropAspectRatio != null &&
                       _editorConfig.cropAspectRatio! > 0) {
                     final Rect rect = _initCropRect(layoutRect);
-                    _editActionDetails.totalScale = _editActionDetails
+                    editAction.totalScale = editAction
                         .preTotalScale = doubleCompare(
                                 destinationRect.width, destinationRect.height) >
                             0
@@ -168,13 +168,13 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                         : rect.width / cropRect.width;
                     cropRect = rect;
                   }
-                  _editActionDetails.cropRect = cropRect;
+                  editAction.cropRect = cropRect;
                 }
 
                 return ExtendedImageCropLayer(
                   key: _layerKey,
                   layoutRect: layoutRect,
-                  editActionDetails: _editActionDetails,
+                  editActionDetails: editAction,
                   editorConfig: _editorConfig,
                   fit: widget.extendedImageState.imageWidget.fit,
                 );
@@ -202,10 +202,10 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   }
 
   Rect _initCropRect(Rect rect) {
-    Rect cropRect = _editActionDetails.getRectWithScale(rect);
+    Rect cropRect = editAction.getRectWithScale(rect);
 
-    if (_editActionDetails.cropAspectRatio != null) {
-      final double aspectRatio = _editActionDetails.cropAspectRatio!;
+    if (editAction.cropAspectRatio != null) {
+      final double aspectRatio = editAction.cropAspectRatio!;
       double width = cropRect.width / aspectRatio;
       final double height = min(cropRect.height, width);
       width = height * aspectRatio;
@@ -221,8 +221,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   void _handleScaleStart(ScaleStartDetails details) {
     _layerKey.currentState?.pointerDown(true);
     _startingOffset = details.focalPoint;
-    _editActionDetails.screenFocalPoint = details.focalPoint;
-    _startingScale = _editActionDetails.totalScale;
+    editAction.screenFocalPoint = details.focalPoint;
+    _startingScale = editAction.totalScale;
     _detailsScale = 1.0;
   }
 
@@ -243,12 +243,11 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
 
     _startingOffset = details.focalPoint;
     //no more zoom
-    if ((_editActionDetails.reachCropRectEdge && zoomOut) ||
-        doubleEqual(_editActionDetails.totalScale, _editorConfig.maxScale) &&
-            zoomIn) {
+    if ((editAction.reachCropRectEdge && zoomOut) ||
+        doubleEqual(editAction.totalScale, _editorConfig.maxScale) && zoomIn) {
       //correct _startingScale
       //details.scale was not calculated at the moment
-      _startingScale = _editActionDetails.totalScale / details.scale;
+      _startingScale = editAction.totalScale / details.scale;
       return;
     }
 
@@ -256,11 +255,11 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
 
     if (mounted && (scaleDelta != 1.0 || delta != Offset.zero)) {
       setState(() {
-        _editActionDetails.totalScale = totalScale;
+        editAction.totalScale = totalScale;
 
         ///if we have shift offset, we should clear delta.
         ///we should += delta in case miss delta
-        _editActionDetails.delta += delta;
+        editAction.delta += delta;
       });
     }
   }
@@ -285,22 +284,22 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       return null;
     }
 
-    Rect? cropScreen = _editActionDetails.screenCropRect;
-    Rect? imageScreenRect = _editActionDetails.screenDestinationRect;
-    imageScreenRect = _editActionDetails.paintRect(imageScreenRect!);
-    cropScreen = _editActionDetails.paintRect(cropScreen!);
+    Rect cropScreen = editAction.screenCropRect!;
+    Rect imageScreenRect = editAction.screenDestinationRect!;
+    imageScreenRect = editAction.paintRect(imageScreenRect);
+    cropScreen = editAction.paintRect(cropScreen);
 
     //move to zero
     cropScreen = cropScreen.shift(-imageScreenRect.topLeft);
 
     imageScreenRect = imageScreenRect.shift(-imageScreenRect.topLeft);
 
-    final ui.Image image = widget.extendedImageState.extendedImageInfo!.image;
+    final ui.Image _image = image!;
     // var size = _editActionDetails.isHalfPi
     //     ? Size(image.height.toDouble(), image.width.toDouble())
     //     : Size(image.width.toDouble(), image.height.toDouble());
     final Rect imageRect =
-        Offset.zero & Size(image.width.toDouble(), image.height.toDouble());
+        Offset.zero & Size(_image.width.toDouble(), _image.height.toDouble());
 
     final double ratioX = imageRect.width / imageScreenRect.width;
     final double ratioY = imageRect.height / imageScreenRect.height;
@@ -314,17 +313,9 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     return cropImageRect;
   }
 
-  ui.Image? get image => widget.extendedImageState.extendedImageInfo?.image;
-
-  Uint8List? get rawImageData =>
-      (widget.extendedImageState.imageWidget.image as ExtendedImageProvider)
-          .rawImageData;
-
-  EditActionDetails get editAction => _editActionDetails;
-
   void rotate({bool right = true}) {
     setState(() {
-      _editActionDetails.rotate(
+      editAction.rotate(
         right ? pi / 2.0 : -pi / 2.0,
         _layerKey.currentState!.layoutRect,
         widget.extendedImageState.imageWidget.fit,
@@ -334,11 +325,14 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
 
   void flip() {
     setState(() {
-      _editActionDetails.flip();
+      editAction.flip();
     });
   }
 
   void reset() {
-    _initGestureConfig();
+    setState(() {
+      _editActionDetails = null;
+      _initGestureConfig();
+    });
   }
 }
