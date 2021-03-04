@@ -4,7 +4,7 @@ version: 3.0.0-non-null-safety
 homepage: https://github.com/fluttercandies/extended_image
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
+  sdk: ">=2.6.0 <2.12.0"
 
 dependencies:
   flutter:
