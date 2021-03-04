@@ -1,6 +1,10 @@
 ## 3.0.0-non-null-safety
 
 * non-null-safety
+* Breaking change:
+  Remove [TransparentMaterialPageRoute] and [TransparentMaterialPageRoute]
+* Improve:
+  Add [ExtendedNetworkImageProvider.printError]
 
 ## 2.0.0
 

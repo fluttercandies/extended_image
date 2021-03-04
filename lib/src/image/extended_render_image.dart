@@ -58,7 +58,8 @@ class ExtendedRenderImage extends RenderBox {
         _beforePaintImage = beforePaintImage,
         _afterPaintImage = afterPaintImage,
         _gestureDetails = gestureDetails,
-        _editActionDetails = editActionDetails {
+        _editActionDetails = editActionDetails,
+        _isAntiAlias = isAntiAlias {
     _updateColorFilter();
   }
 

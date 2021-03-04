@@ -9,6 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  extended_image_library: ^2.0.0-non-null-safety
+  extended_image_library: ^2.0.1-non-null-safety
   meta: ^1.1.8
 
