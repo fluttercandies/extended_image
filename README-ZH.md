@@ -2,7 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image) [![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers) [![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network) [![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE) [![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues) <a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5bcc0gy"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="flutter-candies" title="flutter-candies"></a>
 
-文档语言: [English](README.md) | [中文简体](README-ZH.md)
+文档语言: [English](README.md) | 中文简体
 
 强大的官方 Image 扩展组件, 支持加载以及失败显示，缓存网络图片，缩放拖拽图片，图片浏览(微信掘金效果)，滑动退出页面(微信掘金效果)，编辑图片(裁剪旋转翻转)，保存，绘制自定义效果等功能
 
@@ -45,6 +45,31 @@
   - [瀑布流](#%e7%80%91%e5%b8%83%e6%b5%81)
   - [内存回收/可视区域追踪](#%e5%86%85%e5%ad%98%e5%9b%9e%e6%94%b6%e5%8f%af%e8%a7%86%e5%8c%ba%e5%9f%9f%e8%bf%bd%e8%b8%aa)
   - [其他 APIs](#%e5%85%b6%e4%bb%96-apis)
+
+
+## 导入
+
+*  空安全
+
+``` yaml
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+  flutter: '>=2.0'
+dependencies:
+  extended_image: ^3.0.0
+``` 
+
+*  非空安全
+
+1.22.6 到 2.0, Flutter Api 有 breaking change，所以 1.22.6 以下的，请使用非空安全版本
+
+``` yaml
+environment:
+  sdk: '>=2.6.0 <2.12.0'
+  flutter: '>1.17.0 <=1.22.6'
+dependencies:
+  extended_image: ^3.0.0-non-null-safety
+``` 
 
 ## 缓存网络图片
 

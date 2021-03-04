@@ -2,7 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image) [![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers) [![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network) [![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE) [![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues) <a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5bcc0gy"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="flutter-candies" title="flutter-candies"></a>
 
-Language: [English](README.md) | [中文简体](README-ZH.md)
+Language: English| [中文简体](README-ZH.md)
 
 A powerful official extension library of image, which support placeholder(loading)/ failed state, cache network, zoom pan image, photo view, slide out page, editor(crop,rotate,flip), paint custom etc.
 
@@ -12,6 +12,7 @@ A powerful official extension library of image, which support placeholder(loadin
 
 - [extended_image](#extended_image)
   - [Table of contents](#table-of-contents)
+  - [Import](#import)
   - [Cache Network](#cache-network)
     - [Simple use](#simple-use)
     - [Use ExtendedNetworkImageProvider](#use-extendednetworkimageprovider)
@@ -41,6 +42,30 @@ A powerful official extension library of image, which support placeholder(loadin
   - [WaterfallFlow](#waterfallflow)
   - [CollectGarbage/viewportBuilder](#collectgarbageviewportbuilder)
   - [Other APIs](#other-apis)
+
+## Import
+
+*  null-safety
+
+``` yaml
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+  flutter: '>=2.0'
+dependencies:
+  extended_image: ^3.0.0
+``` 
+
+*  non-null-safety
+  
+1.22.6 to 2.0, Flutter Api has breaking change，please use non-null-safety if you under 1.22.6.
+
+``` yaml
+environment:
+  sdk: '>=2.6.0 <2.12.0'
+  flutter: '>1.17.0 <=1.22.6'
+dependencies:
+  extended_image: ^3.0.0-non-null-safety
+``` 
 
 ## Cache Network
 

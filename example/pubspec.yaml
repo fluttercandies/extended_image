@@ -10,8 +10,7 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
-  flutter: ">=1.20.0"
+  sdk: ">=2.6.0 <2.12.0"
 dependencies:
   flutter:
     sdk: flutter
@@ -25,7 +24,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
   js: ^0.6.1+1
-  http_client_helper: any
+  http_client_helper: ^2.0.0-non-null-safety
   pull_to_refresh_notification: any
   like_button: any
   photo_manager: 0.5.7
@@ -33,8 +32,8 @@ dependencies:
   intl: any
   oktoast: ^2.1.4
   extended_sliver: ^1.0.1
-  ff_annotation_route_core: any
-  ff_annotation_route_library: any
+  ff_annotation_route_core: ^2.0.1-non-null-safety
+  ff_annotation_route_library: ^2.0.1-non-null-safety
 dependency_overrides:
   extended_image:
     path: ../
