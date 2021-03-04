@@ -18,7 +18,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
   /// The [scale], [alignment], [repeat], [matchTextDirection] and [filterQuality] arguments must
   /// not be null.
   const ExtendedRawImage({
-    Key key,
+    Key? key,
     this.image,
     this.width,
     this.height,
@@ -38,12 +38,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
     this.gestureDetails,
     this.editActionDetails,
     this.isAntiAlias = false,
-  })  : assert(isAntiAlias != null),
-        assert(scale != null),
-        assert(alignment != null),
-        assert(repeat != null),
-        assert(matchTextDirection != null),
-        super(key: key);
+  }) : super(key: key);
 
   /// Whether to paint the image with anti-aliasing.
   ///
@@ -51,31 +46,31 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
   final bool isAntiAlias;
 
   /// details about edit
-  final EditActionDetails editActionDetails;
+  final EditActionDetails? editActionDetails;
 
   /// details about gesture
-  final GestureDetails gestureDetails;
+  final GestureDetails? gestureDetails;
 
   ///you can paint anything if you want before paint image.
-  final BeforePaintImage beforePaintImage;
+  final BeforePaintImage? beforePaintImage;
 
   ///you can paint anything if you want after paint image.
-  final AfterPaintImage afterPaintImage;
+  final AfterPaintImage? afterPaintImage;
 
   /// The image to display.
-  final ui.Image image;
+  final ui.Image? image;
 
   /// If non-null, require the image to have this width.
   ///
   /// If null, the image will pick a size that best preserves its intrinsic
   /// aspect ratio.
-  final double width;
+  final double? width;
 
   /// If non-null, require the image to have this height.
   ///
   /// If null, the image will pick a size that best preserves its intrinsic
   /// aspect ratio.
-  final double height;
+  final double? height;
 
   /// Specifies the image's scale.
   ///
@@ -83,7 +78,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
   final double scale;
 
   /// If non-null, this color is blended with each image pixel using [colorBlendMode].
-  final Color color;
+  final Color? color;
 
   /// Used to set the filterQuality of the image
   /// Use the "low" quality setting to scale the image, which corresponds to
@@ -99,13 +94,13 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
   /// See also:
   ///
   ///  * [BlendMode], which includes an illustration of the effect of each blend mode.
-  final BlendMode colorBlendMode;
+  final BlendMode? colorBlendMode;
 
   /// How to inscribe the image into the space allocated during layout.
   ///
   /// The default varies based on the other fields. See the discussion at
   /// [paintImage].
-  final BoxFit fit;
+  final BoxFit? fit;
 
   /// How to align the image within its bounds.
   ///
@@ -144,7 +139,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
   /// region of the image above and below the center slice will be stretched
   /// only horizontally and the region of the image to the left and right of
   /// the center slice will be stretched only vertically.
-  final Rect centerSlice;
+  final Rect? centerSlice;
 
   /// Whether to paint the image in the direction of the [TextDirection].
   ///
@@ -176,14 +171,18 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
 
   ///input Rect, you can use this to crop image.
   ///it work when centerSlice==null
-  final Rect sourceRect;
+  final Rect? sourceRect;
 
   @override
   ExtendedRenderImage createRenderObject(BuildContext context) {
     assert((!matchTextDirection && alignment is Alignment) ||
         debugCheckHasDirectionality(context));
+    assert(
+        image?.debugGetOpenHandleStackTraces()?.isNotEmpty ?? true,
+        'Creator of a RawImage disposed of the image when the RawImage still '
+        'needed it.');
     return ExtendedRenderImage(
-      image: image,
+      image: image?.clone(),
       width: width,
       height: height,
       scale: scale,
@@ -211,8 +210,12 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
   @override
   void updateRenderObject(
       BuildContext context, ExtendedRenderImage renderObject) {
+    assert(
+        image?.debugGetOpenHandleStackTraces()?.isNotEmpty ?? true,
+        'Creator of a RawImage disposed of the image when the RawImage still '
+        'needed it.');
     renderObject
-      ..image = image
+      ..image = image?.clone()
       ..width = width
       ..height = height
       ..scale = scale

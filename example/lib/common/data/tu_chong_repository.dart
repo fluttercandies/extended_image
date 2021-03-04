@@ -55,7 +55,7 @@ class TuChongRepository extends LoadingMoreBase<TuChongItem> {
       //await Future.delayed(const Duration(milliseconds: 500));
       List<TuChongItem> feedList;
       if (!kIsWeb) {
-        final Response result = await HttpClientHelper.get(url);
+        final Response result = await HttpClientHelper.get(Uri.parse(url));
         feedList = TuChongSource.fromJson(
                 json.decode(result.body) as Map<String, dynamic>)
             .feedList;

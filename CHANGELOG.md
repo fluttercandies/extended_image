@@ -1,7 +1,32 @@
+## 3.0.0
+
+* Improve:
+  
+  support null-safety
+
+  Add [ExtendedNetworkImageProvider.printError]
+
+  Merge code from Flutter 2.0
+
+* Breaking change:
+
+  remove [TransparentMaterialPageRoute] and [TransparentMaterialPageRoute]
+  
+## 2.0.0
+
+* Improve:
+  Add cacheKey for NetworkProvider. #288
+  Web capability at pub.dev.
+  Add change event for editor. #300
+
+* Breaking change:
+  Use [EditorCropLayerPainter] instead of [ExtendedImageCropLayerCornerPainter]
+  
 ## 1.6.0
 
 * Improve:
   Public ExtendedImageSlidePageHandler for slide other widget. #298
+
 ## 1.5.0
 
 * Improve:

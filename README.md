@@ -2,7 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image) [![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers) [![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network) [![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE) [![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues) <a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5bcc0gy"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="flutter-candies" title="flutter-candies"></a>
 
-Language: [English](README.md) | [中文简体](README-ZH.md)
+Language: English| [中文简体](README-ZH.md)
 
 A powerful official extension library of image, which support placeholder(loading)/ failed state, cache network, zoom pan image, photo view, slide out page, editor(crop,rotate,flip), paint custom etc.
 
@@ -12,6 +12,7 @@ A powerful official extension library of image, which support placeholder(loadin
 
 - [extended_image](#extended_image)
   - [Table of contents](#table-of-contents)
+  - [Import](#import)
   - [Cache Network](#cache-network)
     - [Simple use](#simple-use)
     - [Use ExtendedNetworkImageProvider](#use-extendednetworkimageprovider)
@@ -21,7 +22,7 @@ A powerful official extension library of image, which support placeholder(loadin
     - [double tap animation](#double-tap-animation)
   - [Editor](#editor)
     - [crop aspect ratio](#crop-aspect-ratio)
-    - [corner painter](#corner-painter)
+    - [crop layer painter](#crop-layer-painter)
     - [crop,flip,reset](#cropflipreset)
     - [crop data](#crop-data)
       - [dart library(stable)](#dart-librarystable)
@@ -41,6 +42,30 @@ A powerful official extension library of image, which support placeholder(loadin
   - [WaterfallFlow](#waterfallflow)
   - [CollectGarbage/viewportBuilder](#collectgarbageviewportbuilder)
   - [Other APIs](#other-apis)
+
+## Import
+
+*  null-safety
+
+``` yaml
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+  flutter: '>=2.0'
+dependencies:
+  extended_image: ^3.0.0
+``` 
+
+*  non-null-safety
+  
+1.22.6 to 2.0, Flutter Api has breaking change，please use non-null-safety if you under 1.22.6.
+
+``` yaml
+environment:
+  sdk: '>=2.6.0 <2.12.0'
+  flutter: '>1.17.0 <=1.22.6'
+dependencies:
+  extended_image: ^3.0.0-non-null-safety
+``` 
 
 ## Cache Network
 
@@ -401,45 +426,34 @@ class CropAspectRatios {
 }
 ```
 
-### corner painter
+### crop layer painter
 
-With `cornerPainter` property you can customize crop layout corners.
-By default is active `ExtendedImageCropLayerPainterNinetyDegreesCorner`. You can pass alternatively `ExtendedImageCropLayerPainterCircleCorner` or extend class `ExtendedImageCropLayerCornerPainter` and create your own corner painter.
-For example this is code for `ExtendedImageCropLayerPainterCircleCorner`:
+you can define your crop layer by override [EditorConfig.editorCropLayerPainter].
 
 ```dart
-class ExtendedImageCropLayerPainterCircleCorner
-    extends ExtendedImageCropLayerCornerPainter {
-  const ExtendedImageCropLayerPainterCircleCorner({
-    this.color,
-    this.radius = 5.0,
-  }) : super(color);
-
-  // color of corner shape
-  // default theme primaryColor
-  final Color color;
-
-  // radius of corner circle
-  final double radius;
-
-  @override
-  ExtendedImageCropLayerPainterCircleCorner copyWith(
-          {Color color, double radius}) =>
-      ExtendedImageCropLayerPainterCircleCorner(
-          color: color ?? this.color, radius: radius ?? this.radius);
-
-  @override
-  void drawCorners(Canvas canvas, Rect cropRect, Paint defautlPainter) {
-    defautlPainter.color = color;
-    canvas.drawCircle(
-        Offset(cropRect.left, cropRect.top), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.right, cropRect.top), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.left, cropRect.bottom), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.right, cropRect.bottom), radius, defautlPainter);
+class EditorCropLayerPainter {
+  const EditorCropLayerPainter();
+  void paint(Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+    paintMask(canvas, size, painter);
+    paintLines(canvas, size, painter);
+    paintCorners(canvas, size, painter);
   }
+
+  /// draw crop layer corners
+  void paintCorners(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+  }
+
+  /// draw crop layer lines
+  void paintMask(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+  }
+  
+
+  /// draw crop layer lines
+  void paintLines(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+  } 
 }
 ```
 

@@ -68,7 +68,7 @@ class GestureDetails {
   GestureDetails(
       {this.offset,
       this.totalScale,
-      GestureDetails gestureDetails,
+      GestureDetails? gestureDetails,
       this.actionType = ActionType.pan,
       this.userOffset = true}) {
     if (gestureDetails != null) {
@@ -87,10 +87,10 @@ class GestureDetails {
   }
 
   ///scale center delta
-  Offset offset;
+  Offset? offset;
 
   ///total scale of image
-  final double totalScale;
+  final double? totalScale;
 
   final ActionType actionType;
 
@@ -108,18 +108,18 @@ class GestureDetails {
   final bool userOffset;
 
   //pre
-  Offset _center;
+  Offset? _center;
 
-  Rect layoutRect;
-  Rect destinationRect;
+  Rect? layoutRect;
+  Rect? destinationRect;
 
   ///from
-  Rect rawDestinationRect;
+  Rect? rawDestinationRect;
 
-  InitialAlignment initialAlignment;
+  InitialAlignment? initialAlignment;
 
   ///slide page offset
-  Offset slidePageOffset;
+  Offset? slidePageOffset;
 
   @override
   int get hashCode => hashValues(
@@ -153,24 +153,24 @@ class GestureDetails {
         _center == other._center;
   }
 
-  Offset _getCenter(Rect destinationRect) {
+  Offset? _getCenter(Rect destinationRect) {
     if (!userOffset && _center != null) {
       return _center;
     }
     //var offset = editAction.paintOffset(this.offset);
-    if (totalScale > 1.0) {
+    if (totalScale! > 1.0) {
       if (_computeHorizontalBoundary && _computeVerticalBoundary) {
-        return destinationRect.center * totalScale + offset;
+        return destinationRect.center * totalScale! + offset!;
       } else if (_computeHorizontalBoundary) {
         //only scale Horizontal
-        return Offset(destinationRect.center.dx * totalScale,
+        return Offset(destinationRect.center.dx * totalScale!,
                 destinationRect.center.dy) +
-            Offset(offset.dx, 0.0);
+            Offset(offset!.dx, 0.0);
       } else if (_computeVerticalBoundary) {
         //only scale Vertical
         return Offset(destinationRect.center.dx,
-                destinationRect.center.dy * totalScale) +
-            Offset(0.0, offset.dy);
+                destinationRect.center.dy * totalScale!) +
+            Offset(0.0, offset!.dy);
       } else {
         return destinationRect.center;
       }
@@ -180,19 +180,19 @@ class GestureDetails {
   }
 
   Offset _getFixedOffset(Rect destinationRect, Offset center) {
-    if (totalScale > 1.0) {
+    if (totalScale! > 1.0) {
       if (_computeHorizontalBoundary && _computeVerticalBoundary) {
-        return center - destinationRect.center * totalScale;
+        return center - destinationRect.center * totalScale!;
       } else if (_computeHorizontalBoundary) {
         //only scale Horizontal
         return center -
-            Offset(destinationRect.center.dx * totalScale,
+            Offset(destinationRect.center.dx * totalScale!,
                 destinationRect.center.dy);
       } else if (_computeVerticalBoundary) {
         //only scale Vertical
         return center -
             Offset(destinationRect.center.dx,
-                destinationRect.center.dy * totalScale);
+                destinationRect.center.dy * totalScale!);
       } else {
         return center - destinationRect.center;
       }
@@ -202,8 +202,8 @@ class GestureDetails {
   }
 
   Rect _getDestinationRect(Rect destinationRect, Offset center) {
-    final double width = destinationRect.width * totalScale;
-    final double height = destinationRect.height * totalScale;
+    final double width = destinationRect.width * totalScale!;
+    final double height = destinationRect.height * totalScale!;
     return Rect.fromLTWH(
         center.dx - width / 2.0, center.dy - height / 2.0, width, height);
   }
@@ -213,14 +213,14 @@ class GestureDetails {
 
     rawDestinationRect = destinationRect;
 
-    final Offset temp = offset;
+    final Offset? temp = offset;
     _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
     offset = temp;
     Rect result =
         _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
 
     ///first call,initial image rect with alignment
-    if (totalScale > 1.0 &&
+    if (totalScale! > 1.0 &&
         destinationRectChanged &&
         initialAlignment != null) {
       offset = _getFixedOffset(destinationRect,
@@ -233,7 +233,7 @@ class GestureDetails {
     return result;
   }
 
-  Offset _getCenterDif(Rect result, Rect layout, InitialAlignment alignment) {
+  Offset _getCenterDif(Rect result, Rect layout, InitialAlignment? alignment) {
     switch (alignment) {
       case InitialAlignment.topLeft:
         return layout.topLeft - result.topLeft;
@@ -261,7 +261,7 @@ class GestureDetails {
   Rect _innerCalculateFinalDestinationRect(
       Rect layoutRect, Rect destinationRect) {
     _boundary = Boundary();
-    final Offset center = _getCenter(destinationRect);
+    final Offset center = _getCenter(destinationRect)!;
     Rect result = _getDestinationRect(destinationRect, center);
 
     if (_computeHorizontalBoundary) {
@@ -324,7 +324,7 @@ class GestureDetails {
             (delta.dy > 0 && boundary.top) ||
             !_computeVerticalBoundary);
 
-    return canMoveHorizontal || canMoveVertical || totalScale <= 1.0;
+    return canMoveHorizontal || canMoveVertical || totalScale! <= 1.0;
   }
 }
 
@@ -361,28 +361,21 @@ enum InitialAlignment {
 
 class GestureConfig {
   GestureConfig({
-    double minScale,
-    double maxScale,
-    double speed,
-    bool cacheGesture,
-    double inertialSpeed,
-    double initialScale,
-    bool inPageView,
-    double animationMinScale,
-    double animationMaxScale,
+    this.minScale = 0.8,
+    this.maxScale = 5.0,
+    this.speed = 1.0,
+    this.cacheGesture = false,
+    this.inertialSpeed = 100.0,
+    this.initialScale = 1.0,
+    this.inPageView = false,
+    double? animationMinScale,
+    double? animationMaxScale,
     this.initialAlignment = InitialAlignment.center,
     this.gestureDetailsIsChanged,
     this.hitTestBehavior = HitTestBehavior.deferToChild,
-  })  : minScale = minScale ??= 0.8,
-        maxScale = maxScale ??= 5.0,
-        speed = speed ??= 1.0,
-        cacheGesture = cacheGesture ?? false,
-        inertialSpeed = inertialSpeed ??= 100.0,
-        initialScale = initialScale ??= 1.0,
-        inPageView = inPageView ?? false,
+  })  : assert(minScale <= maxScale),
         animationMinScale = animationMinScale ??= minScale * 0.8,
         animationMaxScale = animationMaxScale ??= maxScale * 1.2,
-        assert(minScale <= maxScale),
         assert(animationMinScale <= animationMaxScale),
         assert(animationMinScale <= minScale),
         assert(animationMaxScale >= maxScale),
@@ -394,37 +387,38 @@ class GestureConfig {
   final HitTestBehavior hitTestBehavior;
 
   /// Call when GestureDetails is changed
-  final GestureDetailsIsChanged gestureDetailsIsChanged;
+  final GestureDetailsIsChanged? gestureDetailsIsChanged;
 
-  /// the min scale for zooming then animation back to minScale when scale end
+  /// The min scale for zooming then animation back to minScale when scale end
   final double animationMinScale;
-  //min scale
+
+  // Min scale
   final double minScale;
 
-  /// the max scale for zooming then animation back to maxScale when scale end
+  /// The max scale for zooming then animation back to maxScale when scale end
   final double animationMaxScale;
 
-  /// max scale
+  /// Max scale
   final double maxScale;
 
-  /// speed for zoom/pan
+  /// Speed for zoom/pan
   final double speed;
 
-  /// save Gesture state (for example in page view, so that the state will not change when scroll back),
-  /// remember clearGestureDetailsCache  at right time
+  /// Save Gesture state (for example in page view, so that the state will not change when scroll back),
+  /// Remember clearGestureDetailsCache  at right time
   final bool cacheGesture;
 
-  /// whether in page view
+  /// Whether in page view
   final bool inPageView;
 
   /// final double magnitude = details.velocity.pixelsPerSecond.distance;
   /// final Offset direction = details.velocity.pixelsPerSecond / magnitude * _gestureConfig.inertialSpeed;
   final double inertialSpeed;
 
-  /// initial scale of image
+  /// Initial scale of image
   final double initialScale;
 
-  /// init image rect with alignment when initialScale > 1.0
+  /// Init image rect with alignment when initialScale > 1.0
   /// see https://github.com/fluttercandies/extended_image/issues/66
   final InitialAlignment initialAlignment;
 }
@@ -451,11 +445,11 @@ const double minGesturePageDelta = 5.0;
 
 class GestureAnimation {
   GestureAnimation(TickerProvider vsync,
-      {GestureOffsetAnimationCallBack offsetCallBack,
-      GestureScaleAnimationCallBack scaleCallBack}) {
+      {GestureOffsetAnimationCallBack? offsetCallBack,
+      GestureScaleAnimationCallBack? scaleCallBack}) {
     if (offsetCallBack != null) {
       _offsetController = AnimationController(vsync: vsync);
-      _offsetController.addListener(() {
+      _offsetController!.addListener(() {
         //print(_animation.value);
         offsetCallBack(_offsetAnimation.value);
       });
@@ -463,36 +457,36 @@ class GestureAnimation {
 
     if (scaleCallBack != null) {
       _scaleController = AnimationController(vsync: vsync);
-      _scaleController.addListener(() {
+      _scaleController!.addListener(() {
         scaleCallBack(_scaleAnimation.value);
       });
     }
   }
 
-  AnimationController _offsetController;
-  Animation<Offset> _offsetAnimation;
+  AnimationController? _offsetController;
+  late Animation<Offset> _offsetAnimation;
 
-  AnimationController _scaleController;
-  Animation<double> _scaleAnimation;
+  AnimationController? _scaleController;
+  late Animation<double> _scaleAnimation;
 
-  void animationOffset(Offset begin, Offset end) {
+  void animationOffset(Offset? begin, Offset end) {
     if (_offsetController == null) {
       return;
     }
     _offsetAnimation =
-        _offsetController.drive(Tween<Offset>(begin: begin, end: end));
-    _offsetController
+        _offsetController!.drive(Tween<Offset>(begin: begin, end: end));
+    _offsetController!
       ..value = 0.0
       ..fling(velocity: velocity);
   }
 
-  void animationScale(double begin, double end, double velocity) {
+  void animationScale(double? begin, double end, double velocity) {
     if (_scaleController == null) {
       return;
     }
     _scaleAnimation =
-        _scaleController.drive(Tween<double>(begin: begin, end: end));
-    _scaleController
+        _scaleController!.drive(Tween<double>(begin: begin, end: end));
+    _scaleController!
       ..value = 0.0
       ..fling(velocity: velocity);
   }
@@ -513,8 +507,12 @@ class GestureAnimation {
 
 ///ExtendedImageGesturePage
 
-Color defaultSlidePageBackgroundHandler(
-    {Offset offset, Size pageSize, Color color, SlideAxis pageGestureAxis}) {
+Color defaultSlidePageBackgroundHandler({
+  Offset offset = Offset.zero,
+  Size pageSize = const Size(100, 100),
+  required Color color,
+  SlideAxis pageGestureAxis = SlideAxis.both,
+}) {
   double opacity = 0.0;
   if (pageGestureAxis == SlideAxis.both) {
     opacity = offset.distance /
@@ -527,8 +525,11 @@ Color defaultSlidePageBackgroundHandler(
   return color.withOpacity(min(1.0, max(1.0 - opacity, 0.0)));
 }
 
-bool defaultSlideEndHandler(
-    {Offset offset, Size pageSize, SlideAxis pageGestureAxis}) {
+bool defaultSlideEndHandler({
+  Offset offset = Offset.zero,
+  Size pageSize = const Size(100, 100),
+  SlideAxis pageGestureAxis = SlideAxis.both,
+}) {
   const int parameter = 6;
   if (pageGestureAxis == SlideAxis.both) {
     return doubleCompare(offset.distance,
@@ -542,8 +543,11 @@ bool defaultSlideEndHandler(
   return true;
 }
 
-double defaultSlideScaleHandler(
-    {Offset offset, Size pageSize, SlideAxis pageGestureAxis}) {
+double defaultSlideScaleHandler({
+  Offset offset = Offset.zero,
+  Size pageSize = const Size(100, 100),
+  SlideAxis pageGestureAxis = SlideAxis.both,
+}) {
   double scale = 0.0;
   if (pageGestureAxis == SlideAxis.both) {
     scale = offset.distance / Offset(pageSize.width, pageSize.height).distance;
@@ -554,5 +558,3 @@ double defaultSlideScaleHandler(
   }
   return max(1.0 - scale, 0.8);
 }
-
-///ExtendedImageGesturePage

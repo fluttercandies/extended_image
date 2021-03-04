@@ -15,29 +15,32 @@ enum LoadState {
 
 abstract class ExtendedImageState {
   void reLoadImage();
-  ImageInfo get extendedImageInfo;
+  ImageInfo? get extendedImageInfo;
   LoadState get extendedImageLoadState;
 
   ///return widget which from LoadStateChanged function immediately
-  bool returnLoadStateChangedWidget;
+  late bool returnLoadStateChangedWidget;
 
   ImageProvider get imageProvider;
 
   bool get invertColors;
 
-  Object get imageStreamKey;
+  Object? get imageStreamKey;
 
   ExtendedImage get imageWidget;
 
   Widget get completedWidget;
 
-  ImageChunkEvent get loadingProgress;
+  ImageChunkEvent? get loadingProgress;
 
-  int get frameNumber;
+  int? get frameNumber;
 
   bool get wasSynchronouslyLoaded;
 
-  ExtendedImageSlidePageState get slidePageState;
+  ExtendedImageSlidePageState? get slidePageState;
+
+  Object? get lastException;
+  StackTrace? get lastStack;
 }
 
 enum ExtendedImageMode {
@@ -53,7 +56,7 @@ enum ExtendedImageMode {
 Type typeOf<T>() => T;
 
 double clampScale(double scale, double min, double max) {
-  return scale.clamp(min, max) as double;
+  return scale.clamp(min, max);
 }
 
 /// Returns a value indicating whether two instances of Double represent the same value.

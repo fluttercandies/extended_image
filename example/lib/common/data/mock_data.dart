@@ -1,7 +1,8 @@
 // ignore_for_file: implicit_dynamic_list_literal,implicit_dynamic_map_literal
 import 'tu_chong_source.dart';
 
-Map<String, dynamic> _mock = {
+// ignore: always_specify_types
+Map<String, dynamic> _mock = <String, dynamic>{
   'counts': 316,
   'feedList': [
     {

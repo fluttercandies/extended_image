@@ -4,7 +4,7 @@ import 'package:example/common/image_picker/image_picker.dart';
 import 'package:example/common/utils/crop_editor_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ff_annotation_route/ff_annotation_route.dart';
+import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:oktoast/oktoast.dart';
 
@@ -40,12 +40,14 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
         extendedImageEditorKey: editorKey,
         initEditorConfigHandler: (ExtendedImageState state) {
           return EditorConfig(
-            maxScale: 8.0,
-            cropRectPadding: const EdgeInsets.all(20.0),
-            hitTestSize: 20.0,
-            initCropRectType: InitCropRectType.imageRect,
-            cropAspectRatio: CropAspectRatios.ratio4_3,
-          );
+              maxScale: 8.0,
+              cropRectPadding: const EdgeInsets.all(20.0),
+              hitTestSize: 20.0,
+              initCropRectType: InitCropRectType.imageRect,
+              cropAspectRatio: CropAspectRatios.ratio4_3,
+              editActionDetailsIsChanged: (EditActionDetails details) {
+                //print(details?.totalScale);
+              });
         },
       ),
       floatingActionButton: FloatingActionButton(

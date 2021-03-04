@@ -27,24 +27,24 @@ class ExtendedImageSlidePage extends StatefulWidget {
     this.resetPageDuration = const Duration(milliseconds: 500),
     this.slideType = SlideType.onlyImage,
     this.onSlidingPage,
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   ///The [child] contained by the ExtendedImageGesturePage.
-  final Widget child;
+  final Widget? child;
 
   ///builder background when slide page
-  final SlidePageBackgroundHandler slidePageBackgroundHandler;
+  final SlidePageBackgroundHandler? slidePageBackgroundHandler;
 
   ///customize scale of page when slide page
-  final SlideScaleHandler slideScaleHandler;
+  final SlideScaleHandler? slideScaleHandler;
 
   ///customize offset when slide page
-  final SlideOffsetHandler slideOffsetHandler;
+  final SlideOffsetHandler? slideOffsetHandler;
 
   ///call back of slide end
   ///decide whether pop page
-  final SlideEndHandler slideEndHandler;
+  final SlideEndHandler? slideEndHandler;
 
   ///axis of slide
   ///both,horizontal,vertical
@@ -57,7 +57,7 @@ class ExtendedImageSlidePage extends StatefulWidget {
   final SlideType slideType;
 
   /// on sliding page
-  final OnSlidingPage onSlidingPage;
+  final OnSlidingPage? onSlidingPage;
   @override
   ExtendedImageSlidePageState createState() => ExtendedImageSlidePageState();
 }
@@ -69,22 +69,22 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   ///whether is sliding page
   bool get isSliding => _isSliding;
 
-  Size _pageSize;
-  Size get pageSize => _pageSize ?? context.size;
+  Size? _pageSize;
+  Size get pageSize => _pageSize ?? context.size!;
 
-  AnimationController _backAnimationController;
+  late AnimationController _backAnimationController;
   AnimationController get backAnimationController => _backAnimationController;
-  Animation<Offset> _backOffsetAnimation;
-  Animation<Offset> get backOffsetAnimation => _backOffsetAnimation;
-  Animation<double> _backScaleAnimation;
-  Animation<double> get backScaleAnimation => _backScaleAnimation;
+  Animation<Offset>? _backOffsetAnimation;
+  Animation<Offset>? get backOffsetAnimation => _backOffsetAnimation;
+  Animation<double>? _backScaleAnimation;
+  Animation<double>? get backScaleAnimation => _backScaleAnimation;
   Offset _offset = Offset.zero;
   Offset get offset => _backAnimationController.isAnimating
-      ? _backOffsetAnimation.value
+      ? _backOffsetAnimation!.value
       : _offset;
   double _scale = 1.0;
   double get scale =>
-      _backAnimationController.isAnimating ? backScaleAnimation.value : _scale;
+      _backAnimationController.isAnimating ? backScaleAnimation!.value : _scale;
   bool _popping = false;
 
   @override
@@ -106,9 +106,10 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     super.didUpdateWidget(oldWidget);
   }
 
-  ExtendedImageGestureState _extendedImageGestureState;
-  ExtendedImageGestureState get imageGestureState => _extendedImageGestureState;
-  ExtendedImageSlidePageHandlerState _extendedImageSlidePageHandlerState;
+  ExtendedImageGestureState? _extendedImageGestureState;
+  ExtendedImageGestureState? get imageGestureState =>
+      _extendedImageGestureState;
+  ExtendedImageSlidePageHandlerState? _extendedImageSlidePageHandlerState;
   void _backAnimation() {
     if (mounted) {
       setState(() {
@@ -132,8 +133,8 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   }
 
   void slide(Offset value,
-      {ExtendedImageGestureState extendedImageGestureState,
-      ExtendedImageSlidePageHandlerState extendedImageSlidePageHandlerState}) {
+      {ExtendedImageGestureState? extendedImageGestureState,
+      ExtendedImageSlidePageHandlerState? extendedImageSlidePageHandlerState}) {
     if (_backAnimationController.isAnimating) {
       return;
     }
@@ -185,9 +186,10 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
             details: details,
           ) ??
           defaultSlideEndHandler(
-              offset: _offset,
-              pageSize: _pageSize,
-              pageGestureAxis: widget.slideAxis);
+            offset: _offset,
+            pageSize: pageSize,
+            pageGestureAxis: widget.slideAxis,
+          );
 
       if (popPage) {
         setState(() {
@@ -226,7 +228,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
                 color: Theme.of(context).dialogBackgroundColor,
                 pageGestureAxis: widget.slideAxis);
 
-    Widget result = widget.child;
+    Widget? result = widget.child;
     if (widget.slideType == SlideType.wholePage) {
       result = Transform.translate(
         offset: offset,

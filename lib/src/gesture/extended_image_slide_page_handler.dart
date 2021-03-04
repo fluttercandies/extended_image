@@ -11,15 +11,15 @@ import 'extended_image_slide_page.dart';
 /// for loading/failed widget
 class ExtendedImageSlidePageHandler extends StatefulWidget {
   const ExtendedImageSlidePageHandler({
-    @required this.child,
+    this.child,
     this.extendedImageSlidePageState,
     this.heroBuilderForSlidingPage,
   });
-  final Widget child;
-  final ExtendedImageSlidePageState extendedImageSlidePageState;
+  final Widget? child;
+  final ExtendedImageSlidePageState? extendedImageSlidePageState;
 
   ///build Hero only for sliding page
-  final HeroBuilderForSlidingPage heroBuilderForSlidingPage;
+  final HeroBuilderForSlidingPage? heroBuilderForSlidingPage;
   @override
   ExtendedImageSlidePageHandlerState createState() =>
       ExtendedImageSlidePageHandlerState();
@@ -27,8 +27,8 @@ class ExtendedImageSlidePageHandler extends StatefulWidget {
 
 class ExtendedImageSlidePageHandlerState
     extends State<ExtendedImageSlidePageHandler> {
-  Offset _startingOffset;
-  ExtendedImageSlidePageState _extendedImageSlidePageState;
+  late Offset _startingOffset;
+  ExtendedImageSlidePageState? _extendedImageSlidePageState;
   @override
   void didChangeDependencies() {
     _extendedImageSlidePageState = widget.extendedImageSlidePageState ??
@@ -56,11 +56,11 @@ class ExtendedImageSlidePageHandlerState
       result = widget.heroBuilderForSlidingPage?.call(result) ?? result;
     }
     if (_extendedImageSlidePageState != null &&
-        _extendedImageSlidePageState.widget.slideType == SlideType.onlyImage) {
+        _extendedImageSlidePageState!.widget.slideType == SlideType.onlyImage) {
       result = Transform.translate(
-        offset: _extendedImageSlidePageState.offset,
+        offset: _extendedImageSlidePageState!.offset,
         child: Transform.scale(
-          scale: _extendedImageSlidePageState.scale,
+          scale: _extendedImageSlidePageState!.scale,
           child: result,
         ),
       );
@@ -72,7 +72,7 @@ class ExtendedImageSlidePageHandlerState
     _startingOffset = details.focalPoint;
   }
 
-  Offset _updateSlidePagePreOffset;
+  Offset? _updateSlidePagePreOffset;
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     ///whether gesture page
     if (_extendedImageSlidePageState != null && details.scale == 1.0) {
@@ -82,8 +82,8 @@ class ExtendedImageSlidePageHandlerState
 
       if (doubleCompare(delta, minGesturePageDelta) > 0) {
         _updateSlidePagePreOffset ??= details.focalPoint;
-        _extendedImageSlidePageState.slide(
-            details.focalPoint - _updateSlidePagePreOffset,
+        _extendedImageSlidePageState!.slide(
+            details.focalPoint - _updateSlidePagePreOffset!,
             extendedImageSlidePageHandlerState: this);
         _updateSlidePagePreOffset = details.focalPoint;
       }
@@ -92,9 +92,9 @@ class ExtendedImageSlidePageHandlerState
 
   void _handleScaleEnd(ScaleEndDetails details) {
     if (_extendedImageSlidePageState != null &&
-        _extendedImageSlidePageState.isSliding) {
+        _extendedImageSlidePageState!.isSliding) {
       _updateSlidePagePreOffset = null;
-      _extendedImageSlidePageState.endSlide(details);
+      _extendedImageSlidePageState!.endSlide(details);
       return;
     }
   }

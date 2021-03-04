@@ -12,26 +12,27 @@ import 'gesture/extended_image_slide_page.dart';
 ///  create by zmtzawqlp on 2019/4/3
 ///
 
-typedef LoadStateChanged = Widget Function(ExtendedImageState state);
+typedef LoadStateChanged = Widget? Function(ExtendedImageState state);
 
-///[rect] is render size
-///if return true, it will not paint original image,
+/// [rect] is render size
+/// if return true, it will not paint original image,
 typedef BeforePaintImage = bool Function(
     Canvas canvas, Rect rect, ui.Image image, Paint paint);
 
+/// Call after paint image
 typedef AfterPaintImage = void Function(
     Canvas canvas, Rect rect, ui.Image image, Paint paint);
 
-/// animation call back for inertia drag
+/// Animation call back for inertia drag
 typedef GestureOffsetAnimationCallBack = void Function(Offset offset);
 
-/// animation call back for scale
+/// Animation call back for scale
 typedef GestureScaleAnimationCallBack = void Function(double scale);
 
-/// double tap call back
+/// Double tap call back
 typedef DoubleTap = void Function(ExtendedImageGestureState state);
 
-/// build page background when slide page
+/// Build page background when slide page
 typedef SlidePageBackgroundHandler = Color Function(
     Offset offset, Size pageSize);
 
@@ -41,60 +42,63 @@ typedef SlideOffsetHandler = Offset Function(
   ExtendedImageSlidePageState state,
 });
 
-///if return true ,pop page
-///else reset page state
+/// if return true ,pop page
+/// else reset page state
 typedef SlideEndHandler = bool Function(
   Offset offset, {
   ExtendedImageSlidePageState state,
   ScaleEndDetails details,
 });
 
-///customize scale of page when slide page
+/// Customize scale of page when slide page
 typedef SlideScaleHandler = double Function(
   Offset offset, {
   ExtendedImageSlidePageState state,
 });
 
-///init GestureConfig when image is ready.
+/// Init GestureConfig when image is ready.
 typedef InitGestureConfigHandler = GestureConfig Function(
     ExtendedImageState state);
 
-///on sliding page
+/// Call on sliding page
 typedef OnSlidingPage = void Function(ExtendedImageSlidePageState state);
 
-///whether we can move to previous/next page only for Image
-typedef CanMovePage = bool Function(GestureDetails gestureDetails);
+/// Whether we can move to previous/next page only for Image
+typedef CanMovePage = bool Function(GestureDetails? gestureDetails);
 
-///whether we can scroll page
-typedef CanScrollPage = bool Function(GestureDetails gestureDetails);
+/// Whether we can scroll page
+typedef CanScrollPage = bool Function(GestureDetails? gestureDetails);
 
-///return initial destination rect
+/// Return initial destination rect
 typedef InitDestinationRect = void Function(Rect initialDestinationRect);
 
-///return merged editRect rect
+/// Return merged editRect rect
 typedef MergeEditRect = Rect Function(Rect editRect);
 
-///build Gesture Image
+/// Build Gesture Image
 typedef BuildGestureImage = Widget Function(GestureDetails gestureDetails);
 
-///init GestureConfig when image is ready.
-typedef InitEditorConfigHandler = EditorConfig Function(
-    ExtendedImageState state);
+/// Init GestureConfig when image is ready.
+typedef InitEditorConfigHandler = EditorConfig? Function(
+    ExtendedImageState? state);
 
-///get editor mask color base on pointerDown
+/// Get editor mask color base on pointerDown
 typedef EditorMaskColorHandler = Color Function(
     BuildContext context, bool pointerDown);
 
-///build Hero only for sliding page
-///the transform of sliding page must be working on Hero
-///so that Hero animation wouldn't be strange when pop page
+/// Build Hero only for sliding page
+/// the transform of sliding page must be working on Hero
+/// so that Hero animation wouldn't be strange when pop page
 typedef HeroBuilderForSlidingPage = Widget Function(Widget widget);
 
-///build image for gesture, we can handle custom Widget about gesture
+/// Build image for gesture, we can handle custom Widget about gesture
 typedef ImageBuilderForGesture = Widget Function(Widget image);
 
-///whether should scale image
-typedef CanScaleImage = bool Function(GestureDetails details);
+/// Whether should scale image
+typedef CanScaleImage = bool Function(GestureDetails? details);
 
-///Call when GestureDetails is changed
-typedef GestureDetailsIsChanged = void Function(GestureDetails details);
+/// Call when GestureDetails is changed
+typedef GestureDetailsIsChanged = void Function(GestureDetails? details);
+
+/// Call when EditActionDetails is changed
+typedef EditActionDetailsIsChanged = void Function(EditActionDetails? details);

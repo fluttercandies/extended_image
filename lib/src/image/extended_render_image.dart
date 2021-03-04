@@ -3,9 +3,8 @@ import 'dart:ui' as ui show Image;
 import 'package:extended_image/src/editor/extended_image_editor_utils.dart';
 import 'package:extended_image/src/gesture/extended_image_gesture_utils.dart';
 import 'package:extended_image/src/extended_image_typedef.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/rendering.dart';
-import 'package:meta/meta.dart';
 
 class ExtendedRenderImage extends RenderBox {
   /// Creates a render box that displays an image.
@@ -14,33 +13,28 @@ class ExtendedRenderImage extends RenderBox {
   /// must not be null. The [textDirection] argument must not be null if
   /// [alignment] will need resolving or if [matchTextDirection] is true.
   ExtendedRenderImage({
-    ui.Image image,
-    double width,
-    double height,
+    ui.Image? image,
+    this.debugImageLabel,
+    double? width,
+    double? height,
     double scale = 1.0,
-    Color color,
-    BlendMode colorBlendMode,
-    BoxFit fit,
+    Color? color,
+    BlendMode? colorBlendMode,
+    BoxFit? fit,
     AlignmentGeometry alignment = Alignment.center,
     ImageRepeat repeat = ImageRepeat.noRepeat,
-    Rect centerSlice,
+    Rect? centerSlice,
     bool matchTextDirection = false,
-    TextDirection textDirection,
+    TextDirection? textDirection,
     bool invertColors = false,
     FilterQuality filterQuality = FilterQuality.low,
-    Rect sourceRect,
-    AfterPaintImage afterPaintImage,
-    BeforePaintImage beforePaintImage,
-    GestureDetails gestureDetails,
-    EditActionDetails editActionDetails,
+    Rect? sourceRect,
+    AfterPaintImage? afterPaintImage,
+    BeforePaintImage? beforePaintImage,
+    GestureDetails? gestureDetails,
+    EditActionDetails? editActionDetails,
     bool isAntiAlias = false,
-  })  : assert(scale != null),
-        assert(repeat != null),
-        assert(alignment != null),
-        assert(filterQuality != null),
-        assert(matchTextDirection != null),
-        assert(isAntiAlias != null),
-        _image = image,
+  })  : _image = image,
         _width = width,
         _height = height,
         _scale = scale,
@@ -58,13 +52,14 @@ class ExtendedRenderImage extends RenderBox {
         _beforePaintImage = beforePaintImage,
         _afterPaintImage = afterPaintImage,
         _gestureDetails = gestureDetails,
-        _editActionDetails = editActionDetails {
+        _editActionDetails = editActionDetails,
+        _isAntiAlias = isAntiAlias {
     _updateColorFilter();
   }
 
-  EditActionDetails _editActionDetails;
-  EditActionDetails get editActionDetails => _editActionDetails;
-  set editActionDetails(EditActionDetails value) {
+  EditActionDetails? _editActionDetails;
+  EditActionDetails? get editActionDetails => _editActionDetails;
+  set editActionDetails(EditActionDetails? value) {
     if (value == _editActionDetails) {
       return;
     }
@@ -72,9 +67,9 @@ class ExtendedRenderImage extends RenderBox {
     markNeedsPaint();
   }
 
-  GestureDetails _gestureDetails;
-  GestureDetails get gestureDetails => _gestureDetails;
-  set gestureDetails(GestureDetails value) {
+  GestureDetails? _gestureDetails;
+  GestureDetails? get gestureDetails => _gestureDetails;
+  set gestureDetails(GestureDetails? value) {
     if (value == _gestureDetails) {
       return;
     }
@@ -83,9 +78,9 @@ class ExtendedRenderImage extends RenderBox {
   }
 
   ///you can paint anything if you want before paint image.
-  BeforePaintImage _beforePaintImage;
-  BeforePaintImage get beforePaintImage => _beforePaintImage;
-  set beforePaintImage(BeforePaintImage value) {
+  BeforePaintImage? _beforePaintImage;
+  BeforePaintImage? get beforePaintImage => _beforePaintImage;
+  set beforePaintImage(BeforePaintImage? value) {
     if (value == _beforePaintImage) {
       return;
     }
@@ -94,9 +89,9 @@ class ExtendedRenderImage extends RenderBox {
   }
 
   ///you can paint anything if you want after paint image.
-  AfterPaintImage _afterPaintImage;
-  AfterPaintImage get afterPaintImage => _afterPaintImage;
-  set afterPaintImage(AfterPaintImage value) {
+  AfterPaintImage? _afterPaintImage;
+  AfterPaintImage? get afterPaintImage => _afterPaintImage;
+  set afterPaintImage(AfterPaintImage? value) {
     if (value == _afterPaintImage) {
       return;
     }
@@ -105,9 +100,9 @@ class ExtendedRenderImage extends RenderBox {
   }
 
   ///input rect, you can use this to crop image.
-  Rect _sourceRect;
-  Rect get sourceRect => _sourceRect;
-  set sourceRect(Rect value) {
+  Rect? _sourceRect;
+  Rect? get sourceRect => _sourceRect;
+  set sourceRect(Rect? value) {
     if (value == _sourceRect) {
       return;
     }
@@ -115,8 +110,8 @@ class ExtendedRenderImage extends RenderBox {
     markNeedsPaint();
   }
 
-  Alignment _resolvedAlignment;
-  bool _flipHorizontally;
+  Alignment? _resolvedAlignment;
+  bool? _flipHorizontally;
 
   void _resolve() {
     if (_resolvedAlignment != null) {
@@ -134,12 +129,19 @@ class ExtendedRenderImage extends RenderBox {
   }
 
   /// The image to display.
-  ui.Image get image => _image;
-  ui.Image _image;
-  set image(ui.Image value) {
+  ui.Image? get image => _image;
+  ui.Image? _image;
+  set image(ui.Image? value) {
     if (value == _image) {
       return;
     }
+    // If we get a clone of our image, it's the same underlying native data -
+    // dispose of the new clone and return early.
+    if (value != null && _image != null && value.isCloneOf(_image!)) {
+      value.dispose();
+      return;
+    }
+    _image?.dispose();
     _image = value;
     markNeedsPaint();
     if (_width == null || _height == null) {
@@ -147,13 +149,16 @@ class ExtendedRenderImage extends RenderBox {
     }
   }
 
+  /// A string used to identify the source of the image.
+  String? debugImageLabel;
+
   /// If non-null, requires the image to have this width.
   ///
   /// If null, the image will pick a size that best preserves its intrinsic
   /// aspect ratio.
-  double get width => _width;
-  double _width;
-  set width(double value) {
+  double? get width => _width;
+  double? _width;
+  set width(double? value) {
     if (value == _width) {
       return;
     }
@@ -165,9 +170,9 @@ class ExtendedRenderImage extends RenderBox {
   ///
   /// If null, the image will pick a size that best preserves its intrinsic
   /// aspect ratio.
-  double get height => _height;
-  double _height;
-  set height(double value) {
+  double? get height => _height;
+  double? _height;
+  set height(double? value) {
     if (value == _height) {
       return;
     }
@@ -181,7 +186,6 @@ class ExtendedRenderImage extends RenderBox {
   double get scale => _scale;
   double _scale;
   set scale(double value) {
-    assert(value != null);
     if (value == _scale) {
       return;
     }
@@ -189,21 +193,21 @@ class ExtendedRenderImage extends RenderBox {
     markNeedsLayout();
   }
 
-  ColorFilter _colorFilter;
+  ColorFilter? _colorFilter;
 
   void _updateColorFilter() {
     if (_color == null) {
       _colorFilter = null;
     } else {
       _colorFilter =
-          ColorFilter.mode(_color, _colorBlendMode ?? BlendMode.srcIn);
+          ColorFilter.mode(_color!, _colorBlendMode ?? BlendMode.srcIn);
     }
   }
 
   /// If non-null, this color is blended with each image pixel using [colorBlendMode].
-  Color get color => _color;
-  Color _color;
-  set color(Color value) {
+  Color? get color => _color;
+  Color? _color;
+  set color(Color? value) {
     if (value == _color) {
       return;
     }
@@ -219,7 +223,6 @@ class ExtendedRenderImage extends RenderBox {
   FilterQuality get filterQuality => _filterQuality;
   FilterQuality _filterQuality;
   set filterQuality(FilterQuality value) {
-    assert(value != null);
     if (value == _filterQuality) {
       return;
     }
@@ -235,9 +238,9 @@ class ExtendedRenderImage extends RenderBox {
   /// See also:
   ///
   ///  * [BlendMode], which includes an illustration of the effect of each blend mode.
-  BlendMode get colorBlendMode => _colorBlendMode;
-  BlendMode _colorBlendMode;
-  set colorBlendMode(BlendMode value) {
+  BlendMode? get colorBlendMode => _colorBlendMode;
+  BlendMode? _colorBlendMode;
+  set colorBlendMode(BlendMode? value) {
     if (value == _colorBlendMode) {
       return;
     }
@@ -250,9 +253,9 @@ class ExtendedRenderImage extends RenderBox {
   ///
   /// The default varies based on the other fields. See the discussion at
   /// [paintImage].
-  BoxFit get fit => _fit;
-  BoxFit _fit;
-  set fit(BoxFit value) {
+  BoxFit? get fit => _fit;
+  BoxFit? _fit;
+  set fit(BoxFit? value) {
     if (value == _fit) {
       return;
     }
@@ -267,7 +270,6 @@ class ExtendedRenderImage extends RenderBox {
   AlignmentGeometry get alignment => _alignment;
   AlignmentGeometry _alignment;
   set alignment(AlignmentGeometry value) {
-    assert(value != null);
     if (value == _alignment) {
       return;
     }
@@ -279,7 +281,6 @@ class ExtendedRenderImage extends RenderBox {
   ImageRepeat get repeat => _repeat;
   ImageRepeat _repeat;
   set repeat(ImageRepeat value) {
-    assert(value != null);
     if (value == _repeat) {
       return;
     }
@@ -294,9 +295,9 @@ class ExtendedRenderImage extends RenderBox {
   /// region of the image above and below the center slice will be stretched
   /// only horizontally and the region of the image to the left and right of
   /// the center slice will be stretched only vertically.
-  Rect get centerSlice => _centerSlice;
-  Rect _centerSlice;
-  set centerSlice(Rect value) {
+  Rect? get centerSlice => _centerSlice;
+  Rect? _centerSlice;
+  set centerSlice(Rect? value) {
     if (value == _centerSlice) {
       return;
     }
@@ -336,7 +337,6 @@ class ExtendedRenderImage extends RenderBox {
   bool get matchTextDirection => _matchTextDirection;
   bool _matchTextDirection;
   set matchTextDirection(bool value) {
-    assert(value != null);
     if (value == _matchTextDirection) {
       return;
     }
@@ -349,9 +349,9 @@ class ExtendedRenderImage extends RenderBox {
   /// This may be changed to null, but only after the [alignment] and
   /// [matchTextDirection] properties have been changed to values that do not
   /// depend on the direction.
-  TextDirection get textDirection => _textDirection;
-  TextDirection _textDirection;
-  set textDirection(TextDirection value) {
+  TextDirection? get textDirection => _textDirection;
+  TextDirection? _textDirection;
+  set textDirection(TextDirection? value) {
     if (_textDirection == value) {
       return;
     }
@@ -368,7 +368,6 @@ class ExtendedRenderImage extends RenderBox {
     if (_isAntiAlias == value) {
       return;
     }
-    assert(value != null);
     _isAntiAlias = value;
     markNeedsPaint();
   }
@@ -383,15 +382,17 @@ class ExtendedRenderImage extends RenderBox {
   Size _sizeForConstraints(BoxConstraints constraints) {
     // Folds the given |width| and |height| into |constraints| so they can all
     // be treated uniformly.
-    constraints = BoxConstraints.tightFor(width: _width, height: _height)
-        .enforce(constraints);
+    constraints = BoxConstraints.tightFor(
+      width: _width,
+      height: _height,
+    ).enforce(constraints);
 
     if (_image == null) {
       return constraints.smallest;
     }
 
     return constraints.constrainSizeAndAttemptToPreserveAspectRatio(Size(
-        _image.width.toDouble() / _scale, _image.height.toDouble() / _scale));
+        _image!.width.toDouble() / _scale, _image!.height.toDouble() / _scale));
   }
 
   @override
@@ -432,6 +433,11 @@ class ExtendedRenderImage extends RenderBox {
   bool hitTestSelf(Offset position) => true;
 
   @override
+  Size computeDryLayout(BoxConstraints constraints) {
+    return _sizeForConstraints(constraints);
+  }
+
+  @override
   void performLayout() {
     size = _sizeForConstraints(constraints);
   }
@@ -445,20 +451,21 @@ class ExtendedRenderImage extends RenderBox {
     assert(_resolvedAlignment != null);
     assert(_flipHorizontally != null);
     Rect rect = offset & size;
-    if (gestureDetails != null && gestureDetails.slidePageOffset != null) {
-      rect = rect.shift(-gestureDetails.slidePageOffset);
+    if (gestureDetails != null && gestureDetails!.slidePageOffset != null) {
+      rect = rect.shift(-gestureDetails!.slidePageOffset!);
     }
     paintExtendedImage(
         canvas: context.canvas,
         rect: rect,
-        image: _image,
+        image: _image!,
+        debugImageLabel: debugImageLabel,
         scale: _scale,
         colorFilter: _colorFilter,
         fit: _fit,
-        alignment: _resolvedAlignment,
+        alignment: _resolvedAlignment!,
         centerSlice: _centerSlice,
         repeat: _repeat,
-        flipHorizontally: _flipHorizontally,
+        flipHorizontally: _flipHorizontally!,
         invertColors: invertColors,
         filterQuality: _filterQuality,
         customSourceRect: _sourceRect,
@@ -497,33 +504,28 @@ class ExtendedRenderImage extends RenderBox {
 }
 
 void paintExtendedImage({
-  @required Canvas canvas,
-  @required Rect rect,
-  @required ui.Image image,
+  required Canvas canvas,
+  required Rect rect,
+  required ui.Image image,
+  String? debugImageLabel,
   double scale = 1.0,
-  ColorFilter colorFilter,
-  BoxFit fit,
+  ColorFilter? colorFilter,
+  BoxFit? fit,
   Alignment alignment = Alignment.center,
-  Rect centerSlice,
+  Rect? centerSlice,
   ImageRepeat repeat = ImageRepeat.noRepeat,
   bool flipHorizontally = false,
   bool invertColors = false,
   FilterQuality filterQuality = FilterQuality.low,
-  Rect customSourceRect,
+  Rect? customSourceRect,
   //you can paint anything if you want before paint image.
-  BeforePaintImage beforePaintImage,
+  BeforePaintImage? beforePaintImage,
   //you can paint anything if you want after paint image.
-  AfterPaintImage afterPaintImage,
-  GestureDetails gestureDetails,
-  EditActionDetails editActionDetails,
+  AfterPaintImage? afterPaintImage,
+  GestureDetails? gestureDetails,
+  EditActionDetails? editActionDetails,
   bool isAntiAlias = false,
 }) {
-  assert(canvas != null);
-  assert(image != null);
-  assert(alignment != null);
-  assert(repeat != null);
-  assert(flipHorizontally != null);
-  assert(isAntiAlias != null);
   if (rect.isEmpty) {
     return;
   }
@@ -541,7 +543,7 @@ void paintExtendedImage({
   //       .topLeft;
   // }
 
-  Offset sliceBorder;
+  late Offset sliceBorder;
   if (centerSlice != null) {
     sliceBorder = Offset(centerSlice.left + inputSize.width - centerSlice.right,
         centerSlice.top + inputSize.height - centerSlice.bottom);
@@ -595,8 +597,8 @@ void paintExtendedImage({
     needClip = outRect(rect, destinationRect);
 
     if (gestureDetails.slidePageOffset != null) {
-      destinationRect = destinationRect.shift(gestureDetails.slidePageOffset);
-      rect = rect.shift(gestureDetails.slidePageOffset);
+      destinationRect = destinationRect.shift(gestureDetails.slidePageOffset!);
+      rect = rect.shift(gestureDetails.slidePageOffset!);
     }
 
     if (needClip) {
@@ -609,7 +611,7 @@ void paintExtendedImage({
     if (editActionDetails.cropRectPadding != null) {
       destinationRect = getDestinationRect(
           inputSize: inputSize,
-          rect: editActionDetails.cropRectPadding.deflateRect(rect),
+          rect: editActionDetails.cropRectPadding!.deflateRect(rect),
           fit: fit,
           flipHorizontally: false,
           scale: scale,

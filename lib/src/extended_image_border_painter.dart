@@ -1,7 +1,11 @@
 import 'package:flutter/rendering.dart';
 
 class ExtendedImageBorderPainter extends CustomPainter {
-  ExtendedImageBorderPainter({this.border, this.shape, this.borderRadius});
+  ExtendedImageBorderPainter({
+    this.border,
+    this.shape = BoxShape.rectangle,
+    this.borderRadius,
+  });
 
   /// The shape to fill the background [color], [gradient], and [image] into and
   /// to cast as the [boxShadow].
@@ -26,13 +30,13 @@ class ExtendedImageBorderPainter extends CustomPainter {
   /// Use [BoxBorder] objects to describe borders that should flip their left
   /// and right edges based on whether the text is being read left-to-right or
   /// right-to-left.
-  final BoxBorder border;
+  final BoxBorder? border;
 
   /// If non-null, the corners of this box are rounded by this [BorderRadius].
   ///
   /// Applies only to boxes with rectangular shapes; ignored if [shape] is not
   /// [BoxShape.rectangle].
-  final BorderRadius borderRadius;
+  final BorderRadius? borderRadius;
   @override
   void paint(Canvas canvas, Size size) {
     final Rect outputRect = Rect.fromLTWH(0.0, 0.0, size.width, size.height);
@@ -55,15 +59,16 @@ class ExtendedImageBorderPainter extends CustomPainter {
 //    }
 //
 //    if (clipPath != null) canvas.restore();
-
-    switch (shape) {
-      case BoxShape.circle:
-        border.paint(canvas, outputRect, shape: shape);
-        break;
-      case BoxShape.rectangle:
-        border.paint(canvas, outputRect,
-            shape: shape, borderRadius: borderRadius);
-        break;
+    if (border != null) {
+      switch (shape) {
+        case BoxShape.circle:
+          border!.paint(canvas, outputRect, shape: shape);
+          break;
+        case BoxShape.rectangle:
+          border!.paint(canvas, outputRect,
+              shape: shape, borderRadius: borderRadius);
+          break;
+      }
     }
   }
 
