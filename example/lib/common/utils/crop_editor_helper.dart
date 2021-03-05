@@ -3,6 +3,7 @@ import 'dart:isolate';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
+
 // ignore: implementation_imports
 import 'package:http/src/response.dart';
 import 'package:http_client_helper/http_client_helper.dart';
@@ -194,12 +195,14 @@ Future<List<int>> cropImageDataWithNativeLibrary(
 /// it may be failed, due to Cross-domain
 Future<Uint8List> _loadNetwork(ExtendedNetworkImageProvider key) async {
   try {
-    final Response response = await HttpClientHelper.get(key.url,
-        headers: key.headers,
-        timeLimit: key.timeLimit,
-        timeRetry: key.timeRetry,
-        retries: key.retries,
-        cancelToken: key.cancelToken);
+    final Response response = await HttpClientHelper.get(
+      Uri.parse(key.url),
+      headers: key.headers,
+      timeLimit: key.timeLimit,
+      timeRetry: key.timeRetry,
+      retries: key.retries,
+      cancelToken: key.cancelToken,
+    );
     return response.bodyBytes;
   } on OperationCanceledError catch (_) {
     print('User cancel request ${key.url}.');

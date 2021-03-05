@@ -51,6 +51,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   ui.Image? get image => widget.extendedImageState.extendedImageInfo?.image;
 
   Uint8List? get rawImageData =>
+      // ignore: always_specify_types
       (widget.extendedImageState.imageWidget.image as ExtendedImageProvider)
           .rawImageData;
 
@@ -70,20 +71,16 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
             .extendedImageState.imageWidget.initEditorConfigHandler
             ?.call(widget.extendedImageState) ??
         EditorConfig();
-    final double initialScale = _editorConfig.initialScale;
     final double? cropAspectRatio = _editorConfig.cropAspectRatio;
     if (cropAspectRatio != _editorConfig.cropAspectRatio) {
       _editActionDetails = null;
     }
 
-    if (_editActionDetails == null ||
-        initialScale != _editorConfig.initialScale) {
-      _editActionDetails = EditActionDetails()
-        ..delta = Offset.zero
-        ..totalScale = _editorConfig.initialScale
-        ..preTotalScale = _editorConfig.initialScale
-        ..cropRectPadding = _editorConfig.cropRectPadding;
-    }
+    _editActionDetails ??= EditActionDetails()
+      ..delta = Offset.zero
+      ..totalScale = 1.0
+      ..preTotalScale = 1.0
+      ..cropRectPadding = _editorConfig.cropRectPadding;
 
     if (image != null) {
       editAction.originalAspectRatio = image!.width / image!.height;
@@ -260,6 +257,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
         ///if we have shift offset, we should clear delta.
         ///we should += delta in case miss delta
         editAction.delta += delta;
+        _editorConfig.editActionDetailsIsChanged?.call(_editActionDetails);
       });
     }
   }
@@ -320,12 +318,14 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
         _layerKey.currentState!.layoutRect,
         widget.extendedImageState.imageWidget.fit,
       );
+      _editorConfig.editActionDetailsIsChanged?.call(_editActionDetails);
     });
   }
 
   void flip() {
     setState(() {
       editAction.flip();
+      _editorConfig.editActionDetailsIsChanged?.call(_editActionDetails);
     });
   }
 
@@ -333,6 +333,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     setState(() {
       _editActionDetails = null;
       _initGestureConfig();
+      _editorConfig.editActionDetailsIsChanged?.call(_editActionDetails);
     });
   }
 }

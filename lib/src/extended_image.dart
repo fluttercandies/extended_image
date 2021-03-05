@@ -1,4 +1,3 @@
-import 'dart:io' show File;
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -113,6 +112,7 @@ class ExtendedImage extends StatefulWidget {
     int? cacheWidth,
     int? cacheHeight,
     this.isAntiAlias = false,
+    String? cacheKey,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         assert(isAntiAlias != null),
@@ -128,6 +128,7 @@ class ExtendedImage extends StatefulWidget {
             retries: retries,
             timeRetry: timeRetry,
             timeLimit: timeLimit,
+            cacheKey: cacheKey,
           ),
         ),
         assert(constraints == null || constraints.debugAssertIsValid()),

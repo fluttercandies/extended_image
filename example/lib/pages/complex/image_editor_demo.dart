@@ -35,9 +35,8 @@ class ImageEditorDemo extends StatefulWidget {
 class _ImageEditorDemoState extends State<ImageEditorDemo> {
   final GlobalKey<ExtendedImageEditorState> editorKey =
       GlobalKey<ExtendedImageEditorState>();
-  final GlobalKey<PopupMenuButtonState<ExtendedImageCropLayerCornerPainter>>
-      popupMenuKey =
-      GlobalKey<PopupMenuButtonState<ExtendedImageCropLayerCornerPainter>>();
+  final GlobalKey<PopupMenuButtonState<EditorCropLayerPainter>> popupMenuKey =
+      GlobalKey<PopupMenuButtonState<EditorCropLayerPainter>>();
   final List<AspectRatioItem> _aspectRatios = <AspectRatioItem>[
     AspectRatioItem(text: 'custom', value: CropAspectRatios.custom),
     AspectRatioItem(text: 'original', value: CropAspectRatios.original),
@@ -50,15 +49,13 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   AspectRatioItem _aspectRatio;
   bool _cropping = false;
 
-  ExtendedImageCropLayerCornerPainter _cornerPainter;
+  EditorCropLayerPainter _cropLayerPainter;
 
   @override
   void initState() {
     super.initState();
     _aspectRatio = _aspectRatios.first;
-    _cornerPainter = const ExtendedImageCropLayerPainterNinetyDegreesCorner(
-      color: Colors.red,
-    );
+    _cropLayerPainter = const EditorCropLayerPainter();
   }
 
   @override
@@ -97,7 +94,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       maxScale: 8.0,
                       cropRectPadding: const EdgeInsets.all(20.0),
                       hitTestSize: 20.0,
-                      cornerPainter: _cornerPainter,
+                      cropLayerPainter: _cropLayerPainter,
                       initCropRectType: InitCropRectType.imageRect,
                       cropAspectRatio: _aspectRatio.value,
                     );
@@ -114,7 +111,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       maxScale: 8.0,
                       cropRectPadding: const EdgeInsets.all(20.0),
                       hitTestSize: 20.0,
-                      cornerPainter: _cornerPainter,
+                      cropLayerPainter: _cropLayerPainter,
                       initCropRectType: InitCropRectType.imageRect,
                       cropAspectRatio: _aspectRatio.value,
                     );
@@ -127,6 +124,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         shape: const CircularNotchedRectangle(),
         child: ButtonTheme(
           minWidth: 0.0,
+          padding: EdgeInsets.zero,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             mainAxisSize: MainAxisSize.max,
@@ -213,19 +211,18 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
               ),
               FlatButtonWithIcon(
                 icon: const Icon(Icons.rounded_corner_sharp),
-                label: PopupMenuButton<ExtendedImageCropLayerCornerPainter>(
+                label: PopupMenuButton<EditorCropLayerPainter>(
                   key: popupMenuKey,
                   enabled: false,
                   offset: const Offset(100, -300),
                   child: const Text(
-                    'Corner',
+                    'Painter',
                     style: TextStyle(fontSize: 8.0),
                   ),
-                  initialValue: _cornerPainter,
+                  initialValue: _cropLayerPainter,
                   itemBuilder: (BuildContext context) {
-                    return <
-                        PopupMenuEntry<ExtendedImageCropLayerCornerPainter>>[
-                      PopupMenuItem<ExtendedImageCropLayerCornerPainter>(
+                    return <PopupMenuEntry<EditorCropLayerPainter>>[
+                      PopupMenuItem<EditorCropLayerPainter>(
                         child: Row(
                           children: const <Widget>[
                             Icon(
@@ -235,16 +232,13 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             SizedBox(
                               width: 5,
                             ),
-                            Text('NinetyDegrees'),
+                            Text('Default'),
                           ],
                         ),
-                        value:
-                            const ExtendedImageCropLayerPainterNinetyDegreesCorner(
-                          color: Colors.red,
-                        ),
+                        value: const EditorCropLayerPainter(),
                       ),
                       const PopupMenuDivider(),
-                      PopupMenuItem<ExtendedImageCropLayerCornerPainter>(
+                      PopupMenuItem<EditorCropLayerPainter>(
                         child: Row(
                           children: const <Widget>[
                             Icon(
@@ -254,19 +248,17 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             SizedBox(
                               width: 5,
                             ),
-                            Text('Circle'),
+                            Text('Custom'),
                           ],
                         ),
-                        value: const ExtendedImageCropLayerPainterCircleCorner(
-                          color: Colors.red,
-                        ),
+                        value: const EditorCropLayerPainter(),
                       ),
                     ];
                   },
-                  onSelected: (ExtendedImageCropLayerCornerPainter value) {
-                    if (_cornerPainter != value) {
+                  onSelected: (EditorCropLayerPainter value) {
+                    if (_cropLayerPainter != value) {
                       setState(() {
-                        _cornerPainter = value;
+                        _cropLayerPainter = value;
                       });
                     }
                   },
@@ -461,5 +453,26 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         editorKey.currentState.reset();
       });
     });
+  }
+}
+
+class CustomEditorCropLayerPainter extends EditorCropLayerPainter {
+  const CustomEditorCropLayerPainter();
+
+  @override
+  void paintCorners(
+    Canvas canvas,
+    Size size,
+    ExtendedImageCropLayerPainter painter,
+  ) {
+    final Paint paint = Paint()
+      ..color = painter.cornerColor
+      ..style = PaintingStyle.fill;
+    final Rect cropRect = painter.cropRect;
+    const double radius = 6;
+    canvas.drawCircle(Offset(cropRect.left, cropRect.top), radius, paint);
+    canvas.drawCircle(Offset(cropRect.right, cropRect.top), radius, paint);
+    canvas.drawCircle(Offset(cropRect.left, cropRect.bottom), radius, paint);
+    canvas.drawCircle(Offset(cropRect.right, cropRect.bottom), radius, paint);
   }
 }

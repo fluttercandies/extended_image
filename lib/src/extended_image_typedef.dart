@@ -99,3 +99,6 @@ typedef CanScaleImage = bool Function(GestureDetails details);
 
 ///Call when GestureDetails is changed
 typedef GestureDetailsIsChanged = void Function(GestureDetails? details);
+
+///Call when EditActionDetails is changed
+typedef EditActionDetailsIsChanged = void Function(EditActionDetails? details);
