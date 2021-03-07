@@ -361,7 +361,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
-                            OutlineButton(
+                            OutlinedButton(
                               child: const Text(
                                 'Dart',
                                 style: TextStyle(
@@ -372,18 +372,14 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                                 Navigator.of(context).pop();
                                 _cropImage(false);
                               },
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0)),
                             ),
-                            OutlineButton(
+                            OutlinedButton(
                               child: const Text(
                                 'Native',
                                 style: TextStyle(
                                   color: Colors.blue,
                                 ),
                               ),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0)),
                               onPressed: () {
                                 Navigator.of(context).pop();
                                 _cropImage(true);

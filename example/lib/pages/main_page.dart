@@ -48,7 +48,7 @@ class MainPage extends StatelessWidget {
           ButtonTheme(
             minWidth: 0.0,
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: FlatButton(
+            child: TextButton(
               child: const Text(
                 'Github',
                 style: TextStyle(
@@ -66,7 +66,7 @@ class MainPage extends StatelessWidget {
             ButtonTheme(
               padding: const EdgeInsets.only(right: 10.0),
               minWidth: 0.0,
-              child: FlatButton(
+              child: TextButton(
                 child: Image.network(
                     'https://pub.idqqimg.com/wpa/images/group.png'),
                 onPressed: () {

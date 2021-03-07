@@ -12,28 +12,28 @@ version: 1.0.0+1
 environment:
   sdk: ">=2.6.0 <3.0.0"
 dependencies:
-  flutter:
-    sdk: flutter
-  loading_more_list: ^3.0.0
-  extended_text: ^4.0.0
-  wechat_assets_picker: ^4.1.0+4
-  image: any
-  image_editor: ^0.1.2
-  isolate: ^2.0.2
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
-  js: ^0.6.1+1
-  http_client_helper: ^2.0.1
-  pull_to_refresh_notification: any
-  like_button: any
-  photo_manager: 0.5.7
-  url_launcher: 5.3.0
-  intl: any
-  oktoast: ^2.1.4
   extended_sliver: ^1.0.1
-  ff_annotation_route_core: ^2.0.1-non-null-safety
-  ff_annotation_route_library: ^2.0.1-non-null-safety
+  extended_text: ^5.0.0
+  ff_annotation_route_library: ^2.0.0
+  flutter:
+    sdk: flutter  
+  http_client_helper: ^2.0.1
+  image: any    
+  image_editor: ^0.1.2 
+  intl: any
+  isolate: ^2.0.2  
+  js: ^0.6.1+1
+  like_button: any
+  loading_more_list: ^3.0.0
+  oktoast: ^2.1.4
+  photo_manager: 0.5.7
+  pull_to_refresh_notification: any
+  url_launcher: 5.3.0
+  wechat_assets_picker: ^4.1.0+4
 dependency_overrides:
   extended_image:
     path: ../

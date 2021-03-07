@@ -556,7 +556,6 @@ class ImageDetail extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(20.0),
       child: Stack(
-        overflow: Overflow.visible,
         children: <Widget>[
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -592,7 +591,7 @@ class ImageDetail extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             const Text('\u2026 '),
-                            RaisedButton(
+                            TextButton(
                               child: const Text('more'),
                               onPressed: () {
                                 launch(
@@ -603,8 +602,7 @@ class ImageDetail extends StatelessWidget {
                         ),
                       ),
                 selectionEnabled: true,
-                textSelectionControls:
-                    MyExtendedMaterialTextSelectionControls(),
+                selectionControls: MyTextSelectionControls(),
               ),
               const SizedBox(
                 height: 20.0,

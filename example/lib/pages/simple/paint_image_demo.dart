@@ -43,7 +43,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
           ),
           Row(
             children: <Widget>[
-              RaisedButton(
+              TextButton(
                 child: const Text('ClipHeart'),
                 onPressed: () {
                   setState(() {
@@ -54,7 +54,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
               Expanded(
                 child: Container(),
               ),
-              RaisedButton(
+              TextButton(
                 child: const Text('PaintHeart'),
                 onPressed: () {
                   setState(() {

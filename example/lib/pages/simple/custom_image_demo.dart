@@ -50,7 +50,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
             title: const Text('CustomImage'),
           ),
           if (!kIsWeb)
-            RaisedButton(
+            TextButton(
               child: const Text('clear all cache'),
               onPressed: () {
                 clearDiskCachedImages().then((bool done) {

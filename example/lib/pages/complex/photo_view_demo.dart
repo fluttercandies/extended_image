@@ -39,14 +39,12 @@ class PhotoViewDemo extends StatefulWidget {
 }
 
 class _PhotoViewDemoState extends State<PhotoViewDemo> {
-  MyExtendedMaterialTextSelectionControls
-      _myExtendedMaterialTextSelectionControls;
+  MyTextSelectionControls _myExtendedMaterialTextSelectionControls;
   final String _attachContent =
       '[love]Extended text help you to build rich text quickly. any special text you will have with extended text.It\'s my pleasure to invite you to join \$FlutterCandies\$ if you want to improve flutter .[love] if you meet any problem, please let me konw @zmtzawqlp .[sun_glasses]';
   @override
   void initState() {
-    _myExtendedMaterialTextSelectionControls =
-        MyExtendedMaterialTextSelectionControls();
+    _myExtendedMaterialTextSelectionControls = MyTextSelectionControls();
     super.initState();
   }
 
@@ -200,7 +198,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: <Widget>[
                                                   const Text('\u2026 '),
-                                                  RaisedButton(
+                                                  TextButton(
                                                     child: const Text('more'),
                                                     onPressed: () {
                                                       launch(
@@ -211,7 +209,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                               ),
                                             ),
                                       selectionEnabled: true,
-                                      textSelectionControls:
+                                      selectionControls:
                                           _myExtendedMaterialTextSelectionControls,
                                     ),
                                     padding: EdgeInsets.only(
