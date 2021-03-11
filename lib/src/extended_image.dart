@@ -113,9 +113,11 @@ class ExtendedImage extends StatefulWidget {
     this.isAntiAlias = false,
     String? cacheKey,
     bool printError = true,
+    double? scailingRatio,
+    int? maxBytes,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
-        image = ResizeImage.resizeIfNeeded(
+        image = ExtendedResizeImage.resizeIfNeeded(
           cacheWidth,
           cacheHeight,
           ExtendedNetworkImageProvider(
@@ -130,6 +132,8 @@ class ExtendedImage extends StatefulWidget {
             cacheKey: cacheKey,
             printError: printError,
           ),
+          scailingRatio: scailingRatio,
+          maxBytes: maxBytes,
         ),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
@@ -198,15 +202,19 @@ class ExtendedImage extends StatefulWidget {
     int? cacheWidth,
     int? cacheHeight,
     this.isAntiAlias = false,
+    double? scailingRatio,
+    int? maxBytes,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
-        image = ResizeImage.resizeIfNeeded(
+        image = ExtendedResizeImage.resizeIfNeeded(
           cacheWidth,
           cacheHeight,
           ExtendedFileImageProvider(
             file,
             scale: scale,
           ),
+          scailingRatio: scailingRatio,
+          maxBytes: maxBytes,
         ),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
@@ -382,16 +390,21 @@ class ExtendedImage extends StatefulWidget {
     int? cacheWidth,
     int? cacheHeight,
     this.isAntiAlias = false,
+    double? scailingRatio,
+    int? maxBytes,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
-        image = ResizeImage.resizeIfNeeded(
-            cacheWidth,
-            cacheHeight,
-            scale != null
-                ? ExtendedExactAssetImageProvider(name,
-                    bundle: bundle, scale: scale, package: package)
-                : ExtendedAssetImageProvider(name,
-                    bundle: bundle, package: package)),
+        image = ExtendedResizeImage.resizeIfNeeded(
+          cacheWidth,
+          cacheHeight,
+          scale != null
+              ? ExtendedExactAssetImageProvider(name,
+                  bundle: bundle, scale: scale, package: package)
+              : ExtendedAssetImageProvider(name,
+                  bundle: bundle, package: package),
+          scailingRatio: scailingRatio,
+          maxBytes: maxBytes,
+        ),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
@@ -454,15 +467,19 @@ class ExtendedImage extends StatefulWidget {
     int? cacheWidth,
     int? cacheHeight,
     this.isAntiAlias = false,
+    double? scailingRatio,
+    int? maxBytes,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
-        image = ResizeImage.resizeIfNeeded(
+        image = ExtendedResizeImage.resizeIfNeeded(
           cacheWidth,
           cacheHeight,
           ExtendedMemoryImageProvider(
             bytes,
             scale: scale,
           ),
+          scailingRatio: scailingRatio,
+          maxBytes: maxBytes,
         ),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
@@ -693,6 +710,7 @@ class ExtendedImage extends StatefulWidget {
   ///
   /// Anti-aliasing alleviates the sawtooth artifact when the image is rotated.
   final bool isAntiAlias;
+
   @override
   _ExtendedImageState createState() => _ExtendedImageState();
 }
@@ -712,6 +730,7 @@ class _ExtendedImageState extends State<ExtendedImage>
   Object? _lastException;
   StackTrace? _lastStack;
   ImageStreamCompleterHandle? _completerHandle;
+
   @override
   void initState() {
     returnLoadStateChangedWidget = false;
@@ -910,6 +929,7 @@ class _ExtendedImageState extends State<ExtendedImage>
   }
 
   ImageStreamListener? _imageStreamListener;
+
   ImageStreamListener _getListener({bool recreateListener = false}) {
     if (_imageStreamListener == null || recreateListener) {
       _lastException = null;
