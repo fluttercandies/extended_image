@@ -156,7 +156,7 @@ class ExtendedImage extends StatefulWidget {
   /// On Android, this may require the
   /// `android.permission.READ_EXTERNAL_STORAGE` permission.
   ///
-  /// Use [filterQuality] to change the quality when compressionRatio an image.
+  /// Use [filterQuality] to change the quality when scailing an image.
   /// Use the [FilterQuality.low] quality setting to scale the image,
   /// which corresponds to bilinear interpolation, rather than the default
   /// [FilterQuality.none] which corresponds to nearest-neighbor.
@@ -259,7 +259,7 @@ class ExtendedImage extends StatefulWidget {
   /// Otherwise, the image dimensions will change as the image is loaded, which
   /// will result in ugly layout changes.
   ///
-  /// Use [filterQuality] to change the quality when compressionRatio an image.
+  /// Use [filterQuality] to change the quality when scaling an image.
   /// Use the [FilterQuality.low] quality setting to scale the image,
   /// which corresponds to bilinear interpolation, rather than the default
   /// [FilterQuality.none] which corresponds to nearest-neighbor.
@@ -421,7 +421,7 @@ class ExtendedImage extends StatefulWidget {
   /// Otherwise, the image dimensions will change as the image is loaded, which
   /// will result in ugly layout changes.
   ///
-  /// Use [filterQuality] to change the quality when compressionRatio an image.
+  /// Use [filterQuality] to change the quality when scaling an image.
   /// Use the [FilterQuality.low] quality setting to scale the image,
   /// which corresponds to bilinear interpolation, rather than the default
   /// [FilterQuality.none] which corresponds to nearest-neighbor.
@@ -678,7 +678,7 @@ class ExtendedImage extends StatefulWidget {
   /// If this is true, then in [TextDirection.ltr] contexts, the image will be
   /// drawn with its origin in the top left (the 'normal' painting direction for
   /// images); and in [TextDirection.rtl] contexts, the image will be drawn with
-  /// a compressionRatio factor of -1 in the horizontal direction so that the origin is
+  /// a scaling factor of -1 in the horizontal direction so that the origin is
   /// in the top right.
   ///
   /// This is occasionally used with images in right-to-left environments, for
