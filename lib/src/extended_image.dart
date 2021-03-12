@@ -733,11 +733,31 @@ class _ExtendedImageState extends State<ExtendedImage>
 
   @override
   void initState() {
+    super.initState();
     returnLoadStateChangedWidget = false;
     _loadState = LoadState.loading;
     WidgetsBinding.instance!.addObserver(this);
     _scrollAwareContext = DisposableBuildContext<State<ExtendedImage>>(this);
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    assert(_imageStream != null);
+
+    WidgetsBinding.instance!.removeObserver(this);
+    _stopListeningToStream();
+    _completerHandle?.dispose();
+    _scrollAwareContext.dispose();
+    _replaceImage(info: null);
+    // TODO(zmtzawqlp): Exception has occurred
+    // https://github.com/flutter/flutter/issues/77576
+    //if (widget.clearMemoryCacheWhenDispose) {
+    // widget.image.evict();
+    // if (widget.image is ExtendedImageProvider) {
+    //   rawImageDataMap.remove(widget.image);
+    // }
+    //}
+    super.dispose();
   }
 
   @override
@@ -819,27 +839,6 @@ class _ExtendedImageState extends State<ExtendedImage>
     _updateSourceStream(newStream, rebuild: rebuild);
   }
 
-  void _loadFailed(dynamic exception, StackTrace? stackTrace) {
-    //print('$exception');
-
-//    ImageProvider imageProvider = widget.image;
-//    if (imageProvider is ExtendedNetworkImageProvider) {
-//      pendingImages.remove(imageProvider);
-//    }
-
-    setState(() {
-      _lastStack = stackTrace;
-      _lastException = exception;
-      _loadState = LoadState.failed;
-    });
-    // if (kDebugMode) {
-    //   print(exception);
-    // }
-    if (!widget.enableMemoryCache || widget.clearMemoryCacheIfFailed) {
-      widget.image.evict();
-    }
-  }
-
   void _handleImageChunk(ImageChunkEvent event) {
     setState(() {
       _lastException = null;
@@ -849,11 +848,6 @@ class _ExtendedImageState extends State<ExtendedImage>
   }
 
   void _handleImageFrame(ImageInfo imageInfo, bool synchronousCall) {
-//    ImageProvider imageProvider = widget.image;
-//    if (imageProvider is ExtendedNetworkImageProvider) {
-//      pendingImages.remove(imageProvider);
-//    }
-
     setState(() {
       _replaceImage(info: imageInfo);
       _loadState = LoadState.completed;
@@ -864,9 +858,10 @@ class _ExtendedImageState extends State<ExtendedImage>
       _wasSynchronouslyLoaded |= synchronousCall;
     });
 
-    if (!widget.enableMemoryCache) {
-      widget.image.evict();
-    }
+    // clearMemoryCacheWhenDispose is better
+    // if (!widget.enableMemoryCache) {
+    //   widget.image.evict();
+    // }
   }
 
   void _replaceImage({required ImageInfo? info}) {
@@ -881,9 +876,9 @@ class _ExtendedImageState extends State<ExtendedImage>
     if (_imageStream?.key == newStream.key) {
       return;
     }
-    //print('_updateSourceStream');
+
     if (_isListeningToStream) {
-      _imageStream!.removeListener(_getListener());
+      _imageStream?.removeListener(_getListener());
     }
 
     if (!widget.gaplessPlayback || rebuild) {
@@ -943,28 +938,16 @@ class _ExtendedImageState extends State<ExtendedImage>
     return _imageStreamListener!;
   }
 
-//  void _cancelNetworkImageRequest(ImageProvider provider) {
-//    if (provider == null) return;
-//
-//    ///cancel network request
-////    if (provider is ExtendedNetworkImageProvider && provider.autoCancel) {
-////      cancelPendingNetworkImageByProvider(provider);
-////    }
-//  }
+  void _loadFailed(dynamic exception, StackTrace? stackTrace) {
+    setState(() {
+      _lastStack = stackTrace;
+      _lastException = exception;
+      _loadState = LoadState.failed;
+    });
 
-  @override
-  void dispose() {
-    assert(_imageStream != null);
-    if (widget.clearMemoryCacheWhenDispose) {
+    if (widget.clearMemoryCacheIfFailed) {
       widget.image.evict();
     }
-    _completerHandle?.dispose();
-    WidgetsBinding.instance!.removeObserver(this);
-    _stopListeningToStream();
-    _scrollAwareContext.dispose();
-    _replaceImage(info: null);
-    //_cancelNetworkImageRequest(widget.image);
-    super.dispose();
   }
 
   @override
