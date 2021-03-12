@@ -113,7 +113,7 @@ class ExtendedImage extends StatefulWidget {
     this.isAntiAlias = false,
     String? cacheKey,
     bool printError = true,
-    double? scaling,
+    double? compressionRatio,
     int? maxBytes,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
@@ -132,7 +132,7 @@ class ExtendedImage extends StatefulWidget {
             cacheKey: cacheKey,
             printError: printError,
           ),
-          scaling: scaling,
+          compressionRatio: compressionRatio,
           maxBytes: maxBytes,
         ),
         assert(constraints == null || constraints.debugAssertIsValid()),
@@ -156,7 +156,7 @@ class ExtendedImage extends StatefulWidget {
   /// On Android, this may require the
   /// `android.permission.READ_EXTERNAL_STORAGE` permission.
   ///
-  /// Use [filterQuality] to change the quality when scaling an image.
+  /// Use [filterQuality] to change the quality when compressionRatio an image.
   /// Use the [FilterQuality.low] quality setting to scale the image,
   /// which corresponds to bilinear interpolation, rather than the default
   /// [FilterQuality.none] which corresponds to nearest-neighbor.
@@ -202,7 +202,7 @@ class ExtendedImage extends StatefulWidget {
     int? cacheWidth,
     int? cacheHeight,
     this.isAntiAlias = false,
-    double? scaling,
+    double? compressionRatio,
     int? maxBytes,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
@@ -213,7 +213,7 @@ class ExtendedImage extends StatefulWidget {
             file,
             scale: scale,
           ),
-          scaling: scaling,
+          compressionRatio: compressionRatio,
           maxBytes: maxBytes,
         ),
         constraints = (width != null || height != null)
@@ -259,7 +259,7 @@ class ExtendedImage extends StatefulWidget {
   /// Otherwise, the image dimensions will change as the image is loaded, which
   /// will result in ugly layout changes.
   ///
-  /// Use [filterQuality] to change the quality when scaling an image.
+  /// Use [filterQuality] to change the quality when compressionRatio an image.
   /// Use the [FilterQuality.low] quality setting to scale the image,
   /// which corresponds to bilinear interpolation, rather than the default
   /// [FilterQuality.none] which corresponds to nearest-neighbor.
@@ -390,7 +390,7 @@ class ExtendedImage extends StatefulWidget {
     int? cacheWidth,
     int? cacheHeight,
     this.isAntiAlias = false,
-    double? scaling,
+    double? compressionRatio,
     int? maxBytes,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
@@ -402,7 +402,7 @@ class ExtendedImage extends StatefulWidget {
                   bundle: bundle, scale: scale, package: package)
               : ExtendedAssetImageProvider(name,
                   bundle: bundle, package: package),
-          scaling: scaling,
+          compressionRatio: compressionRatio,
           maxBytes: maxBytes,
         ),
         constraints = (width != null || height != null)
@@ -421,7 +421,7 @@ class ExtendedImage extends StatefulWidget {
   /// Otherwise, the image dimensions will change as the image is loaded, which
   /// will result in ugly layout changes.
   ///
-  /// Use [filterQuality] to change the quality when scaling an image.
+  /// Use [filterQuality] to change the quality when compressionRatio an image.
   /// Use the [FilterQuality.low] quality setting to scale the image,
   /// which corresponds to bilinear interpolation, rather than the default
   /// [FilterQuality.none] which corresponds to nearest-neighbor.
@@ -467,7 +467,7 @@ class ExtendedImage extends StatefulWidget {
     int? cacheWidth,
     int? cacheHeight,
     this.isAntiAlias = false,
-    double? scaling,
+    double? compressionRatio,
     int? maxBytes,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
@@ -478,7 +478,7 @@ class ExtendedImage extends StatefulWidget {
             bytes,
             scale: scale,
           ),
-          scaling: scaling,
+          compressionRatio: compressionRatio,
           maxBytes: maxBytes,
         ),
         constraints = (width != null || height != null)
@@ -678,7 +678,7 @@ class ExtendedImage extends StatefulWidget {
   /// If this is true, then in [TextDirection.ltr] contexts, the image will be
   /// drawn with its origin in the top left (the 'normal' painting direction for
   /// images); and in [TextDirection.rtl] contexts, the image will be drawn with
-  /// a scaling factor of -1 in the horizontal direction so that the origin is
+  /// a compressionRatio factor of -1 in the horizontal direction so that the origin is
   /// in the top right.
   ///
   /// This is occasionally used with images in right-to-left environments, for
