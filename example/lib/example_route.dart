@@ -9,6 +9,7 @@ import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/widgets.dart';
 import 'common/widget/pic_swiper.dart';
 import 'pages/complex/image_editor_demo.dart';
+import 'pages/complex/memory_usage_demo.dart';
 import 'pages/complex/photo_view_demo.dart';
 import 'pages/complex/waterfall_flow_demo.dart';
 import 'pages/main_page.dart';
@@ -21,7 +22,7 @@ import 'pages/simple/photo_view_demo.dart';
 import 'pages/simple/slide_page_demo.dart';
 import 'pages/simple/zoom_image_demo.dart';
 
-// ignore_for_file: prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_literals_to_create_immutables,unused_local_variable,unused_import
 FFRouteSettings getRouteSettings({
   @required String name,
   Map<String, dynamic> arguments,
@@ -29,6 +30,15 @@ FFRouteSettings getRouteSettings({
   final Map<String, dynamic> safeArguments =
       arguments ?? const <String, dynamic>{};
   switch (name) {
+    case 'fluttercandies://MemoryUsageDemo':
+      return FFRouteSettings(
+        name: name,
+        arguments: arguments,
+        widget: MemoryUsageDemo(),
+        routeName: 'MemoryUsage',
+        description: 'show how to reduce memory usage.',
+        exts: <String, dynamic>{'group': 'Complex', 'order': 1},
+      );
     case 'fluttercandies://WaterfallFlowDemo':
       return FFRouteSettings(
         name: name,

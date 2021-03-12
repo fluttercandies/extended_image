@@ -50,13 +50,8 @@ class CropImage extends StatelessWidget {
     }
 
     return ExtendedImage.network(imageItem.imageUrl,
-        //if you don't want to resize image to reduce the memory
-        //use ExtendedImage.network(imageItem.imageUrl)
-        //image: imageItem.createResizeImage(),
-        //fit: BoxFit.fill,
-        //height: 200.0,
         width: width,
-        clearMemoryCacheWhenDispose: true,
+        clearMemoryCacheWhenDispose: false,
         height: height, loadStateChanged: (ExtendedImageState state) {
       Widget widget;
       switch (state.extendedImageLoadState) {

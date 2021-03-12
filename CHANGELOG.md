@@ -1,3 +1,8 @@
+## 3.1.0
+
+* Improve:
+  Add [ExtendedResizeImage] to support resize image
+  
 ## 3.0.0
 
 * Improve:

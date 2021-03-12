@@ -22,8 +22,9 @@ dependencies:
   flutter:
     sdk: flutter  
   http_client_helper: ^2.0.1
-  image: any    
+  image: any     
   image_editor: ^0.1.2 
+ 
   intl: any
   isolate: ^2.0.2  
   js: ^0.6.1+1
@@ -33,6 +34,7 @@ dependencies:
   photo_manager: 0.5.7
   pull_to_refresh_notification: any
   url_launcher: 5.3.0
+  vm_service: any
   wechat_assets_picker: ^4.1.0+4
 dependency_overrides:
   extended_image:
