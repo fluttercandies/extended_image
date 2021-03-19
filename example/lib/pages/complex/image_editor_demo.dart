@@ -4,7 +4,6 @@ import 'dart:ui';
 
 import 'package:example/common/image_picker/image_picker.dart';
 import 'package:example/common/utils/crop_editor_helper.dart';
-import 'package:example/common/utils/screen_util.dart';
 import 'package:example/common/widget/common_widget.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
@@ -99,6 +98,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       cropAspectRatio: _aspectRatio.value,
                     );
                   },
+                  cacheRawData: true,
                 )
               : ExtendedImage.asset(
                   'assets/image.jpg',
@@ -116,6 +116,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       cropAspectRatio: _aspectRatio.value,
                     );
                   },
+                  cacheRawData: true,
                 ),
         ),
       ]),
@@ -146,7 +147,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                               child: SizedBox(),
                             ),
                             SizedBox(
-                              height: ScreenUtil.instance.setWidth(200.0),
+                              height: 100,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.horizontal,

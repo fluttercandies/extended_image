@@ -1,14 +1,15 @@
 import 'package:example/common/data/tu_chong_repository.dart';
 import 'package:example/common/data/tu_chong_source.dart';
-import 'package:example/common/utils/screen_util.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:like_button/like_button.dart';
 
+import 'common_widget.dart';
+
 Widget itemBuilder(BuildContext context, TuChongItem item, int index) {
   return Container(
-    height: ScreenUtil.instance.setWidth(kIsWeb ? 400.0 : 200.0),
+    height: kIsWeb ? 200.0 : 100.0,
     child: Stack(
       children: <Widget>[
         Positioned(
@@ -18,10 +19,8 @@ Widget itemBuilder(BuildContext context, TuChongItem item, int index) {
                     return ExtendedImage.network(
                       item.images[index].imageUrl,
                       fit: BoxFit.cover,
-                      width: ScreenUtil.instance
-                          .setWidth(kIsWeb ? 400.0 : double.infinity),
-                      height:
-                          ScreenUtil.instance.setWidth(kIsWeb ? 400.0 : 200.0),
+                      width: kIsWeb ? 200.0 : double.infinity,
+                      height: kIsWeb ? 200.0 : 100.0,
                       clearMemoryCacheWhenDispose: true,
                     );
                   },
@@ -102,46 +101,47 @@ Widget itemBuilder(BuildContext context, TuChongItem item, int index) {
 }
 
 Widget buildWaterfallFlowItem(BuildContext c, TuChongItem item, int index,
-    {bool konwSized = true}) {
+    {bool konwSized = true,
+    Widget Function(
+      TuChongItem item,
+    )
+        imageBuilder}) {
   const double fontSize = 12.0;
 
   Widget image = Stack(
     children: <Widget>[
-      ExtendedImage.network(
-        item.imageUrl,
-        shape: BoxShape.rectangle,
-        clearMemoryCacheWhenDispose: false,
-        compressionRatio: 0.1,
-        border: Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(10.0),
-        ),
-        loadStateChanged: (ExtendedImageState value) {
-          if (value.extendedImageLoadState == LoadState.loading) {
-            Widget loadingWidget = Container(
-              alignment: Alignment.center,
-              color: Colors.grey.withOpacity(0.8),
-              child: CircularProgressIndicator(
-                strokeWidth: 2.0,
-                valueColor:
-                    AlwaysStoppedAnimation<Color>(Theme.of(c).primaryColor),
+      Positioned.fill(
+        child: imageBuilder != null
+            ? imageBuilder(item)
+            : ExtendedImage.network(
+                item.imageUrl,
+                shape: BoxShape.rectangle,
+                clearMemoryCacheWhenDispose: true,
+                border:
+                    Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(10.0),
+                ),
+                loadStateChanged: (ExtendedImageState value) {
+                  if (value.extendedImageLoadState == LoadState.loading) {
+                    Widget loadingWidget = CommonCircularProgressIndicator();
+                    if (!konwSized) {
+                      //todo: not work in web
+                      loadingWidget = AspectRatio(
+                        aspectRatio: 1.0,
+                        child: loadingWidget,
+                      );
+                    }
+                    return loadingWidget;
+                  } else if (value.extendedImageLoadState ==
+                      LoadState.completed) {
+                    item.imageRawSize = Size(
+                        value.extendedImageInfo.image.width.toDouble(),
+                        value.extendedImageInfo.image.height.toDouble());
+                  }
+                  return null;
+                },
               ),
-            );
-            if (!konwSized) {
-              //todo: not work in web
-              loadingWidget = AspectRatio(
-                aspectRatio: 1.0,
-                child: loadingWidget,
-              );
-            }
-            return loadingWidget;
-          } else if (value.extendedImageLoadState == LoadState.completed) {
-            item.imageRawSize = Size(
-                value.extendedImageInfo.image.width.toDouble(),
-                value.extendedImageInfo.image.height.toDouble());
-          }
-          return null;
-        },
       ),
       Positioned(
         top: 5.0,

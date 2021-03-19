@@ -1,7 +1,6 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:example/common/utils/screen_util.dart';
 
 class FlatButtonWithIcon extends TextButton with MaterialButtonWithIconMixin {
   FlatButtonWithIcon({
@@ -51,8 +50,7 @@ class AspectRatioWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      size: Size(ScreenUtil.instance.setWidth(200.0),
-          ScreenUtil.instance.setWidth(200.0)),
+      size: const Size(100, 100),
       painter: AspectRatioPainter(
           aspectRatio: aspectRatio,
           aspectRatioS: aspectRatioS,
@@ -108,5 +106,20 @@ class AspectRatioPainter extends CustomPainter {
         (oldDelegate.isSelected != isSelected ||
             oldDelegate.aspectRatioS != aspectRatioS ||
             oldDelegate.aspectRatio != aspectRatio);
+  }
+}
+
+class CommonCircularProgressIndicator extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      color: Colors.grey.withOpacity(0.8),
+      child: CircularProgressIndicator(
+        strokeWidth: 2.0,
+        valueColor:
+            AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+      ),
+    );
   }
 }

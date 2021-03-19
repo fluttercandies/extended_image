@@ -32,7 +32,7 @@ class Routes {
   ///
   /// [description] : 'show how to reduce memory usage.'
   ///
-  /// [exts] : {group: Complex, order: 1}
+  /// [exts] : {group: Complex, order: 3}
   static const String fluttercandiesMemoryUsageDemo =
       'fluttercandies://MemoryUsageDemo';
 
@@ -43,6 +43,10 @@ class Routes {
   /// [routeName] : 'WaterfallFlow'
   ///
   /// [description] : 'WaterfallFlow with ExtendedImage.'
+  ///
+  /// [constructors] :
+  ///
+  /// WaterfallFlowDemo : [Widget Function(TuChongItem item) imageBuilder]
   ///
   /// [exts] : {group: Complex, order: 0}
   static const String fluttercandiesWaterfallFlowDemo =

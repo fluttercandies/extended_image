@@ -9,7 +9,6 @@ import 'package:example/common/data/tu_chong_repository.dart';
 import 'package:example/common/data/tu_chong_source.dart';
 import 'package:example/common/text/my_extended_text_selection_controls.dart';
 import 'package:example/common/text/my_special_text_span_builder.dart';
-import 'package:example/common/utils/screen_util.dart';
 import 'package:example/common/widget/item_builder.dart';
 import 'package:example/common/widget/pic_grid_view.dart';
 import 'package:example/common/widget/push_to_refresh_header.dart';
@@ -62,7 +61,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
 
   @override
   Widget build(BuildContext context) {
-    final double margin = ScreenUtil.instance.setWidth(22);
+    const double margin = 11;
     final Widget result = Material(
       child: Column(
         children: <Widget>[
@@ -70,15 +69,14 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
             title: const Text('photo view demo'),
           ),
           Container(
-            padding: EdgeInsets.all(margin),
+            padding: const EdgeInsets.all(margin),
             child: const Text(
                 'click image to show photo view, support zoom/pan image. horizontal and vertical page view are supported.'),
           ),
           Expanded(
             child: LayoutBuilder(
               builder: (BuildContext c, BoxConstraints data) {
-                final int crossAxisCount =
-                    max(data.maxWidth ~/ ScreenUtil.instance.screenWidthDp, 1);
+                final int crossAxisCount = max(data.maxWidth ~/ 200, 1);
                 return PullToRefreshNotification(
                     pullBackOnRefresh: false,
                     maxDragOffset: maxDragOffset,
@@ -102,17 +100,6 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                               crossAxisSpacing: 5,
                               mainAxisSpacing: 5,
                             ),
-                            // collectGarbage: (List<int> indexes) {
-                            //   ///collectGarbage
-                            //   indexes.forEach((index) {
-                            //     final item = listSourceRepository[index];
-                            //     if (item.hasImage) {
-                            //       item.images.forEach((image) {
-                            //         image.clearCache();
-                            //       });
-                            //     }
-                            //   });
-                            // },
                             itemBuilder: (BuildContext context,
                                 TuChongItem item, int index) {
                               String title = item.site.name;
@@ -129,7 +116,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   Padding(
-                                    padding: EdgeInsets.all(margin),
+                                    padding: const EdgeInsets.all(margin),
                                     child: Row(
                                       children: <Widget>[
                                         ExtendedImage.network(
@@ -154,15 +141,14 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                             );
                                           },
                                         ),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: margin,
                                         ),
                                         Text(title,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontSize:
-                                                  ScreenUtil.instance.setSp(34),
+                                            style: const TextStyle(
+                                              fontSize: 17,
                                             )),
                                       ],
                                     ),
@@ -212,13 +198,13 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                       selectionControls:
                                           _myExtendedMaterialTextSelectionControls,
                                     ),
-                                    padding: EdgeInsets.only(
+                                    padding: const EdgeInsets.only(
                                         left: margin,
                                         right: margin,
                                         bottom: margin),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: margin),
                                     child: buildTagsWidget(item),
                                   ),
@@ -226,14 +212,14 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                     tuChongItem: item,
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: margin),
                                     child: buildBottomWidget(item,
                                         showAvatar: false),
                                   ),
                                   Container(
-                                    margin:
-                                        EdgeInsets.symmetric(vertical: margin),
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: margin),
                                     color: Colors.grey.withOpacity(0.2),
                                     height: margin,
                                   )

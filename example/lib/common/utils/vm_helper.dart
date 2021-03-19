@@ -1,5 +1,5 @@
 import 'dart:developer';
-
+import 'package:flutter/foundation.dart';
 import 'package:vm_service/utils.dart';
 import 'package:vm_service/vm_service.dart';
 import 'package:vm_service/vm_service_io.dart';
@@ -8,11 +8,14 @@ class VMHelper {
   factory VMHelper() => _vMHelper;
   VMHelper._();
   static final VMHelper _vMHelper = VMHelper._();
-  Map<IsolateRef, MemoryUsage> memoryInfo = <IsolateRef, MemoryUsage>{};
-
-  Map<IsolateRef, List<List<int>>> historyMemoryInfo =
-      <IsolateRef, List<List<int>>>{};
-
+  // Map<IsolateRef, MemoryUsage> memoryInfo = <IsolateRef, MemoryUsage>{};
+  MemoryUsage mainMemoryUsage;
+  List<MyMemoryUsage> mainHistoryMemoryInfo = <MyMemoryUsage>[];
+  // Map<IsolateRef, List<MyMemoryUsage>> historyMemoryInfo =
+  //     <IsolateRef, List<MyMemoryUsage>>{};
+  IsolateRef get main =>
+      vm.isolates.firstWhere((IsolateRef element) => element.name == 'main',
+          orElse: () => null);
   int _count = 0;
   int get count => _count;
   bool connected;
@@ -35,24 +38,64 @@ class VMHelper {
 
   Future<void> updateMemoryUsage() async {
     if (vm != null && connected) {
-      final List<IsolateRef> isolates = vm.isolates;
-      for (int i = 0; i < isolates.length; i++) {
-        final IsolateRef element = isolates[i];
-        final MemoryUsage memoryUsage =
-            await serviceClient.getMemoryUsage(element.id);
-        memoryInfo[element] = memoryUsage;
-        List<List<int>> lines = historyMemoryInfo[element];
-        lines ??= List<List<int>>.filled(3, null);
-        lines[0] ??= <int>[];
-        lines[1] ??= <int>[];
-        lines[2] ??= <int>[];
-        lines[0].add(memoryUsage.heapUsage);
-        lines[1].add(memoryUsage.heapCapacity);
-        lines[2].add(memoryUsage.externalUsage);
-        _count = lines[0].length;
-        historyMemoryInfo[element] = lines;
-      }
+      final MemoryUsage memoryUsage =
+          await serviceClient.getMemoryUsage(main.id);
+
+      mainMemoryUsage = memoryUsage;
+      final MyMemoryUsage lastest =
+          MyMemoryUsage.copyFromMemoryUsage(memoryUsage);
+      mainHistoryMemoryInfo.add(lastest);
+
+      mainHistoryMemoryInfo.removeWhere((MyMemoryUsage element) => element
+          .dataTime
+          .isBefore(lastest.dataTime.subtract(const Duration(minutes: 1))));
     }
+  }
+
+  void clear() {
+    _count = 0;
+    mainHistoryMemoryInfo.clear();
+  }
+}
+
+class MyMemoryUsage {
+  MyMemoryUsage({
+    @required int externalUsage,
+    @required int heapCapacity,
+    @required int heapUsage,
+  })  : dataTime = DateTime.now(),
+        externalUsage = externalUsage / 1024 / 1024,
+        heapCapacity = heapCapacity / 1024 / 1024,
+        heapUsage = heapUsage / 1024 / 1024;
+
+  final DateTime dataTime;
+
+  /// The amount of non-Dart memory that is retained by Dart objects. For
+  /// example, memory associated with Dart objects through APIs such as
+  /// Dart_NewFinalizableHandle, Dart_NewWeakPersistentHandle and
+  /// Dart_NewExternalTypedData.  This usage is only as accurate as the values
+  /// supplied to these APIs from the VM embedder or native extensions. This
+  /// external memory applies GC pressure, but is separate from heapUsage and
+  /// heapCapacity.
+  final double externalUsage;
+
+  /// The total capacity of the heap in bytes. This is the amount of memory used
+  /// by the Dart heap from the perspective of the operating system.
+  final double heapCapacity;
+
+  /// The current heap memory usage in bytes. Heap usage is always less than or
+  /// equal to the heap capacity.
+  final double heapUsage;
+
+  static MyMemoryUsage copyFromMemoryUsage(MemoryUsage memoryUsage) =>
+      MyMemoryUsage(
+        externalUsage: memoryUsage.externalUsage,
+        heapCapacity: memoryUsage.heapCapacity,
+        heapUsage: memoryUsage.heapUsage,
+      );
+
+  double todouble(double d) {
+    return double.parse(d.toStringAsFixed(2));
   }
 }
 

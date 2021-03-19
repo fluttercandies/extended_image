@@ -1,5 +1,4 @@
 import 'package:example/common/data/tu_chong_source.dart';
-import 'package:example/common/utils/screen_util.dart';
 import 'package:flutter/material.dart';
 import 'crop_image.dart';
 
@@ -18,13 +17,13 @@ class PicGridView extends StatelessWidget {
     }
 
     Widget widget = LayoutBuilder(builder: (BuildContext c, BoxConstraints b) {
-      final double margin = ScreenUtil.instance.setWidth(22);
+      const double margin = 11;
       final double size = b.maxWidth;
       int rowCount = 3;
       //single image
       if (tuChongItem.images.length == 1) {
         return Padding(
-          padding: EdgeInsets.all(margin),
+          padding: const EdgeInsets.all(margin),
           child: CropImage(
             index: 0,
             tuChongItem: tuChongItem,
@@ -39,7 +38,7 @@ class PicGridView extends StatelessWidget {
         rowCount = 2;
       }
       return Container(
-        margin: EdgeInsets.all(margin),
+        margin: const EdgeInsets.all(margin),
         width: totalWidth,
         child: GridView.builder(
           shrinkWrap: true,

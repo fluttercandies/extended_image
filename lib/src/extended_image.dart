@@ -9,7 +9,7 @@ import 'package:extended_image/src/image/extended_raw_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/semantics.dart';
@@ -115,6 +115,7 @@ class ExtendedImage extends StatefulWidget {
     bool printError = true,
     double? compressionRatio,
     int? maxBytes,
+    bool cacheRawData = false,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -129,11 +130,13 @@ class ExtendedImage extends StatefulWidget {
             timeLimit: timeLimit,
             cacheKey: cacheKey,
             printError: printError,
+            cacheRawData: cacheRawData,
           ),
           compressionRatio: compressionRatio,
           maxBytes: maxBytes,
           cacheWidth: cacheWidth,
           cacheHeight: cacheHeight,
+          cacheRawData: cacheRawData,
         ),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
@@ -204,17 +207,20 @@ class ExtendedImage extends StatefulWidget {
     this.isAntiAlias = false,
     double? compressionRatio,
     int? maxBytes,
+    bool cacheRawData = false,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
           provider: ExtendedFileImageProvider(
             file,
             scale: scale,
+            cacheRawData: cacheRawData,
           ),
           compressionRatio: compressionRatio,
           maxBytes: maxBytes,
           cacheWidth: cacheWidth,
           cacheHeight: cacheHeight,
+          cacheRawData: cacheRawData,
         ),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
@@ -392,18 +398,29 @@ class ExtendedImage extends StatefulWidget {
     this.isAntiAlias = false,
     double? compressionRatio,
     int? maxBytes,
+    bool cacheRawData = false,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
           provider: scale != null
-              ? ExtendedExactAssetImageProvider(name,
-                  bundle: bundle, scale: scale, package: package)
-              : ExtendedAssetImageProvider(name,
-                  bundle: bundle, package: package),
+              ? ExtendedExactAssetImageProvider(
+                  name,
+                  bundle: bundle,
+                  scale: scale,
+                  package: package,
+                  cacheRawData: cacheRawData,
+                )
+              : ExtendedAssetImageProvider(
+                  name,
+                  bundle: bundle,
+                  package: package,
+                  cacheRawData: cacheRawData,
+                ),
           compressionRatio: compressionRatio,
           maxBytes: maxBytes,
           cacheWidth: cacheWidth,
           cacheHeight: cacheHeight,
+          cacheRawData: cacheRawData,
         ),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
@@ -469,17 +486,20 @@ class ExtendedImage extends StatefulWidget {
     this.isAntiAlias = false,
     double? compressionRatio,
     int? maxBytes,
+    bool cacheRawData = false,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
           provider: ExtendedMemoryImageProvider(
             bytes,
             scale: scale,
+            cacheRawData: cacheRawData,
           ),
           compressionRatio: compressionRatio,
           maxBytes: maxBytes,
           cacheWidth: cacheWidth,
           cacheHeight: cacheHeight,
+          cacheRawData: cacheRawData,
         ),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
@@ -751,12 +771,20 @@ class _ExtendedImageState extends State<ExtendedImage>
     _replaceImage(info: null);
     // TODO(zmtzawqlp): Exception has occurred
     // https://github.com/flutter/flutter/issues/77576
-    //if (widget.clearMemoryCacheWhenDispose) {
-    // widget.image.evict();
-    // if (widget.image is ExtendedImageProvider) {
-    //   rawImageDataMap.remove(widget.image);
-    // }
-    //}
+    if (widget.clearMemoryCacheWhenDispose) {
+      // if (widget.image is ExtendedImageProvider) {
+      //   (widget.image as ExtendedImageProvider<dynamic>)
+      //       .evict(includeLive: false);
+      // }
+      widget.image
+          .obtainCacheStatus(configuration: ImageConfiguration.empty)
+          .then((ImageCacheStatus? value) {
+        if (value?.keepAlive ?? false) {
+          widget.image.evict();
+        }
+      });
+    }
+
     super.dispose();
   }
 
@@ -783,6 +811,12 @@ class _ExtendedImageState extends State<ExtendedImage>
   @override
   void didUpdateWidget(ExtendedImage oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (_isListeningToStream &&
+        widget.handleLoadingProgress != oldWidget.handleLoadingProgress) {
+      final ImageStreamListener oldListener = _getListener();
+      _imageStream!.addListener(_getListener(recreateListener: true));
+      _imageStream!.removeListener(oldListener);
+    }
     if (widget.image != oldWidget.image) {
       _resolveImage();
     }
@@ -839,12 +873,19 @@ class _ExtendedImageState extends State<ExtendedImage>
     _updateSourceStream(newStream, rebuild: rebuild);
   }
 
-  void _handleImageChunk(ImageChunkEvent event) {
-    setState(() {
+  ImageStreamListener? _imageStreamListener;
+
+  ImageStreamListener _getListener({bool recreateListener = false}) {
+    if (_imageStreamListener == null || recreateListener) {
       _lastException = null;
       _lastStack = null;
-      _loadingProgress = event;
-    });
+      _imageStreamListener = ImageStreamListener(
+        _handleImageFrame,
+        onChunk: widget.handleLoadingProgress ? _handleImageChunk : null,
+        onError: _loadFailed,
+      );
+    }
+    return _imageStreamListener!;
   }
 
   void _handleImageFrame(ImageInfo imageInfo, bool synchronousCall) {
@@ -855,7 +896,7 @@ class _ExtendedImageState extends State<ExtendedImage>
       _lastException = null;
       _lastStack = null;
       _frameNumber = _frameNumber == null ? 0 : _frameNumber! + 1;
-      _wasSynchronouslyLoaded |= synchronousCall;
+      _wasSynchronouslyLoaded = _wasSynchronouslyLoaded | synchronousCall;
     });
 
     // clearMemoryCacheWhenDispose is better
@@ -864,12 +905,21 @@ class _ExtendedImageState extends State<ExtendedImage>
     // }
   }
 
+  void _handleImageChunk(ImageChunkEvent event) {
+    assert(widget.handleLoadingProgress);
+    setState(() {
+      _loadingProgress = event;
+      _lastException = null;
+      _lastStack = null;
+    });
+  }
+
   void _replaceImage({required ImageInfo? info}) {
     _imageInfo?.dispose();
     _imageInfo = info;
   }
 
-  // Update _imageStream to newStream, and moves the stream listener
+  // Updates _imageStream to newStream, and moves the stream listener
   // registration from the old stream to the new stream (if a listener was
   // registered).
   void _updateSourceStream(ImageStream newStream, {bool rebuild = false}) {
@@ -910,6 +960,13 @@ class _ExtendedImageState extends State<ExtendedImage>
     _isListeningToStream = true;
   }
 
+  /// Stops listening to the image stream, if this state object has attached a
+  /// listener.
+  ///
+  /// If the listener from this state is the last listener on the stream, the
+  /// stream will be disposed. To keep the stream alive, set `keepStreamAlive`
+  /// to true, which create [ImageStreamCompleterHandle] to keep the completer
+  /// alive and is compatible with the [TickerMode] being off.
   void _stopListeningToStream({bool keepStreamAlive = false}) {
     if (!_isListeningToStream) {
       return;
@@ -921,21 +978,6 @@ class _ExtendedImageState extends State<ExtendedImage>
     }
     _imageStream!.removeListener(_getListener());
     _isListeningToStream = false;
-  }
-
-  ImageStreamListener? _imageStreamListener;
-
-  ImageStreamListener _getListener({bool recreateListener = false}) {
-    if (_imageStreamListener == null || recreateListener) {
-      _lastException = null;
-      _lastStack = null;
-      _imageStreamListener = ImageStreamListener(
-        _handleImageFrame,
-        onChunk: widget.handleLoadingProgress ? _handleImageChunk : null,
-        onError: _loadFailed,
-      );
-    }
-    return _imageStreamListener!;
   }
 
   void _loadFailed(dynamic exception, StackTrace? stackTrace) {

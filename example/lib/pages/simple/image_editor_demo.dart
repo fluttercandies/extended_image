@@ -38,6 +38,7 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
         mode: ExtendedImageMode.editor,
         enableLoadState: true,
         extendedImageEditorKey: editorKey,
+        cacheRawData: true,
         initEditorConfigHandler: (ExtendedImageState state) {
           return EditorConfig(
               maxScale: 8.0,

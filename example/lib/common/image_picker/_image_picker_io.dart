@@ -55,9 +55,6 @@ class PickerTextDelegate implements AssetsPickerTextDelegate {
   String edit = 'Edit';
 
   @override
-  String emptyPlaceHolder = 'empty';
-
-  @override
   String gifIndicator = 'GIF';
 
   @override

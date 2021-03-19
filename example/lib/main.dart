@@ -1,5 +1,4 @@
 import 'package:example/common/data/tu_chong_repository.dart';
-import 'package:example/common/utils/screen_util.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
@@ -35,10 +34,6 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       builder: (BuildContext c, Widget w) {
-        ScreenUtil.init(width: 750, height: 1334, allowFontScaling: true);
-        // ScreenUtil.instance =
-        //     ScreenUtil(width: 750, height: 1334, allowFontScaling: true)
-        //       ..init(c);
         if (!kIsWeb) {
           final MediaQueryData data = MediaQuery.of(c);
           return MediaQuery(

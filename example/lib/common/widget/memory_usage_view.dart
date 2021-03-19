@@ -1,7 +1,12 @@
 import 'dart:async';
+import 'dart:math';
+import 'dart:ui';
 
 import 'package:example/common/utils/vm_helper.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:vm_service/vm_service.dart';
 
 class MemoryUsageView extends StatefulWidget {
   @override
@@ -32,6 +37,7 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
   @override
   void dispose() {
     _timer.cancel();
+    VMHelper().clear();
     super.dispose();
   }
 
@@ -42,125 +48,200 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
     if (VMHelper().serviceClient == null) {
       return Container();
     }
+    final MemoryUsage main = VMHelper().mainMemoryUsage;
+
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        for (IsolateRef key in VMHelper().memoryInfo.keys)
-          IntrinsicHeight(
+        DefaultTextStyle(
+          style: const TextStyle(fontSize: 12, color: Colors.black),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Text.rich(
-                  TextSpan(
-                    children: <InlineSpan>[
-                      const TextSpan(text: 'IsolateName: '),
-                      TextSpan(text: key.name),
-                      const TextSpan(text: '\nHeapUsage: '),
-                      TextSpan(
-                        text: ByteUtil.toByteString(
-                            VMHelper().memoryInfo[key].heapUsage),
-                      ),
-                      const TextSpan(text: '\nHeapCapacity: '),
-                      TextSpan(
-                        text: ByteUtil.toByteString(
-                            VMHelper().memoryInfo[key].heapCapacity),
-                      ),
-                      const TextSpan(text: '\nExternalUsage: '),
-                      TextSpan(
-                        text: ByteUtil.toByteString(
-                            VMHelper().memoryInfo[key].externalUsage),
-                      ),
-                    ],
-                  ),
+                Expanded(
+                  child: Text.rich(TextSpan(children: <InlineSpan>[
+                    const TextSpan(text: 'HeapUsage: '),
+                    TextSpan(
+                        text: ByteUtil.toByteString(main.heapUsage),
+                        style: const TextStyle(
+                          color: Colors.red,
+                        )),
+                  ])),
                 ),
                 Expanded(
-                    child: Container(
-                  height: 200,
-                  padding: const EdgeInsets.all(8.0),
-                  child: CustomPaint(
-                    painter: MemoryUsageViewPainter(
-                      start,
-                      end,
-                      VMHelper().historyMemoryInfo[key],
-                    ),
-                  ),
-                )),
+                  child: Text.rich(TextSpan(children: <InlineSpan>[
+                    const TextSpan(text: 'HeapCapacity: '),
+                    TextSpan(
+                        text: ByteUtil.toByteString(main.heapCapacity),
+                        style: const TextStyle(
+                          color: Colors.blue,
+                        )),
+                  ])),
+                ),
+                Expanded(
+                  child: Text.rich(TextSpan(children: <InlineSpan>[
+                    const TextSpan(text: 'ExternalUsage: '),
+                    TextSpan(
+                        text: ByteUtil.toByteString(main.externalUsage),
+                        style: const TextStyle(
+                          color: Colors.green,
+                        )),
+                  ])),
+                ),
               ],
             ),
-          )
+          ),
+        ),
+        Container(
+          padding:
+              const EdgeInsets.only(left: 30, right: 30, top: 5, bottom: 5),
+          width: window.physicalSize.width,
+          child: LineChart(
+            sampleData1(),
+            swapAnimationDuration: const Duration(milliseconds: 250),
+          ),
+        ),
       ],
     );
   }
-}
 
-class MemoryUsageViewPainter extends CustomPainter {
-  MemoryUsageViewPainter(this.start, this.end, this.memoryUsages);
-  final int end;
-  final int start;
-  final List<List<int>> memoryUsages;
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawRect(
-        Offset.zero & size,
-        Paint()
-          ..color = Colors.green.withOpacity(0.3)
-          ..style = PaintingStyle.fill);
-    drawLine(
-      canvas,
-      size,
-      memoryUsages[0].getRange(start, end).toList(),
-      Colors.red,
-    );
-    drawLine(
-      canvas,
-      size,
-      memoryUsages[1].getRange(start, end).toList(),
-      Colors.blue,
-    );
-    drawLine(
-      canvas,
-      size,
-      memoryUsages[2].getRange(start, end).toList(),
-      Colors.green,
+  LineChartData sampleData1() {
+    final DateTime now = DateTime.now();
+    final List<LineChartBarData> data = linesBarData1(now);
+
+    return LineChartData(
+      lineTouchData: LineTouchData(
+        touchTooltipData: LineTouchTooltipData(
+          tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+        ),
+        touchCallback: (LineTouchResponse touchResponse) {},
+        handleBuiltInTouches: true,
+      ),
+      gridData: FlGridData(
+        show: false,
+      ),
+      titlesData: FlTitlesData(
+        topTitles: SideTitles(
+          getTextStyles: (double value) => const TextStyle(
+            color: Color(0xff72719b),
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+          margin: 10,
+          getTitles: (double value) {
+            return value.toString();
+          },
+        ),
+        bottomTitles: SideTitles(
+          showTitles: true,
+          getTextStyles: (double value) => const TextStyle(
+            color: Color(0xff72719b),
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+          margin: 10,
+          getTitles: (double value) {
+            final int millisecondsSinceEpoch = value.toInt();
+            final DateTime dateTime =
+                DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
+
+            return DateFormat('HH:mm').format(dateTime);
+          },
+          interval: const Duration(minutes: 1).inMilliseconds.toDouble(),
+        ),
+        leftTitles: SideTitles(
+          showTitles: true,
+          getTextStyles: (double value) => const TextStyle(
+            color: Color(0xff75729e),
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+          interval: 100,
+          getTitles: (double value) {
+            return value.toInt().toString() + 'M';
+          },
+          margin: 20,
+        ),
+      ),
+      borderData: FlBorderData(
+        show: true,
+        border: const Border(
+          bottom: BorderSide(
+            color: Color(0xff4e4965),
+            width: 2,
+          ),
+          left: BorderSide(
+            color: Color(0xff4e4965),
+            width: 2,
+          ),
+          right: BorderSide(
+            color: Colors.transparent,
+          ),
+          top: BorderSide(
+            color: Colors.transparent,
+          ),
+        ),
+      ),
+      minX: now
+          .subtract(const Duration(minutes: 1))
+          .millisecondsSinceEpoch
+          .toDouble(),
+      maxX: now.millisecondsSinceEpoch.toDouble(),
+      minY: 0,
+      maxY: max(500, maxY ?? 0),
+      lineBarsData: data,
     );
   }
 
-  void drawLine(Canvas canvas, Size size, List<int> data, Color color) {
-    if (data.isEmpty) {
-      return;
+  double minY;
+  double maxY;
+  List<LineChartBarData> linesBarData1(DateTime now) {
+    final List<FlSpot> data1 = <FlSpot>[];
+    final List<FlSpot> data2 = <FlSpot>[];
+    final List<FlSpot> data3 = <FlSpot>[];
+    for (final MyMemoryUsage item in VMHelper().mainHistoryMemoryInfo) {
+      data1.add(FlSpot(item.dataTime.millisecondsSinceEpoch.toDouble(),
+          item.todouble(item.heapUsage)));
+      data2.add(FlSpot(item.dataTime.millisecondsSinceEpoch.toDouble(),
+          item.todouble(item.heapCapacity)));
+      data3.add(FlSpot(item.dataTime.millisecondsSinceEpoch.toDouble(),
+          item.todouble(item.externalUsage)));
+
+      final double minValue =
+          min(min(item.heapUsage, item.heapCapacity), item.externalUsage);
+
+      final double maxValue =
+          max(max(item.heapUsage, item.heapCapacity), item.externalUsage);
+
+      minY = min(maxY ?? minValue.toDouble(), minValue.toDouble());
+      maxY = max(maxY ?? maxValue.toDouble(), maxValue.toDouble());
     }
-    final int max = data
-        .reduce((int value, int element) => value > element ? value : element);
-    final int min = data
-        .reduce((int value, int element) => value < element ? value : element);
 
-    final double x = size.width / 30;
-    final Path path = Path();
-
-    for (int i = 0; i < data.length; i++) {
-      if (i == 0) {
-        path.moveTo(x * i, getY(min, max, size.height, data[i]));
-      } else {
-        path.lineTo(x * i, getY(min, max, size.height, data[i]));
-      }
-    }
-    path.fillType = PathFillType.nonZero;
-
-    canvas.drawPath(
-        path,
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1);
+    return <LineChartBarData>[
+      getLineChartBarData(data1, Colors.red),
+      getLineChartBarData(data2, Colors.blue),
+      getLineChartBarData(data3, Colors.green),
+    ];
   }
 
-  double getY(int min, int max, double height, int value) {
-    if (min == max) {
-      return height / 2.0;
-    }
-    return (value - min) * height / (max - min);
-  }
-
-  @override
-  bool shouldRepaint(covariant MemoryUsageViewPainter oldDelegate) {
-    return oldDelegate.start != start || oldDelegate.end != end;
+  LineChartBarData getLineChartBarData(List<FlSpot> spots, Color color) {
+    return LineChartBarData(
+      spots: spots,
+      isCurved: true,
+      colors: <Color>[
+        color,
+      ],
+      barWidth: 2,
+      isStrokeCapRound: true,
+      dotData: FlDotData(
+        show: false,
+      ),
+      belowBarData: BarAreaData(
+        show: false,
+      ),
+    );
   }
 }

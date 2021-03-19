@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:ui' as ui show Image;
-import 'package:example/common/utils/screen_util.dart';
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -68,8 +67,8 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
             child: Align(
               child: ExtendedImage.network(
                 url,
-                width: ScreenUtil.instance.setWidth(400),
-                height: ScreenUtil.instance.setWidth(400),
+                width: 200,
+                height: 200,
                 fit: BoxFit.fill,
                 cache: true,
                 beforePaintImage:
@@ -140,11 +139,10 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
     final Rect rect1 =
         Rect.fromLTWH(wxmin, wymin, wxmax - wxmin, wymax - wymin);
 
-    final double xx = ScreenUtil.instance.setWidth(400) /
-        (max(rect1.width, rect1.height) * 1.1);
+    final double xx = 200 / (max(rect1.width, rect1.height) * 1.1);
 
-    final double top = rect.top + ScreenUtil.instance.setWidth(400) / 2.0;
-    final double left = rect.left + ScreenUtil.instance.setWidth(400) / 2.0;
+    final double top = rect.top + 200 / 2.0;
+    final double left = rect.left + 200 / 2.0;
 
     final List<Offset> points1 = <Offset>[];
     for (final Offset point in points) {

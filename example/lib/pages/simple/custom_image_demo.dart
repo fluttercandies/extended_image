@@ -1,4 +1,3 @@
-import 'package:example/common/utils/screen_util.dart';
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
@@ -88,8 +87,8 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                         opacity: _controller,
                         child: ExtendedRawImage(
                           image: state.extendedImageInfo?.image,
-                          width: ScreenUtil.instance.setWidth(600),
-                          height: ScreenUtil.instance.setWidth(400),
+                          width: 300,
+                          height: 200,
                         ),
                       );
                       break;

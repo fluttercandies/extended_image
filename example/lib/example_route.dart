@@ -37,13 +37,16 @@ FFRouteSettings getRouteSettings({
         widget: MemoryUsageDemo(),
         routeName: 'MemoryUsage',
         description: 'show how to reduce memory usage.',
-        exts: <String, dynamic>{'group': 'Complex', 'order': 1},
+        exts: <String, dynamic>{'group': 'Complex', 'order': 3},
       );
     case 'fluttercandies://WaterfallFlowDemo':
       return FFRouteSettings(
         name: name,
         arguments: arguments,
-        widget: WaterfallFlowDemo(),
+        widget: WaterfallFlowDemo(
+          imageBuilder: asT<Widget Function(TuChongItem item)>(
+              safeArguments['imageBuilder']),
+        ),
         routeName: 'WaterfallFlow',
         description: 'WaterfallFlow with ExtendedImage.',
         exts: <String, dynamic>{'group': 'Complex', 'order': 0},

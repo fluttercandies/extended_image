@@ -1,12 +1,11 @@
 import 'dart:math';
 import 'dart:ui' as ui show Image;
-import 'package:example/common/utils/screen_util.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 import 'package:intl/intl.dart';
 
-double get maxDragOffset => ScreenUtil.instance.setWidth(180);
+const double maxDragOffset = 90;
 double hideHeight = maxDragOffset / 2.3;
 double refreshHeight = maxDragOffset / 1.5;
 
@@ -36,7 +35,7 @@ class PullToRefreshHeader extends StatelessWidget {
 
     final TextStyle ts = const TextStyle(
       color: Colors.grey,
-    ).copyWith(fontSize: ScreenUtil.instance.setSp(26));
+    ).copyWith(fontSize: 13);
 
     final double dragOffset = info?.dragOffset ?? 0.0;
 
@@ -73,8 +72,7 @@ class PullToRefreshHeader extends StatelessWidget {
                     Text(
                       'Last updated:' +
                           DateFormat('yyyy-MM-dd hh:mm').format(time),
-                      style:
-                          ts.copyWith(fontSize: ScreenUtil.instance.setSp(24)),
+                      style: ts.copyWith(fontSize: 12),
                     )
                   ],
                 ),
@@ -95,7 +93,7 @@ class RefreshImage extends StatelessWidget {
   final double top;
   @override
   Widget build(BuildContext context) {
-    final double imageSize = ScreenUtil.instance.setWidth(80);
+    const double imageSize = 40;
     return ExtendedImage.asset(
       'assets/flutterCandies_grey.png',
       width: imageSize,
