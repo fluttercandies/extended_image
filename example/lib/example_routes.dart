@@ -44,10 +44,6 @@ class Routes {
   ///
   /// [description] : 'WaterfallFlow with ExtendedImage.'
   ///
-  /// [constructors] :
-  ///
-  /// WaterfallFlowDemo : [Widget Function(TuChongItem item) imageBuilder]
-  ///
   /// [exts] : {group: Complex, order: 0}
   static const String fluttercandiesWaterfallFlowDemo =
       'fluttercandies://WaterfallFlowDemo';
@@ -72,7 +68,7 @@ class Routes {
   ///
   /// [constructors] :
   ///
-  /// DemoGroupPage : [MapEntry<String, List<DemoRouteResult>> keyValue]
+  /// DemoGroupPage : [MapEntry<String, List<DemoRouteResult>>(required) keyValue]
   static const String fluttercandiesDemogrouppage =
       'fluttercandies://demogrouppage';
 
@@ -166,7 +162,7 @@ class Routes {
   ///
   /// [constructors] :
   ///
-  /// PicSwiper : [int index, List<PicSwiperItem> pics, TuChongItem tuChongItem]
+  /// PicSwiper : [int? index, List<PicSwiperItem>? pics, TuChongItem? tuChongItem]
   ///
   /// [showStatusBar] : false
   ///
@@ -206,7 +202,7 @@ class Routes {
   ///
   /// [constructors] :
   ///
-  /// SlidePage : [String url]
+  /// SlidePage : [String? url]
   ///
   /// [pageRouteType] : PageRouteType.transparent
   static const String fluttercandiesSlidepageitem =

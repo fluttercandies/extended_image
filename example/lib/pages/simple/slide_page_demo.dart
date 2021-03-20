@@ -83,7 +83,7 @@ class _SlidePageDemoState extends State<SlidePageDemo> {
 )
 class SlidePage extends StatefulWidget {
   const SlidePage({this.url});
-  final String url;
+  final String? url;
   @override
   _SlidePageState createState() => _SlidePageState();
 }
@@ -112,7 +112,7 @@ class _SlidePageState extends State<SlidePage> {
                   ///make hero better when slide out
                   heroBuilderForSlidingPage: (Widget result) {
                     return Hero(
-                      tag: widget.url,
+                      tag: widget.url!,
                       child: result,
                       flightShuttleBuilder: (BuildContext flightContext,
                           Animation<double> animation,
@@ -129,13 +129,13 @@ class _SlidePageState extends State<SlidePage> {
                   },
                 )
               : ExtendedImage.network(
-                  widget.url,
+                  widget.url!,
                   enableSlideOutPage: true,
 
                   ///make hero better when slide out
                   heroBuilderForSlidingPage: (Widget result) {
                     return Hero(
-                      tag: widget.url,
+                      tag: widget.url!,
                       child: result,
                       flightShuttleBuilder: (BuildContext flightContext,
                           Animation<double> animation,
@@ -152,7 +152,7 @@ class _SlidePageState extends State<SlidePage> {
                   },
                 ),
           onTap: () {
-            slidePagekey.currentState.popPage();
+            slidePagekey.currentState!.popPage();
             Navigator.pop(context);
           },
         ),

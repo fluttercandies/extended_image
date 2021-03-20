@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'package:flutter/foundation.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:vm_service/utils.dart';
 import 'package:vm_service/vm_service.dart';
 import 'package:vm_service/vm_service_io.dart';
@@ -9,37 +9,36 @@ class VMHelper {
   VMHelper._();
   static final VMHelper _vMHelper = VMHelper._();
   // Map<IsolateRef, MemoryUsage> memoryInfo = <IsolateRef, MemoryUsage>{};
-  MemoryUsage mainMemoryUsage;
+  late MemoryUsage mainMemoryUsage;
   List<MyMemoryUsage> mainHistoryMemoryInfo = <MyMemoryUsage>[];
   // Map<IsolateRef, List<MyMemoryUsage>> historyMemoryInfo =
   //     <IsolateRef, List<MyMemoryUsage>>{};
-  IsolateRef get main =>
-      vm.isolates.firstWhere((IsolateRef element) => element.name == 'main',
-          orElse: () => null);
+  IsolateRef? get main => vm!.isolates!
+      .firstWhereOrNull((IsolateRef element) => element.name == 'main');
   int _count = 0;
   int get count => _count;
-  bool connected;
-  VmService serviceClient;
-  VM vm;
+  late bool connected;
+  VmService? serviceClient;
+  VM? vm;
   Future<void> startConnect() async {
     final ServiceProtocolInfo info = await Service.getInfo();
-    if (info == null || info.serverUri == null) {
+    if (info.serverUri == null) {
       print('service  protocol url is null,start vm service fail');
       return;
     }
-    final Uri uri = convertToWebSocketUrl(serviceProtocolUrl: info.serverUri);
+    final Uri uri = convertToWebSocketUrl(serviceProtocolUrl: info.serverUri!);
     serviceClient = await vmServiceConnectUri(uri.toString(), log: StdoutLog());
     print('socket connected in service $info');
     connected = true;
 
-    vm = await serviceClient.getVM();
+    vm = await serviceClient!.getVM();
     await updateMemoryUsage();
   }
 
   Future<void> updateMemoryUsage() async {
     if (vm != null && connected) {
       final MemoryUsage memoryUsage =
-          await serviceClient.getMemoryUsage(main.id);
+          await serviceClient!.getMemoryUsage(main!.id!);
 
       mainMemoryUsage = memoryUsage;
       final MyMemoryUsage lastest =
@@ -60,10 +59,10 @@ class VMHelper {
 
 class MyMemoryUsage {
   MyMemoryUsage({
-    @required int externalUsage,
-    @required int heapCapacity,
-    @required int heapUsage,
-  })  : dataTime = DateTime.now(),
+    required int externalUsage,
+    required int heapCapacity,
+    required int heapUsage,
+  })   : dataTime = DateTime.now(),
         externalUsage = externalUsage / 1024 / 1024,
         heapCapacity = heapCapacity / 1024 / 1024,
         heapUsage = heapUsage / 1024 / 1024;
@@ -89,9 +88,9 @@ class MyMemoryUsage {
 
   static MyMemoryUsage copyFromMemoryUsage(MemoryUsage memoryUsage) =>
       MyMemoryUsage(
-        externalUsage: memoryUsage.externalUsage,
-        heapCapacity: memoryUsage.heapCapacity,
-        heapUsage: memoryUsage.heapUsage,
+        externalUsage: memoryUsage.externalUsage!,
+        heapCapacity: memoryUsage.heapCapacity!,
+        heapUsage: memoryUsage.heapUsage!,
       );
 
   double todouble(double d) {

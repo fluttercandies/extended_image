@@ -22,7 +22,7 @@ class CustomImageDemo extends StatefulWidget {
 
 class _CustomImageDemoState extends State<CustomImageDemo>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
+  late AnimationController _controller;
   @override
   void initState() {
     _controller = AnimationController(
@@ -75,7 +75,6 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                         'assets/loading.gif',
                         fit: BoxFit.fill,
                       );
-                      break;
                     case LoadState.completed:
                       _controller.forward();
 
@@ -91,7 +90,6 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                           height: 200,
                         ),
                       );
-                      break;
                     case LoadState.failed:
                       _controller.reset();
                       //remove memory cached
@@ -119,9 +117,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                           state.reLoadImage();
                         },
                       );
-                      break;
                   }
-                  return Container();
                 },
               ),
             ),

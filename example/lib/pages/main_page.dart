@@ -139,7 +139,7 @@ class MainPage extends StatelessWidget {
   routeName: 'DemoGroupPage',
 )
 class DemoGroupPage extends StatelessWidget {
-  DemoGroupPage({MapEntry<String, List<DemoRouteResult>> keyValue})
+  DemoGroupPage({required MapEntry<String, List<DemoRouteResult>> keyValue})
       : routes = keyValue.value
           ..sort((DemoRouteResult a, DemoRouteResult b) =>
               a.order.compareTo(b.order)),
@@ -163,17 +163,17 @@ class DemoGroupPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    (index + 1).toString() + '.' + page.routeResult.routeName,
+                    (index + 1).toString() + '.' + page.routeResult.routeName!,
                     //style: TextStyle(inherit: false),
                   ),
                   Text(
-                    page.routeResult.description,
+                    page.routeResult.description!,
                     style: const TextStyle(color: Colors.grey),
                   )
                 ],
               ),
               onTap: () {
-                Navigator.pushNamed(context, page.routeResult.name);
+                Navigator.pushNamed(context, page.routeResult.name!);
               },
             ),
           );
@@ -187,8 +187,8 @@ class DemoGroupPage extends StatelessWidget {
 class DemoRouteResult {
   DemoRouteResult(
     this.routeResult,
-  )   : order = routeResult.exts['order'] as int,
-        group = routeResult.exts['group'] as String;
+  )   : order = routeResult.exts!['order'] as int,
+        group = routeResult.exts!['group'] as String;
 
   final int order;
   final String group;

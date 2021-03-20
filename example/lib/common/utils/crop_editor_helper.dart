@@ -6,14 +6,14 @@ import 'package:flutter/foundation.dart';
 // ignore: implementation_imports
 import 'package:http/src/response.dart';
 import 'package:http_client_helper/http_client_helper.dart';
-import 'package:isolate/load_balancer.dart';
-import 'package:isolate/isolate_runner.dart';
+// import 'package:isolate/load_balancer.dart';
+// import 'package:isolate/isolate_runner.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:image/image.dart';
 import 'package:image_editor/image_editor.dart';
 
-final Future<LoadBalancer> loadBalancer =
-    LoadBalancer.create(1, IsolateRunner.spawn);
+// final Future<LoadBalancer> loadBalancer =
+//     LoadBalancer.create(1, IsolateRunner.spawn);
 
 Future<dynamic> isolateDecodeImage(List<int> data) async {
   final ReceivePort response = ReceivePort();
@@ -56,11 +56,11 @@ void _isolateEncodeImage(SendPort port) {
 }
 
 Future<List<int>> cropImageDataWithDartLibrary(
-    {ExtendedImageEditorState state}) async {
+    {required ExtendedImageEditorState state}) async {
   print('dart library start cropping');
 
   ///crop rect base on raw image
-  final Rect cropRect = state.getCropRect();
+  final Rect? cropRect = state.getCropRect();
 
   // in web, we can't get rawImageData due to .
   // using following code to get imageCodec without download it.
@@ -83,7 +83,7 @@ Future<List<int>> cropImageDataWithDartLibrary(
       //     .asUint8List()
       : state.rawImageData;
 
-  final EditActionDetails editAction = state.editAction;
+  final EditActionDetails editAction = state.editAction!;
 
   final DateTime time1 = DateTime.now();
 
@@ -93,13 +93,14 @@ Future<List<int>> cropImageDataWithDartLibrary(
   /// it will not block ui with using isolate.
   //Image src = await compute(decodeImage, data);
   //Image src = await isolateDecodeImage(data);
-  Image src;
-  LoadBalancer lb;
+  Image? src;
+  //LoadBalancer lb;
   if (kIsWeb) {
     src = decodeImage(data);
   } else {
-    lb = await loadBalancer;
-    src = await lb.run<Image, List<int>>(decodeImage, data);
+    src = await compute(decodeImage, data);
+   // lb = await loadBalancer;
+   // src = await lb.run<Image, List<int>>(decodeImage, data);
   }
 
   final DateTime time2 = DateTime.now();
@@ -107,15 +108,15 @@ Future<List<int>> cropImageDataWithDartLibrary(
   print('${time2.difference(time1)} : decode');
 
   //clear orientation
-  src = bakeOrientation(src);
+  src = bakeOrientation(src!);
 
   if (editAction.needCrop) {
-    src = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
+    src = copyCrop(src, cropRect!.left.toInt(), cropRect.top.toInt(),
         cropRect.width.toInt(), cropRect.height.toInt());
   }
 
   if (editAction.needFlip) {
-    Flip mode;
+    late Flip mode;
     if (editAction.flipY && editAction.flipX) {
       mode = Flip.both;
     } else if (editAction.flipY) {
@@ -145,7 +146,8 @@ Future<List<int>> cropImageDataWithDartLibrary(
   if (kIsWeb) {
     fileData = encodeJpg(src);
   } else {
-    fileData = await lb.run<List<int>, Image>(encodeJpg, src);
+    //fileData = await lb.run<List<int>, Image>(encodeJpg, src);
+    fileData = await compute(encodeJpg, src);
   }
 
   final DateTime time4 = DateTime.now();
@@ -154,12 +156,12 @@ Future<List<int>> cropImageDataWithDartLibrary(
   return fileData;
 }
 
-Future<List<int>> cropImageDataWithNativeLibrary(
-    {ExtendedImageEditorState state}) async {
+Future<List<int>?> cropImageDataWithNativeLibrary(
+    {required ExtendedImageEditorState state}) async {
   print('native library start cropping');
 
-  final Rect cropRect = state.getCropRect();
-  final EditActionDetails action = state.editAction;
+  final Rect? cropRect = state.getCropRect();
+  final EditActionDetails action = state.editAction!;
 
   final int rotateAngle = action.rotateAngle.toInt();
   final bool flipHorizontal = action.flipY;
@@ -169,7 +171,7 @@ Future<List<int>> cropImageDataWithNativeLibrary(
   final ImageEditorOption option = ImageEditorOption();
 
   if (action.needCrop) {
-    option.addOption(ClipOption.fromRect(cropRect));
+    option.addOption(ClipOption.fromRect(cropRect!));
   }
 
   if (action.needFlip) {
@@ -182,7 +184,7 @@ Future<List<int>> cropImageDataWithNativeLibrary(
   }
 
   final DateTime start = DateTime.now();
-  final Uint8List result = await ImageEditor.editImage(
+  final Uint8List? result = await ImageEditor.editImage(
     image: img,
     imageEditorOption: option,
   );
@@ -194,13 +196,13 @@ Future<List<int>> cropImageDataWithNativeLibrary(
 /// it may be failed, due to Cross-domain
 Future<Uint8List> _loadNetwork(ExtendedNetworkImageProvider key) async {
   try {
-    final Response response = await HttpClientHelper.get(Uri.parse(key.url),
+    final Response? response = await HttpClientHelper.get(Uri.parse(key.url),
         headers: key.headers,
         timeLimit: key.timeLimit,
         timeRetry: key.timeRetry,
         retries: key.retries,
         cancelToken: key.cancelToken);
-    return response.bodyBytes;
+    return response!.bodyBytes;
   } on OperationCanceledError catch (_) {
     print('User cancel request ${key.url}.');
     return Future<Uint8List>.error(

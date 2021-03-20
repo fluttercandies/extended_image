@@ -6,9 +6,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
-Future<Uint8List> pickImage(BuildContext context) async {
+Future<Uint8List?> pickImage(BuildContext context) async {
   List<AssetEntity> assets = <AssetEntity>[];
-  final List<AssetEntity> result = await AssetPicker.pickAssets(
+  final List<AssetEntity>? result = await AssetPicker.pickAssets(
     context,
     maxAssets: 1,
     pathThumbSize: 84,
@@ -32,8 +32,8 @@ Future<Uint8List> pickImage(BuildContext context) async {
 class ImageSaver {
   static Future<String> save(String name, Uint8List fileData) async {
     final AssetEntity imageEntity =
-        await PhotoManager.editor.saveImage(fileData);
-    final File file = await imageEntity.file;
+        await (PhotoManager.editor.saveImage(fileData) as FutureOr<AssetEntity>);
+    final File file = await (imageEntity.file as FutureOr<File>);
     return file.path;
   }
 }

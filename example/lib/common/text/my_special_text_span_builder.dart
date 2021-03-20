@@ -12,32 +12,34 @@ class MySpecialTextSpanBuilder extends SpecialTextSpanBuilder {
   final bool showAtBackground;
   @override
   TextSpan build(String data,
-      {TextStyle textStyle, SpecialTextGestureTapCallback onTap}) {
+      {TextStyle? textStyle, SpecialTextGestureTapCallback? onTap}) {
     final TextSpan textSpan =
         super.build(data, textStyle: textStyle, onTap: onTap);
     return textSpan;
   }
 
   @override
-  SpecialText createSpecialText(String flag,
-      {TextStyle textStyle, SpecialTextGestureTapCallback onTap, int index}) {
-    if (flag == null || flag == '') {
+  SpecialText? createSpecialText(String flag,
+      {TextStyle? textStyle,
+      SpecialTextGestureTapCallback? onTap,
+      int? index}) {
+    if (flag == '') {
       return null;
     }
 
     ///index is end index of start flag, so text start index should be index-(flag.length-1)
     if (isStart(flag, AtText.flag)) {
       return AtText(
-        textStyle,
+        textStyle!,
         onTap,
-        start: index - (AtText.flag.length - 1),
+        start: index! - (AtText.flag.length - 1),
         showAtBackground: showAtBackground,
       );
     } else if (isStart(flag, EmojiText.flag)) {
-      return EmojiText(textStyle, start: index - (EmojiText.flag.length - 1));
+      return EmojiText(textStyle!, start: index! - (EmojiText.flag.length - 1));
     } else if (isStart(flag, DollarText.flag)) {
-      return DollarText(textStyle, onTap,
-          start: index - (DollarText.flag.length - 1));
+      return DollarText(textStyle!, onTap,
+          start: index! - (DollarText.flag.length - 1));
     }
     return null;
   }

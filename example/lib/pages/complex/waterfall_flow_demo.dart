@@ -15,18 +15,13 @@ import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
   },
 )
 class WaterfallFlowDemo extends StatefulWidget {
-  const WaterfallFlowDemo({
-    this.imageBuilder,
-  });
-  final Widget Function(
-    TuChongItem item,
-  ) imageBuilder;
+
   @override
   _WaterfallFlowDemoState createState() => _WaterfallFlowDemoState();
 }
 
 class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
-  TuChongRepository listSourceRepository;
+  TuChongRepository? listSourceRepository;
   @override
   void initState() {
     listSourceRepository = TuChongRepository();
@@ -56,19 +51,8 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
               ),
-              itemBuilder: (
-                BuildContext c,
-                TuChongItem item,
-                int index,
-              ) {
-                return buildWaterfallFlowItem(
-                  c,
-                  item,
-                  index,
-                  imageBuilder: widget.imageBuilder,
-                );
-              },
-              sourceList: listSourceRepository,
+              itemBuilder:buildWaterfallFlowItem,
+              sourceList: listSourceRepository!,
               padding: const EdgeInsets.all(5.0),
               lastChildLayoutType: LastChildLayoutType.foot,
             ),

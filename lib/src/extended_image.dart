@@ -116,6 +116,7 @@ class ExtendedImage extends StatefulWidget {
     double? compressionRatio,
     int? maxBytes,
     bool cacheRawData = false,
+    String? imageCacheName,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -131,12 +132,14 @@ class ExtendedImage extends StatefulWidget {
             cacheKey: cacheKey,
             printError: printError,
             cacheRawData: cacheRawData,
+            imageCacheName: imageCacheName,
           ),
           compressionRatio: compressionRatio,
           maxBytes: maxBytes,
           cacheWidth: cacheWidth,
           cacheHeight: cacheHeight,
           cacheRawData: cacheRawData,
+          imageCacheName: imageCacheName,
         ),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
@@ -208,6 +211,7 @@ class ExtendedImage extends StatefulWidget {
     double? compressionRatio,
     int? maxBytes,
     bool cacheRawData = false,
+    String? imageCacheName,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -215,12 +219,14 @@ class ExtendedImage extends StatefulWidget {
             file,
             scale: scale,
             cacheRawData: cacheRawData,
+            imageCacheName: imageCacheName,
           ),
           compressionRatio: compressionRatio,
           maxBytes: maxBytes,
           cacheWidth: cacheWidth,
           cacheHeight: cacheHeight,
           cacheRawData: cacheRawData,
+          imageCacheName: imageCacheName,
         ),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
@@ -399,6 +405,7 @@ class ExtendedImage extends StatefulWidget {
     double? compressionRatio,
     int? maxBytes,
     bool cacheRawData = false,
+    String? imageCacheName,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -409,18 +416,21 @@ class ExtendedImage extends StatefulWidget {
                   scale: scale,
                   package: package,
                   cacheRawData: cacheRawData,
+                  imageCacheName: imageCacheName,
                 )
               : ExtendedAssetImageProvider(
                   name,
                   bundle: bundle,
                   package: package,
                   cacheRawData: cacheRawData,
+                  imageCacheName: imageCacheName,
                 ),
           compressionRatio: compressionRatio,
           maxBytes: maxBytes,
           cacheWidth: cacheWidth,
           cacheHeight: cacheHeight,
           cacheRawData: cacheRawData,
+          imageCacheName: imageCacheName,
         ),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
@@ -487,6 +497,7 @@ class ExtendedImage extends StatefulWidget {
     double? compressionRatio,
     int? maxBytes,
     bool cacheRawData = false,
+    String? imageCacheName,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -494,12 +505,14 @@ class ExtendedImage extends StatefulWidget {
             bytes,
             scale: scale,
             cacheRawData: cacheRawData,
+            imageCacheName: imageCacheName,
           ),
           compressionRatio: compressionRatio,
           maxBytes: maxBytes,
           cacheWidth: cacheWidth,
           cacheHeight: cacheHeight,
           cacheRawData: cacheRawData,
+          imageCacheName: imageCacheName,
         ),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??

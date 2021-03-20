@@ -30,11 +30,11 @@ class LoadingProgress extends StatelessWidget {
               cache: false,
               loadStateChanged: (ExtendedImageState state) {
                 if (state.extendedImageLoadState == LoadState.loading) {
-                  final ImageChunkEvent loadingProgress = state.loadingProgress;
-                  final double progress =
+                  final ImageChunkEvent? loadingProgress = state.loadingProgress;
+                  final double? progress =
                       loadingProgress?.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes
+                          ? loadingProgress!.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
                           : null;
                   return Center(
                     child: Column(

@@ -12,9 +12,10 @@ import 'tu_chong_source.dart';
 Future<bool> onLikeButtonTap(bool isLiked, TuChongItem item) {
   ///send your request here
   return Future<bool>.delayed(const Duration(milliseconds: 50), () {
-    item.isFavorite = !item.isFavorite;
-    item.favorites = item.isFavorite ? item.favorites + 1 : item.favorites - 1;
-    return item.isFavorite;
+    item.isFavorite = !item.isFavorite!;
+    item.favorites =
+        item.isFavorite! ? item.favorites! + 1 : item.favorites! - 1;
+    return item.isFavorite!;
   });
 }
 
@@ -45,7 +46,7 @@ class TuChongRepository extends LoadingMoreBase<TuChongItem> {
     if (isEmpty) {
       url = 'https://api.tuchong.com/feed-app';
     } else {
-      final int lastPostId = this[length - 1].postId;
+      final int? lastPostId = this[length - 1].postId;
       url =
           'https://api.tuchong.com/feed-app?post_id=$lastPostId&page=$_pageIndex&type=loadmore';
     }
@@ -53,21 +54,22 @@ class TuChongRepository extends LoadingMoreBase<TuChongItem> {
     try {
       //to show loading more clearly, in your app,remove this
       //await Future.delayed(const Duration(milliseconds: 500));
-      List<TuChongItem> feedList;
+      List<TuChongItem>? feedList;
       if (!kIsWeb) {
-        final Response result = await HttpClientHelper.get(Uri.parse(url));
+        final Response result =
+            await HttpClientHelper.get(Uri.parse(url)) as Response;
         feedList = TuChongSource.fromJson(
                 json.decode(result.body) as Map<String, dynamic>)
             .feedList;
       } else {
-        feedList = mockSource.feedList.getRange(length, length + 20).toList();
+        feedList = mockSource.feedList!.getRange(length, length + 20).toList();
       }
 
       if (_pageIndex == 1) {
         clear();
       }
 
-      for (final TuChongItem item in feedList) {
+      for (final TuChongItem item in feedList!) {
         if (item.hasImage && !contains(item) && hasMore) {
           add(item);
         }

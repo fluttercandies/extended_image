@@ -16,7 +16,7 @@ class MemoryUsageView extends StatefulWidget {
 class _MemoryUsageViewState extends State<MemoryUsageView> {
   int start = 0;
   int end = 0;
-  Timer _timer;
+  late Timer _timer;
   @override
   void initState() {
     super.initState();
@@ -65,7 +65,7 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
                   child: Text.rich(TextSpan(children: <InlineSpan>[
                     const TextSpan(text: 'HeapUsage: '),
                     TextSpan(
-                        text: ByteUtil.toByteString(main.heapUsage),
+                        text: ByteUtil.toByteString(main.heapUsage!),
                         style: const TextStyle(
                           color: Colors.red,
                         )),
@@ -75,7 +75,7 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
                   child: Text.rich(TextSpan(children: <InlineSpan>[
                     const TextSpan(text: 'HeapCapacity: '),
                     TextSpan(
-                        text: ByteUtil.toByteString(main.heapCapacity),
+                        text: ByteUtil.toByteString(main.heapCapacity!),
                         style: const TextStyle(
                           color: Colors.blue,
                         )),
@@ -85,7 +85,7 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
                   child: Text.rich(TextSpan(children: <InlineSpan>[
                     const TextSpan(text: 'ExternalUsage: '),
                     TextSpan(
-                        text: ByteUtil.toByteString(main.externalUsage),
+                        text: ByteUtil.toByteString(main.externalUsage!),
                         style: const TextStyle(
                           color: Colors.green,
                         )),
@@ -99,6 +99,7 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
           padding:
               const EdgeInsets.only(left: 30, right: 30, top: 5, bottom: 5),
           width: window.physicalSize.width,
+          height: 200,
           child: LineChart(
             sampleData1(),
             swapAnimationDuration: const Duration(milliseconds: 250),
@@ -124,17 +125,6 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
         show: false,
       ),
       titlesData: FlTitlesData(
-        topTitles: SideTitles(
-          getTextStyles: (double value) => const TextStyle(
-            color: Color(0xff72719b),
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-          margin: 10,
-          getTitles: (double value) {
-            return value.toString();
-          },
-        ),
         bottomTitles: SideTitles(
           showTitles: true,
           getTextStyles: (double value) => const TextStyle(
@@ -196,8 +186,8 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
     );
   }
 
-  double minY;
-  double maxY;
+  double? minY;
+  double? maxY;
   List<LineChartBarData> linesBarData1(DateTime now) {
     final List<FlSpot> data1 = <FlSpot>[];
     final List<FlSpot> data2 = <FlSpot>[];

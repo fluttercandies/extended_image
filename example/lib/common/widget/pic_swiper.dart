@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 @FFArgumentImport()
-import 'package:example/common/data/tu_chong_source.dart';
+import 'package:example/common/data/tu_chong_source.dart' hide asT;
 @FFArgumentImport()
 import 'package:example/common/model/pic_swiper_item.dart';
 import 'package:example/common/text/my_extended_text_selection_controls.dart';
@@ -36,9 +36,9 @@ class PicSwiper extends StatefulWidget {
     this.pics,
     this.tuChongItem,
   });
-  final int index;
-  final List<PicSwiperItem> pics;
-  final TuChongItem tuChongItem;
+  final int? index;
+  final List<PicSwiperItem>? pics;
+  final TuChongItem? tuChongItem;
   @override
   _PicSwiperState createState() => _PicSwiperState();
 }
@@ -50,18 +50,18 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
   final StreamController<double> rebuildDetail =
       StreamController<double>.broadcast();
   final Map<int, ImageDetailInfo> detailKeys = <int, ImageDetailInfo>{};
-  AnimationController _doubleClickAnimationController;
-  AnimationController _slideEndAnimationController;
-  Animation<double> _slideEndAnimation;
-  Animation<double> _doubleClickAnimation;
-  DoubleClickAnimationListener _doubleClickAnimationListener;
+  late AnimationController _doubleClickAnimationController;
+  late AnimationController _slideEndAnimationController;
+  late Animation<double> _slideEndAnimation;
+  Animation<double>? _doubleClickAnimation;
+  late DoubleClickAnimationListener _doubleClickAnimationListener;
   List<double> doubleTapScales = <double>[1.0, 2.0];
   GlobalKey<ExtendedImageSlidePageState> slidePagekey =
       GlobalKey<ExtendedImageSlidePageState>();
-  int _currentIndex = 0;
+  int? _currentIndex = 0;
   bool _showSwiper = true;
   double _imageDetailY = 0;
-  Rect imageDRect;
+  Rect? imageDRect;
   @override
   void initState() {
     _currentIndex = widget.index;
@@ -110,10 +110,10 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
           children: <Widget>[
             ExtendedImageGesturePageView.builder(
               controller: PageController(
-                initialPage: widget.index,
+                initialPage: widget.index!,
               ),
               itemBuilder: (BuildContext context, int index) {
-                final String item = widget.pics[index].picUrl;
+                final String item = widget.pics![index].picUrl;
 
                 Widget image = ExtendedImage.network(
                   item,
@@ -121,7 +121,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                   enableSlideOutPage: true,
                   mode: ExtendedImageMode.gesture,
                   heroBuilderForSlidingPage: (Widget result) {
-                    if (index < min(9, widget.pics.length)) {
+                    if (index < min(9, widget.pics!.length)) {
                       return Hero(
                         tag: item,
                         child: result,
@@ -142,20 +142,20 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                     }
                   },
                   initGestureConfigHandler: (ExtendedImageState state) {
-                    double initialScale = 1.0;
+                    double? initialScale = 1.0;
 
-                    if (state.extendedImageInfo != null &&
-                        state.extendedImageInfo.image != null) {
+                    if (state.extendedImageInfo != null) {
                       initialScale = initScale(
                           size: size,
                           initialScale: initialScale,
                           imageSize: Size(
-                              state.extendedImageInfo.image.width.toDouble(),
-                              state.extendedImageInfo.image.height.toDouble()));
+                              state.extendedImageInfo!.image.width.toDouble(),
+                              state.extendedImageInfo!.image.height
+                                  .toDouble()));
                     }
                     return GestureConfig(
                         inPageView: true,
-                        initialScale: initialScale,
+                        initialScale: initialScale!,
                         maxScale: max(initialScale, 5.0),
                         animationMaxScale: max(initialScale, 5.0),
                         initialAlignment: InitialAlignment.center,
@@ -166,9 +166,9 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                   onDoubleTap: (ExtendedImageGestureState state) {
                     ///you can use define pointerDownPosition as you can,
                     ///default value is double tap pointer down postion.
-                    final Offset pointerDownPosition =
+                    final Offset? pointerDownPosition =
                         state.pointerDownPosition;
-                    final double begin = state.gestureDetails.totalScale;
+                    final double? begin = state.gestureDetails!.totalScale;
                     double end;
 
                     //remove old
@@ -190,13 +190,13 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                     _doubleClickAnimationListener = () {
                       //print(_animation.value);
                       state.handleDoubleTap(
-                          scale: _doubleClickAnimation.value,
+                          scale: _doubleClickAnimation!.value,
                           doubleTapPosition: pointerDownPosition);
                     };
                     _doubleClickAnimation = _doubleClickAnimationController
                         .drive(Tween<double>(begin: begin, end: end));
 
-                    _doubleClickAnimation
+                    _doubleClickAnimation!
                         .addListener(_doubleClickAnimationListener);
 
                     _doubleClickAnimationController.forward();
@@ -206,8 +206,8 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                       final Rect imageDRect = getDestinationRect(
                         rect: Offset.zero & size,
                         inputSize: Size(
-                          state.extendedImageInfo.image.width.toDouble(),
-                          state.extendedImageInfo.image.height.toDouble(),
+                          state.extendedImageInfo!.image.width.toDouble(),
+                          state.extendedImageInfo!.image.height.toDouble(),
                         ),
                         fit: BoxFit.contain,
                       );
@@ -215,9 +215,10 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                       detailKeys[index] ??= ImageDetailInfo(
                         imageDRect: imageDRect,
                         pageSize: size,
-                        imageInfo: state.extendedImageInfo,
+                        imageInfo: state.extendedImageInfo!,
                       );
-                      final ImageDetailInfo imageDetailInfo = detailKeys[index];
+                      final ImageDetailInfo? imageDetailInfo =
+                          detailKeys[index];
                       return StreamBuilder<double>(
                         builder:
                             (BuildContext context, AsyncSnapshot<double> data) {
@@ -235,7 +236,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                                   Positioned(
                                     left: 0.0,
                                     right: 0.0,
-                                    top: imageDetailInfo.imageBottom +
+                                    top: imageDetailInfo!.imageBottom +
                                         _imageDetailY,
                                     child: Opacity(
                                       opacity: _imageDetailY == 0
@@ -275,7 +276,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                     // }
                     // else
                     {
-                      slidePagekey.currentState.popPage();
+                      slidePagekey.currentState!.popPage();
                       Navigator.pop(context);
                     }
                   },
@@ -283,7 +284,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
 
                 return image;
               },
-              itemCount: widget.pics.length,
+              itemCount: widget.pics!.length,
               onPageChanged: (int index) {
                 _currentIndex = index;
                 rebuildIndex.add(index);
@@ -306,7 +307,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
             ),
             StreamBuilder<bool>(
               builder: (BuildContext c, AsyncSnapshot<bool> d) {
-                if (d.data == null || !d.data) {
+                if (d.data == null || !d.data!) {
                   return Container();
                 }
 
@@ -331,13 +332,14 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
       slideType: SlideType.onlyImage,
       slideScaleHandler: (
         Offset offset, {
-        ExtendedImageSlidePageState state,
+        ExtendedImageSlidePageState? state,
       }) {
         //image is ready and it's not sliding.
-        if (detailKeys[_currentIndex] != null && state.scale == 1.0) {
+        if (state != null &&
+            detailKeys[_currentIndex!] != null &&
+            state.scale == 1.0) {
           //don't slide page if scale of image is more than 1.0
-          if (state != null &&
-              state.imageGestureState.gestureDetails.totalScale > 1.0) {
+          if (state.imageGestureState!.gestureDetails!.totalScale! > 1.0) {
             return 1.0;
           }
           //or slide down into detail mode
@@ -350,14 +352,15 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
       },
       slideOffsetHandler: (
         Offset offset, {
-        ExtendedImageSlidePageState state,
+        ExtendedImageSlidePageState? state,
       }) {
         //image is ready and it's not sliding.
-        if (detailKeys[_currentIndex] != null && state.scale == 1.0) {
+        if (state != null &&
+            detailKeys[_currentIndex!] != null &&
+            state.scale == 1.0) {
           //don't slide page if scale of image is more than 1.0
 
-          if (state != null &&
-              state.imageGestureState.gestureDetails.totalScale > 1.0) {
+          if (state.imageGestureState!.gestureDetails!.totalScale! > 1.0) {
             return Offset.zero;
           }
 
@@ -366,8 +369,8 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
             _imageDetailY += offset.dy;
 
             // print(offset.dy);
-            _imageDetailY =
-                max(-detailKeys[_currentIndex].maxImageDetailY, _imageDetailY);
+            _imageDetailY = max(
+                -detailKeys[_currentIndex!]!.maxImageDetailY, _imageDetailY);
             rebuildDetail.sink.add(_imageDetailY);
             return Offset.zero;
           }
@@ -383,13 +386,13 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
       },
       slideEndHandler: (
         Offset offset, {
-        ExtendedImageSlidePageState state,
-        ScaleEndDetails details,
+        ExtendedImageSlidePageState? state,
+        ScaleEndDetails? details,
       }) {
-        if (_imageDetailY != 0 && state.scale == 1) {
+        if (_imageDetailY != 0 && state!.scale == 1) {
           if (!_slideEndAnimationController.isAnimating) {
 // get magnitude from gesture velocity
-            final double magnitude = details.velocity.pixelsPerSecond.distance;
+            final double magnitude = details!.velocity.pixelsPerSecond.distance;
 
             // do a significant magnitude
 
@@ -400,8 +403,8 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
               _slideEndAnimation =
                   _slideEndAnimationController.drive(Tween<double>(
                 begin: _imageDetailY,
-                end: (_imageDetailY + direction.dy).clamp(
-                    -detailKeys[_currentIndex].maxImageDetailY, 0.0) as double,
+                end: (_imageDetailY + direction.dy)
+                    .clamp(-detailKeys[_currentIndex!]!.maxImageDetailY, 0.0),
               ));
               _slideEndAnimationController.reset();
               _slideEndAnimationController.forward();
@@ -436,8 +439,8 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
 
 class MySwiperPlugin extends StatelessWidget {
   const MySwiperPlugin(this.pics, this.index, this.reBuild);
-  final List<PicSwiperItem> pics;
-  final int index;
+  final List<PicSwiperItem>? pics;
+  final int? index;
   final StreamController<int> reBuild;
   @override
   Widget build(BuildContext context) {
@@ -455,16 +458,16 @@ class MySwiperPlugin extends StatelessWidget {
                   width: 10.0,
                 ),
                 Text(
-                  '${data.data + 1}',
+                  '${data.data! + 1}',
                 ),
                 Text(
-                  ' / ${pics.length}',
+                  ' / ${pics!.length}',
                 ),
                 const SizedBox(
                   width: 10.0,
                 ),
                 Expanded(
-                    child: Text(pics[data.data].des ?? '',
+                    child: Text(pics![data.data!].des ?? '',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -483,7 +486,7 @@ class MySwiperPlugin extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-                      saveNetworkImageToPhoto(pics[index].picUrl)
+                      saveNetworkImageToPhoto(pics![index!].picUrl)
                           .then((bool done) {
                         showToast(done ? 'save succeed' : 'save failed',
                             position: const ToastPosition(
@@ -504,9 +507,9 @@ class MySwiperPlugin extends StatelessWidget {
 
 class ImageDetailInfo {
   ImageDetailInfo({
-    @required this.imageDRect,
-    @required this.pageSize,
-    @required this.imageInfo,
+    required this.imageDRect,
+    required this.pageSize,
+    required this.imageInfo,
   });
 
   final GlobalKey<State<StatefulWidget>> key = GlobalKey<State>();
@@ -519,12 +522,12 @@ class ImageDetailInfo {
 
   double get imageBottom => imageDRect.bottom - 20;
 
-  double _maxImageDetailY;
+  double? _maxImageDetailY;
   double get maxImageDetailY {
     try {
       //
       return _maxImageDetailY ??= max(
-          key.currentContext.size.height - (pageSize.height - imageBottom),
+          key.currentContext!.size!.height - (pageSize.height - imageBottom),
           0.1);
     } catch (e) {
       //currentContext is not ready
@@ -539,17 +542,17 @@ class ImageDetail extends StatelessWidget {
     this.index,
     this.tuChongItem,
   );
-  final ImageDetailInfo info;
+  final ImageDetailInfo? info;
   final int index;
-  final TuChongItem tuChongItem;
+  final TuChongItem? tuChongItem;
   @override
   Widget build(BuildContext context) {
     String content =
-        tuChongItem.content ?? (tuChongItem.excerpt ?? tuChongItem.title);
+        tuChongItem!.content ?? (tuChongItem!.excerpt ?? tuChongItem!.title!);
     content += attachContent * 2;
     final Widget result = Container(
       // constraints: BoxConstraints(minHeight: 25.0),
-      key: info.key,
+      key: info!.key,
       margin: const EdgeInsets.only(
         left: 5,
         right: 5,
@@ -562,8 +565,8 @@ class ImageDetail extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               buildTagsWidget(
-                tuChongItem,
-                maxNum: tuChongItem.tags.length,
+                tuChongItem!,
+                maxNum: tuChongItem!.tags!.length,
               ),
               const SizedBox(
                 height: 15.0,
@@ -612,7 +615,7 @@ class ImageDetail extends StatelessWidget {
                 height: 20.0,
               ),
               buildBottomWidget(
-                tuChongItem,
+                tuChongItem!,
                 showAvatar: true,
               ),
             ],
@@ -621,14 +624,14 @@ class ImageDetail extends StatelessWidget {
             top: -30.0,
             left: -15.0,
             child: FloatText(
-              '${(index + 1).toString().padLeft(tuChongItem.images.length.toString().length, '0')}/${tuChongItem.images.length}',
+              '${(index + 1).toString().padLeft(tuChongItem!.images!.length.toString().length, '0')}/${tuChongItem!.images!.length}',
             ),
           ),
           Positioned(
             top: -30.0,
             right: -15.0,
             child: FloatText(
-              '${info.imageInfo.image.width} * ${info.imageInfo.image.height}',
+              '${info!.imageInfo.image.width} * ${info!.imageInfo.image.height}',
             ),
           ),
           Positioned(

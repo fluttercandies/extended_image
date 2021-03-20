@@ -39,14 +39,14 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
         enableLoadState: true,
         extendedImageEditorKey: editorKey,
         cacheRawData: true,
-        initEditorConfigHandler: (ExtendedImageState state) {
+        initEditorConfigHandler: (ExtendedImageState? state) {
           return EditorConfig(
               maxScale: 8.0,
               cropRectPadding: const EdgeInsets.all(20.0),
               hitTestSize: 20.0,
               initCropRectType: InitCropRectType.imageRect,
               cropAspectRatio: CropAspectRatios.ratio4_3,
-              editActionDetailsIsChanged: (EditActionDetails details) {
+              editActionDetailsIsChanged: (EditActionDetails? details) {
                 //print(details?.totalScale);
               });
         },
@@ -64,8 +64,9 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
       return;
     }
     final Uint8List fileData = Uint8List.fromList(kIsWeb
-        ? await cropImageDataWithDartLibrary(state: editorKey.currentState)
-        : await cropImageDataWithNativeLibrary(state: editorKey.currentState));
+        ? await cropImageDataWithDartLibrary(state: editorKey.currentState!)
+        : (await cropImageDataWithNativeLibrary(
+            state: editorKey.currentState!))!);
     final String fileFath =
         await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
 

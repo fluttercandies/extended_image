@@ -1,7 +1,6 @@
-// ignore_for_file: implicit_dynamic_list_literal,implicit_dynamic_map_literal
 import 'tu_chong_source.dart';
 
-// ignore: always_specify_types
+// ignore_for_file: implicit_dynamic_list_literal,implicit_dynamic_map_literal
 Map<String, dynamic> _mock = <String, dynamic>{
   'counts': 316,
   'feedList': [
@@ -50390,5 +50389,5 @@ Map<String, dynamic> _mock = <String, dynamic>{
   'result': 'SUCCESS'
 };
 
-TuChongSource _mockSource;
-TuChongSource get mockSource => _mockSource ??= TuChongSource.fromJson(_mock);
+TuChongSource _mockSource = TuChongSource.fromJson(_mock);
+TuChongSource get mockSource => _mockSource;

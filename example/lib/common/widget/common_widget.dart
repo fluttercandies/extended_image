@@ -4,15 +4,14 @@ import 'package:flutter/material.dart';
 
 class FlatButtonWithIcon extends TextButton with MaterialButtonWithIconMixin {
   FlatButtonWithIcon({
-    Key key,
-    @required VoidCallback onPressed,
+    Key? key,
+    required VoidCallback onPressed,
     Clip clipBehavior = Clip.none,
-    FocusNode focusNode,
-    Color textColor,
-    @required Widget icon,
-    @required Widget label,
-  })  : assert(icon != null),
-        assert(label != null),
+    FocusNode? focusNode,
+    Color? textColor,
+    required Widget icon,
+    required Widget label,
+  })  :
         super(
           key: key,
           onPressed: onPressed,
@@ -37,15 +36,15 @@ class FlatButtonWithIcon extends TextButton with MaterialButtonWithIconMixin {
 
 class AspectRatioItem {
   AspectRatioItem({this.value, this.text});
-  final String text;
-  final double value;
+  final String? text;
+  final double? value;
 }
 
 class AspectRatioWidget extends StatelessWidget {
   const AspectRatioWidget(
       {this.aspectRatioS, this.aspectRatio, this.isSelected = false});
-  final String aspectRatioS;
-  final double aspectRatio;
+  final String? aspectRatioS;
+  final double? aspectRatio;
   final bool isSelected;
   @override
   Widget build(BuildContext context) {
@@ -62,8 +61,8 @@ class AspectRatioWidget extends StatelessWidget {
 class AspectRatioPainter extends CustomPainter {
   AspectRatioPainter(
       {this.aspectRatioS, this.aspectRatio, this.isSelected = false});
-  final String aspectRatioS;
-  final double aspectRatio;
+  final String? aspectRatioS;
+  final double? aspectRatio;
   final bool isSelected;
   @override
   void paint(Canvas canvas, Size size) {
@@ -74,7 +73,7 @@ class AspectRatioPainter extends CustomPainter {
       ..color = color
       ..style = PaintingStyle.fill;
     final double aspectRatioResult =
-        (aspectRatio != null && aspectRatio > 0.0) ? aspectRatio : 1.0;
+        (aspectRatio != null && aspectRatio! > 0.0) ? aspectRatio! : 1.0;
     canvas.drawRect(
         getDestinationRect(
             rect: const EdgeInsets.all(10.0).deflateRect(rect),

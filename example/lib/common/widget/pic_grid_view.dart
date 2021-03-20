@@ -7,7 +7,7 @@ const int maxPicGridViewCount = 9;
 /// Grid view to show picture
 class PicGridView extends StatelessWidget {
   const PicGridView({
-    @required this.tuChongItem,
+    required this.tuChongItem,
   });
   final TuChongItem tuChongItem;
   @override
@@ -21,7 +21,7 @@ class PicGridView extends StatelessWidget {
       final double size = b.maxWidth;
       int rowCount = 3;
       //single image
-      if (tuChongItem.images.length == 1) {
+      if (tuChongItem.images!.length == 1) {
         return Padding(
           padding: const EdgeInsets.all(margin),
           child: CropImage(
@@ -33,7 +33,7 @@ class PicGridView extends StatelessWidget {
       }
 
       double totalWidth = size;
-      if (tuChongItem.images.length == 4) {
+      if (tuChongItem.images!.length == 4) {
         totalWidth = size / 3 * 2;
         rowCount = 2;
       }
@@ -55,7 +55,7 @@ class PicGridView extends StatelessWidget {
           },
           physics: const NeverScrollableScrollPhysics(),
           itemCount:
-              tuChongItem.images.length.clamp(1, maxPicGridViewCount) as int,
+              tuChongItem.images!.length.clamp(1, maxPicGridViewCount),
           padding: const EdgeInsets.all(0.0),
         ),
       );

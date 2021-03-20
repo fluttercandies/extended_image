@@ -37,21 +37,21 @@ typedef SlidePageBackgroundHandler = Color Function(
     Offset offset, Size pageSize);
 
 /// customize offset of page when slide page
-typedef SlideOffsetHandler = Offset Function(
+typedef SlideOffsetHandler = Offset? Function(
   Offset offset, {
   ExtendedImageSlidePageState state,
 });
 
 /// if return true ,pop page
 /// else reset page state
-typedef SlideEndHandler = bool Function(
+typedef SlideEndHandler = bool? Function(
   Offset offset, {
   ExtendedImageSlidePageState state,
   ScaleEndDetails details,
 });
 
 /// Customize scale of page when slide page
-typedef SlideScaleHandler = double Function(
+typedef SlideScaleHandler = double? Function(
   Offset offset, {
   ExtendedImageSlidePageState state,
 });

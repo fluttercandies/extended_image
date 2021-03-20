@@ -38,7 +38,7 @@ class PhotoViewDemo extends StatefulWidget {
 }
 
 class _PhotoViewDemoState extends State<PhotoViewDemo> {
-  MyTextSelectionControls _myExtendedMaterialTextSelectionControls;
+  MyTextSelectionControls? _myExtendedMaterialTextSelectionControls;
   final String _attachContent =
       '[love]Extended text help you to build rich text quickly. any special text you will have with extended text.It\'s my pleasure to invite you to join \$FlutterCandies\$ if you want to improve flutter .[love] if you meet any problem, please let me konw @zmtzawqlp .[sun_glasses]';
   @override
@@ -88,7 +88,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                       slivers: <Widget>[
                         SliverToBoxAdapter(
                           child: PullToRefreshContainer(
-                              (PullToRefreshScrollNotificationInfo info) {
+                              (PullToRefreshScrollNotificationInfo? info) {
                             return PullToRefreshHeader(info, dateTimeNow);
                           }),
                         ),
@@ -102,7 +102,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                             ),
                             itemBuilder: (BuildContext context,
                                 TuChongItem item, int index) {
-                              String title = item.site.name;
+                              String? title = item.site!.name;
                               if (title == null || title == '') {
                                 title = 'Image$index';
                               }
@@ -120,7 +120,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                     child: Row(
                                       children: <Widget>[
                                         ExtendedImage.network(
-                                          item.avatarUrl,
+                                          item.avatarUrl!,
                                           width: 40.0,
                                           height: 40.0,
                                           shape: BoxShape.circle,

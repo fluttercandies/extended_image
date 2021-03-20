@@ -45,10 +45,10 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     AspectRatioItem(text: '16*9', value: CropAspectRatios.ratio16_9),
     AspectRatioItem(text: '9*16', value: CropAspectRatios.ratio9_16)
   ];
-  AspectRatioItem _aspectRatio;
+  AspectRatioItem? _aspectRatio;
   bool _cropping = false;
 
-  EditorCropLayerPainter _cropLayerPainter;
+  EditorCropLayerPainter? _cropLayerPainter;
 
   @override
   void initState() {
@@ -83,19 +83,19 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         Expanded(
           child: _memoryImage != null
               ? ExtendedImage.memory(
-                  _memoryImage,
+                  _memoryImage!,
                   fit: BoxFit.contain,
                   mode: ExtendedImageMode.editor,
                   enableLoadState: true,
                   extendedImageEditorKey: editorKey,
-                  initEditorConfigHandler: (ExtendedImageState state) {
+                  initEditorConfigHandler: (ExtendedImageState? state) {
                     return EditorConfig(
                       maxScale: 8.0,
                       cropRectPadding: const EdgeInsets.all(20.0),
                       hitTestSize: 20.0,
-                      cropLayerPainter: _cropLayerPainter,
+                      cropLayerPainter: _cropLayerPainter!,
                       initCropRectType: InitCropRectType.imageRect,
-                      cropAspectRatio: _aspectRatio.value,
+                      cropAspectRatio: _aspectRatio!.value,
                     );
                   },
                   cacheRawData: true,
@@ -106,14 +106,14 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                   mode: ExtendedImageMode.editor,
                   enableLoadState: true,
                   extendedImageEditorKey: editorKey,
-                  initEditorConfigHandler: (ExtendedImageState state) {
+                  initEditorConfigHandler: (ExtendedImageState? state) {
                     return EditorConfig(
                       maxScale: 8.0,
                       cropRectPadding: const EdgeInsets.all(20.0),
                       hitTestSize: 20.0,
-                      cropLayerPainter: _cropLayerPainter,
+                      cropLayerPainter: _cropLayerPainter!,
                       initCropRectType: InitCropRectType.imageRect,
-                      cropAspectRatio: _aspectRatio.value,
+                      cropAspectRatio: _aspectRatio!.value,
                     );
                   },
                   cacheRawData: true,
@@ -185,7 +185,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 ),
                 textColor: Colors.white,
                 onPressed: () {
-                  editorKey.currentState.flip();
+                  editorKey.currentState!.flip();
                 },
               ),
               FlatButtonWithIcon(
@@ -196,7 +196,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 ),
                 textColor: Colors.white,
                 onPressed: () {
-                  editorKey.currentState.rotate(right: false);
+                  editorKey.currentState!.rotate(right: false);
                 },
               ),
               FlatButtonWithIcon(
@@ -207,7 +207,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 ),
                 textColor: Colors.white,
                 onPressed: () {
-                  editorKey.currentState.rotate(right: true);
+                  editorKey.currentState!.rotate(right: true);
                 },
               ),
               FlatButtonWithIcon(
@@ -266,7 +266,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 ),
                 textColor: Colors.white,
                 onPressed: () {
-                  popupMenuKey.currentState.showButtonMenu();
+                  popupMenuKey.currentState!.showButtonMenu();
                 },
               ),
               FlatButtonWithIcon(
@@ -277,7 +277,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 ),
                 textColor: Colors.white,
                 onPressed: () {
-                  editorKey.currentState.reset();
+                  editorKey.currentState!.reset();
                 },
               ),
             ],
@@ -413,8 +413,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
       /// native library
       if (useNative) {
-        fileData = Uint8List.fromList(await cropImageDataWithNativeLibrary(
-            state: editorKey.currentState));
+        fileData = Uint8List.fromList(await (cropImageDataWithNativeLibrary(
+            state: editorKey.currentState!) as FutureOr<List<int>>));
       } else {
         ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
         ///it will block showBusyingDialog
@@ -423,7 +423,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
         ///if you don't want to block ui, use compute/isolate,but it costs more time.
         fileData = Uint8List.fromList(
-            await cropImageDataWithDartLibrary(state: editorKey.currentState));
+            await cropImageDataWithDartLibrary(state: editorKey.currentState!));
       }
       final String filePath =
           await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
@@ -440,13 +440,13 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     _cropping = false;
   }
 
-  Uint8List _memoryImage;
+  Uint8List? _memoryImage;
   Future<void> _getImage() async {
     _memoryImage = await pickImage(context);
     //when back to current page, may be editorKey.currentState is not ready.
     Future<void>.delayed(const Duration(milliseconds: 200), () {
       setState(() {
-        editorKey.currentState.reset();
+        editorKey.currentState!.reset();
       });
     });
   }

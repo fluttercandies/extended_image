@@ -30,7 +30,7 @@ class MyTextSelectionControls extends TextSelectionControls {
     List<TextSelectionPoint> endpoints,
     TextSelectionDelegate delegate,
     ClipboardStatusNotifier clipboardStatus,
-    Offset lastSecondaryTapDownPosition,
+    Offset? lastSecondaryTapDownPosition,
   ) {
     return _TextSelectionControlsToolbar(
       globalEditableRegion: globalEditableRegion,
@@ -85,7 +85,6 @@ class MyTextSelectionControls extends TextSelectionControls {
       case TextSelectionHandleType.collapsed: // points up
         return handle;
     }
-    return Container();
   }
 
   /// Gets anchor for material-style text selection handles.
@@ -118,39 +117,39 @@ class MyTextSelectionControls extends TextSelectionControls {
 // The label and callback for the available default text selection menu buttons.
 class _TextSelectionToolbarItemData {
   const _TextSelectionToolbarItemData({
-    @required this.label,
-    @required this.onPressed,
+    required this.label,
+    required this.onPressed,
   });
 
   final String label;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 }
 
 // The highest level toolbar widget, built directly by buildToolbar.
 class _TextSelectionControlsToolbar extends StatefulWidget {
   const _TextSelectionControlsToolbar({
-    Key key,
-    @required this.clipboardStatus,
-    @required this.delegate,
-    @required this.endpoints,
-    @required this.globalEditableRegion,
-    @required this.handleCut,
-    @required this.handleCopy,
-    @required this.handlePaste,
-    @required this.handleSelectAll,
-    @required this.selectionMidpoint,
-    @required this.textLineHeight,
-    @required this.handleLike,
+    Key? key,
+    required this.clipboardStatus,
+    required this.delegate,
+    required this.endpoints,
+    required this.globalEditableRegion,
+    required this.handleCut,
+    required this.handleCopy,
+    required this.handlePaste,
+    required this.handleSelectAll,
+    required this.selectionMidpoint,
+    required this.textLineHeight,
+    required this.handleLike,
   }) : super(key: key);
 
   final ClipboardStatusNotifier clipboardStatus;
   final TextSelectionDelegate delegate;
   final List<TextSelectionPoint> endpoints;
   final Rect globalEditableRegion;
-  final VoidCallback handleCut;
-  final VoidCallback handleCopy;
-  final VoidCallback handlePaste;
-  final VoidCallback handleSelectAll;
+  final VoidCallback? handleCut;
+  final VoidCallback? handleCopy;
+  final VoidCallback? handlePaste;
+  final VoidCallback? handleSelectAll;
   final VoidCallback handleLike;
   final Offset selectionMidpoint;
   final double textLineHeight;
@@ -258,11 +257,10 @@ class _TextSelectionControlsToolbarState
           label: localizations.selectAllButtonLabel,
           onPressed: widget.handleSelectAll,
         ),
-      if (widget.handleLike != null)
-        _TextSelectionToolbarItemData(
-          label: 'like',
-          onPressed: widget.handleLike,
-        ),
+      _TextSelectionToolbarItemData(
+        label: 'like',
+        onPressed: widget.handleLike,
+      ),
     ];
 
     // If there is no option available, build an empty widget.

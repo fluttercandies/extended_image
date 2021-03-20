@@ -1,4 +1,4 @@
-import 'package:example/common/data/tu_chong_repository.dart';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
@@ -16,13 +16,8 @@ class MyApp extends StatelessWidget {
     if (!kIsWeb) {
       clearDiskCachedImages(duration: const Duration(days: 7));
     }
-    listSourceRepository.loadData().then((bool result) {
-      if (listSourceRepository.isNotEmpty) {
-        _imageTestUrl = listSourceRepository.first.imageUrl;
-      }
-    });
   }
-  final TuChongRepository listSourceRepository = TuChongRepository();
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -33,15 +28,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      builder: (BuildContext c, Widget w) {
+      builder: (BuildContext c, Widget? w) {
         if (!kIsWeb) {
           final MediaQueryData data = MediaQuery.of(c);
           return MediaQuery(
             data: data.copyWith(textScaleFactor: 1.0),
-            child: w,
+            child: w!,
           );
         }
-        return w;
+        return w!;
       },
       initialRoute: Routes.fluttercandiesMainpage,
       onGenerateRoute: (RouteSettings settings) {
@@ -70,15 +65,15 @@ class CommonWidget extends StatelessWidget {
     this.child,
     this.title,
   });
-  final Widget child;
-  final String title;
+  final Widget? child;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          title,
+          title!,
         ),
       ),
       body: child,
@@ -86,6 +81,4 @@ class CommonWidget extends StatelessWidget {
   }
 }
 
-String _imageTestUrl;
-String get imageTestUrl =>
-    _imageTestUrl ?? 'https://photo.tuchong.com/4870004/f/298584322.jpg';
+String get imageTestUrl => 'https://photo.tuchong.com/4870004/f/298584322.jpg';

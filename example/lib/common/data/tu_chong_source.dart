@@ -1,16 +1,37 @@
 import 'dart:convert' show json;
 import 'dart:math';
-import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
 void tryCatch(Function f) {
   try {
-    f?.call();
+    f.call();
   } catch (e, stack) {
     debugPrint('$e');
     debugPrint('$stack');
   }
+}
+
+T? asT<T>(dynamic value) {
+  if (value is T) {
+    return value;
+  }
+  if (value != null) {
+    final String valueS = value.toString();
+    if (0 is T) {
+      return int.tryParse(valueS) as T?;
+    } else if (0.0 is T) {
+      return double.tryParse(valueS) as T?;
+    } else if ('' is T) {
+      return valueS as T;
+    } else if (false is T) {
+      if (valueS == '0' || valueS == '1') {
+        return (valueS == '1') as T;
+      }
+      return (valueS == 'true') as T;
+    }
+  }
+  return null;
 }
 
 class TuChongSource {
@@ -24,16 +45,13 @@ class TuChongSource {
   });
 
   factory TuChongSource.fromJson(Map<String, dynamic> jsonRes) {
-    if (jsonRes == null) {
-      return null;
-    }
-    final List<TuChongItem> feedList =
+    final List<TuChongItem>? feedList =
         jsonRes['feedList'] is List ? <TuChongItem>[] : null;
     if (feedList != null) {
       for (final dynamic item in jsonRes['feedList']) {
         if (item != null) {
           tryCatch(() {
-            feedList.add(TuChongItem.fromJson(asT<Map<String, dynamic>>(item)));
+            feedList.add(TuChongItem.fromJson(asT<Map<String, dynamic>>(item)!));
           });
         }
       }
@@ -49,12 +67,12 @@ class TuChongSource {
     );
   }
 
-  final int counts;
-  final List<TuChongItem> feedList;
-  final bool isHistory;
-  final String message;
-  final bool more;
-  final String result;
+  final int? counts;
+  final List<TuChongItem>? feedList;
+  final bool? isHistory;
+  final String? message;
+  final bool? more;
+  final String? result;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'counts': counts,
@@ -113,11 +131,8 @@ class TuChongItem {
   });
 
   factory TuChongItem.fromJson(Map<String, dynamic> jsonRes) {
-    if (jsonRes == null) {
-      return null;
-    }
-    final List<Object> commentListPrefix =
-        jsonRes['comment_list_prefix'] is List ? <Object>[] : null;
+    final List<Object?>? commentListPrefix =
+        jsonRes['comment_list_prefix'] is List ? <Object?>[] : null;
     if (commentListPrefix != null) {
       for (final dynamic item in jsonRes['comment_list_prefix']) {
         if (item != null) {
@@ -128,8 +143,8 @@ class TuChongItem {
       }
     }
 
-    final List<String> eventTags =
-        jsonRes['event_tags'] is List ? <String>[] : null;
+    final List<String?>? eventTags =
+        jsonRes['event_tags'] is List ? <String?>[] : null;
     if (eventTags != null) {
       for (final dynamic item in jsonRes['event_tags']) {
         if (item != null) {
@@ -140,8 +155,8 @@ class TuChongItem {
       }
     }
 
-    final List<Object> favoriteListPrefix =
-        jsonRes['favorite_list_prefix'] is List ? <Object>[] : null;
+    final List<Object?>? favoriteListPrefix =
+        jsonRes['favorite_list_prefix'] is List ? <Object?>[] : null;
     if (favoriteListPrefix != null) {
       for (final dynamic item in jsonRes['favorite_list_prefix']) {
         if (item != null) {
@@ -152,20 +167,20 @@ class TuChongItem {
       }
     }
 
-    final List<ImageItem> images =
+    final List<ImageItem>? images =
         jsonRes['images'] is List ? <ImageItem>[] : null;
     if (images != null) {
       for (final dynamic item in jsonRes['images']) {
         if (item != null) {
           tryCatch(() {
-            images.add(ImageItem.fromJson(asT<Map<String, dynamic>>(item)));
+            images.add(ImageItem.fromJson(asT<Map<String, dynamic>>(item)!));
           });
         }
       }
     }
 
-    final List<Object> rewardListPrefix =
-        jsonRes['reward_list_prefix'] is List ? <Object>[] : null;
+    final List<Object?>? rewardListPrefix =
+        jsonRes['reward_list_prefix'] is List ? <Object?>[] : null;
     if (rewardListPrefix != null) {
       for (final dynamic item in jsonRes['reward_list_prefix']) {
         if (item != null) {
@@ -176,7 +191,7 @@ class TuChongItem {
       }
     }
 
-    final List<Object> sites = jsonRes['sites'] is List ? <Object>[] : null;
+    final List<Object?>? sites = jsonRes['sites'] is List ? <Object?>[] : null;
     if (sites != null) {
       for (final dynamic item in jsonRes['sites']) {
         if (item != null) {
@@ -187,7 +202,7 @@ class TuChongItem {
       }
     }
     final List<Color> tagColors = <Color>[];
-    final List<String> tags = jsonRes['tags'] is List ? <String>[] : null;
+    final List<String?>? tags = jsonRes['tags'] is List ? <String?>[] : null;
     if (tags != null) {
       const int maxNum = 6;
       for (final dynamic item in jsonRes['tags']) {
@@ -231,7 +246,7 @@ class TuChongItem {
       rewards: asT<String>(jsonRes['rewards']),
       rqtId: asT<String>(jsonRes['rqt_id']),
       shares: asT<int>(jsonRes['shares']),
-      site: Site.fromJson(asT<Map<String, dynamic>>(jsonRes['site'])),
+      site: Site.fromJson(asT<Map<String, dynamic>>(jsonRes['site'])!),
       siteId: asT<String>(jsonRes['site_id']),
       sites: sites,
       tags: tags,
@@ -245,79 +260,79 @@ class TuChongItem {
     );
   }
 
-  final String authorId;
-  final bool collected;
-  final List<Object> commentListPrefix;
-  final int comments;
-  final String content;
-  final String createdAt;
-  final String dataType;
-  final bool delete;
-  final List<String> eventTags;
-  final String excerpt;
-  final List<Object> favoriteListPrefix;
-  int favorites;
-  final int imageCount;
-  final List<ImageItem> images;
-  bool isFavorite;
-  final String parentComments;
-  final String passedTime;
-  final int postId;
-  final String publishedAt;
-  final bool recommend;
-  final String recomType;
-  final bool rewardable;
-  final List<Object> rewardListPrefix;
-  final String rewards;
-  final String rqtId;
-  final int shares;
-  final Site site;
-  final String siteId;
-  final List<Object> sites;
-  final List<String> tags;
-  final String title;
-  final Object titleImage;
-  final String type;
-  final bool update;
-  final String url;
-  final int views;
-  final List<Color> tagColors;
+  final String? authorId;
+  final bool? collected;
+  final List<Object?>? commentListPrefix;
+  final int? comments;
+  final String? content;
+  final String? createdAt;
+  final String? dataType;
+  final bool? delete;
+  final List<String?>? eventTags;
+  final String? excerpt;
+  final List<Object?>? favoriteListPrefix;
+  int? favorites;
+  final int? imageCount;
+  final List<ImageItem>? images;
+  bool? isFavorite;
+  final String? parentComments;
+  final String? passedTime;
+  final int? postId;
+  final String? publishedAt;
+  final bool? recommend;
+  final String? recomType;
+  final bool? rewardable;
+  final List<Object?>? rewardListPrefix;
+  final String? rewards;
+  final String? rqtId;
+  final int? shares;
+  final Site? site;
+  final String? siteId;
+  final List<Object?>? sites;
+  final List<String?>? tags;
+  final String? title;
+  final Object? titleImage;
+  final String? type;
+  final bool? update;
+  final String? url;
+  final int? views;
+  final List<Color>? tagColors;
   bool get hasImage {
-    return images != null && images.isNotEmpty;
+    return images != null && images!.isNotEmpty;
   }
 
-  Size imageRawSize;
+  Size? imageRawSize;
 
   Size get imageSize {
     if (!hasImage) {
       return const Size(0, 0);
     }
-    return Size(images[0].width.toDouble(), images[0].height.toDouble());
+    return Size(images![0].width!.toDouble(), images![0].height!.toDouble());
   }
 
   String get imageUrl {
     if (!hasImage) {
       return '';
     }
-    return 'https://photo.tuchong.com/${images[0].userId}/f/${images[0].imgId}.jpg';
+    return 'https://photo.tuchong.com/${images![0].userId}/f/${images![0].imgId}.jpg';
   }
 
-  String get avatarUrl => site.icon;
+  String? get avatarUrl => site!.icon;
 
-  String get imageTitle {
+  String? get imageTitle {
     if (!hasImage) {
       return title;
     }
 
-    return images[0].title;
+    return images![0].title;
   }
 
-  String get imageDescription {
+  String? get imageDescription {
     if (!hasImage) {
       return content;
     }
 
-    return images[0].description;
+    return images![0].description;
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -377,27 +392,25 @@ class ImageItem {
     this.width,
   });
 
-  factory ImageItem.fromJson(Map<String, dynamic> jsonRes) => jsonRes == null
-      ? null
-      : ImageItem(
-          description: asT<String>(jsonRes['description']),
-          excerpt: asT<String>(jsonRes['excerpt']),
-          height: asT<int>(jsonRes['height']),
-          imgId: asT<int>(jsonRes['img_id']),
-          imgIdStr: asT<String>(jsonRes['img_id_str']),
-          title: asT<String>(jsonRes['title']),
-          userId: asT<int>(jsonRes['user_id']),
-          width: asT<int>(jsonRes['width']),
-        );
+  factory ImageItem.fromJson(Map<String, dynamic> jsonRes) => ImageItem(
+        description: asT<String>(jsonRes['description']),
+        excerpt: asT<String>(jsonRes['excerpt']),
+        height: asT<int>(jsonRes['height']),
+        imgId: asT<int>(jsonRes['img_id']),
+        imgIdStr: asT<String>(jsonRes['img_id_str']),
+        title: asT<String>(jsonRes['title']),
+        userId: asT<int>(jsonRes['user_id']),
+        width: asT<int>(jsonRes['width']),
+      );
 
-  final String description;
-  final String excerpt;
-  final int height;
-  final int imgId;
-  final String imgIdStr;
-  final String title;
-  final int userId;
-  final int width;
+  final String? description;
+  final String? excerpt;
+  final int? height;
+  final int? imgId;
+  final String? imgIdStr;
+  final String? title;
+  final int? userId;
+  final int? width;
   String get imageUrl {
     return 'https://photo.tuchong.com/$userId/f/$imgId.jpg';
   }
@@ -450,17 +463,14 @@ class Site {
   });
 
   factory Site.fromJson(Map<String, dynamic> jsonRes) {
-    if (jsonRes == null) {
-      return null;
-    }
-    final List<VerificationList> verificationList =
+    final List<VerificationList>? verificationList =
         jsonRes['verification_list'] is List ? <VerificationList>[] : null;
     if (verificationList != null) {
       for (final dynamic item in jsonRes['verification_list']) {
         if (item != null) {
           tryCatch(() {
             verificationList.add(
-                VerificationList.fromJson(asT<Map<String, dynamic>>(item)));
+                VerificationList.fromJson(asT<Map<String, dynamic>>(item)!));
           });
         }
       }
@@ -484,20 +494,20 @@ class Site {
     );
   }
 
-  final String description;
-  final String domain;
-  int followers;
-  final bool hasEverphotoNote;
-  final String icon;
-  final bool isBindEverphoto;
-  bool isFollowing;
-  final String name;
-  final String siteId;
-  final String type;
-  final String url;
-  final List<VerificationList> verificationList;
-  final int verifications;
-  final bool verified;
+  final String? description;
+  final String? domain;
+  int? followers;
+  final bool? hasEverphotoNote;
+  final String? icon;
+  final bool? isBindEverphoto;
+  bool? isFollowing;
+  final String? name;
+  final String? siteId;
+  final String? type;
+  final String? url;
+  final List<VerificationList>? verificationList;
+  final int? verifications;
+  final bool? verified;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'description': description,
@@ -529,15 +539,13 @@ class VerificationList {
   });
 
   factory VerificationList.fromJson(Map<String, dynamic> jsonRes) =>
-      jsonRes == null
-          ? null
-          : VerificationList(
-              verificationReason: asT<String>(jsonRes['verification_reason']),
-              verificationType: asT<int>(jsonRes['verification_type']),
-            );
+      VerificationList(
+        verificationReason: asT<String>(jsonRes['verification_reason']),
+        verificationType: asT<int>(jsonRes['verification_type']),
+      );
 
-  final String verificationReason;
-  final int verificationType;
+  final String? verificationReason;
+  final int? verificationType;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
         'verification_reason': verificationReason,

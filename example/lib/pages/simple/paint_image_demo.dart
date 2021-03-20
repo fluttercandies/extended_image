@@ -20,7 +20,7 @@ class PaintImageDemo extends StatefulWidget {
 }
 
 class _PaintImageDemoState extends State<PaintImageDemo> {
-  PaintType paintType;
+  PaintType? paintType;
   @override
   void initState() {
     paintType = PaintType.ClipHeart;

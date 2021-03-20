@@ -7,7 +7,7 @@ class EmojiText extends SpecialText {
   EmojiText(TextStyle textStyle, {this.start})
       : super(EmojiText.flag, ']', textStyle);
   static const String flag = '[';
-  final int start;
+  final int? start;
   @override
   InlineSpan finishText() {
     final String key = toString();
@@ -23,12 +23,12 @@ class EmojiText extends SpecialText {
       //final double fontSize = 26.0;
       return ImageSpan(
           AssetImage(
-            EmojiUitl.instance.emojiMap[key],
+            EmojiUitl.instance.emojiMap[key]!,
           ),
           actualText: key,
           imageWidth: size,
           imageHeight: size,
-          start: start,
+          start: start!,
           fit: BoxFit.fill,
           margin: const EdgeInsets.only(left: 2.0, top: 2.0, right: 2.0));
     }
@@ -49,6 +49,6 @@ class EmojiUitl {
 
   final String _emojiFilePath = 'assets';
 
-  static EmojiUitl _instance;
+  static EmojiUitl? _instance;
   static EmojiUitl get instance => _instance ??= EmojiUitl._();
 }

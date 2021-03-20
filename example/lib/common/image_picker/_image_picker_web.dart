@@ -27,13 +27,13 @@ Future<Uint8List> pickImage(BuildContext context) async {
     ..type = 'file'
     ..accept = 'image/*';
   input.onChange.listen((Event e) async {
-    final List<File> files = input.files;
+    final List<File> files = input.files!;
     final FileReader reader = FileReader();
     reader.readAsArrayBuffer(files[0]);
     reader.onError
         .listen((ProgressEvent error) => completer.completeError(error));
     await reader.onLoad.first;
-    completer.complete(reader.result as Uint8List);
+    completer.complete(reader.result as Uint8List?);
   });
   input.click();
   return completer.future;

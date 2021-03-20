@@ -21,7 +21,7 @@ class ImageDemo extends StatefulWidget {
 }
 
 class _ImageDemoState extends State<ImageDemo> {
-  BoxShape boxShape;
+  BoxShape? boxShape;
   @override
   void initState() {
     boxShape = BoxShape.circle;

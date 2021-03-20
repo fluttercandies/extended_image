@@ -10,7 +10,7 @@ description: A new Flutter application.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.6.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 dependencies:
 
   # The following adds the Cupertino Icons font to your application.
@@ -21,13 +21,14 @@ dependencies:
   ff_annotation_route_library: any
   fl_chart: any
   flutter:
-    sdk: flutter  
- 
+    sdk: flutter
+
   http_client_helper: any
-  image: any     
+  image: any
   image_editor: any
   intl: any
-  isolate: any
+  # not support null-safety
+  # isolate: any
   js: any
   like_button: any
   loading_more_list: any

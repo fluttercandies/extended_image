@@ -1,18 +1,19 @@
 ## 4.0.0
 
 * Breaking change:
-  
+
   1. we cache raw image pixels as default behavior at previous versions, it's not good for heap memory usage. so add [ExtendedImageProvider.cacheRawData] to support whether should cache the raw image pixels. It's [false] now.
 
 * Improve:
-  
+
   1. add [ExtendedResizeImage] to support resize image more convenient.
-  2. add MemoryUsageDemo
+  2. add [ExtendedImageProvider.imageCacheName] to support custom ImageCache to store ExtendedImageProvider.
+  3. add MemoryUsageDemo
 
 ## 3.0.0
 
 * Improve:
-  
+
   1. support null-safety
   2. add [ExtendedNetworkImageProvider.printError]
   3. merge code from Flutter 2.0
@@ -20,7 +21,7 @@
 * Breaking change:
 
   1. remove [TransparentMaterialPageRoute] and [TransparentMaterialPageRoute]
-  
+
 ## 2.0.0
 
 * Improve:
@@ -30,23 +31,23 @@
 
 * Breaking change:
   1. Use [EditorCropLayerPainter] instead of [ExtendedImageCropLayerCornerPainter]
-  
+
 ## 1.6.0
 
 * Improve:
-  
+
   1. public ExtendedImageSlidePageHandler for slide other widget. #298
 
 ## 1.5.0
 
 * Improve:
-  
+
   1. public handleLoadingProgress for default constructor of ExtendedImage. #274
 
 ## 1.4.0
 
 * Improve:
-  
+
   1. add hitTestBehavior for GestureConfig and EditorConfig. #271
 
 ## 1.3.0
@@ -133,7 +134,7 @@
 * Features:
   1. support web.
   2. add [clearMemoryCacheWhenDispose] parameter that whether clear memory cache when image is disposed.
-   
+
 * Issues:
   1. fix animationMinScale and animationMaxScale are not working for gif.
   2. fix scale parameter of method(handleDoubleTap) is beyond minScale and maxScale.
