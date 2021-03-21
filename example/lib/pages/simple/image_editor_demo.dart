@@ -26,14 +26,31 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
   final GlobalKey<ExtendedImageEditorState> editorKey =
       GlobalKey<ExtendedImageEditorState>();
   bool _cropping = false;
+  String imageSource = 'assets/example.gif';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('ImageEditor'),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.build),
+            onPressed: () {
+              //Toggle image source type.
+              setState(() {
+                if (imageSource == 'assets/example.gif') {
+                  imageSource = 'assets/image.jpg';
+                } else {
+                  imageSource = 'assets/example.gif';
+                }
+              });
+            },
+          ),
+        ],
       ),
       body: ExtendedImage.asset(
-        'assets/image.jpg',
+        imageSource,
         fit: BoxFit.contain,
         mode: ExtendedImageMode.editor,
         enableLoadState: true,
@@ -63,11 +80,14 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
     if (_cropping) {
       return;
     }
-    final Uint8List fileData = Uint8List.fromList(kIsWeb
-        ? await cropImageDataWithDartLibrary(state: editorKey.currentState!)
+    Uint8List fileData;
+    //nativeLibrary didn't support for gif encode.
+    fileData = Uint8List.fromList(kIsWeb || imageSource.endsWith('gif')
+        ? await cropImageDataWithDartLibrary(state: editorKey.currentState!) ??
+            []
         : (await cropImageDataWithNativeLibrary(
             state: editorKey.currentState!))!);
-    final String fileFath =
+    final String? fileFath =
         await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
 
     showToast('save image : $fileFath');

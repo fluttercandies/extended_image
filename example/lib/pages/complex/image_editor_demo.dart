@@ -423,9 +423,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
         ///if you don't want to block ui, use compute/isolate,but it costs more time.
         fileData = Uint8List.fromList(
-            await cropImageDataWithDartLibrary(state: editorKey.currentState!));
+            await cropImageDataWithDartLibrary(state: editorKey.currentState!) ?? []) ;
       }
-      final String filePath =
+      final String? filePath =
           await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
       // var filePath = await ImagePickerSaver.saveFile(fileData: fileData);
 
