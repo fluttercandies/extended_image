@@ -1,15 +1,26 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:flutter/foundation.dart';
 import 'package:vm_service/utils.dart';
 import 'package:vm_service/vm_service.dart';
 import 'package:vm_service/vm_service_io.dart';
 
-class VMHelper {
+class VMHelper with ChangeNotifier {
   factory VMHelper() => _vMHelper;
-  VMHelper._();
+  VMHelper._() {
+    _startConnect().whenComplete(() {
+      _timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
+        VMHelper()._updateMemoryUsage().whenComplete(() {
+          notifyListeners();
+        });
+      });
+    });
+  }
   static final VMHelper _vMHelper = VMHelper._();
   // Map<IsolateRef, MemoryUsage> memoryInfo = <IsolateRef, MemoryUsage>{};
   late MemoryUsage mainMemoryUsage;
+  late Timer _timer;
   List<MyMemoryUsage> mainHistoryMemoryInfo = <MyMemoryUsage>[];
   // Map<IsolateRef, List<MyMemoryUsage>> historyMemoryInfo =
   //     <IsolateRef, List<MyMemoryUsage>>{};
@@ -20,7 +31,7 @@ class VMHelper {
   late bool connected;
   VmService? serviceClient;
   VM? vm;
-  Future<void> startConnect() async {
+  Future<void> _startConnect() async {
     final ServiceProtocolInfo info = await Service.getInfo();
     if (info.serverUri == null) {
       print('service  protocol url is null,start vm service fail');
@@ -32,10 +43,10 @@ class VMHelper {
     connected = true;
 
     vm = await serviceClient!.getVM();
-    await updateMemoryUsage();
+    await _updateMemoryUsage();
   }
 
-  Future<void> updateMemoryUsage() async {
+  Future<void> _updateMemoryUsage() async {
     if (vm != null && connected) {
       final MemoryUsage memoryUsage =
           await serviceClient!.getMemoryUsage(main!.id!);
@@ -54,6 +65,12 @@ class VMHelper {
   void clear() {
     _count = 0;
     mainHistoryMemoryInfo.clear();
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 }
 

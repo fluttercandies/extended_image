@@ -409,12 +409,12 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
       //await showBusyingDialog();
 
-      Uint8List fileData;
+      Uint8List? fileData;
 
       /// native library
       if (useNative) {
-        fileData = Uint8List.fromList(await (cropImageDataWithNativeLibrary(
-            state: editorKey.currentState!) as FutureOr<List<int>>));
+        fileData = await cropImageDataWithNativeLibrary(
+            state: editorKey.currentState!);
       } else {
         ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
         ///it will block showBusyingDialog
@@ -422,11 +422,11 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         //await Future.delayed(Duration(milliseconds: 200));
 
         ///if you don't want to block ui, use compute/isolate,but it costs more time.
-        fileData = Uint8List.fromList(
-            await cropImageDataWithDartLibrary(state: editorKey.currentState!) ?? []) ;
+        fileData =
+            await cropImageDataWithDartLibrary(state: editorKey.currentState!);
       }
       final String? filePath =
-          await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
+          await ImageSaver.save('extended_image_cropped_image.jpg', fileData!);
       // var filePath = await ImagePickerSaver.saveFile(fileData: fileData);
 
       msg = 'save image : $filePath';

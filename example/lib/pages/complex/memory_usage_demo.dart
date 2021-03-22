@@ -22,7 +22,7 @@ class MemoryUsageDemo extends StatefulWidget {
 }
 
 class _MemoryUsageDemoState extends State<MemoryUsageDemo> {
- late TuChongRepository listSourceRepository;
+  late TuChongRepository listSourceRepository;
   final String imageCacheName = 'MemoryUsage';
   @override
   void initState() {

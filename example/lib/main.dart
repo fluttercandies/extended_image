@@ -1,4 +1,3 @@
-
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
@@ -6,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
+import 'common/widget/memory_usage_view.dart';
 import 'example_route.dart';
 import 'example_routes.dart';
 
@@ -29,14 +29,21 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       builder: (BuildContext c, Widget? w) {
+        w = Stack(
+          children: <Widget>[
+            Positioned.fill(child: w!),
+            MemoryUsageView(),
+          ],
+        );
         if (!kIsWeb) {
           final MediaQueryData data = MediaQuery.of(c);
-          return MediaQuery(
+          w = MediaQuery(
             data: data.copyWith(textScaleFactor: 1.0),
-            child: w!,
+            child: w,
           );
         }
-        return w!;
+
+        return w;
       },
       initialRoute: Routes.fluttercandiesMainpage,
       onGenerateRoute: (RouteSettings settings) {

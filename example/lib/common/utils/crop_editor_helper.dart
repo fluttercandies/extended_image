@@ -57,7 +57,7 @@ void _isolateEncodeImage(SendPort port) {
   });
 }
 
-Future<List<int>?> cropImageDataWithDartLibrary(
+Future<Uint8List?> cropImageDataWithDartLibrary(
     {required ExtendedImageEditorState state}) async {
   print('dart library start cropping');
 
@@ -101,7 +101,7 @@ Future<List<int>?> cropImageDataWithDartLibrary(
   }
   if (src != null) {
     //handle every frame.
-    src.frames = src.frames.map((image) {
+    src.frames = src.frames.map((Image image) {
       final DateTime time2 = DateTime.now();
       //clear orientation
       image = bakeOrientation(image);
@@ -144,7 +144,7 @@ Future<List<int>?> cropImageDataWithDartLibrary(
   print('start encode');
   final DateTime time4 = DateTime.now();
   if (src != null) {
-    bool onlyOneFrame = src.numFrames == 1;
+    final bool onlyOneFrame = src.numFrames == 1;
     //If there's only one frame, encode it to jpg.
     if (kIsWeb) {
       fileData = onlyOneFrame ? encodeJpg(src.first) : encodeGifAnimation(src);
@@ -158,10 +158,10 @@ Future<List<int>?> cropImageDataWithDartLibrary(
   final DateTime time5 = DateTime.now();
   print('${time5.difference(time4)} : encode');
   print('${time5.difference(time1)} : total time');
-  return fileData;
+  return Uint8List.fromList(fileData!);
 }
 
-Future<List<int>?> cropImageDataWithNativeLibrary(
+Future<Uint8List?> cropImageDataWithNativeLibrary(
     {required ExtendedImageEditorState state}) async {
   print('native library start cropping');
 
