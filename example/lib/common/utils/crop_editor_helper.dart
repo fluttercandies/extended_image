@@ -3,9 +3,11 @@ import 'dart:isolate';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
+
 // ignore: implementation_imports
 import 'package:http/src/response.dart';
 import 'package:http_client_helper/http_client_helper.dart';
+
 // import 'package:isolate/load_balancer.dart';
 // import 'package:isolate/isolate_runner.dart';
 import 'package:extended_image/extended_image.dart';
@@ -55,12 +57,14 @@ void _isolateEncodeImage(SendPort port) {
   });
 }
 
-Future<List<int>> cropImageDataWithDartLibrary(
+Future<List<int>?> cropImageDataWithDartLibrary(
     {required ExtendedImageEditorState state}) async {
   print('dart library start cropping');
 
   ///crop rect base on raw image
   final Rect? cropRect = state.getCropRect();
+
+  print('getCropRect : $cropRect');
 
   // in web, we can't get rawImageData due to .
   // using following code to get imageCodec without download it.
@@ -87,52 +91,46 @@ Future<List<int>> cropImageDataWithDartLibrary(
 
   final DateTime time1 = DateTime.now();
 
-  /// it costs much time and blocks ui.
-  //Image src = decodeImage(data);
-
-  /// it will not block ui with using isolate.
-  //Image src = await compute(decodeImage, data);
-  //Image src = await isolateDecodeImage(data);
-  Image? src;
+  //Decode source to Animation. It can holds multi frame.
+  Animation? src;
   //LoadBalancer lb;
   if (kIsWeb) {
-    src = decodeImage(data);
+    src = decodeAnimation(data);
   } else {
-    src = await compute(decodeImage, data);
-   // lb = await loadBalancer;
-   // src = await lb.run<Image, List<int>>(decodeImage, data);
+    src = await compute(decodeAnimation, data);
   }
+  if (src != null) {
+    //handle every frame.
+    src.frames = src.frames.map((image) {
+      final DateTime time2 = DateTime.now();
+      //clear orientation
+      image = bakeOrientation(image);
 
-  final DateTime time2 = DateTime.now();
+      if (editAction.needCrop) {
+        image = copyCrop(image, cropRect!.left.toInt(), cropRect.top.toInt(),
+            cropRect.width.toInt(), cropRect.height.toInt());
+      }
 
-  print('${time2.difference(time1)} : decode');
+      if (editAction.needFlip) {
+        late Flip mode;
+        if (editAction.flipY && editAction.flipX) {
+          mode = Flip.both;
+        } else if (editAction.flipY) {
+          mode = Flip.horizontal;
+        } else if (editAction.flipX) {
+          mode = Flip.vertical;
+        }
+        image = flip(image, mode);
+      }
 
-  //clear orientation
-  src = bakeOrientation(src!);
-
-  if (editAction.needCrop) {
-    src = copyCrop(src, cropRect!.left.toInt(), cropRect.top.toInt(),
-        cropRect.width.toInt(), cropRect.height.toInt());
+      if (editAction.hasRotateAngle) {
+        image = copyRotate(image, editAction.rotateAngle);
+      }
+      final DateTime time3 = DateTime.now();
+      print('${time3.difference(time2)} : crop/flip/rotate');
+      return image;
+    }).toList();
   }
-
-  if (editAction.needFlip) {
-    late Flip mode;
-    if (editAction.flipY && editAction.flipX) {
-      mode = Flip.both;
-    } else if (editAction.flipY) {
-      mode = Flip.horizontal;
-    } else if (editAction.flipX) {
-      mode = Flip.vertical;
-    }
-    src = flip(src, mode);
-  }
-
-  if (editAction.hasRotateAngle) {
-    src = copyRotate(src, editAction.rotateAngle);
-  }
-
-  final DateTime time3 = DateTime.now();
-  print('${time3.difference(time2)} : crop/flip/rotate');
 
   /// you can encode your image
   ///
@@ -142,17 +140,24 @@ Future<List<int>> cropImageDataWithDartLibrary(
   /// it will not block ui with using isolate.
   //var fileData = await compute(encodeJpg, src);
   //var fileData = await isolateEncodeImage(src);
-  List<int> fileData;
-  if (kIsWeb) {
-    fileData = encodeJpg(src);
-  } else {
-    //fileData = await lb.run<List<int>, Image>(encodeJpg, src);
-    fileData = await compute(encodeJpg, src);
-  }
-
+  List<int>? fileData;
+  print('start encode');
   final DateTime time4 = DateTime.now();
-  print('${time4.difference(time3)} : encode');
-  print('${time4.difference(time1)} : total time');
+  if (src != null) {
+    bool onlyOneFrame = src.numFrames == 1;
+    //If there's only one frame, encode it to jpg.
+    if (kIsWeb) {
+      fileData = onlyOneFrame ? encodeJpg(src.first) : encodeGifAnimation(src);
+    } else {
+      //fileData = await lb.run<List<int>, Image>(encodeJpg, src);
+      fileData = onlyOneFrame
+          ? await compute(encodeJpg, src.first)
+          : await compute(encodeGifAnimation, src);
+    }
+  }
+  final DateTime time5 = DateTime.now();
+  print('${time5.difference(time4)} : encode');
+  print('${time5.difference(time1)} : total time');
   return fileData;
 }
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+
 //import 'package:image_picker/image_picker.dart' as picker;
 import 'package:flutter/cupertino.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -30,11 +31,11 @@ Future<Uint8List?> pickImage(BuildContext context) async {
 }
 
 class ImageSaver {
-  static Future<String> save(String name, Uint8List fileData) async {
-    final AssetEntity imageEntity =
-        await (PhotoManager.editor.saveImage(fileData) as FutureOr<AssetEntity>);
-    final File file = await (imageEntity.file as FutureOr<File>);
-    return file.path;
+  static Future<String?> save(String name, Uint8List fileData) async {
+    final AssetEntity? imageEntity =
+        await PhotoManager.editor.saveImage(fileData);
+    final File? file = await imageEntity?.file;
+    return file?.path;
   }
 }
 

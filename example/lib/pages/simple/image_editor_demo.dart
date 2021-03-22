@@ -26,6 +26,7 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
   final GlobalKey<ExtendedImageEditorState> editorKey =
       GlobalKey<ExtendedImageEditorState>();
   bool _cropping = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,10 +65,10 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
       return;
     }
     final Uint8List fileData = Uint8List.fromList(kIsWeb
-        ? await cropImageDataWithDartLibrary(state: editorKey.currentState!)
+        ? (await cropImageDataWithDartLibrary(state: editorKey.currentState!))!
         : (await cropImageDataWithNativeLibrary(
             state: editorKey.currentState!))!);
-    final String fileFath =
+    final String? fileFath =
         await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
 
     showToast('save image : $fileFath');
