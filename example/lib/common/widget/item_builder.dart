@@ -100,48 +100,45 @@ Widget itemBuilder(BuildContext context, TuChongItem item, int index) {
   );
 }
 
-Widget buildWaterfallFlowItem(BuildContext c, TuChongItem item, int index,
-    {bool konwSized = true,
-    Widget Function(
-      TuChongItem item,
-    )?
-        imageBuilder}) {
+Widget buildWaterfallFlowItem(
+  BuildContext c,
+  TuChongItem item,
+  int index, {
+  bool konwSized = true,
+}) {
   const double fontSize = 12.0;
 
   Widget image = Stack(
     children: <Widget>[
       Positioned.fill(
-        child: imageBuilder != null
-            ? imageBuilder(item)
-            : ExtendedImage.network(
-                item.imageUrl,
-                shape: BoxShape.rectangle,
-                clearMemoryCacheWhenDispose: true,
-                border:
-                    Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(10.0),
-                ),
-                loadStateChanged: (ExtendedImageState value) {
-                  if (value.extendedImageLoadState == LoadState.loading) {
-                    Widget loadingWidget = CommonCircularProgressIndicator();
-                    if (!konwSized) {
-                      //todo: not work in web
-                      loadingWidget = AspectRatio(
-                        aspectRatio: 1.0,
-                        child: loadingWidget,
-                      );
-                    }
-                    return loadingWidget;
-                  } else if (value.extendedImageLoadState ==
-                      LoadState.completed) {
-                    item.imageRawSize = Size(
-                        value.extendedImageInfo!.image.width.toDouble(),
-                        value.extendedImageInfo!.image.height.toDouble());
-                  }
-                  return null;
-                },
-              ),
+        child: ExtendedImage.network(
+          item.imageUrl,
+          shape: BoxShape.rectangle,
+          //clearMemoryCacheWhenDispose: true,
+          imageCacheName: 'WaterfallFlow',
+          border: Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(10.0),
+          ),
+          loadStateChanged: (ExtendedImageState value) {
+            if (value.extendedImageLoadState == LoadState.loading) {
+              Widget loadingWidget = CommonCircularProgressIndicator();
+              if (!konwSized) {
+                //todo: not work in web
+                loadingWidget = AspectRatio(
+                  aspectRatio: 1.0,
+                  child: loadingWidget,
+                );
+              }
+              return loadingWidget;
+            } else if (value.extendedImageLoadState == LoadState.completed) {
+              item.imageRawSize = Size(
+                  value.extendedImageInfo!.image.width.toDouble(),
+                  value.extendedImageInfo!.image.height.toDouble());
+            }
+            return null;
+          },
+        ),
       ),
       Positioned(
         top: 5.0,
@@ -161,7 +158,7 @@ Widget buildWaterfallFlowItem(BuildContext c, TuChongItem item, int index,
             style: const TextStyle(fontSize: fontSize, color: Colors.white),
           ),
         ),
-      )
+      ),
     ],
   );
   if (konwSized) {
@@ -234,14 +231,16 @@ Widget buildBottomWidget(TuChongItem item, {bool showAvatar = true}) {
           width: 25.0,
           height: 25.0,
           shape: BoxShape.circle,
+          imageCacheName: 'WaterfallFlow',
           //enableLoadState: false,
           border: Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
           loadStateChanged: (ExtendedImageState state) {
             if (state.extendedImageLoadState == LoadState.completed) {
               return null;
             }
-            return Image.asset(
+            return ExtendedImage.asset(
               'assets/avatar.jpg',
+              imageCacheName: 'WaterfallFlow',
             );
           },
         ),

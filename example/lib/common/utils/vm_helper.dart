@@ -18,12 +18,9 @@ class VMHelper with ChangeNotifier {
     });
   }
   static final VMHelper _vMHelper = VMHelper._();
-  // Map<IsolateRef, MemoryUsage> memoryInfo = <IsolateRef, MemoryUsage>{};
   late MemoryUsage mainMemoryUsage;
   late Timer _timer;
   List<MyMemoryUsage> mainHistoryMemoryInfo = <MyMemoryUsage>[];
-  // Map<IsolateRef, List<MyMemoryUsage>> historyMemoryInfo =
-  //     <IsolateRef, List<MyMemoryUsage>>{};
   IsolateRef? get main => vm!.isolates!
       .firstWhereOrNull((IsolateRef element) => element.name == 'main');
   int _count = 0;
@@ -50,7 +47,6 @@ class VMHelper with ChangeNotifier {
     if (vm != null && connected) {
       final MemoryUsage memoryUsage =
           await serviceClient!.getMemoryUsage(main!.id!);
-
       mainMemoryUsage = memoryUsage;
       final MyMemoryUsage lastest =
           MyMemoryUsage.copyFromMemoryUsage(memoryUsage);
@@ -71,6 +67,10 @@ class VMHelper with ChangeNotifier {
   void dispose() {
     _timer.cancel();
     super.dispose();
+  }
+
+  void forceGC() {
+    serviceClient?.getAllocationProfile(main?.id ?? '', gc: true);
   }
 }
 

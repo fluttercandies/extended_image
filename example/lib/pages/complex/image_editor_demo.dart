@@ -121,7 +121,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         ),
       ]),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.lightBlue,
+        //color: Colors.lightBlue,
         shape: const CircularNotchedRectangle(),
         child: ButtonTheme(
           minWidth: 0.0,

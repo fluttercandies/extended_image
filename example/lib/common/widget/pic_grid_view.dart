@@ -54,8 +54,7 @@ class PicGridView extends StatelessWidget {
             );
           },
           physics: const NeverScrollableScrollPhysics(),
-          itemCount:
-              tuChongItem.images!.length.clamp(1, maxPicGridViewCount),
+          itemCount: tuChongItem.images!.length.clamp(1, maxPicGridViewCount),
           padding: const EdgeInsets.all(0.0),
         ),
       );

@@ -8,7 +8,10 @@
 
   1. add [ExtendedResizeImage] to support resize image more convenient.
   2. add [ExtendedImageProvider.imageCacheName] to support custom ImageCache to store ExtendedImageProvider.
-  3. add MemoryUsageDemo
+  3. add MemoryUsageDemo. #315
+
+* Issues:
+  1. fix issue that [EditorConfig.editActionDetailsIsChanged] is not fire when change crop area. #317
 
 ## 3.0.0
 

@@ -39,8 +39,7 @@ A powerful official extension library of image, which support placeholder(loadin
     - [save network](#save-network)
   - [Show Crop Image](#show-crop-image)
   - [Paint](#paint)
-  - [WaterfallFlow](#waterfallflow)
-  - [CollectGarbage/viewportBuilder](#collectgarbageviewportbuilder)
+  - [MemoryUsage](#memoryusage)
   - [Other APIs](#other-apis)
 
 ## Import
@@ -52,11 +51,11 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
   flutter: '>=2.0'
 dependencies:
-  extended_image: ^3.0.0
-``` 
+  extended_image: ^4.0.0
+```
 
 *  non-null-safety
-  
+
 1.22.6 to 2.0, Flutter Api has breaking change，please use non-null-safety if you under 1.22.6.
 
 ``` yaml
@@ -65,7 +64,7 @@ environment:
   flutter: '>1.17.0 <=1.22.6'
 dependencies:
   extended_image: ^3.0.0-non-null-safety
-``` 
+```
 
 ## Cache Network
 
@@ -928,61 +927,72 @@ ExtendedImage
 see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/simple/paint_image_demo.dart)
 and [push to refresh header which is used in crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/push_to_refresh_header.dart)
 
-## WaterfallFlow
+## MemoryUsage
 
-build WaterfallFlow with [LoadingMoreList](https://github.com/fluttercandies/loading_more_list) or [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) with ExtendedImage.
+You can reduce memory usage with following settings now.
 
-![img](https://github.com/fluttercandies/flutter_candies/tree/master/gif/waterfall_flow/known_sized.gif)
+* ExtendedResizeImage
+
+| parameter                                                | description                                                  | default   |
+| -------------------------------------------------------- | ------------------------------------------------------------ | --------- |
+| [ExtendedResizeImage.compressionRatio]                   | The image`s size will resize to original * [compressionRatio].It's ExtendedResizeImage`s first pick.The compressionRatio`s range is from 0.0 (exclusive), to 1.0 (exclusive). | null      |
+| [ExtendedResizeImage.maxBytes]                           | [ExtendedResizeImage] will compress the image to a size that is smaller than [maxBytes]. The default size is 500KB. | 500 << 10 |
+| [ExtendedResizeImage.width]/[ExtendedResizeImage.height] | The width/height the image should decode to and cache. It's same as [ResizeImage], | null      |
 
 ```dart
-            LoadingMoreList(
-              ListConfig<TuChongItem>(
-                waterfallFlowDelegate: WaterfallFlowDelegate(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                ),
-                itemBuilder: buildWaterfallFlowItem,
-                sourceList: listSourceRepository,
-                padding: EdgeInsets.all(5.0),
-                lastChildLayoutType: LastChildLayoutType.foot,
-              ),
-            ),
+    ExtendedImage.network(
+      'imageUrl',  
+      compressionRatio: 0.1,
+      maxBytes: null,
+      cacheWidth: null,
+      cacheHeight: null,  
+    )
+
+    ExtendedImage(
+      image: ExtendedResizeImage(
+        ExtendedNetworkImageProvider(
+          'imageUrl',  
+        ),
+        compressionRatio: 0.1,
+        maxBytes: null,
+        width: null,
+        height: null,
+      ),
+    )
 ```
 
-## CollectGarbage/viewportBuilder
+* clearMemoryCacheWhenDispose
 
-you can collect garbage when item is dispose or viewport indexes is changed.
-
-more details, [LoadingMoreList](https://github.com/fluttercandies/loading_more_list), [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) and [ExtendedList](https://github.com/fluttercandies/extended_list)
+| parameter                                                | description                                                  | default |
+| -------------------------------------------------------- | ------------------------------------------------------------ | ------- |
+| clearMemoryCacheWhenDispose                              | It's not good enough after Flutter 2.0, it seems that we can't release memory usage if this image is not completed(https://github.com/fluttercandies/extended_image/issues/317). It will release memory usage only for completed image now.  | false   |
 
 ```dart
-            LoadingMoreList(
-              ListConfig<TuChongItem>(
-                waterfallFlowDelegate: WaterfallFlowDelegate(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                ),
-                itemBuilder: buildWaterfallFlowItem,
-                sourceList: listSourceRepository,
-                padding: EdgeInsets.all(5.0),
-                lastChildLayoutType: LastChildLayoutType.foot,
-                collectGarbage: (List<int> garbages) {
-                  ///collectGarbage
-                  garbages.forEach((index) {
-                    final provider = ExtendedNetworkImageProvider(
-                      listSourceRepository[index].imageUrl,
-                    );
-                    provider.evict();
-                  });
-                  //print("collect garbage : $garbages");
-                },
-                viewportBuilder: (int firstIndex, int lastIndex) {
-                  print("viewport : [$firstIndex,$lastIndex]");
-                },
-              ),
-            ),
+   ExtendedImage.network(
+     'imageUrl',     
+     clearMemoryCacheWhenDispose: true,
+   )
+```
+
+* imageCacheName
+
+| parameter      | description                                                  | default |
+| -------------- | ------------------------------------------------------------ | ------- |
+| imageCacheName | The name of [ImageCache], you can define custom [ImageCache] to store this image. In this way you can work with them without affecting other [ImageCache]| null    |
+
+```dart
+   ExtendedImage.network(
+     'imageUrl',  
+     imageCacheName: 'MemoryUsage',
+   )
+     
+  /// clear when this page is disposed   
+  @override
+  void dispose() {
+    // clear ImageCache which named 'MemoryUsage'
+    clearMemoryImageCache(imageCacheName);
+    super.dispose();
+  }   
 ```
 
 ## Other APIs

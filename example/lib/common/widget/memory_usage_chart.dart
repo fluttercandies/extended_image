@@ -36,9 +36,9 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
       return Container();
     }
     return Container(
-      padding: const EdgeInsets.only(left: 30, right: 30, top: 5, bottom: 5),
+      padding: const EdgeInsets.only(left: 30, right: 30, top: 20, bottom: 5),
       width: window.physicalSize.width,
-      height: 200,
+      height: 150,
       child: LineChart(
         getData(),
         swapAnimationDuration: const Duration(milliseconds: 250),
@@ -118,7 +118,7 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
           .toDouble(),
       maxX: now.millisecondsSinceEpoch.toDouble(),
       minY: 0,
-      maxY: max(500, maxY ?? 0),
+      maxY: max(300, maxY ?? 0),
       lineBarsData: data,
     );
   }

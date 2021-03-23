@@ -15,10 +15,13 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
   @override
   void initState() {
     super.initState();
-    VMHelper().addListener(updateMemoryUsage);
+    VMHelper().addListener(_updateMemoryUsage);
+
+    _top = window.physicalSize.height / window.devicePixelRatio / 2 - 80;
+    _left = window.physicalSize.width / window.devicePixelRatio / 2 - 40;
   }
 
-  void updateMemoryUsage() {
+  void _updateMemoryUsage() {
     if (mounted) {
       setState(() {});
     }
@@ -26,7 +29,7 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
 
   @override
   void dispose() {
-    VMHelper().removeListener(updateMemoryUsage);
+    VMHelper().removeListener(_updateMemoryUsage);
     super.dispose();
   }
 
@@ -40,47 +43,82 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
     return Positioned(
       top: _top,
       left: _left,
-      child: DefaultTextStyle(
-        style: const TextStyle(fontSize: 12, color: Colors.black),
-        child: GestureDetector(
-          onPanUpdate: (DragUpdateDetails dragUpdateDetails) {
-            setState(() {
-              _top += dragUpdateDetails.delta.dy;
-              _left += dragUpdateDetails.delta.dx;
-            });
-          },
+      child: GestureDetector(
+        onPanUpdate: (DragUpdateDetails dragUpdateDetails) {
+          setState(() {
+            _top += dragUpdateDetails.delta.dy;
+            _left += dragUpdateDetails.delta.dx;
+          });
+        },
+        child: DefaultTextStyle(
+          style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.68)),
           child: Container(
-            color: Colors.grey.withOpacity(0.2),
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text.rich(TextSpan(children: <InlineSpan>[
-                  const TextSpan(text: 'HeapUsage: '),
-                  TextSpan(
-                      text: ByteUtil.toByteString(main.heapUsage!),
-                      style: const TextStyle(
-                        color: Colors.red,
-                      )),
-                ])),
-                Text.rich(TextSpan(children: <InlineSpan>[
-                  const TextSpan(text: 'HeapCapacity: '),
-                  TextSpan(
-                      text: ByteUtil.toByteString(main.heapCapacity!),
-                      style: const TextStyle(
-                        color: Colors.blue,
-                      )),
-                ])),
-                Text.rich(TextSpan(children: <InlineSpan>[
-                  const TextSpan(text: 'ExternalUsage: '),
-                  TextSpan(
-                      text: ByteUtil.toByteString(main.externalUsage!),
-                      style: const TextStyle(
-                        color: Colors.green,
-                      )),
-                ])),
+            decoration: ShapeDecoration(
+              color: Colors.black.withOpacity(0.8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+              shadows: <BoxShadow>[
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                )
               ],
+            ),
+            padding: const EdgeInsets.all(8.0),
+            child: IntrinsicWidth(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  const Text('Used: '),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    ByteUtil.toByteString(main.heapUsage!),
+                    style: const TextStyle(
+                      color: Colors.red,
+                      height: 1.4,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.white.withOpacity(0.1),
+                    thickness: 1,
+                  ),
+                  const Text('Capacity: '),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    ByteUtil.toByteString(main.heapCapacity!),
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      height: 1.4,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.white.withOpacity(0.1),
+                    thickness: 1,
+                  ),
+                  const Text('External: '),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    ByteUtil.toByteString(main.externalUsage!),
+                    style: const TextStyle(
+                      color: Colors.green,
+                      height: 1.4,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

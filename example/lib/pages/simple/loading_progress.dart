@@ -30,7 +30,8 @@ class LoadingProgress extends StatelessWidget {
               cache: false,
               loadStateChanged: (ExtendedImageState state) {
                 if (state.extendedImageLoadState == LoadState.loading) {
-                  final ImageChunkEvent? loadingProgress = state.loadingProgress;
+                  final ImageChunkEvent? loadingProgress =
+                      state.loadingProgress;
                   final double? progress =
                       loadingProgress?.expectedTotalBytes != null
                           ? loadingProgress!.cumulativeBytesLoaded /

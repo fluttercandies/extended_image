@@ -56,8 +56,8 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
   flutter: '>=2.0'
 dependencies:
-  extended_image: ^3.0.0
-``` 
+  extended_image: ^4.0.0
+```
 
 *  非空安全
 
@@ -69,7 +69,7 @@ environment:
   flutter: '>1.17.0 <=1.22.6'
 dependencies:
   extended_image: ^3.0.0-non-null-safety
-``` 
+```
 
 ## 缓存网络图片
 
@@ -935,61 +935,74 @@ ExtendedImage
 [绘制例子](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/simple/paint_image_demo.dart)
 [下拉刷新头当中，也使用了这个技巧](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/push_to_refresh_header.dart)
 
-## 瀑布流
+## 内存使用
 
-使用 [LoadingMoreList](https://github.com/fluttercandies/loading_more_list) 或者 [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) 以及 ExtendedImage 创建瀑布流布局.
+现在你可以通过下面设置来减少图片内存的占用.
 
-![img](https://github.com/fluttercandies/flutter_candies/tree/master/gif/waterfall_flow/known_sized.gif)
+* ExtendedResizeImage
+
+| parameter                                                | description                                         | default   |
+| -------------------------------------------------------- | --------------------------------------------------- | --------- |
+| [ExtendedResizeImage.compressionRatio]                   | 图片压缩率，大于0小于1                              | null      |
+| [ExtendedResizeImage.maxBytes]                           | 图片的大小的最大值. 默认值为 500KB.                 | 500 << 10 |
+| [ExtendedResizeImage.width]/[ExtendedResizeImage.height] | 宽和高用于decode和缓存. 跟官方的[ResizeImage]一致。 | null      |
 
 ```dart
-            LoadingMoreList(
-              ListConfig<TuChongItem>(
-                waterfallFlowDelegate: WaterfallFlowDelegate(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                ),
-                itemBuilder: buildWaterfallFlowItem,
-                sourceList: listSourceRepository,
-                padding: EdgeInsets.all(5.0),
-                lastChildLayoutType: LastChildLayoutType.foot,
-              ),
-            ),
+    ExtendedImage.network(
+      'imageUrl',  
+      compressionRatio: 0.1,
+      maxBytes: null,
+      cacheWidth: null,
+      cacheHeight: null,  
+    )
+
+    ExtendedImage(
+      image: ExtendedResizeImage(
+        ExtendedNetworkImageProvider(
+          'imageUrl',  
+        ),
+        compressionRatio: 0.1,
+        maxBytes: null,
+        width: null,
+        height: null,
+      ),
+    )
 ```
 
-## 内存回收/可视区域追踪
+* clearMemoryCacheWhenDispose
 
-当列表元素回收的时候你可以回收掉图片的内存缓存以减少内存压力。你也可以监听到 viewport 中 indexes 的变化。
+| parameter                   | description                                                  | default |
+| --------------------------- | ------------------------------------------------------------ | ------- |
+| clearMemoryCacheWhenDispose | 在Flutter 2.0之后也许不会起作用, 因为没法在图片没有完成之前释放掉(https://github.com/fluttercandies/extended_image/issues/317).  现在只会释放已完成的图片资源. | false   |
 
-更多详情请查看[LoadingMoreList](https://github.com/fluttercandies/loading_more_list), [WaterfallFlow](https://github.com/fluttercandies/waterfall_flow) 和 [ExtendedList](https://github.com/fluttercandies/extended_list)
+
 
 ```dart
-            LoadingMoreList(
-              ListConfig<TuChongItem>(
-                waterfallFlowDelegate: WaterfallFlowDelegate(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                ),
-                itemBuilder: buildWaterfallFlowItem,
-                sourceList: listSourceRepository,
-                padding: EdgeInsets.all(5.0),
-                lastChildLayoutType: LastChildLayoutType.foot,
-                collectGarbage: (List<int> garbages) {
-                  ///collectGarbage
-                  garbages.forEach((index) {
-                    final provider = ExtendedNetworkImageProvider(
-                      listSourceRepository[index].imageUrl,
-                    );
-                    provider.evict();
-                  });
-                  //print("collect garbage : $garbages");
-                },
-                viewportBuilder: (int firstIndex, int lastIndex) {
-                  print("viewport : [$firstIndex,$lastIndex]");
-                },
-              ),
-            ),
+   ExtendedImage.network(
+     'imageUrl',     
+     clearMemoryCacheWhenDispose: true,
+   )
+```
+
+* imageCacheName
+
+| parameter      | description                                                  | default |
+| -------------- | ------------------------------------------------------------ | ------- |
+| imageCacheName | 你可以指定一个 ImageCache 来缓存一些图片。这样你可以一起处理它们，不会影响其他的图片缓存. | null    |
+
+```dart
+   ExtendedImage.network(
+     'imageUrl',  
+     imageCacheName: 'MemoryUsage',
+   )
+     
+  /// clear when this page is disposed   
+  @override
+  void dispose() {
+    // clear ImageCache which named 'MemoryUsage'
+    clearMemoryImageCache(imageCacheName);
+    super.dispose();
+  }   
 ```
 
 ## 其他 APIs

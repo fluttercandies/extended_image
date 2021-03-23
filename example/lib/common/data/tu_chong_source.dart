@@ -51,7 +51,8 @@ class TuChongSource {
       for (final dynamic item in jsonRes['feedList']) {
         if (item != null) {
           tryCatch(() {
-            feedList.add(TuChongItem.fromJson(asT<Map<String, dynamic>>(item)!));
+            feedList
+                .add(TuChongItem.fromJson(asT<Map<String, dynamic>>(item)!));
           });
         }
       }

@@ -102,8 +102,8 @@ class RefreshImage extends StatelessWidget {
         final double imageHeight = image.height.toDouble();
         final double imageWidth = image.width.toDouble();
         final Size size = rect.size;
-        final double y = (1 - min(top / (refreshHeight - hideHeight), 1)) *
-            imageHeight;
+        final double y =
+            (1 - min(top / (refreshHeight - hideHeight), 1)) * imageHeight;
 
         canvas.drawImageRect(
             image,

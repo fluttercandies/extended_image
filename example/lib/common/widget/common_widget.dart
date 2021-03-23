@@ -11,8 +11,7 @@ class FlatButtonWithIcon extends TextButton with MaterialButtonWithIconMixin {
     Color? textColor,
     required Widget icon,
     required Widget label,
-  })  :
-        super(
+  }) : super(
           key: key,
           onPressed: onPressed,
           clipBehavior: clipBehavior,

@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui' as ui show Image;
 import 'package:example/common/data/tu_chong_source.dart';
 import 'package:example/common/model/pic_swiper_item.dart';
+import 'package:example/common/widget/common_widget.dart';
 import 'package:example/example_routes.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -51,19 +52,12 @@ class CropImage extends StatelessWidget {
     return ExtendedImage.network(imageItem.imageUrl,
         width: width,
         clearMemoryCacheWhenDispose: false,
+        imageCacheName: 'CropImage',
         height: height, loadStateChanged: (ExtendedImageState state) {
       Widget? widget;
       switch (state.extendedImageLoadState) {
         case LoadState.loading:
-          widget = Container(
-            color: Colors.grey,
-            alignment: Alignment.center,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.0,
-              valueColor:
-                  AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-            ),
-          );
+          widget = CommonCircularProgressIndicator();
           break;
         case LoadState.completed:
           //if you can't konw image size before build,
@@ -148,12 +142,13 @@ class CropImage extends StatelessWidget {
       return ExtendedRawImage(image: image, fit: BoxFit.cover);
     } else if (n >= 4 / 3) {
       Widget imageWidget = ExtendedRawImage(
-          image: image,
-          width: num300,
-          height: num400,
-          fit: BoxFit.fill,
-          sourceRect: Rect.fromLTWH(
-              0.0, 0.0, image.width.toDouble(), 4 * image.width / 3));
+        image: image,
+        width: num300,
+        height: num400,
+        fit: BoxFit.fill,
+        sourceRect: Rect.fromLTWH(
+            0.0, 0.0, image.width.toDouble(), 4 * image.width / 3),
+      );
       if (n >= 4) {
         imageWidget = Container(
           width: num300,

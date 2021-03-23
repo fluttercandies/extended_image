@@ -8,7 +8,8 @@ import 'package:photo_manager/photo_manager.dart';
 ///
 ///  create by zmtzawqlp on 2020/1/31
 ///
-double? initScale({required Size imageSize, required Size size, double? initialScale}) {
+double? initScale(
+    {required Size imageSize, required Size size, double? initialScale}) {
   final double n1 = imageSize.height / imageSize.width;
   final double n2 = size.height / size.width;
   if (n1 > n2) {

@@ -1,5 +1,3 @@
-
-
 class PicSwiperItem {
   PicSwiperItem({
     required this.picUrl,
