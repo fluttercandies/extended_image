@@ -114,13 +114,15 @@ class ExtendedImage extends StatefulWidget {
     this.isAntiAlias = false,
     String cacheKey,
     bool printError = true,
-  })  : assert(cacheWidth == null || cacheWidth > 0),
+    double compressionRatio,
+    int maxBytes,
+    bool cacheRawData = false,
+    String imageCacheName,
+  })  : assert(url != null),
+        assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
-        assert(isAntiAlias != null),
-        image = ResizeImage.resizeIfNeeded(
-          cacheWidth,
-          cacheHeight,
-          ExtendedNetworkImageProvider(
+        image = ExtendedResizeImage.resizeIfNeeded(
+          provider: ExtendedNetworkImageProvider(
             url,
             scale: scale,
             headers: headers,
@@ -131,7 +133,15 @@ class ExtendedImage extends StatefulWidget {
             timeLimit: timeLimit,
             cacheKey: cacheKey,
             printError: printError,
+            cacheRawData: cacheRawData,
+            imageCacheName: imageCacheName,
           ),
+          compressionRatio: compressionRatio,
+          maxBytes: maxBytes,
+          cacheWidth: cacheWidth,
+          cacheHeight: cacheHeight,
+          cacheRawData: cacheRawData,
+          imageCacheName: imageCacheName,
         ),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
@@ -154,7 +164,7 @@ class ExtendedImage extends StatefulWidget {
   /// On Android, this may require the
   /// `android.permission.READ_EXTERNAL_STORAGE` permission.
   ///
-  /// Use [filterQuality] to change the quality when scaling an image.
+  /// Use [filterQuality] to change the quality when scailing an image.
   /// Use the [FilterQuality.low] quality setting to scale the image,
   /// which corresponds to bilinear interpolation, rather than the default
   /// [FilterQuality.none] which corresponds to nearest-neighbor.
@@ -200,21 +210,27 @@ class ExtendedImage extends StatefulWidget {
     int cacheWidth,
     int cacheHeight,
     this.isAntiAlias = false,
-  })  : assert(cacheWidth == null || cacheWidth > 0),
+    double compressionRatio,
+    int maxBytes,
+    bool cacheRawData = false,
+    String imageCacheName,
+  })  : assert(file != null),
+        assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
-        assert(isAntiAlias != null),
-        image = ResizeImage.resizeIfNeeded(
-          cacheWidth,
-          cacheHeight,
-          ExtendedFileImageProvider(
+        image = ExtendedResizeImage.resizeIfNeeded(
+          provider: ExtendedFileImageProvider(
             file,
             scale: scale,
+            cacheRawData: cacheRawData,
+            imageCacheName: imageCacheName,
           ),
+          compressionRatio: compressionRatio,
+          maxBytes: maxBytes,
+          cacheWidth: cacheWidth,
+          cacheHeight: cacheHeight,
+          cacheRawData: cacheRawData,
+          imageCacheName: imageCacheName,
         ),
-        assert(alignment != null),
-        assert(repeat != null),
-        assert(filterQuality != null),
-        assert(matchTextDirection != null),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
@@ -389,20 +405,37 @@ class ExtendedImage extends StatefulWidget {
     int cacheWidth,
     int cacheHeight,
     this.isAntiAlias = false,
-  })  : assert(cacheWidth == null || cacheWidth > 0),
+    double compressionRatio,
+    int maxBytes,
+    bool cacheRawData = false,
+    String imageCacheName,
+  })  : assert(name != null),
+        assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
-        assert(isAntiAlias != null),
-        image = ResizeImage.resizeIfNeeded(
-            cacheWidth,
-            cacheHeight,
-            scale != null
-                ? ExtendedExactAssetImageProvider(name,
-                    bundle: bundle, scale: scale, package: package)
-                : ExtendedAssetImageProvider(name,
-                    bundle: bundle, package: package)),
-        assert(alignment != null),
-        assert(repeat != null),
-        assert(matchTextDirection != null),
+        image = ExtendedResizeImage.resizeIfNeeded(
+          provider: scale != null
+              ? ExtendedExactAssetImageProvider(
+                  name,
+                  bundle: bundle,
+                  scale: scale,
+                  package: package,
+                  cacheRawData: cacheRawData,
+                  imageCacheName: imageCacheName,
+                )
+              : ExtendedAssetImageProvider(
+                  name,
+                  bundle: bundle,
+                  package: package,
+                  cacheRawData: cacheRawData,
+                  imageCacheName: imageCacheName,
+                ),
+          compressionRatio: compressionRatio,
+          maxBytes: maxBytes,
+          cacheWidth: cacheWidth,
+          cacheHeight: cacheHeight,
+          cacheRawData: cacheRawData,
+          imageCacheName: imageCacheName,
+        ),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
@@ -465,20 +498,27 @@ class ExtendedImage extends StatefulWidget {
     int cacheWidth,
     int cacheHeight,
     this.isAntiAlias = false,
-  })  : assert(cacheWidth == null || cacheWidth > 0),
+    double compressionRatio,
+    int maxBytes,
+    bool cacheRawData = false,
+    String imageCacheName,
+  })  : assert(bytes != null),
+        assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
-        assert(isAntiAlias != null),
-        image = ResizeImage.resizeIfNeeded(
-          cacheWidth,
-          cacheHeight,
-          ExtendedMemoryImageProvider(
+        image = ExtendedResizeImage.resizeIfNeeded(
+          provider: ExtendedMemoryImageProvider(
             bytes,
             scale: scale,
+            cacheRawData: cacheRawData,
+            imageCacheName: imageCacheName,
           ),
+          compressionRatio: compressionRatio,
+          maxBytes: maxBytes,
+          cacheWidth: cacheWidth,
+          cacheHeight: cacheHeight,
+          cacheRawData: cacheRawData,
+          imageCacheName: imageCacheName,
         ),
-        assert(alignment != null),
-        assert(repeat != null),
-        assert(matchTextDirection != null),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)

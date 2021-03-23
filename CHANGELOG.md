@@ -1,3 +1,17 @@
+## 4.0.0-non-null-safety
+
+* Breaking change:
+
+  1. we cache raw image pixels as default behavior at previous versions, it's not good for heap memory usage. so add [ExtendedImageProvider.cacheRawData] to support whether should cache the raw image pixels. It's [false] now.
+
+* Improve:
+
+  1. add [ExtendedResizeImage] to support resize image more convenient.
+  2. add [ExtendedImageProvider.imageCacheName] to support custom ImageCache to store ExtendedImageProvider.
+  3. add MemoryUsageDemo. #315
+
+* Issues:
+  1. fix issue that [EditorConfig.editActionDetailsIsChanged] is not fire when change crop area. #317
 ## 3.0.0-non-null-safety
 
 * non-null-safety
@@ -5,7 +19,6 @@
   Remove [TransparentMaterialPageRoute] and [TransparentMaterialPageRoute]
 * Improve:
   Add [ExtendedNetworkImageProvider.printError]
-
 ## 2.0.0
 
 * Improve:
