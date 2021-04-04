@@ -38,9 +38,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       GlobalKey<ExtendedImageCropLayerState>();
   @override
   void initState() {
-    _initGestureConfig();
-
     super.initState();
+    _initGestureConfig();
   }
 
   void _initGestureConfig() {

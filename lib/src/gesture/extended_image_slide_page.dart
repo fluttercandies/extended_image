@@ -127,9 +127,9 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
 
   @override
   void dispose() {
-    super.dispose();
     _backAnimationController.removeListener(_backAnimation);
     _backAnimationController.dispose();
+    super.dispose();
   }
 
   void slide(Offset value,

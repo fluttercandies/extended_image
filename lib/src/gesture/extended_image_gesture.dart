@@ -113,9 +113,9 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
 
   @override
   void dispose() {
-    super.dispose();
     _gestureAnimation.stop();
     _gestureAnimation.dispose();
+    super.dispose();
   }
 
   void _handleScaleStart(ScaleStartDetails details) {

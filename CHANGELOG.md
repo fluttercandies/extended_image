@@ -1,3 +1,8 @@
+## 4.0.1
+
+* Issues:
+  1. fix issue that we should end method with a call to super.dispose().(#329).
+
 ## 4.0.0
 
 * Breaking change:
