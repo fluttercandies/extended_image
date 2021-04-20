@@ -120,6 +120,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                   fit: BoxFit.contain,
                   enableSlideOutPage: true,
                   mode: ExtendedImageMode.gesture,
+                  imageCacheName: 'CropImage',
                   heroBuilderForSlidingPage: (Widget result) {
                     if (index < min(9, widget.pics!.length)) {
                       return Hero(
