@@ -117,6 +117,7 @@ class ExtendedImage extends StatefulWidget {
     int? maxBytes,
     bool cacheRawData = false,
     String? imageCacheName,
+    Duration? cacheMaxAge,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -133,6 +134,7 @@ class ExtendedImage extends StatefulWidget {
             printError: printError,
             cacheRawData: cacheRawData,
             imageCacheName: imageCacheName,
+            cacheMaxAge: cacheMaxAge,
           ),
           compressionRatio: compressionRatio,
           maxBytes: maxBytes,
