@@ -1,3 +1,8 @@
+## 4.1.0-non-null-safety
+
+* Improve:
+  1. add [ExtendedImage.network.cacheMaxAge] to set max age to be cached.
+
 ## 4.0.1-non-null-safety
 
 * Issues:
