@@ -10,13 +10,6 @@ class MySpecialTextSpanBuilder extends SpecialTextSpanBuilder {
 
   /// whether show background for @somebody
   final bool showAtBackground;
-  @override
-  TextSpan build(String data,
-      {TextStyle? textStyle, SpecialTextGestureTapCallback? onTap}) {
-    final TextSpan textSpan =
-        super.build(data, textStyle: textStyle, onTap: onTap);
-    return textSpan;
-  }
 
   @override
   SpecialText? createSpecialText(String flag,

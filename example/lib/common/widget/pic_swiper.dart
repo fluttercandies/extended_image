@@ -17,6 +17,7 @@ import 'package:oktoast/oktoast.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/rendering.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'hero.dart';
 import 'item_builder.dart';
 
 const String attachContent =
@@ -121,27 +122,6 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                   enableSlideOutPage: true,
                   mode: ExtendedImageMode.gesture,
                   imageCacheName: 'CropImage',
-                  heroBuilderForSlidingPage: (Widget result) {
-                    if (index < min(9, widget.pics!.length)) {
-                      return Hero(
-                        tag: item,
-                        child: result,
-                        flightShuttleBuilder: (BuildContext flightContext,
-                            Animation<double> animation,
-                            HeroFlightDirection flightDirection,
-                            BuildContext fromHeroContext,
-                            BuildContext toHeroContext) {
-                          final Hero hero =
-                              (flightDirection == HeroFlightDirection.pop
-                                  ? fromHeroContext.widget
-                                  : toHeroContext.widget) as Hero;
-                          return hero.child;
-                        },
-                      );
-                    } else {
-                      return result;
-                    }
-                  },
                   initGestureConfigHandler: (ExtendedImageState state) {
                     double? initialScale = 1.0;
 
@@ -268,6 +248,16 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                     return null;
                   },
                 );
+
+                if (index < min(9, widget.pics!.length)) {
+                  image = HeroWidget(
+                    child: image,
+                    tag: item,
+                    slideType: SlideType.onlyImage,
+                    slidePagekey: slidePagekey,
+                  );
+                }
+
                 image = GestureDetector(
                   child: image,
                   onTap: () {
@@ -560,6 +550,7 @@ class ImageDetail extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(20.0),
       child: Stack(
+        clipBehavior: Clip.none,
         children: <Widget>[
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -585,26 +576,27 @@ class ImageDetail extends StatelessWidget {
                 //overflow: ExtendedTextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 14, color: Colors.grey),
                 maxLines: 10,
-                overflowWidget: kIsWeb
-                    ? null
-                    : TextOverflowWidget(
-                        //maxHeight: double.infinity,
-                        //align: TextOverflowAlign.right,
-                        //fixedOffset: Offset.zero,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            const Text('\u2026 '),
-                            TextButton(
-                              child: const Text('more'),
-                              onPressed: () {
-                                launch(
-                                    'https://github.com/fluttercandies/extended_text');
-                              },
-                            )
-                          ],
-                        ),
-                      ),
+                overflowWidget: TextOverflowWidget(
+                  //maxHeight: double.infinity,
+                  //align: TextOverflowAlign.right,
+                  //fixedOffset: Offset.zero,
+                  //debugOverflowRectColor: Colors.red,
+                  child: Material(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const Text('\u2026 '),
+                        InkWell(
+                          child: const Text('more'),
+                          onTap: () {
+                            launch(
+                                'https://github.com/fluttercandies/extended_text');
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ),
                 selectionEnabled: true,
                 selectionControls: MyTextSelectionControls(),
               ),
@@ -628,43 +620,45 @@ class ImageDetail extends StatelessWidget {
               '${(index + 1).toString().padLeft(tuChongItem!.images!.length.toString().length, '0')}/${tuChongItem!.images!.length}',
             ),
           ),
+          if (tuChongItem != null)
+            Positioned(
+              top: -30.0,
+              right: -15.0,
+              child: FloatText(
+                '${tuChongItem?.imageSize.width.toInt()} * ${tuChongItem?.imageSize.height.toInt()}',
+              ),
+            ),
           Positioned(
-            top: -30.0,
-            right: -15.0,
-            child: FloatText(
-              '${info!.imageInfo.image.width} * ${info!.imageInfo.image.height}',
+            top: -33.0,
+            right: 0,
+            left: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: const <Widget>[
+                Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+                Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+                Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+                Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+                Icon(
+                  Icons.star,
+                  color: Colors.yellow,
+                ),
+              ],
             ),
           ),
-          Positioned(
-              top: -33.0,
-              right: 0,
-              left: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const <Widget>[
-                  Icon(
-                    Icons.star,
-                    color: Colors.yellow,
-                  ),
-                  Icon(
-                    Icons.star,
-                    color: Colors.yellow,
-                  ),
-                  Icon(
-                    Icons.star,
-                    color: Colors.yellow,
-                  ),
-                  Icon(
-                    Icons.star,
-                    color: Colors.yellow,
-                  ),
-                  Icon(
-                    Icons.star,
-                    color: Colors.yellow,
-                  ),
-                ],
-              )),
         ],
       ),
       decoration: BoxDecoration(

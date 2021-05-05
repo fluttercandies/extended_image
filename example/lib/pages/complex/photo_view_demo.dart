@@ -19,7 +19,6 @@ import 'package:flutter/material.dart' hide CircularProgressIndicator;
 import 'package:loading_more_list/loading_more_list.dart';
 import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/foundation.dart';
 
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 
@@ -65,12 +64,12 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
   @override
   Widget build(BuildContext context) {
     const double margin = 11;
-    final Widget result = Material(
-      child: Column(
+    final Widget result = Scaffold(
+      appBar: AppBar(
+        title: const Text('photo view demo'),
+      ),
+      body: Column(
         children: <Widget>[
-          AppBar(
-            title: const Text('photo view demo'),
-          ),
           Container(
             padding: const EdgeInsets.all(margin),
             child: const Text(
@@ -171,27 +170,22 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                   //overflow: ExtendedTextOverflow.ellipsis,
                                   style: const TextStyle(
                                       fontSize: 14, color: Colors.grey),
-                                  maxLines: 10,
-                                  overflowWidget: kIsWeb
-                                      ? null
-                                      : TextOverflowWidget(
-                                          //maxHeight: double.infinity,
-                                          //align: TextOverflowAlign.right,
-                                          //fixedOffset: Offset.zero,
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              const Text('\u2026 '),
-                                              TextButton(
-                                                child: const Text('more'),
-                                                onPressed: () {
-                                                  launch(
-                                                      'https://github.com/fluttercandies/extended_text');
-                                                },
-                                              )
-                                            ],
-                                          ),
-                                        ),
+                                  maxLines: 5,
+                                  overflowWidget: TextOverflowWidget(
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        const Text('\u2026 '),
+                                        InkWell(
+                                          child: const Text('more'),
+                                          onTap: () {
+                                            launch(
+                                                'https://github.com/fluttercandies/extended_text');
+                                          },
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                   selectionEnabled: true,
                                   selectionControls:
                                       _myExtendedMaterialTextSelectionControls,

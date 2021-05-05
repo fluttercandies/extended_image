@@ -72,9 +72,9 @@ class CropImage extends StatelessWidget {
           //return null;
           //return state.completedWidget;
           widget = Hero(
-              tag: imageItem.imageUrl,
-              child:
-                  buildImage(state.extendedImageInfo!.image, num300, num400));
+            tag: imageItem.imageUrl,
+            child: buildImage(state.extendedImageInfo!.image, num300, num400),
+          );
 
           break;
         case LoadState.failed:
