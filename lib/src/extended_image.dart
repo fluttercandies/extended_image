@@ -57,6 +57,8 @@ class ExtendedImage extends StatefulWidget {
     this.extendedImageGestureKey,
     this.isAntiAlias = false,
     this.handleLoadingProgress = false,
+    this.brightness = 0,
+    this.saturation = 0,
   })  : assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
@@ -118,6 +120,8 @@ class ExtendedImage extends StatefulWidget {
     bool cacheRawData = false,
     String? imageCacheName,
     Duration? cacheMaxAge,
+    this.brightness = 0,
+    this.saturation = 0,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -214,6 +218,8 @@ class ExtendedImage extends StatefulWidget {
     int? maxBytes,
     bool cacheRawData = false,
     String? imageCacheName,
+    this.brightness = 0,
+    this.saturation = 0,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -408,6 +414,8 @@ class ExtendedImage extends StatefulWidget {
     int? maxBytes,
     bool cacheRawData = false,
     String? imageCacheName,
+    this.brightness = 0,
+    this.saturation = 0,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -500,6 +508,8 @@ class ExtendedImage extends StatefulWidget {
     int? maxBytes,
     bool cacheRawData = false,
     String? imageCacheName,
+    this.brightness = 0,
+    this.saturation = 0,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -745,6 +755,9 @@ class ExtendedImage extends StatefulWidget {
   ///
   /// Anti-aliasing alleviates the sawtooth artifact when the image is rotated.
   final bool isAntiAlias;
+
+  final double brightness;
+  final double saturation;
 
   @override
   _ExtendedImageState createState() => _ExtendedImageState();
@@ -1122,6 +1135,8 @@ class _ExtendedImageState extends State<ExtendedImage>
     } else if (widget.mode == ExtendedImageMode.editor) {
       current = ExtendedImageEditor(
         extendedImageState: this,
+        brightness: widget.brightness,
+        saturation: widget.saturation,
         key: widget.extendedImageEditorKey,
       );
     } else {
