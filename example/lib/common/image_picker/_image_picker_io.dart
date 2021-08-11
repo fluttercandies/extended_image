@@ -17,7 +17,7 @@ Future<Uint8List?> pickImage(BuildContext context) async {
     pageSize: 300,
     selectedAssets: assets,
     requestType: RequestType.image,
-    textDelegate: PickerTextDelegate(),
+    textDelegate: EnglishTextDelegate(),
   );
   if (result != null) {
     assets = List<AssetEntity>.from(result);
@@ -36,54 +36,5 @@ class ImageSaver {
         await PhotoManager.editor.saveImage(fileData);
     final File? file = await imageEntity?.file;
     return file?.path;
-  }
-}
-
-class PickerTextDelegate implements AssetsPickerTextDelegate {
-  factory PickerTextDelegate() => _instance;
-
-  PickerTextDelegate._internal();
-
-  static final PickerTextDelegate _instance = PickerTextDelegate._internal();
-
-  @override
-  String confirm = 'OK';
-
-  @override
-  String cancel = 'Cancel';
-
-  @override
-  String edit = 'Edit';
-
-  @override
-  String gifIndicator = 'GIF';
-
-  @override
-  String heicNotSupported = 'not support HEIC yet';
-
-  @override
-  String loadFailed = 'load failed';
-
-  @override
-  String original = 'Original';
-
-  @override
-  String preview = 'Preview';
-
-  @override
-  String select = 'Select';
-
-  @override
-  String unSupportedAssetType = 'not support yet';
-
-  @override
-  String durationIndicatorBuilder(Duration duration) {
-    const String separator = ':';
-    final String minute = duration.inMinutes.toString().padLeft(2, '0');
-    final String second =
-        ((duration - Duration(minutes: duration.inMinutes)).inSeconds)
-            .toString()
-            .padLeft(2, '0');
-    return '$minute$separator$second';
   }
 }
