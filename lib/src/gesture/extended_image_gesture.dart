@@ -117,6 +117,17 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     _gestureAnimation.dispose();
     super.dispose();
   }
+  
+  // public
+  void handleScaleStart(ScaleStartDetails details) {
+    _handleScaleStart(details);
+  }
+  void handleScaleUpdate(ScaleUpdateDetails details) {
+    _handleScaleUpdate(details);
+  }
+  void handleScaleEnd(ScaleEndDetails details) {
+    _handleScaleEnd(details);
+  }
 
   void _handleScaleStart(ScaleStartDetails details) {
     _gestureAnimation.stop();
