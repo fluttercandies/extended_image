@@ -280,7 +280,17 @@ class ExtendedImageGesturePageViewState
         behavior: HitTestBehavior.opaque,
         child: result,
       );
+      
     }
+    // 目的是为了: 在PageView左右滑动时候, 能够增加上下滑动的体验
+    // 如果`widget.childrenDelegate`没有被`ExtendedImageSlidePage`包裹, 即开发者不使用下拉关闭功能, `extendedImageGestureState`为null, 不影响左右滑动
+    result = GestureDetector(
+      onScaleStart: extendedImageGestureState?.handleScaleStart,
+      onScaleUpdate: extendedImageGestureState?.handleScaleUpdate,
+      onScaleEnd: extendedImageGestureState?.handleScaleEnd,
+      child: result,
+    );
+    
     return result;
   }
 
