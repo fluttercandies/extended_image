@@ -193,7 +193,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             left: cropRect!.left + gWidth,
             child: Container(
               height: gWidth * 2,
-              width: cropRect!.width - gWidth * 2,
+              width: max(cropRect!.width - gWidth * 2, gWidth * 2),
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onVerticalDragUpdate: (DragUpdateDetails details) {
@@ -210,7 +210,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             top: cropRect!.top + gWidth,
             left: cropRect!.left - gWidth,
             child: Container(
-              height: cropRect!.height - gWidth * 2,
+              height: max(cropRect!.height - gWidth * 2, gWidth * 2),
               width: gWidth * 2,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -229,7 +229,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             left: cropRect!.left + gWidth,
             child: Container(
               height: gWidth * 2,
-              width: cropRect!.width - gWidth * 2,
+              width: max(cropRect!.width - gWidth * 2, gWidth * 2),
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onVerticalDragUpdate: (DragUpdateDetails details) {
@@ -246,7 +246,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             top: cropRect!.top + gWidth,
             left: cropRect!.right - gWidth,
             child: Container(
-              height: cropRect!.height - gWidth * 2,
+              height: max(cropRect!.height - gWidth * 2, gWidth * 2),
               width: gWidth * 2,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
