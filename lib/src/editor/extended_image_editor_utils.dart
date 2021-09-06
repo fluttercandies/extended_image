@@ -438,8 +438,9 @@ class EditorConfig {
   final double speed;
 
   /// reverse mouse pointer scroll deirection
-  /// false: zoom up => down, zoom in => up
-  /// true: zoom up => up, zoom in => down
+  /// false: zoom int => down, zoom out => up
+  /// true: zoom int => up, zoom out => down
+  /// default is false
   final bool reverseMousePointerScrollDirection;
 }
 

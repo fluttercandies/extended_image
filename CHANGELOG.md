@@ -1,3 +1,8 @@
+## 4.2.1
+
+* Improve:
+  fix description of reverseMousePointerScrollDirection
+
 ## 4.2.0
 
 * Issues:
