@@ -373,6 +373,7 @@ class GestureConfig {
     this.initialAlignment = InitialAlignment.center,
     this.gestureDetailsIsChanged,
     this.hitTestBehavior = HitTestBehavior.deferToChild,
+    this.reverseMousePointerScrollDirection = false,
   })  : minScale = minScale ??= 0.8,
         maxScale = maxScale ??= 5.0,
         speed = speed ??= 1.0,
@@ -427,6 +428,12 @@ class GestureConfig {
   /// init image rect with alignment when initialScale > 1.0
   /// see https://github.com/fluttercandies/extended_image/issues/66
   final InitialAlignment initialAlignment;
+
+  /// reverse mouse pointer scroll deirection
+  /// false: zoom int => down, zoom out => up
+  /// true: zoom int => up, zoom out => down
+  /// default is false
+  final bool reverseMousePointerScrollDirection;
 }
 
 double roundAfter(double number, int position) {

@@ -257,7 +257,17 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       _handleScaleUpdate(ScaleUpdateDetails(
           focalPoint: event.position,
           scale: 1.0 +
-              (dy.abs() > dx.abs() ? dy : dx) * _editorConfig.speed / 1000.0));
+              _reverseIf((dy.abs() > dx.abs() ? dy : dx) *
+                  _editorConfig.speed /
+                  1000.0)));
+    }
+  }
+
+  double _reverseIf(double scaleDetal) {
+    if (_editorConfig?.reverseMousePointerScrollDirection ?? false) {
+      return -scaleDetal;
+    } else {
+      return scaleDetal;
     }
   }
 

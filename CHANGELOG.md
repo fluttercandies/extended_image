@@ -1,3 +1,9 @@
+## 4.2.0-non-null-safety
+
+* Issues:
+  fix issue that inverse zoom by mouse wheel.(#382)
+  fix issue that crop_layer with/height is negative
+
 ## 4.1.0-non-null-safety
 
 * Improve:

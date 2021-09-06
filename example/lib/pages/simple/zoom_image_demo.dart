@@ -51,6 +51,7 @@ class ZoomImageDemo extends StatelessWidget {
                   initialScale: 1.0,
                   inPageView: false,
                   initialAlignment: InitialAlignment.center,
+                  reverseMousePointerScrollDirection: true,
                   gestureDetailsIsChanged: (GestureDetails details) {
                     //print(details?.totalScale);
                   },
