@@ -1,10 +1,11 @@
 import 'dart:ui' as ui show Image;
-import 'package:flutter/material.dart';
+
 import 'package:extended_image/src/editor/extended_image_editor_utils.dart';
-import 'package:extended_image/src/gesture/extended_image_gesture_utils.dart';
 import 'package:extended_image/src/extended_image_typedef.dart';
+import 'package:extended_image/src/gesture/extended_image_gesture_utils.dart';
 import 'package:extended_image/src/image/extended_render_image.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 /// A widget that displays a [dart:ui.Image] directly.
 ///
@@ -44,6 +45,40 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
         assert(repeat != null),
         assert(matchTextDirection != null),
         super(key: key);
+
+  @override
+  ExtendedRenderImage createRenderObject(BuildContext context) {
+    assert((!matchTextDirection && alignment is Alignment) ||
+        debugCheckHasDirectionality(context));
+    // assert(
+    //     image?.debugGetOpenHandleStackTraces()?.isNotEmpty ?? true,
+    //     'Creator of a RawImage disposed of the image when the RawImage still '
+    //     'needed it.');
+    return ExtendedRenderImage(
+      image: image,
+      width: width,
+      height: height,
+      scale: scale,
+      color: color,
+      colorBlendMode: colorBlendMode,
+      fit: fit,
+      alignment: alignment,
+      repeat: repeat,
+      centerSlice: centerSlice,
+      matchTextDirection: matchTextDirection,
+      textDirection: matchTextDirection || alignment is! Alignment
+          ? Directionality.of(context)
+          : null,
+      invertColors: invertColors,
+      filterQuality: filterQuality,
+      sourceRect: sourceRect,
+      beforePaintImage: beforePaintImage,
+      afterPaintImage: afterPaintImage,
+      gestureDetails: gestureDetails,
+      editActionDetails: editActionDetails,
+      isAntiAlias: isAntiAlias,
+    );
+  }
 
   /// Whether to paint the image with anti-aliasing.
   ///
@@ -177,35 +212,29 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
   ///input Rect, you can use this to crop image.
   ///it work when centerSlice==null
   final Rect sourceRect;
-
   @override
-  ExtendedRenderImage createRenderObject(BuildContext context) {
-    assert((!matchTextDirection && alignment is Alignment) ||
-        debugCheckHasDirectionality(context));
-    return ExtendedRenderImage(
-      image: image,
-      width: width,
-      height: height,
-      scale: scale,
-      color: color,
-      colorBlendMode: colorBlendMode,
-      fit: fit,
-      alignment: alignment,
-      repeat: repeat,
-      centerSlice: centerSlice,
-      matchTextDirection: matchTextDirection,
-      textDirection: matchTextDirection || alignment is! Alignment
-          ? Directionality.of(context)
-          : null,
-      invertColors: invertColors,
-      filterQuality: filterQuality,
-      sourceRect: sourceRect,
-      beforePaintImage: beforePaintImage,
-      afterPaintImage: afterPaintImage,
-      gestureDetails: gestureDetails,
-      editActionDetails: editActionDetails,
-      isAntiAlias: isAntiAlias,
-    );
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<ui.Image>('image', image));
+    properties.add(DoubleProperty('width', width, defaultValue: null));
+    properties.add(DoubleProperty('height', height, defaultValue: null));
+    properties.add(DoubleProperty('scale', scale, defaultValue: 1.0));
+    properties
+        .add(DiagnosticsProperty<Color>('color', color, defaultValue: null));
+    properties.add(EnumProperty<BlendMode>('colorBlendMode', colorBlendMode,
+        defaultValue: null));
+    properties.add(EnumProperty<BoxFit>('fit', fit, defaultValue: null));
+    properties.add(DiagnosticsProperty<AlignmentGeometry>(
+        'alignment', alignment,
+        defaultValue: null));
+    properties.add(EnumProperty<ImageRepeat>('repeat', repeat,
+        defaultValue: ImageRepeat.noRepeat));
+    properties.add(DiagnosticsProperty<Rect>('centerSlice', centerSlice,
+        defaultValue: null));
+    properties.add(FlagProperty('matchTextDirection',
+        value: matchTextDirection, ifTrue: 'match text direction'));
+    properties.add(DiagnosticsProperty<bool>('invertColors', invertColors));
+    properties.add(EnumProperty<FilterQuality>('filterQuality', filterQuality));
   }
 
   @override
@@ -234,30 +263,5 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
       ..gestureDetails = gestureDetails
       ..editActionDetails = editActionDetails
       ..isAntiAlias = isAntiAlias;
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<ui.Image>('image', image));
-    properties.add(DoubleProperty('width', width, defaultValue: null));
-    properties.add(DoubleProperty('height', height, defaultValue: null));
-    properties.add(DoubleProperty('scale', scale, defaultValue: 1.0));
-    properties
-        .add(DiagnosticsProperty<Color>('color', color, defaultValue: null));
-    properties.add(EnumProperty<BlendMode>('colorBlendMode', colorBlendMode,
-        defaultValue: null));
-    properties.add(EnumProperty<BoxFit>('fit', fit, defaultValue: null));
-    properties.add(DiagnosticsProperty<AlignmentGeometry>(
-        'alignment', alignment,
-        defaultValue: null));
-    properties.add(EnumProperty<ImageRepeat>('repeat', repeat,
-        defaultValue: ImageRepeat.noRepeat));
-    properties.add(DiagnosticsProperty<Rect>('centerSlice', centerSlice,
-        defaultValue: null));
-    properties.add(FlagProperty('matchTextDirection',
-        value: matchTextDirection, ifTrue: 'match text direction'));
-    properties.add(DiagnosticsProperty<bool>('invertColors', invertColors));
-    properties.add(EnumProperty<FilterQuality>('filterQuality', filterQuality));
   }
 }

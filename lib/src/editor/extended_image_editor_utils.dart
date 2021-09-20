@@ -232,14 +232,14 @@ class EditActionDetails {
       /// move
       else {
         if (_screenDestinationRect != screenCropRect) {
-          final bool topSame =
-              doubleEqual(_screenDestinationRect.top, screenCropRect.top);
+          final bool topSame = _screenDestinationRect.topIsSame(screenCropRect);
           final bool leftSame =
-              doubleEqual(_screenDestinationRect.left, screenCropRect.left);
+              _screenDestinationRect.leftIsSame(screenCropRect);
           final bool bottomSame =
-              doubleEqual(_screenDestinationRect.bottom, screenCropRect.bottom);
+              _screenDestinationRect.bottomIsSame(screenCropRect);
           final bool rightSame =
-              doubleEqual(_screenDestinationRect.right, screenCropRect.right);
+              _screenDestinationRect.rightIsSame(screenCropRect);
+
           if (topSame && bottomSame) {
             delta = Offset(delta.dx, 0.0);
           } else if (leftSame && rightSame) {
@@ -259,11 +259,10 @@ class EditActionDetails {
       if (screenCropRect != null) {
         Rect rect = screenCropRect.expandToInclude(_screenDestinationRect);
         if (rect != _screenDestinationRect) {
-          final bool topSame = doubleEqual(rect.top, screenCropRect.top);
-          final bool leftSame = doubleEqual(rect.left, screenCropRect.left);
-          final bool bottomSame =
-              doubleEqual(rect.bottom, screenCropRect.bottom);
-          final bool rightSame = doubleEqual(rect.right, screenCropRect.right);
+          final bool topSame = rect.topIsSame(screenCropRect);
+          final bool leftSame = rect.leftIsSame(screenCropRect);
+          final bool bottomSame = rect.bottomIsSame(screenCropRect);
+          final bool rightSame = rect.rightIsSame(screenCropRect);
 
           // make sure that image rect keep same aspect ratio
           if (topSame && bottomSame) {
@@ -308,13 +307,13 @@ class EditActionDetails {
   Rect computeBoundary(Rect result, Rect layoutRect) {
     if (_computeHorizontalBoundary) {
       //move right
-      if (doubleCompare(result.left, layoutRect.left) >= 0) {
+      if (result.left.greaterThanOrEqualTo(layoutRect.left)) {
         result = Rect.fromLTWH(
             layoutRect.left, result.top, result.width, result.height);
       }
 
       ///move left
-      if (doubleCompare(result.right, layoutRect.right) <= 0) {
+      if (result.right.lessThanOrEqualTo(layoutRect.right)) {
         result = Rect.fromLTWH(layoutRect.right - result.width, result.top,
             result.width, result.height);
       }
@@ -322,24 +321,24 @@ class EditActionDetails {
 
     if (_computeVerticalBoundary) {
       //move down
-      if (doubleCompare(result.bottom, layoutRect.bottom) <= 0) {
+      if (result.bottom.lessThanOrEqualTo(layoutRect.bottom)) {
         result = Rect.fromLTWH(result.left, layoutRect.bottom - result.height,
             result.width, result.height);
       }
 
       //move up
-      if (doubleCompare(result.top, layoutRect.top) >= 0) {
+      if (result.top.greaterThanOrEqualTo(layoutRect.top)) {
         result = Rect.fromLTWH(
             result.left, layoutRect.top, result.width, result.height);
       }
     }
 
     _computeHorizontalBoundary =
-        doubleCompare(result.left, layoutRect.left) <= 0 &&
-            doubleCompare(result.right, layoutRect.right) >= 0;
+        result.left.lessThanOrEqualTo(layoutRect.left) &&
+            result.right.greaterThanOrEqualTo(layoutRect.right);
 
-    _computeVerticalBoundary = doubleCompare(result.top, layoutRect.top) <= 0 &&
-        doubleCompare(result.bottom, layoutRect.bottom) >= 0;
+    _computeVerticalBoundary = result.top.lessThanOrEqualTo(layoutRect.top) &&
+        result.bottom.greaterThanOrEqualTo(layoutRect.bottom);
     return result;
   }
 }

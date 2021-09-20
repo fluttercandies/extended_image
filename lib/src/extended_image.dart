@@ -2,17 +2,18 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:extended_image/src/extended_image_border_painter.dart';
-import 'package:extended_image/src/gesture/extended_image_gesture.dart';
 import 'package:extended_image/src/extended_image_typedef.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
+import 'package:extended_image/src/gesture/extended_image_gesture.dart';
 import 'package:extended_image/src/image/extended_raw_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Image;
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter/semantics.dart';
+
 import 'editor/extended_image_editor.dart';
 import 'gesture/extended_image_slide_page.dart';
 import 'gesture/extended_image_slide_page_handler.dart';
@@ -57,187 +58,11 @@ class ExtendedImage extends StatefulWidget {
     this.extendedImageGestureKey,
     this.isAntiAlias = false,
     this.handleLoadingProgress = false,
-  })  : assert(image != null),
-        assert(constraints == null || constraints.debugAssertIsValid()),
+  })  : assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
                 BoxConstraints.tightFor(width: width, height: height)
             : constraints,
-        super(key: key);
-
-  ExtendedImage.network(
-    String url, {
-    Key key,
-    this.semanticLabel,
-    this.excludeFromSemantics = false,
-    this.width,
-    this.height,
-    this.color,
-    this.colorBlendMode,
-    this.fit,
-    this.alignment = Alignment.center,
-    this.repeat = ImageRepeat.noRepeat,
-    this.centerSlice,
-    this.matchTextDirection = false,
-    this.gaplessPlayback = false,
-    this.filterQuality = FilterQuality.low,
-    this.loadStateChanged,
-    this.shape,
-    this.border,
-    this.borderRadius,
-    this.clipBehavior = Clip.antiAlias,
-    this.enableLoadState = true,
-    this.beforePaintImage,
-    this.afterPaintImage,
-    this.mode = ExtendedImageMode.none,
-    this.enableMemoryCache = true,
-    this.clearMemoryCacheIfFailed = true,
-    this.onDoubleTap,
-    this.initGestureConfigHandler,
-    this.enableSlideOutPage = false,
-    BoxConstraints constraints,
-    CancellationToken cancelToken,
-    int retries = 3,
-    Duration timeLimit,
-    Map<String, String> headers,
-    bool cache = true,
-    double scale = 1.0,
-    Duration timeRetry = const Duration(milliseconds: 100),
-    this.extendedImageEditorKey,
-    this.initEditorConfigHandler,
-    this.heroBuilderForSlidingPage,
-    this.clearMemoryCacheWhenDispose = false,
-    this.handleLoadingProgress = false,
-    this.extendedImageGestureKey,
-    int cacheWidth,
-    int cacheHeight,
-    this.isAntiAlias = false,
-    String cacheKey,
-    bool printError = true,
-    double compressionRatio,
-    int maxBytes,
-    bool cacheRawData = false,
-    String imageCacheName,
-    Duration cacheMaxAge,
-  })  : assert(url != null),
-        assert(cacheWidth == null || cacheWidth > 0),
-        assert(cacheHeight == null || cacheHeight > 0),
-        image = ExtendedResizeImage.resizeIfNeeded(
-          provider: ExtendedNetworkImageProvider(
-            url,
-            scale: scale,
-            headers: headers,
-            cache: cache,
-            cancelToken: cancelToken,
-            retries: retries,
-            timeRetry: timeRetry,
-            timeLimit: timeLimit,
-            cacheKey: cacheKey,
-            printError: printError,
-            cacheRawData: cacheRawData,
-            imageCacheName: imageCacheName,
-            cacheMaxAge: cacheMaxAge,
-          ),
-          compressionRatio: compressionRatio,
-          maxBytes: maxBytes,
-          cacheWidth: cacheWidth,
-          cacheHeight: cacheHeight,
-          cacheRawData: cacheRawData,
-          imageCacheName: imageCacheName,
-        ),
-        assert(constraints == null || constraints.debugAssertIsValid()),
-        constraints = (width != null || height != null)
-            ? constraints?.tighten(width: width, height: height) ??
-                BoxConstraints.tightFor(width: width, height: height)
-            : constraints,
-        assert(cacheWidth == null || cacheWidth > 0),
-        assert(cacheHeight == null || cacheHeight > 0),
-        super(key: key);
-
-  /// Creates a widget that displays an [ImageStream] obtained from a [File].
-  ///
-  /// The [file], [scale], and [repeat] arguments must not be null.
-  ///
-  /// Either the [width] and [height] arguments should be specified, or the
-  /// widget should be placed in a context that sets tight layout constraints.
-  /// Otherwise, the image dimensions will change as the image is loaded, which
-  /// will result in ugly layout changes.
-  ///
-  /// On Android, this may require the
-  /// `android.permission.READ_EXTERNAL_STORAGE` permission.
-  ///
-  /// Use [filterQuality] to change the quality when scailing an image.
-  /// Use the [FilterQuality.low] quality setting to scale the image,
-  /// which corresponds to bilinear interpolation, rather than the default
-  /// [FilterQuality.none] which corresponds to nearest-neighbor.
-  ///
-  /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
-  ExtendedImage.file(
-    File file, {
-    Key key,
-    double scale = 1.0,
-    this.semanticLabel,
-    this.excludeFromSemantics = false,
-    this.width,
-    this.height,
-    this.color,
-    this.colorBlendMode,
-    this.fit,
-    this.alignment = Alignment.center,
-    this.repeat = ImageRepeat.noRepeat,
-    this.centerSlice,
-    this.matchTextDirection = false,
-    this.gaplessPlayback = false,
-    this.filterQuality = FilterQuality.low,
-    this.loadStateChanged,
-    this.shape,
-    this.border,
-    this.borderRadius,
-    this.clipBehavior = Clip.antiAlias,
-    this.enableLoadState = false,
-    this.beforePaintImage,
-    this.afterPaintImage,
-    this.mode = ExtendedImageMode.none,
-    this.enableMemoryCache = true,
-    this.clearMemoryCacheIfFailed = true,
-    this.onDoubleTap,
-    this.initGestureConfigHandler,
-    this.enableSlideOutPage = false,
-    BoxConstraints constraints,
-    this.extendedImageEditorKey,
-    this.initEditorConfigHandler,
-    this.heroBuilderForSlidingPage,
-    this.clearMemoryCacheWhenDispose = false,
-    this.extendedImageGestureKey,
-    int cacheWidth,
-    int cacheHeight,
-    this.isAntiAlias = false,
-    double compressionRatio,
-    int maxBytes,
-    bool cacheRawData = false,
-    String imageCacheName,
-  })  : assert(file != null),
-        assert(cacheWidth == null || cacheWidth > 0),
-        assert(cacheHeight == null || cacheHeight > 0),
-        image = ExtendedResizeImage.resizeIfNeeded(
-          provider: ExtendedFileImageProvider(
-            file,
-            scale: scale,
-            cacheRawData: cacheRawData,
-            imageCacheName: imageCacheName,
-          ),
-          compressionRatio: compressionRatio,
-          maxBytes: maxBytes,
-          cacheWidth: cacheWidth,
-          cacheHeight: cacheHeight,
-          cacheRawData: cacheRawData,
-          imageCacheName: imageCacheName,
-        ),
-        constraints = (width != null || height != null)
-            ? constraints?.tighten(width: width, height: height) ??
-                BoxConstraints.tightFor(width: width, height: height)
-            : constraints,
-        handleLoadingProgress = false,
         super(key: key);
 
   /// Creates a widget that displays an [ImageStream] obtained from an asset
@@ -411,8 +236,7 @@ class ExtendedImage extends StatefulWidget {
     int maxBytes,
     bool cacheRawData = false,
     String imageCacheName,
-  })  : assert(name != null),
-        assert(cacheWidth == null || cacheWidth > 0),
+  })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
           provider: scale != null
@@ -431,6 +255,91 @@ class ExtendedImage extends StatefulWidget {
                   cacheRawData: cacheRawData,
                   imageCacheName: imageCacheName,
                 ),
+          compressionRatio: compressionRatio,
+          maxBytes: maxBytes,
+          cacheWidth: cacheWidth,
+          cacheHeight: cacheHeight,
+          cacheRawData: cacheRawData,
+          imageCacheName: imageCacheName,
+        ),
+        constraints = (width != null || height != null)
+            ? constraints?.tighten(width: width, height: height) ??
+                BoxConstraints.tightFor(width: width, height: height)
+            : constraints,
+        handleLoadingProgress = false,
+        super(key: key);
+
+  /// Creates a widget that displays an [ImageStream] obtained from a [File].
+  ///
+  /// The [file], [scale], and [repeat] arguments must not be null.
+  ///
+  /// Either the [width] and [height] arguments should be specified, or the
+  /// widget should be placed in a context that sets tight layout constraints.
+  /// Otherwise, the image dimensions will change as the image is loaded, which
+  /// will result in ugly layout changes.
+  ///
+  /// On Android, this may require the
+  /// `android.permission.READ_EXTERNAL_STORAGE` permission.
+  ///
+  /// Use [filterQuality] to change the quality when scailing an image.
+  /// Use the [FilterQuality.low] quality setting to scale the image,
+  /// which corresponds to bilinear interpolation, rather than the default
+  /// [FilterQuality.none] which corresponds to nearest-neighbor.
+  ///
+  /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
+  ExtendedImage.file(
+    File file, {
+    Key key,
+    double scale = 1.0,
+    this.semanticLabel,
+    this.excludeFromSemantics = false,
+    this.width,
+    this.height,
+    this.color,
+    this.colorBlendMode,
+    this.fit,
+    this.alignment = Alignment.center,
+    this.repeat = ImageRepeat.noRepeat,
+    this.centerSlice,
+    this.matchTextDirection = false,
+    this.gaplessPlayback = false,
+    this.filterQuality = FilterQuality.low,
+    this.loadStateChanged,
+    this.shape,
+    this.border,
+    this.borderRadius,
+    this.clipBehavior = Clip.antiAlias,
+    this.enableLoadState = false,
+    this.beforePaintImage,
+    this.afterPaintImage,
+    this.mode = ExtendedImageMode.none,
+    this.enableMemoryCache = true,
+    this.clearMemoryCacheIfFailed = true,
+    this.onDoubleTap,
+    this.initGestureConfigHandler,
+    this.enableSlideOutPage = false,
+    BoxConstraints constraints,
+    this.extendedImageEditorKey,
+    this.initEditorConfigHandler,
+    this.heroBuilderForSlidingPage,
+    this.clearMemoryCacheWhenDispose = false,
+    this.extendedImageGestureKey,
+    int cacheWidth,
+    int cacheHeight,
+    this.isAntiAlias = false,
+    double compressionRatio,
+    int maxBytes,
+    bool cacheRawData = false,
+    String imageCacheName,
+  })  : assert(cacheWidth == null || cacheWidth > 0),
+        assert(cacheHeight == null || cacheHeight > 0),
+        image = ExtendedResizeImage.resizeIfNeeded(
+          provider: ExtendedFileImageProvider(
+            file,
+            scale: scale,
+            cacheRawData: cacheRawData,
+            imageCacheName: imageCacheName,
+          ),
           compressionRatio: compressionRatio,
           maxBytes: maxBytes,
           cacheWidth: cacheWidth,
@@ -504,8 +413,7 @@ class ExtendedImage extends StatefulWidget {
     int maxBytes,
     bool cacheRawData = false,
     String imageCacheName,
-  })  : assert(bytes != null),
-        assert(cacheWidth == null || cacheWidth > 0),
+  })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
           provider: ExtendedMemoryImageProvider(
@@ -528,16 +436,104 @@ class ExtendedImage extends StatefulWidget {
         handleLoadingProgress = false,
         super(key: key);
 
+  ExtendedImage.network(
+    String url, {
+    Key key,
+    this.semanticLabel,
+    this.excludeFromSemantics = false,
+    this.width,
+    this.height,
+    this.color,
+    this.colorBlendMode,
+    this.fit,
+    this.alignment = Alignment.center,
+    this.repeat = ImageRepeat.noRepeat,
+    this.centerSlice,
+    this.matchTextDirection = false,
+    this.gaplessPlayback = false,
+    this.filterQuality = FilterQuality.low,
+    this.loadStateChanged,
+    this.shape,
+    this.border,
+    this.borderRadius,
+    this.clipBehavior = Clip.antiAlias,
+    this.enableLoadState = true,
+    this.beforePaintImage,
+    this.afterPaintImage,
+    this.mode = ExtendedImageMode.none,
+    this.enableMemoryCache = true,
+    this.clearMemoryCacheIfFailed = true,
+    this.onDoubleTap,
+    this.initGestureConfigHandler,
+    this.enableSlideOutPage = false,
+    BoxConstraints constraints,
+    CancellationToken cancelToken,
+    int retries = 3,
+    Duration timeLimit,
+    Map<String, String> headers,
+    bool cache = true,
+    double scale = 1.0,
+    Duration timeRetry = const Duration(milliseconds: 100),
+    this.extendedImageEditorKey,
+    this.initEditorConfigHandler,
+    this.heroBuilderForSlidingPage,
+    this.clearMemoryCacheWhenDispose = false,
+    this.handleLoadingProgress = false,
+    this.extendedImageGestureKey,
+    int cacheWidth,
+    int cacheHeight,
+    this.isAntiAlias = false,
+    String cacheKey,
+    bool printError = true,
+    double compressionRatio,
+    int maxBytes,
+    bool cacheRawData = false,
+    String imageCacheName,
+    Duration cacheMaxAge,
+  })  : assert(cacheWidth == null || cacheWidth > 0),
+        assert(cacheHeight == null || cacheHeight > 0),
+        image = ExtendedResizeImage.resizeIfNeeded(
+          provider: ExtendedNetworkImageProvider(
+            url,
+            scale: scale,
+            headers: headers,
+            cache: cache,
+            cancelToken: cancelToken,
+            retries: retries,
+            timeRetry: timeRetry,
+            timeLimit: timeLimit,
+            cacheKey: cacheKey,
+            printError: printError,
+            cacheRawData: cacheRawData,
+            imageCacheName: imageCacheName,
+            cacheMaxAge: cacheMaxAge,
+          ),
+          compressionRatio: compressionRatio,
+          maxBytes: maxBytes,
+          cacheWidth: cacheWidth,
+          cacheHeight: cacheHeight,
+          cacheRawData: cacheRawData,
+          imageCacheName: imageCacheName,
+        ),
+        assert(constraints == null || constraints.debugAssertIsValid()),
+        constraints = (width != null || height != null)
+            ? constraints?.tighten(width: width, height: height) ??
+                BoxConstraints.tightFor(width: width, height: height)
+            : constraints,
+        assert(cacheWidth == null || cacheWidth > 0),
+        assert(cacheHeight == null || cacheHeight > 0),
+        super(key: key);
+
   /// key of ExtendedImageGesture
   final Key extendedImageGestureKey;
 
   /// whether handle loading progress for network
   final bool handleLoadingProgress;
 
-  ///when image is removed from the tree permanently, whether clear memory cache
+  /// when image is removed from the tree permanently, whether clear memory cache
   final bool clearMemoryCacheWhenDispose;
 
-  ///build Hero only for sliding page
+  /// build Hero only for sliding page
   final HeroBuilderForSlidingPage heroBuilderForSlidingPage;
 
   /// init EditConfig when image is ready.
@@ -590,9 +586,9 @@ class ExtendedImage extends StatefulWidget {
   ///
   /// If this is [BoxShape.circle] then [borderRadius] is ignored.
   ///
-  /// The [shape] cannot be interpolated; animating between two [BoxDecoration]s
+  /// The [shape] cannot be interpod; animating between two [BoxDecoration]s
   /// with different [shape]s will result in a discontinuity in the rendering.
-  /// To interpolate between two shapes, consider using [ShapeDecoration] and
+  /// To interpo between two shapes, consider using [ShapeDecoration] and
   /// different [ShapeBorder]s; in particular, [CircleBorder] instead of
   /// [BoxShape.circle] and [RoundedRectangleBorder] instead of
   /// [BoxShape.rectangle].
@@ -750,6 +746,7 @@ class ExtendedImage extends StatefulWidget {
   ///
   /// Anti-aliasing alleviates the sawtooth artifact when the image is rotated.
   final bool isAntiAlias;
+
   @override
   _ExtendedImageState createState() => _ExtendedImageState();
 }
@@ -764,239 +761,63 @@ class _ExtendedImageState extends State<ExtendedImage>
   ExtendedImageSlidePageState _slidePageState;
   ImageChunkEvent _loadingProgress;
   int _frameNumber;
-  bool _wasSynchronouslyLoaded;
+  bool _wasSynchronouslyLoaded = false;
   DisposableBuildContext<State<ExtendedImage>> _scrollAwareContext;
+  Object _lastException;
+  StackTrace _lastStack;
+  //ImageStreamCompleterHandle _completerHandle;
+
+  ImageStreamListener _imageStreamListener;
 
   @override
-  void initState() {
-    returnLoadStateChangedWidget = false;
-    _loadState = LoadState.loading;
-    WidgetsBinding.instance.addObserver(this);
-    _scrollAwareContext = DisposableBuildContext<State<ExtendedImage>>(this);
-    super.initState();
-  }
+  Widget get completedWidget => _getCompletedWidget();
 
   @override
-  void didChangeDependencies() {
-    _updateInvertColors();
-    _resolveImage();
-
-    _slidePageState = null;
-    if (widget.enableSlideOutPage) {
-      _slidePageState =
-          context.findAncestorStateOfType<ExtendedImageSlidePageState>();
-    }
-
-    if (TickerMode.of(context)) {
-      _listenToStream();
-    } else {
-      _stopListeningToStream();
-    }
-
-    super.didChangeDependencies();
-  }
+  ImageInfo get extendedImageInfo => _imageInfo;
 
   @override
-  void didUpdateWidget(ExtendedImage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.image != oldWidget.image) {
-      //_cancelNetworkImageRequest(oldWidget.image);
-      _resolveImage();
-    }
-    if (widget.enableSlideOutPage != oldWidget.enableSlideOutPage) {
-      _slidePageState = null;
-      if (widget.enableSlideOutPage) {
-        _slidePageState =
-            context.findAncestorStateOfType<ExtendedImageSlidePageState>();
-      }
-    }
-  }
+  LoadState get extendedImageLoadState => _loadState;
 
   @override
-  void didChangeAccessibilityFeatures() {
-    super.didChangeAccessibilityFeatures();
-    setState(() {
-      _updateInvertColors();
-    });
-  }
+  int get frameNumber => _frameNumber;
 
   @override
-  void reassemble() {
-    _resolveImage(); // in case the image cache was flushed
-    super.reassemble();
-  }
+  ImageProvider get imageProvider => widget.image;
 
-  void _updateInvertColors() {
-    _invertColors = MediaQuery.of(context, nullOk: true)?.invertColors ??
-        SemanticsBinding.instance.accessibilityFeatures.invertColors;
-  }
+  @override
+  Object get imageStreamKey => _imageStream?.key;
 
-  void _resolveImage([bool rebuild = false]) {
-    if (rebuild) {
-      widget.image.evict();
-    }
+  @override
+  ExtendedImage get imageWidget => widget;
 
-    final ScrollAwareImageProvider provider = ScrollAwareImageProvider<dynamic>(
-      context: _scrollAwareContext,
-      imageProvider: widget.image,
-    );
+  @override
+  bool get invertColors => _invertColors;
 
-    final ImageStream newStream = provider.resolve(
-        createLocalImageConfiguration(context,
-            size: widget.width != null && widget.height != null
-                ? Size(widget.width, widget.height)
-                : null));
-    assert(newStream != null);
+  @override
+  Object get lastException => _lastException;
 
-    if (_imageInfo != null && !rebuild && _imageStream?.key == newStream?.key) {
-      setState(() {
-        _loadState = LoadState.completed;
-      });
-    }
+  @override
+  StackTrace get lastStack => _lastStack;
 
-    _updateSourceStream(newStream, rebuild: rebuild);
-  }
+  @override
+  ImageChunkEvent get loadingProgress => _loadingProgress;
 
-  void _loadFailed(dynamic exception, StackTrace stackTrace) {
-    //print('$exception');
+  @override
+  ExtendedImageSlidePageState get slidePageState => _slidePageState;
 
-//    ImageProvider imageProvider = widget.image;
-//    if (imageProvider is ExtendedNetworkImageProvider) {
-//      pendingImages.remove(imageProvider);
-//    }
-
-    setState(() {
-      _loadState = LoadState.failed;
-    });
-    // if (kDebugMode) {
-    //   print(exception);
-    // }
-    if (!widget.enableMemoryCache || widget.clearMemoryCacheIfFailed) {
-      widget.image.evict();
-    }
-  }
-
-  void _handleImageChunk(ImageChunkEvent event) {
-    setState(() {
-      _loadingProgress = event;
-    });
-  }
-
-  void _handleImageChanged(ImageInfo imageInfo, bool synchronousCall) {
-//    ImageProvider imageProvider = widget.image;
-//    if (imageProvider is ExtendedNetworkImageProvider) {
-//      pendingImages.remove(imageProvider);
-//    }
-
-    setState(() {
-      if (imageInfo != null) {
-        _loadState = LoadState.completed;
-      } else {
-        _loadState = LoadState.failed;
-      }
-      //_loadState = LoadState.completed;
-      _imageInfo = imageInfo;
-      _loadingProgress = null;
-      _frameNumber = _frameNumber == null ? 0 : _frameNumber + 1;
-      _wasSynchronouslyLoaded |= synchronousCall;
-    });
-
-    if (!widget.enableMemoryCache) {
-      widget.image.evict();
-    }
-  }
-
-  // Update _imageStream to newStream, and moves the stream listener
+  // Updates _imageStream to newStream, and moves the stream listener
   // registration from the old stream to the new stream (if a listener was
   // registered).
-  void _updateSourceStream(ImageStream newStream, {bool rebuild = false}) {
-    if (_imageStream?.key == newStream?.key) {
-      return;
-    }
-    //print('_updateSourceStream');
-    if (_isListeningToStream) {
-      _imageStream.removeListener(ImageStreamListener(
-        _handleImageChanged,
-        onError: _loadFailed,
-        onChunk: widget.handleLoadingProgress ? _handleImageChunk : null,
-      ));
-    }
-
-    if (!widget.gaplessPlayback || rebuild) {
-      setState(() {
-        _imageInfo = null;
-        _loadState = LoadState.loading;
-      });
-    }
-
-    setState(() {
-      _loadingProgress = null;
-      _frameNumber = null;
-      _wasSynchronouslyLoaded = false;
-    });
-
-    _imageStream = newStream;
-    if (_isListeningToStream) {
-      _imageStream.addListener(ImageStreamListener(
-        _handleImageChanged,
-        onError: _loadFailed,
-        onChunk: widget.handleLoadingProgress ? _handleImageChunk : null,
-      ));
-    }
-  }
-
-  void _listenToStream() {
-    if (_isListeningToStream) {
-      return;
-    }
-    _imageStream.addListener(ImageStreamListener(
-      _handleImageChanged,
-      onError: _loadFailed,
-      onChunk: widget.handleLoadingProgress ? _handleImageChunk : null,
-    ));
-    _isListeningToStream = true;
-  }
-
-  void _stopListeningToStream() {
-    if (!_isListeningToStream) {
-      return;
-    }
-    _imageStream.removeListener(ImageStreamListener(
-      _handleImageChanged,
-      onError: _loadFailed,
-      onChunk: widget.handleLoadingProgress ? _handleImageChunk : null,
-    ));
-    _isListeningToStream = false;
-  }
-
-//  void _cancelNetworkImageRequest(ImageProvider provider) {
-//    if (provider == null) return;
-//
-//    ///cancel network request
-////    if (provider is ExtendedNetworkImageProvider && provider.autoCancel) {
-////      cancelPendingNetworkImageByProvider(provider);
-////    }
-//  }
-
   @override
-  void dispose() {
-    assert(_imageStream != null);
-    if (widget.clearMemoryCacheWhenDispose) {
-      widget.image?.evict();
-    }
-    WidgetsBinding.instance.removeObserver(this);
-    _stopListeningToStream();
-    _scrollAwareContext.dispose();
-    //_cancelNetworkImageRequest(widget.image);
-    super.dispose();
-  }
+  bool get wasSynchronouslyLoaded => _wasSynchronouslyLoaded;
 
   @override
   Widget build(BuildContext context) {
     Widget current;
+
     returnLoadStateChangedWidget = false;
     if (widget.loadStateChanged != null) {
-      current = widget.loadStateChanged(this);
+      current = widget.loadStateChanged?.call(this);
       if (current != null && returnLoadStateChangedWidget) {
         return current;
       }
@@ -1060,7 +881,7 @@ class _ExtendedImageState extends State<ExtendedImage>
         foregroundPainter: ExtendedImageBorderPainter(
             borderRadius: widget.borderRadius,
             border: widget.border,
-            shape: widget.shape),
+            shape: widget.shape ?? BoxShape.rectangle),
         child: current,
         size: widget.width != null && widget.height != null
             ? Size(widget.width, widget.height)
@@ -1072,7 +893,7 @@ class _ExtendedImageState extends State<ExtendedImage>
       current = ConstrainedBox(constraints: widget.constraints, child: current);
     }
 
-    ///add for loading/failed/ unGesture image
+    // add for loading/failed/ unGesture image
     if (_slidePageState != null &&
         !(_loadState == LoadState.completed &&
             widget.mode == ExtendedImageMode.gesture)) {
@@ -1091,6 +912,137 @@ class _ExtendedImageState extends State<ExtendedImage>
       image: true,
       label: widget.semanticLabel ?? '',
       child: current,
+    );
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder description) {
+    super.debugFillProperties(description);
+    description.add(DiagnosticsProperty<ImageStream>('stream', _imageStream));
+    description.add(DiagnosticsProperty<ImageInfo>('pixels', _imageInfo));
+    description.add(DiagnosticsProperty<ImageChunkEvent>(
+        'loadingProgress', _loadingProgress));
+    description.add(DiagnosticsProperty<int>('frameNumber', _frameNumber));
+    description.add(DiagnosticsProperty<bool>(
+        'wasSynchronouslyLoaded', _wasSynchronouslyLoaded));
+  }
+
+  @override
+  void didChangeAccessibilityFeatures() {
+    super.didChangeAccessibilityFeatures();
+    setState(() {
+      _updateInvertColors();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    _updateInvertColors();
+    _resolveImage();
+
+    _slidePageState = null;
+    if (widget.enableSlideOutPage) {
+      _slidePageState =
+          context.findAncestorStateOfType<ExtendedImageSlidePageState>();
+    }
+
+    if (TickerMode.of(context)) {
+      _listenToStream();
+    } else {
+      _stopListeningToStream(keepStreamAlive: true);
+    }
+
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(ExtendedImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_isListeningToStream &&
+        widget.handleLoadingProgress != oldWidget.handleLoadingProgress) {
+      final ImageStreamListener oldListener = _getListener();
+      _imageStream.addListener(_getListener(recreateListener: true));
+      _imageStream.removeListener(oldListener);
+    }
+    if (widget.image != oldWidget.image) {
+      _resolveImage();
+    }
+    if (widget.enableSlideOutPage != oldWidget.enableSlideOutPage) {
+      _slidePageState = null;
+      if (widget.enableSlideOutPage) {
+        _slidePageState =
+            context.findAncestorStateOfType<ExtendedImageSlidePageState>();
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    assert(_imageStream != null);
+
+    WidgetsBinding.instance.removeObserver(this);
+    _stopListeningToStream();
+    //_completerHandle?.dispose();
+    _scrollAwareContext.dispose();
+    _replaceImage(info: null);
+    // TODO(zmtzawqlp): Exception has occurred
+    // https://github.com/flutter/flutter/issues/77576
+    if (widget.clearMemoryCacheWhenDispose) {
+      // if (widget.image is ExtendedImageProvider) {
+      //   (widget.image as ExtendedImageProvider<dynamic>)
+      //       .evict(includeLive: false);
+      // }
+      widget.image
+          .obtainCacheStatus(configuration: ImageConfiguration.empty)
+          .then((ImageCacheStatus value) {
+        if (value?.keepAlive ?? false) {
+          widget.image.evict();
+        }
+      });
+    }
+
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    returnLoadStateChangedWidget = false;
+    _loadState = LoadState.loading;
+    WidgetsBinding.instance.addObserver(this);
+    _scrollAwareContext = DisposableBuildContext<State<ExtendedImage>>(this);
+  }
+
+  @override
+  void reassemble() {
+    _resolveImage(); // in case the image cache was flushed
+    super.reassemble();
+  }
+
+  //reload image as you wish,(loaded failed)
+  @override
+  void reLoadImage() {
+    _resolveImage(true);
+  }
+
+  Widget _buildExtendedRawImage() {
+    return ExtendedRawImage(
+      image: _imageInfo?.image,
+      width: widget.width,
+      height: widget.height,
+      scale: _imageInfo?.scale ?? 1.0,
+      color: widget.color,
+      colorBlendMode: widget.colorBlendMode,
+      fit: widget.fit,
+      alignment: widget.alignment,
+      repeat: widget.repeat,
+      centerSlice: widget.centerSlice,
+      matchTextDirection: widget.matchTextDirection,
+      invertColors: _invertColors,
+      isAntiAlias: widget.isAntiAlias,
+      filterQuality: widget.filterQuality,
+      beforePaintImage: widget.beforePaintImage,
+      afterPaintImage: widget.afterPaintImage,
     );
   }
 
@@ -1125,75 +1077,147 @@ class _ExtendedImageState extends State<ExtendedImage>
           );
   }
 
-  Widget _buildExtendedRawImage() {
-    return ExtendedRawImage(
-      image: _imageInfo?.image,
-      width: widget.width,
-      height: widget.height,
-      scale: _imageInfo?.scale ?? 1.0,
-      color: widget.color,
-      colorBlendMode: widget.colorBlendMode,
-      fit: widget.fit,
-      alignment: widget.alignment,
-      repeat: widget.repeat,
-      centerSlice: widget.centerSlice,
-      matchTextDirection: widget.matchTextDirection,
-      invertColors: _invertColors,
-      isAntiAlias: widget.isAntiAlias,
-      filterQuality: widget.filterQuality,
-      beforePaintImage: widget.beforePaintImage,
-      afterPaintImage: widget.afterPaintImage,
+  ImageStreamListener _getListener({bool recreateListener = false}) {
+    if (_imageStreamListener == null || recreateListener) {
+      _lastException = null;
+      _lastStack = null;
+      _imageStreamListener = ImageStreamListener(
+        _handleImageFrame,
+        onChunk: widget.handleLoadingProgress ? _handleImageChunk : null,
+        onError: _loadFailed,
+      );
+    }
+    return _imageStreamListener;
+  }
+
+  void _handleImageChunk(ImageChunkEvent event) {
+    assert(widget.handleLoadingProgress);
+    setState(() {
+      _loadingProgress = event;
+      _lastException = null;
+      _lastStack = null;
+    });
+  }
+
+  void _handleImageFrame(ImageInfo imageInfo, bool synchronousCall) {
+    setState(() {
+      _replaceImage(info: imageInfo);
+      _loadState = LoadState.completed;
+      _loadingProgress = null;
+      _lastException = null;
+      _lastStack = null;
+      _frameNumber = _frameNumber == null ? 0 : _frameNumber + 1;
+      _wasSynchronouslyLoaded = _wasSynchronouslyLoaded | synchronousCall;
+    });
+
+    // clearMemoryCacheWhenDispose is better
+    // if (!widget.enableMemoryCache) {
+    //   widget.image.evict();
+    // }
+  }
+
+  void _listenToStream() {
+    if (_isListeningToStream) {
+      return;
+    }
+    _imageStream.addListener(_getListener());
+    //_completerHandle?.dispose();
+    //_completerHandle = null;
+    _isListeningToStream = true;
+  }
+
+  void _loadFailed(dynamic exception, StackTrace stackTrace) {
+    setState(() {
+      _lastStack = stackTrace;
+      _lastException = exception;
+      _loadState = LoadState.failed;
+    });
+
+    if (widget.clearMemoryCacheIfFailed) {
+      widget.image.evict();
+    }
+  }
+
+  void _replaceImage({@required ImageInfo info}) {
+    //_imageInfo?.dispose();
+    _imageInfo = info;
+  }
+
+  void _resolveImage([bool rebuild = false]) {
+    if (rebuild) {
+      widget.image.evict();
+    }
+
+    final ScrollAwareImageProvider provider = ScrollAwareImageProvider<Object>(
+      context: _scrollAwareContext,
+      imageProvider: widget.image,
     );
+
+    final ImageStream newStream = provider.resolve(
+        createLocalImageConfiguration(context,
+            size: widget.width != null && widget.height != null
+                ? Size(widget.width, widget.height)
+                : null));
+
+    if (_imageInfo != null && !rebuild && _imageStream?.key == newStream.key) {
+      setState(() {
+        _loadState = LoadState.completed;
+      });
+    }
+
+    _updateSourceStream(newStream, rebuild: rebuild);
   }
 
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder description) {
-    super.debugFillProperties(description);
-    description.add(DiagnosticsProperty<ImageStream>('stream', _imageStream));
-    description.add(DiagnosticsProperty<ImageInfo>('pixels', _imageInfo));
-    description.add(DiagnosticsProperty<ImageChunkEvent>(
-        'loadingProgress', _loadingProgress));
-    description.add(DiagnosticsProperty<int>('frameNumber', _frameNumber));
-    description.add(DiagnosticsProperty<bool>(
-        'wasSynchronouslyLoaded', _wasSynchronouslyLoaded));
+  /// Stops listening to the image stream, if this state object has attached a
+  /// listener.
+  ///
+  /// If the listener from this state is the last listener on the stream, the
+  /// stream will be disposed. To keep the stream alive, set `keepStreamAlive`
+  /// to true, which create [ImageStreamCompleterHandle] to keep the completer
+  /// alive and is compatible with the [TickerMode] being off.
+  void _stopListeningToStream({bool keepStreamAlive = false}) {
+    if (!_isListeningToStream) {
+      return;
+    }
+    // if (keepStreamAlive &&
+    //     _completerHandle == null &&
+    //     _imageStream?.completer != null) {
+    //   _completerHandle = _imageStream.completer.keepAlive();
+    // }
+    _imageStream.removeListener(_getListener());
+    _isListeningToStream = false;
   }
 
-  //reload image as you wish,(loaded failed)
-  @override
-  void reLoadImage() {
-    _resolveImage(true);
+  void _updateInvertColors() {
+    _invertColors = MediaQuery.of(context)?.invertColors ??
+        SemanticsBinding.instance.accessibilityFeatures.invertColors;
   }
 
-  @override
-  ImageInfo get extendedImageInfo => _imageInfo;
+  void _updateSourceStream(ImageStream newStream, {bool rebuild = false}) {
+    if (_imageStream?.key == newStream.key) {
+      return;
+    }
 
-  @override
-  LoadState get extendedImageLoadState => _loadState;
+    if (_isListeningToStream) {
+      _imageStream?.removeListener(_getListener());
+    }
 
-  @override
-  ImageProvider get imageProvider => widget.image;
+    if (!widget.gaplessPlayback || rebuild) {
+      setState(() {
+        _replaceImage(info: null);
+        _loadState = LoadState.loading;
+      });
+    }
 
-  @override
-  bool get invertColors => _invertColors;
+    setState(() {
+      _loadingProgress = null;
+      _frameNumber = null;
+      _wasSynchronouslyLoaded = false;
+    });
 
-  @override
-  Object get imageStreamKey => _imageStream?.key;
-
-  @override
-  ExtendedImage get imageWidget => widget;
-
-  @override
-  Widget get completedWidget => _getCompletedWidget();
-
-  @override
-  ImageChunkEvent get loadingProgress => _loadingProgress;
-
-  @override
-  int get frameNumber => _frameNumber;
-
-  @override
-  bool get wasSynchronouslyLoaded => _wasSynchronouslyLoaded;
-
-  @override
-  ExtendedImageSlidePageState get slidePageState => _slidePageState;
+    _imageStream = newStream;
+    if (_isListeningToStream) {
+      _imageStream.addListener(_getListener());
+    }
+  }
 }

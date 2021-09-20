@@ -38,6 +38,10 @@ abstract class ExtendedImageState {
   bool get wasSynchronouslyLoaded;
 
   ExtendedImageSlidePageState get slidePageState;
+
+  Object get lastException;
+
+  StackTrace get lastStack;
 }
 
 enum ExtendedImageMode {
@@ -61,9 +65,9 @@ double clampScale(double scale, double min, double max) {
 /// [value] equal to [other] will return `true`, otherwise, `false`.
 ///
 /// If [value] or [other] is not finite (`NaN` or infinity), throws an [UnsupportedError].
-bool doubleEqual(double value, double other) {
-  return doubleCompare(value, other) == 0;
-}
+// bool doubleEqual(double value, double other) {
+//   return doubleCompare(value, other) == 0;
+// }
 
 /// Compare two double-precision values.
 /// Returns an integer that indicates whether [value] is less than, equal to, or greater than [other].
@@ -73,14 +77,64 @@ bool doubleEqual(double value, double other) {
 /// [value] greater than [other] will return `1`
 ///
 /// If [value] or [other] is not finite (`NaN` or infinity), throws an [UnsupportedError].
-int doubleCompare(double value, double other,
-    {double precision = precisionErrorTolerance}) {
-  if (value.isNaN || other.isNaN) {
-    throw UnsupportedError('Compared with Infinity or NaN');
+// int doubleCompare(double value, double other,
+//     {double precision = precisionErrorTolerance}) {
+//   if (value.isNaN || other.isNaN) {
+//     throw UnsupportedError('Compared with Infinity or NaN');
+//   }
+//   final double n = value - other;
+//   if (n.abs() < precision) {
+//     return 0;
+//   }
+//   return n < 0 ? -1 : 1;
+// }
+
+extension DoubleExtension on double {
+  bool get isZero => abs() < precisionErrorTolerance;
+  int compare(double other, {double precision = precisionErrorTolerance}) {
+    if (isNaN || other.isNaN) {
+      throw UnsupportedError('Compared with Infinity or NaN');
+    }
+    final double n = this - other;
+    if (n.abs() < precision) {
+      return 0;
+    }
+    return n < 0 ? -1 : 1;
   }
-  final double n = value - other;
-  if (n.abs() < precision) {
-    return 0;
+
+  bool greaterThan(double other, {double precision = precisionErrorTolerance}) {
+    return compare(other, precision: precision) > 0;
   }
-  return n < 0 ? -1 : 1;
+
+  bool lessThan(double other, {double precision = precisionErrorTolerance}) {
+    return compare(other, precision: precision) < 0;
+  }
+
+  bool equalTo(double other, {double precision = precisionErrorTolerance}) {
+    return compare(other, precision: precision) == 0;
+  }
+
+  bool greaterThanOrEqualTo(double other,
+      {double precision = precisionErrorTolerance}) {
+    return compare(other, precision: precision) >= 0;
+  }
+
+  bool lessThanOrEqualTo(double other,
+      {double precision = precisionErrorTolerance}) {
+    return compare(other, precision: precision) <= 0;
+  }
+}
+
+extension RectExtension on Rect {
+  bool beyond(Rect other) {
+    return left.lessThan(other.left) ||
+        right.greaterThan(other.right) ||
+        top.lessThan(other.top) ||
+        bottom.greaterThan(other.bottom);
+  }
+
+  bool topIsSame(Rect other) => top.equalTo(other.top);
+  bool leftIsSame(Rect other) => left.equalTo(other.left);
+  bool rightIsSame(Rect other) => right.equalTo(other.right);
+  bool bottomIsSame(Rect other) => bottom.equalTo(other.bottom);
 }

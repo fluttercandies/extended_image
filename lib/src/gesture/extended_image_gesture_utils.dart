@@ -11,14 +11,6 @@ import 'extended_image_slide_page.dart';
 
 ///gesture
 
-///whether gesture rect is out size
-bool outRect(Rect rect, Rect destinationRect) {
-  return doubleCompare(destinationRect.top, rect.top) < 0 ||
-      doubleCompare(destinationRect.left, rect.left) < 0 ||
-      doubleCompare(destinationRect.right, rect.right) > 0 ||
-      doubleCompare(destinationRect.bottom, rect.bottom) > 0;
-}
-
 class Boundary {
   Boundary({
     this.left = false,
@@ -132,7 +124,8 @@ class GestureDetails {
       userOffset,
       layoutRect,
       destinationRect,
-      _center);
+      _center,
+      slidePageOffset);
 
   @override
   bool operator ==(dynamic other) {
@@ -150,7 +143,8 @@ class GestureDetails {
         userOffset == other.userOffset &&
         layoutRect == other.layoutRect &&
         destinationRect == other.destinationRect &&
-        _center == other._center;
+        _center == other._center &&
+        slidePageOffset == other.slidePageOffset;
   }
 
   Offset _getCenter(Rect destinationRect) {
@@ -266,14 +260,14 @@ class GestureDetails {
 
     if (_computeHorizontalBoundary) {
       //move right
-      if (doubleCompare(result.left, layoutRect.left) >= 0) {
+      if (result.left.greaterThanOrEqualTo(layoutRect.left)) {
         result = Rect.fromLTWH(
             layoutRect.left, result.top, result.width, result.height);
         _boundary.left = true;
       }
 
       ///move left
-      if (doubleCompare(result.right, layoutRect.right) <= 0) {
+      if (result.right.lessThanOrEqualTo(layoutRect.right)) {
         result = Rect.fromLTWH(layoutRect.right - result.width, result.top,
             result.width, result.height);
         _boundary.right = true;
@@ -282,14 +276,14 @@ class GestureDetails {
 
     if (_computeVerticalBoundary) {
       //move down
-      if (doubleCompare(result.bottom, layoutRect.bottom) <= 0) {
+      if (result.bottom.lessThanOrEqualTo(layoutRect.bottom)) {
         result = Rect.fromLTWH(result.left, layoutRect.bottom - result.height,
             result.width, result.height);
         _boundary.bottom = true;
       }
 
       //move up
-      if (doubleCompare(result.top, layoutRect.top) >= 0) {
+      if (result.top.greaterThanOrEqualTo(layoutRect.top)) {
         result = Rect.fromLTWH(
             result.left, layoutRect.top, result.width, result.height);
         _boundary.top = true;
@@ -297,11 +291,11 @@ class GestureDetails {
     }
 
     _computeHorizontalBoundary =
-        doubleCompare(result.left, layoutRect.left) <= 0 &&
-            doubleCompare(result.right, layoutRect.right) >= 0;
+        result.left.lessThanOrEqualTo(layoutRect.left) &&
+            result.right.greaterThanOrEqualTo(layoutRect.right);
 
-    _computeVerticalBoundary = doubleCompare(result.top, layoutRect.top) <= 0 &&
-        doubleCompare(result.bottom, layoutRect.bottom) >= 0;
+    _computeVerticalBoundary = result.top.lessThanOrEqualTo(layoutRect.top) &&
+        result.bottom.greaterThanOrEqualTo(layoutRect.bottom);
 
     ///fix offset
     ///fix offset when it's not slide page
@@ -313,18 +307,25 @@ class GestureDetails {
     return result;
   }
 
-  bool movePage(Offset delta) {
-    final bool canMoveHorizontal = delta.dx != 0 &&
-        ((delta.dx < 0 && boundary.right) ||
-            (delta.dx > 0 && boundary.left) ||
-            !_computeHorizontalBoundary);
+  bool movePage(Offset delta, Axis axis) {
+    switch (axis) {
+      case Axis.horizontal:
+        return totalScale > 1.0 &&
+            delta.dx != 0 &&
+            ((delta.dx < 0 && boundary.right) ||
+                (delta.dx > 0 && boundary.left) ||
+                !_computeHorizontalBoundary);
 
-    final bool canMoveVertical = delta.dy != 0 &&
-        ((delta.dy < 0 && boundary.bottom) ||
-            (delta.dy > 0 && boundary.top) ||
-            !_computeVerticalBoundary);
+      case Axis.vertical:
+        return totalScale > 1.0 &&
+            delta.dy != 0 &&
+            ((delta.dy < 0 && boundary.bottom) ||
+                (delta.dy > 0 && boundary.top) ||
+                !_computeVerticalBoundary);
 
-    return canMoveHorizontal || canMoveVertical || totalScale <= 1.0;
+      default:
+    }
+    return false;
   }
 }
 
@@ -538,13 +539,12 @@ bool defaultSlideEndHandler(
     {Offset offset, Size pageSize, SlideAxis pageGestureAxis}) {
   const int parameter = 6;
   if (pageGestureAxis == SlideAxis.both) {
-    return doubleCompare(offset.distance,
-            Offset(pageSize.width, pageSize.height).distance / parameter) >
-        0;
+    return offset.distance.greaterThan(
+        Offset(pageSize.width, pageSize.height).distance / parameter);
   } else if (pageGestureAxis == SlideAxis.horizontal) {
-    return doubleCompare(offset.dx.abs(), pageSize.width / parameter) > 0;
+    return offset.dx.abs().greaterThan(pageSize.width / parameter);
   } else if (pageGestureAxis == SlideAxis.vertical) {
-    return doubleCompare(offset.dy.abs(), pageSize.height / parameter) > 0;
+    return offset.dy.abs().greaterThan(pageSize.height / parameter);
   }
   return true;
 }

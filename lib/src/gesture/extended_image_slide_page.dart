@@ -137,6 +137,9 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     if (_backAnimationController.isAnimating) {
       return;
     }
+    if (extendedImageGestureState != null) {
+      assert(extendedImageGestureState.mounted);
+    }
     _extendedImageGestureState = extendedImageGestureState;
     _extendedImageSlidePageHandlerState = extendedImageSlidePageHandlerState;
 

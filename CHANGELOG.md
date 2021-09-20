@@ -1,3 +1,13 @@
+## 5.0.0-non-null-safety
+
+* Improve:
+  solve gesture conflict between Scale and Horizontal/Vertical drag.
+
+## 4.2.1-non-null-safety
+
+* Improve:
+  fix description of reverseMousePointerScrollDirection
+
 ## 4.2.0-non-null-safety
 
 * Issues:

@@ -62,10 +62,7 @@ typedef InitGestureConfigHandler = GestureConfig Function(
 ///on sliding page
 typedef OnSlidingPage = void Function(ExtendedImageSlidePageState state);
 
-///whether we can move to previous/next page only for Image
-typedef CanMovePage = bool Function(GestureDetails gestureDetails);
-
-///whether we can scroll page
+/// Whether we can scroll page
 typedef CanScrollPage = bool Function(GestureDetails gestureDetails);
 
 ///return initial destination rect
