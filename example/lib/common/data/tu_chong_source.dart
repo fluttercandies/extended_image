@@ -1,4 +1,4 @@
-import 'dart:convert' show json;
+import 'dart:convert' show json, jsonEncode;
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
@@ -253,7 +253,10 @@ class TuChongItem {
       tags: tags,
       tagColors: tagColors,
       title: asT<String>(jsonRes['title']),
-      titleImage: asT<Object>(jsonRes['title_image']),
+      titleImage: jsonRes['title_image'] == null
+          ? null
+          : TitleImage.fromJson(
+              asT<Map<String, dynamic>>(jsonRes['title_image'])!),
       type: asT<String>(jsonRes['type']),
       update: asT<bool>(jsonRes['update']),
       url: asT<String>(jsonRes['url']),
@@ -292,7 +295,7 @@ class TuChongItem {
   final List<Object?>? sites;
   final List<String?>? tags;
   final String? title;
-  final Object? titleImage;
+  final TitleImage? titleImage;
   final String? type;
   final bool? update;
   final String? url;
@@ -557,4 +560,33 @@ class VerificationList {
   String toString() {
     return json.encode(this);
   }
+}
+
+class TitleImage {
+  const TitleImage({
+    this.height,
+    this.url,
+    this.width,
+  });
+
+  factory TitleImage.fromJson(Map<String, dynamic> jsonRes) => TitleImage(
+        height: asT<int?>(jsonRes['height']),
+        url: asT<String?>(jsonRes['url']),
+        width: asT<int?>(jsonRes['width']),
+      );
+
+  final int? height;
+  final String? url;
+  final int? width;
+
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'height': height,
+        'url': url,
+        'width': width,
+      };
 }

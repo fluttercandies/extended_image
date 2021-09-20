@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/material.dart';
 
 /// make hero better when slide out
 class HeroWidget extends StatefulWidget {
@@ -18,14 +18,14 @@ class HeroWidget extends StatefulWidget {
 }
 
 class _HeroWidgetState extends State<HeroWidget> {
-  late RectTween _rectTween;
+  RectTween? _rectTween;
   @override
   Widget build(BuildContext context) {
     return Hero(
       tag: widget.tag,
       createRectTween: (Rect? begin, Rect? end) {
         _rectTween = RectTween(begin: begin, end: end);
-        return _rectTween;
+        return _rectTween!;
       },
       // make hero better when slide out
       flightShuttleBuilder: (BuildContext flightContext,
@@ -37,6 +37,10 @@ class _HeroWidgetState extends State<HeroWidget> {
         final Hero hero = (flightDirection == HeroFlightDirection.pop
             ? fromHeroContext.widget
             : toHeroContext.widget) as Hero;
+        if (_rectTween == null) {
+          return hero;
+        }
+
         if (flightDirection == HeroFlightDirection.pop) {
           final bool fixTransform = widget.slideType == SlideType.onlyImage &&
               (widget.slidePagekey.currentState!.offset != Offset.zero ||
@@ -57,8 +61,8 @@ class _HeroWidgetState extends State<HeroWidget> {
                     opacity: 1 - animation.value,
                     child: UnconstrainedBox(
                       child: SizedBox(
-                        width: _rectTween.begin!.width,
-                        height: _rectTween.begin!.height,
+                        width: _rectTween!.begin!.width,
+                        height: _rectTween!.begin!.height,
                         child: toHeroWidget,
                       ),
                     ),

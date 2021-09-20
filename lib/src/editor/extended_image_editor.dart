@@ -143,9 +143,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                       _editorConfig!.cropAspectRatio! > 0) {
                     final Rect rect = _initCropRect(layoutRect);
                     _editActionDetails!.totalScale = _editActionDetails!
-                        .preTotalScale = doubleCompare(
-                                destinationRect.width, destinationRect.height) >
-                            0
+                        .preTotalScale = destinationRect.width
+                            .greaterThan(destinationRect.height)
                         ? rect.height / cropRect.height
                         : rect.width / cropRect.width;
                     cropRect = rect;
@@ -221,7 +220,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     _startingOffset = details.focalPoint;
     //no more zoom
     if ((_editActionDetails!.reachCropRectEdge && zoomOut) ||
-        doubleEqual(_editActionDetails!.totalScale, _editorConfig!.maxScale) &&
+        _editActionDetails!.totalScale.equalTo(_editorConfig!.maxScale) &&
             zoomIn) {
       //correct _startingScale
       //details.scale was not calcuated at the moment

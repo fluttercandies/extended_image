@@ -13,6 +13,7 @@ import 'package:js/js.dart';
 external void _exportRaw(String key, Uint8List value);
 
 class ImageSaver {
+  ImageSaver._();
   static Future<String> save(String name, Uint8List fileData) async {
     _exportRaw(name, fileData);
     return name;

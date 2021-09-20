@@ -9,13 +9,14 @@ import 'package:vm_service/vm_service_io.dart';
 class VMHelper with ChangeNotifier {
   factory VMHelper() => _vMHelper;
   VMHelper._() {
-    _startConnect().whenComplete(() {
-      _timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
-        VMHelper()._updateMemoryUsage().whenComplete(() {
-          notifyListeners();
+    if (kDebugMode)
+      _startConnect().whenComplete(() {
+        _timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
+          VMHelper()._updateMemoryUsage().whenComplete(() {
+            notifyListeners();
+          });
         });
       });
-    });
   }
   static final VMHelper _vMHelper = VMHelper._();
   late MemoryUsage mainMemoryUsage;
@@ -70,7 +71,8 @@ class VMHelper with ChangeNotifier {
   }
 
   void forceGC() {
-    serviceClient?.getAllocationProfile(main?.id ?? '', gc: true);
+    if (kDebugMode)
+      serviceClient?.getAllocationProfile(main?.id ?? '', gc: true);
   }
 }
 
@@ -79,7 +81,7 @@ class MyMemoryUsage {
     required int externalUsage,
     required int heapCapacity,
     required int heapUsage,
-  })   : dataTime = DateTime.now(),
+  })  : dataTime = DateTime.now(),
         externalUsage = externalUsage / 1024 / 1024,
         heapCapacity = heapCapacity / 1024 / 1024,
         heapUsage = heapUsage / 1024 / 1024;
@@ -124,6 +126,7 @@ class StdoutLog extends Log {
 }
 
 class ByteUtil {
+  ByteUtil._();
   static String toByteString(int bytes) {
     if (bytes <= 1024) {
       return '${bytes}B';

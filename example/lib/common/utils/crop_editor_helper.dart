@@ -2,60 +2,19 @@
 import 'dart:isolate';
 import 'dart:typed_data';
 import 'dart:ui';
-import 'package:flutter/foundation.dart';
-
-// ignore: implementation_imports
-import 'package:http/src/response.dart';
-import 'package:http_client_helper/http_client_helper.dart';
 
 // import 'package:isolate/load_balancer.dart';
 // import 'package:isolate/isolate_runner.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/foundation.dart';
+// ignore: implementation_imports
+import 'package:http/src/response.dart';
+import 'package:http_client_helper/http_client_helper.dart';
 import 'package:image/image.dart';
 import 'package:image_editor/image_editor.dart';
 
 // final Future<LoadBalancer> loadBalancer =
 //     LoadBalancer.create(1, IsolateRunner.spawn);
-
-Future<dynamic> isolateDecodeImage(List<int> data) async {
-  final ReceivePort response = ReceivePort();
-  await Isolate.spawn(_isolateDecodeImage, response.sendPort);
-  final dynamic sendPort = await response.first;
-  final ReceivePort answer = ReceivePort();
-  // ignore: always_specify_types
-  sendPort.send([answer.sendPort, data]);
-  return answer.first;
-}
-
-void _isolateDecodeImage(SendPort port) {
-  final ReceivePort rPort = ReceivePort();
-  port.send(rPort.sendPort);
-  rPort.listen((dynamic message) {
-    final SendPort send = message[0] as SendPort;
-    final List<int> data = message[1] as List<int>;
-    send.send(decodeImage(data));
-  });
-}
-
-Future<dynamic> isolateEncodeImage(Image src) async {
-  final ReceivePort response = ReceivePort();
-  await Isolate.spawn(_isolateEncodeImage, response.sendPort);
-  final dynamic sendPort = await response.first;
-  final ReceivePort answer = ReceivePort();
-  // ignore: always_specify_types
-  sendPort.send([answer.sendPort, src]);
-  return answer.first;
-}
-
-void _isolateEncodeImage(SendPort port) {
-  final ReceivePort rPort = ReceivePort();
-  port.send(rPort.sendPort);
-  rPort.listen((dynamic message) {
-    final SendPort send = message[0] as SendPort;
-    final Image src = message[1] as Image;
-    send.send(encodeJpg(src));
-  });
-}
 
 Future<Uint8List?> cropImageDataWithDartLibrary(
     {required ExtendedImageEditorState state}) async {
@@ -196,6 +155,46 @@ Future<Uint8List?> cropImageDataWithNativeLibrary(
 
   print('${DateTime.now().difference(start)} ：total time');
   return result;
+}
+
+Future<dynamic> isolateDecodeImage(List<int> data) async {
+  final ReceivePort response = ReceivePort();
+  await Isolate.spawn(_isolateDecodeImage, response.sendPort);
+  final dynamic sendPort = await response.first;
+  final ReceivePort answer = ReceivePort();
+  // ignore: always_specify_types
+  sendPort.send([answer.sendPort, data]);
+  return answer.first;
+}
+
+Future<dynamic> isolateEncodeImage(Image src) async {
+  final ReceivePort response = ReceivePort();
+  await Isolate.spawn(_isolateEncodeImage, response.sendPort);
+  final dynamic sendPort = await response.first;
+  final ReceivePort answer = ReceivePort();
+  // ignore: always_specify_types
+  sendPort.send([answer.sendPort, src]);
+  return answer.first;
+}
+
+void _isolateDecodeImage(SendPort port) {
+  final ReceivePort rPort = ReceivePort();
+  port.send(rPort.sendPort);
+  rPort.listen((dynamic message) {
+    final SendPort send = message[0] as SendPort;
+    final List<int> data = message[1] as List<int>;
+    send.send(decodeImage(data));
+  });
+}
+
+void _isolateEncodeImage(SendPort port) {
+  final ReceivePort rPort = ReceivePort();
+  port.send(rPort.sendPort);
+  rPort.listen((dynamic message) {
+    final SendPort send = message[0] as SendPort;
+    final Image src = message[1] as Image;
+    send.send(encodeJpg(src));
+  });
 }
 
 /// it may be failed, due to Cross-domain

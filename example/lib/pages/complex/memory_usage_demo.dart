@@ -3,9 +3,9 @@ import 'package:example/common/data/tu_chong_source.dart';
 import 'package:example/common/utils/vm_helper.dart';
 import 'package:example/common/widget/common_widget.dart';
 import 'package:example/common/widget/memory_usage_chart.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/material.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 
 @FFRoute(
@@ -29,26 +29,6 @@ class _MemoryUsageDemoState extends State<MemoryUsageDemo> {
   double? _compressionRatio;
   int? _maxBytes;
   bool _clearMemoryCacheWhenDispose = false;
-  @override
-  void initState() {
-    super.initState();
-    listSourceRepository = TuChongRepository();
-    // try the following parameters, they can reduce memory usage
-    _maxBytes = 500 << 10;
-    //_compressionRatio = 0.4;
-    _clearMemoryCacheWhenDispose = true;
-  }
-
-  @override
-  void dispose() {
-    listSourceRepository.dispose();
-    // clear ImageCache which named 'MemoryUsage'
-    clearMemoryImageCache(imageCacheName);
-    // just for test
-    VMHelper().forceGC();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -137,5 +117,25 @@ class _MemoryUsageDemoState extends State<MemoryUsageDemo> {
             )),
           ],
         ));
+  }
+
+  @override
+  void dispose() {
+    listSourceRepository.dispose();
+    // clear ImageCache which named 'MemoryUsage'
+    clearMemoryImageCache(imageCacheName);
+    // just for test
+    VMHelper().forceGC();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    listSourceRepository = TuChongRepository();
+    // try the following parameters, they can reduce memory usage
+    _maxBytes = 500 << 10;
+    //_compressionRatio = 0.4;
+    _clearMemoryCacheWhenDispose = true;
   }
 }

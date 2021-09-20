@@ -31,6 +31,7 @@ Future<Uint8List?> pickImage(BuildContext context) async {
 }
 
 class ImageSaver {
+  ImageSaver._();
   static Future<String?> save(String name, Uint8List fileData) async {
     final AssetEntity? imageEntity =
         await PhotoManager.editor.saveImage(fileData);

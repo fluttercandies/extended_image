@@ -80,7 +80,7 @@ class ExtendedImageSlidePageHandlerState
 
       final double delta = (details.focalPoint - _startingOffset).distance;
 
-      if (doubleCompare(delta, minGesturePageDelta) > 0) {
+      if (delta.greaterThan(minGesturePageDelta)) {
         _updateSlidePagePreOffset ??= details.focalPoint;
         _extendedImageSlidePageState!.slide(
             details.focalPoint - _updateSlidePagePreOffset!,

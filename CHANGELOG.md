@@ -1,3 +1,8 @@
+## 5.0.0
+
+* Improve:
+  solve gesture conflict between Scale and Horizontal/Vertical drag.
+
 ## 4.2.1
 
 * Improve:
