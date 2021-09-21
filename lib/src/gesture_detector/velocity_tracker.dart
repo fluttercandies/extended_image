@@ -1,4 +1,4 @@
-// ignore_for_file: always_put_control_body_on_new_line, unnecessary_null_comparison
+// ignore_for_file: always_put_control_body_on_new_line, unnecessary_null_comparison, deprecated_member_use
 
 import 'package:flutter/gestures.dart';
 

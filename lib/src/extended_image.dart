@@ -1,11 +1,11 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:extended_image/src/extended_image_border_painter.dart';
-import 'package:extended_image/src/extended_image_typedef.dart';
-import 'package:extended_image/src/extended_image_utils.dart';
-import 'package:extended_image/src/gesture/extended_image_gesture.dart';
-import 'package:extended_image/src/image/extended_raw_image.dart';
+import 'package:extended_image/src/border_painter.dart';
+import 'package:extended_image/src/gesture/gesture.dart';
+import 'package:extended_image/src/image/raw_image.dart';
+import 'package:extended_image/src/typedef.dart';
+import 'package:extended_image/src/utils.dart';
 import 'package:extended_image_library/extended_image_library.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -14,9 +14,9 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import 'editor/extended_image_editor.dart';
-import 'gesture/extended_image_slide_page.dart';
-import 'gesture/extended_image_slide_page_handler.dart';
+import 'editor/editor.dart';
+import 'gesture/slide_page.dart';
+import 'gesture/slide_page_handler.dart';
 
 /// extended image base on official
 class ExtendedImage extends StatefulWidget {
@@ -28,6 +28,7 @@ class ExtendedImage extends StatefulWidget {
     this.width,
     this.height,
     this.color,
+    this.opacity,
     this.colorBlendMode,
     this.fit,
     this.alignment = Alignment.center,
@@ -200,6 +201,7 @@ class ExtendedImage extends StatefulWidget {
     this.width,
     this.height,
     this.color,
+    this.opacity,
     this.colorBlendMode,
     this.fit,
     this.alignment = Alignment.center,
@@ -296,6 +298,7 @@ class ExtendedImage extends StatefulWidget {
     this.width,
     this.height,
     this.color,
+    this.opacity,
     this.colorBlendMode,
     this.fit,
     this.alignment = Alignment.center,
@@ -378,6 +381,7 @@ class ExtendedImage extends StatefulWidget {
     this.width,
     this.height,
     this.color,
+    this.opacity,
     this.colorBlendMode,
     this.fit,
     this.alignment = Alignment.center,
@@ -444,6 +448,7 @@ class ExtendedImage extends StatefulWidget {
     this.width,
     this.height,
     this.color,
+    this.opacity,
     this.colorBlendMode,
     this.fit,
     this.alignment = Alignment.center,
@@ -646,6 +651,20 @@ class ExtendedImage extends StatefulWidget {
 
   /// If non-null, this color is blended with each image pixel using [colorBlendMode].
   final Color color;
+
+  /// If non-null, the value from the [Animation] is multiplied with the opacity
+  /// of each image pixel before painting onto the canvas.
+  ///
+  /// This is more efficient than using [FadeTransition] to change the opacity
+  /// of an image, since this avoids creating a new composited layer. Composited
+  /// layers may double memory usage as the image is painted onto an offscreen
+  /// render target.
+  ///
+  /// See also:
+  ///
+  ///  * [AlwaysStoppedAnimation], which allows you to create an [Animation]
+  ///    from a single opacity value.
+  final Animation<double> opacity;
 
   /// Used to set the [FilterQuality] of the image.
   ///
@@ -1032,6 +1051,7 @@ class _ExtendedImageState extends State<ExtendedImage>
       height: widget.height,
       scale: _imageInfo?.scale ?? 1.0,
       color: widget.color,
+      opacity: widget.opacity,
       colorBlendMode: widget.colorBlendMode,
       fit: widget.fit,
       alignment: widget.alignment,

@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:extended_image/src/typedef.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../utils.dart';

@@ -2,13 +2,13 @@ import 'dart:math';
 import 'dart:ui' as ui show Image;
 
 import 'package:extended_image/src/editor/extended_image_editor_utils.dart';
-import 'package:extended_image/src/extended_image_typedef.dart';
-import 'package:extended_image/src/extended_image_utils.dart';
-import 'package:extended_image/src/gesture/extended_image_gesture_utils.dart';
-
+import 'package:extended_image/src/gesture/utils.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/rendering.dart';
 import 'package:meta/meta.dart';
+
+import '../typedef.dart';
+import '../utils.dart';
 
 void paintExtendedImage({
   @required Canvas canvas,
