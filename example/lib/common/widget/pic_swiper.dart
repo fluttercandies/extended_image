@@ -383,9 +383,16 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
           fit: StackFit.expand,
           children: <Widget>[
             ExtendedImageGesturePageView.builder(
-              controller: PageController(
+              controller: ExtendedPageController(
                 initialPage: widget.index!,
+                pageSpacing: 50,
               ),
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              canScrollPage: (GestureDetails? gestureDetails) {
+                return _imageDetailY >= 0;
+                //return (gestureDetails?.totalScale ?? 1.0) <= 1.0;
+              },
               itemBuilder: (BuildContext context, int index) {
                 final String item = widget.pics![index].picUrl;
 
@@ -408,14 +415,15 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                                   .toDouble()));
                     }
                     return GestureConfig(
-                        inPageView: true,
-                        initialScale: initialScale!,
-                        maxScale: max(initialScale, 5.0),
-                        animationMaxScale: max(initialScale, 5.0),
-                        initialAlignment: InitialAlignment.center,
-                        //you can cache gesture state even though page view page change.
-                        //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
-                        cacheGesture: false);
+                      inPageView: true,
+                      initialScale: initialScale!,
+                      maxScale: max(initialScale, 5.0),
+                      animationMaxScale: max(initialScale, 5.0),
+                      initialAlignment: InitialAlignment.center,
+                      //you can cache gesture state even though page view page change.
+                      //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
+                      cacheGesture: false,
+                    );
                   },
                   onDoubleTap: (ExtendedImageGestureState state) {
                     ///you can use define pointerDownPosition as you can,
@@ -534,12 +542,10 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                 image = GestureDetector(
                   child: image,
                   onTap: () {
-                    // if (translateY != 0) {
-                    //   translateY = 0;
-                    //   rebuildDetail.sink.add(translateY);
-                    // }
-                    // else
-                    {
+                    if (_imageDetailY != 0) {
+                      _imageDetailY = 0;
+                      rebuildDetail.sink.add(_imageDetailY);
+                    } else {
                       slidePagekey.currentState!.popPage();
                       Navigator.pop(context);
                     }
@@ -559,15 +565,6 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                 _showSwiper = true;
                 rebuildSwiper.add(_showSwiper);
               },
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-//              //move page only when scale is not more than 1.0
-              // canMovePage: (GestureDetails gestureDetails) {
-              //   //gestureDetails.totalScale <= 1.0
-              //   //return translateY == 0.0;
-
-              // }
-              //physics: ClampingScrollPhysics(),
             ),
             StreamBuilder<bool>(
               builder: (BuildContext c, AsyncSnapshot<bool> d) {
@@ -592,7 +589,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
     result = ExtendedImageSlidePage(
       key: slidePagekey,
       child: result,
-      slideAxis: SlideAxis.both,
+      slideAxis: SlideAxis.vertical,
       slideType: SlideType.onlyImage,
       slideScaleHandler: (
         Offset offset, {
@@ -714,6 +711,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    super.initState();
     _currentIndex = widget.index;
     _doubleClickAnimationController = AnimationController(
         duration: const Duration(milliseconds: 150), vsync: this);
@@ -730,6 +728,5 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
       }
       rebuildDetail.sink.add(_imageDetailY);
     });
-    super.initState();
   }
 }

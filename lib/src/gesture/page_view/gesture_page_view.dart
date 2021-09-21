@@ -3,13 +3,23 @@ import 'package:extended_image/src/gesture_detector/drag.dart';
 import 'package:extended_image/src/gesture_detector/scale.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+
+import 'widgets/page_controller.dart';
+import 'widgets/sliver_fill.dart';
+
+export 'rendering/sliver_fill.dart';
+export 'widgets/page_controller.dart';
+export 'widgets/sliver_fill.dart';
+
+part 'widgets/page_view.dart';
 
 ///
 ///  extended_image_view.dart
 ///  create by zmtzawqlp on 2019/4/3
 ///
-final PageController _defaultPageController = PageController();
-//const PageScrollPhysics _kPagePhysics = PageScrollPhysics();
+final ExtendedPageController _defaultPageController = ExtendedPageController();
+const PageScrollPhysics _kPagePhysics = PageScrollPhysics();
 const ScrollPhysics _defaultScrollPhysics = NeverScrollableScrollPhysics();
 
 final PageMetrics _testPageMetrics = PageMetrics(
@@ -30,7 +40,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     Key? key,
     this.scrollDirection = Axis.horizontal,
     this.reverse = false,
-    PageController? controller,
+    ExtendedPageController? controller,
     ScrollPhysics? physics,
     this.pageSnapping = true,
     this.onPageChanged,
@@ -60,7 +70,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     Key? key,
     this.scrollDirection = Axis.horizontal,
     this.reverse = false,
-    PageController? controller,
+    ExtendedPageController? controller,
     ScrollPhysics? physics,
     this.pageSnapping = true,
     this.onPageChanged,
@@ -82,7 +92,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     Key? key,
     this.scrollDirection = Axis.horizontal,
     this.reverse = false,
-    PageController? controller,
+    ExtendedPageController? controller,
     //this.physics,
     this.pageSnapping = true,
     this.onPageChanged,
@@ -117,7 +127,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
 
   /// An object that can be used to control the position to which this page
   /// view is scrolled.
-  final PageController controller;
+  final ExtendedPageController controller;
 
   /// How the page view should respond to user input.
   ///
@@ -156,7 +166,7 @@ class ExtendedImageGesturePageViewState
       const <Type, GestureRecognizerFactory>{};
   late GestureAnimation _gestureAnimation;
   ScrollPosition get position => pageController.position;
-  PageController get pageController => widget.controller;
+  ExtendedPageController get pageController => widget.controller;
   ExtendedImageGestureState? get extendedImageGestureState {
     return extendedImageGestureStates.lastWhere(
         (ExtendedImageGestureState? element) => element?.mounted ?? false,
@@ -280,7 +290,7 @@ class ExtendedImageGesturePageViewState
 //      finallyPhysics = finallyPhysics.applyTo(widget.physics);
 //    }
 
-    Widget result = PageView.custom(
+    Widget result = GesturePageView.custom(
       scrollDirection: widget.scrollDirection,
       reverse: widget.reverse,
       controller: widget.controller,

@@ -1,18 +1,24 @@
 ## 5.0.0
 
 * Improve:
-  solve gesture conflict between Scale and Horizontal/Vertical drag.
+  1. solve gesture conflict between Scale and Horizontal/Vertical drag.
+  2. support to set page spacing. [ExtendedPageController.pageSpacing]
+  3. add [ExtendedImage.opacity].
+
+* Breaking change:
+  1. use [ExtendedPageController] instead of [PageController].
+  2. use [ExtendedImageGesturePageView.canScrollPage] instead of [ExtendedImageGesturePageView.canMovePage].
 
 ## 4.2.1
 
 * Improve:
-  fix description of reverseMousePointerScrollDirection
+  1. fix description of reverseMousePointerScrollDirection
 
 ## 4.2.0
 
 * Issues:
-  fix issue that inverse zoom by mouse wheel.(#382)
-  fix issue that crop_layer with/height is negative
+  1. fix issue that inverse zoom by mouse wheel.(#382)
+  2. fix issue that crop_layer with/height is negative
 
 ## 4.1.0
 

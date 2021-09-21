@@ -1,9 +1,9 @@
 import 'dart:ui' as ui show Image;
 
-import 'package:extended_image/src/editor/extended_image_editor_utils.dart';
-import 'package:extended_image/src/extended_image_typedef.dart';
-import 'package:extended_image/src/gesture/extended_image_gesture_utils.dart';
-import 'package:extended_image/src/image/extended_render_image.dart';
+import 'package:extended_image/src/editor/editor_utils.dart';
+import 'package:extended_image/src/gesture/utils.dart';
+import 'package:extended_image/src/image/render_image.dart';
+import 'package:extended_image/src/typedef.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -25,6 +25,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
     this.height,
     this.scale = 1.0,
     this.color,
+    this.opacity,
     this.colorBlendMode,
     this.fit,
     this.alignment = Alignment.center,
@@ -55,6 +56,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
       height: height,
       scale: scale,
       color: color,
+      opacity: opacity,
       colorBlendMode: colorBlendMode,
       fit: fit,
       alignment: alignment,
@@ -114,6 +116,20 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
 
   /// If non-null, this color is blended with each image pixel using [colorBlendMode].
   final Color? color;
+
+  /// If non-null, the value from the [Animation] is multiplied with the opacity
+  /// of each image pixel before painting onto the canvas.
+  ///
+  /// This is more efficient than using [FadeTransition] to change the opacity
+  /// of an image, since this avoids creating a new composited layer. Composited
+  /// layers may double memory usage as the image is painted onto an offscreen
+  /// render target.
+  ///
+  /// See also:
+  ///
+  ///  * [AlwaysStoppedAnimation], which allows you to create an [Animation]
+  ///    from a single opacity value.
+  final Animation<double>? opacity;
 
   /// Used to set the filterQuality of the image
   /// Use the "low" quality setting to scale the image, which corresponds to
@@ -245,6 +261,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
       ..height = height
       ..scale = scale
       ..color = color
+      ..opacity = opacity
       ..colorBlendMode = colorBlendMode
       ..alignment = alignment
       ..fit = fit
