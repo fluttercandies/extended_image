@@ -308,24 +308,22 @@ class GestureDetails {
   }
 
   bool movePage(Offset delta, Axis axis) {
+    if (totalScale! <= 1.0) {
+      return false;
+    }
     switch (axis) {
       case Axis.horizontal:
-        return totalScale! > 1.0 &&
-            delta.dx != 0 &&
+        return delta.dx != 0 &&
             ((delta.dx < 0 && boundary.right) ||
                 (delta.dx > 0 && boundary.left) ||
                 !_computeHorizontalBoundary);
 
       case Axis.vertical:
-        return totalScale! > 1.0 &&
-            delta.dy != 0 &&
+        return delta.dy != 0 &&
             ((delta.dy < 0 && boundary.bottom) ||
                 (delta.dy > 0 && boundary.top) ||
                 !_computeVerticalBoundary);
-
-      default:
     }
-    return false;
   }
 }
 
