@@ -1,9 +1,10 @@
 import 'dart:math';
 import 'dart:ui' as ui show Image;
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 import 'package:intl/intl.dart';
+import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 
 const double maxDragOffset = 90;
 double hideHeight = maxDragOffset / 2.3;

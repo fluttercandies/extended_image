@@ -55,7 +55,6 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
         touchTooltipData: LineTouchTooltipData(
           tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
         ),
-        touchCallback: (LineTouchResponse touchResponse) {},
         handleBuiltInTouches: true,
       ),
       gridData: FlGridData(
@@ -64,7 +63,7 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
       titlesData: FlTitlesData(
         bottomTitles: SideTitles(
           showTitles: true,
-          getTextStyles: (double value) => const TextStyle(
+          getTextStyles: (BuildContext b, double value) => const TextStyle(
             color: Color(0xff72719b),
             fontWeight: FontWeight.bold,
             fontSize: 16,
@@ -81,7 +80,7 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
         ),
         leftTitles: SideTitles(
           showTitles: true,
-          getTextStyles: (double value) => const TextStyle(
+          getTextStyles: (BuildContext b, double value) => const TextStyle(
             color: Color(0xff75729e),
             fontWeight: FontWeight.bold,
             fontSize: 14,

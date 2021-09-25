@@ -1,6 +1,7 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:flutter/material.dart';
-import 'package:extended_image/extended_image.dart';
+import 'package:flutter/rendering.dart';
 
 @FFRoute(
   name: 'fluttercandies://extendedImageGesturePageView',
@@ -34,8 +35,9 @@ class _SimplePhotoViewDemoState extends State<SimplePhotoViewDemo> {
         title: const Text('ExtendedImageGesturePageView'),
       ),
       body: ExtendedImageGesturePageView.builder(
-        controller: PageController(
+        controller: ExtendedPageController(
           initialPage: 0,
+          pageSpacing: 50,
         ),
         itemCount: images.length,
         itemBuilder: (BuildContext context, int index) {

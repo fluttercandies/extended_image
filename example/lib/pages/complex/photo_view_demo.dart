@@ -2,8 +2,8 @@
 ///  photo_view_demo.dart
 ///  create by zmtzawqlp on 2019/4/4
 ///
-
 import 'dart:async';
+
 import 'package:example/common/data/tu_chong_repository.dart';
 import 'package:example/common/data/tu_chong_source.dart';
 import 'package:example/common/text/my_extended_text_selection_controls.dart';
@@ -14,13 +14,12 @@ import 'package:example/common/widget/pic_grid_view.dart';
 import 'package:example/common/widget/push_to_refresh_header.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
+import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide CircularProgressIndicator;
 import 'package:loading_more_list/loading_more_list.dart';
 import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 
 @FFRoute(
   name: 'fluttercandies://photoview',
@@ -40,27 +39,13 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
   MyTextSelectionControls? _myExtendedMaterialTextSelectionControls;
   final String _attachContent =
       '[love]Extended text help you to build rich text quickly. any special text you will have with extended text.It\'s my pleasure to invite you to join \$FlutterCandies\$ if you want to improve flutter .[love] if you meet any problem, please let me konw @zmtzawqlp .[sun_glasses]';
-  @override
-  void initState() {
-    _myExtendedMaterialTextSelectionControls = MyTextSelectionControls();
-    super.initState();
-  }
-
   TuChongRepository listSourceRepository = TuChongRepository();
+
+  bool konwImageSize = true;
 
   //if you can't konw image size before build,
   //you have to handle copy when image is loaded.
-  bool konwImageSize = true;
   DateTime dateTimeNow = DateTime.now();
-  @override
-  void dispose() {
-    listSourceRepository.dispose();
-    clearMemoryImageCache('CropImage');
-    // just for test
-    VMHelper().forceGC();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     const double margin = 11;
@@ -253,6 +238,21 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    listSourceRepository.dispose();
+    clearMemoryImageCache('CropImage');
+    // just for test
+    VMHelper().forceGC();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    _myExtendedMaterialTextSelectionControls = MyTextSelectionControls();
+    super.initState();
   }
 
   Future<bool> onRefresh() {

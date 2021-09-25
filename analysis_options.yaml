@@ -33,12 +33,10 @@ analyzer:
     # Stream and not importing dart:async
     # Please see https://github.com/flutter/flutter/pull/24528 for details.
     sdk_version_async_exported_from_core: ignore
-  # exclude:
-  #   - "bin/cache/**"
-  #   # the following two are relative to the stocks example and the flutter package respectively
-  #   # see https://github.com/dart-lang/sdk/issues/28463
-  #   - "lib/i18n/messages_*.dart"
-  #   - "lib/src/http/**"
+  exclude:
+    # the following two are relative to the stocks example and the flutter package respectively
+    # see https://github.com/dart-lang/sdk/issues/28463
+    #- "lib/src/gesture_detector/*.dart"
 
 linter:
   rules:

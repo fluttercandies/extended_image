@@ -1,7 +1,7 @@
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:flutter/material.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
+import 'package:flutter/material.dart';
 
 @FFRoute(
   name: 'fluttercandies://zoomimage',
@@ -51,6 +51,7 @@ class ZoomImageDemo extends StatelessWidget {
                   initialScale: 1.0,
                   inPageView: false,
                   initialAlignment: InitialAlignment.center,
+                  reverseMousePointerScrollDirection: true,
                   gestureDetailsIsChanged: (GestureDetails? details) {
                     //print(details?.totalScale);
                   },

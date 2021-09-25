@@ -2,10 +2,10 @@ import 'package:example/common/data/tu_chong_repository.dart';
 import 'package:example/common/data/tu_chong_source.dart';
 import 'package:example/common/utils/vm_helper.dart';
 import 'package:example/common/widget/item_builder.dart';
+import 'package:extended_image/extended_image.dart';
+import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_more_list/loading_more_list.dart';
-import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
-import 'package:extended_image/extended_image.dart';
 
 @FFRoute(
   name: 'fluttercandies://WaterfallFlowDemo',
@@ -23,21 +23,6 @@ class WaterfallFlowDemo extends StatefulWidget {
 
 class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
   TuChongRepository? listSourceRepository;
-  @override
-  void initState() {
-    listSourceRepository = TuChongRepository();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    listSourceRepository?.dispose();
-    clearMemoryImageCache('WaterfallFlow');
-    // just for test
-    VMHelper().forceGC();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -64,5 +49,20 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    listSourceRepository?.dispose();
+    clearMemoryImageCache('WaterfallFlow');
+    // just for test
+    VMHelper().forceGC();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    listSourceRepository = TuChongRepository();
+    super.initState();
   }
 }

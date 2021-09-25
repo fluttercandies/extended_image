@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
+
 @FFArgumentImport()
 import 'package:example/common/data/tu_chong_source.dart' hide asT;
 @FFArgumentImport()
@@ -13,10 +14,11 @@ import 'package:extended_text/extended_text.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:oktoast/oktoast.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/rendering.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import 'hero.dart';
 import 'item_builder.dart';
 
@@ -24,6 +26,310 @@ const String attachContent =
     '''[love]Extended text help you to build rich text quickly. any special text you will have with extended text.It's my pleasure to invite you to join \$FlutterCandies\$ if you want to improve flutter .[love] if you meet any problem, please let me konw @zmtzawqlp .[sun_glasses]''';
 
 typedef DoubleClickAnimationListener = void Function();
+
+class FloatText extends StatelessWidget {
+  const FloatText(this.text);
+  final String text;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(3.0),
+      decoration: BoxDecoration(
+        color: Colors.red.withOpacity(0.6),
+        border: Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
+        borderRadius: const BorderRadius.all(
+          Radius.circular(5.0),
+        ),
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: const TextStyle(color: Colors.white),
+      ),
+    );
+  }
+}
+
+class ImageDetail extends StatelessWidget {
+  const ImageDetail(
+    this.info,
+    this.index,
+    this.tuChongItem,
+  );
+  final ImageDetailInfo? info;
+  final int index;
+  final TuChongItem? tuChongItem;
+  @override
+  Widget build(BuildContext context) {
+    String content =
+        tuChongItem!.content ?? (tuChongItem!.excerpt ?? tuChongItem!.title!);
+    content += attachContent * 2;
+    final Widget result = Container(
+      // constraints: BoxConstraints(minHeight: 25.0),
+      key: info!.key,
+      margin: const EdgeInsets.only(
+        left: 5,
+        right: 5,
+      ),
+      padding: const EdgeInsets.all(20.0),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: <Widget>[
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              buildTagsWidget(
+                tuChongItem!,
+                maxNum: tuChongItem!.tags!.length,
+              ),
+              const SizedBox(
+                height: 15.0,
+              ),
+              ExtendedText(
+                content,
+                onSpecialTextTap: (dynamic parameter) {
+                  if (parameter.toString().startsWith('\$')) {
+                    launch('https://github.com/fluttercandies');
+                  } else if (parameter.toString().startsWith('@')) {
+                    launch('mailto:zmtzawqlp@live.com');
+                  }
+                },
+                specialTextSpanBuilder: MySpecialTextSpanBuilder(),
+                //overflow: ExtendedTextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 14, color: Colors.grey),
+                maxLines: 10,
+                overflowWidget: TextOverflowWidget(
+                  //maxHeight: double.infinity,
+                  //align: TextOverflowAlign.right,
+                  //fixedOffset: Offset.zero,
+                  //debugOverflowRectColor: Colors.red,
+                  child: DefaultTextStyle(
+                    style: const TextStyle(fontSize: 12, color: Colors.blue),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        const Text('\u2026 '),
+                        GestureDetector(
+                          child: const Text('more'),
+                          onTap: () {
+                            launch(
+                                'https://github.com/fluttercandies/extended_text');
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                selectionEnabled: true,
+                selectionControls: MyTextSelectionControls(),
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              const Divider(height: 1),
+              const SizedBox(
+                height: 20.0,
+              ),
+              buildBottomWidget(
+                tuChongItem!,
+                showAvatar: true,
+              ),
+            ],
+          ),
+          Positioned(
+            top: -30.0,
+            left: -15.0,
+            child: FloatText(
+              '${(index + 1).toString().padLeft(tuChongItem!.images!.length.toString().length, '0')}/${tuChongItem!.images!.length}',
+            ),
+          ),
+          if (tuChongItem != null)
+            Positioned(
+              top: -30.0,
+              right: -15.0,
+              child: FloatText(
+                '${tuChongItem?.imageSize.width.toInt()} * ${tuChongItem?.imageSize.height.toInt()}',
+              ),
+            ),
+          Positioned(
+            top: -33.0,
+            right: 0,
+            left: 0,
+            child: SingleChildScrollView(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const <Widget>[
+                  Icon(
+                    Icons.star,
+                    color: Colors.yellow,
+                  ),
+                  Icon(
+                    Icons.star,
+                    color: Colors.yellow,
+                  ),
+                  Icon(
+                    Icons.star,
+                    color: Colors.yellow,
+                  ),
+                  Icon(
+                    Icons.star,
+                    color: Colors.yellow,
+                  ),
+                  Icon(
+                    Icons.star,
+                    color: Colors.yellow,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+          border: Border.all(
+            color: Colors.grey,
+          ),
+          boxShadow: const <BoxShadow>[
+            BoxShadow(color: Colors.grey, blurRadius: 15.0, spreadRadius: 20.0),
+          ]),
+    );
+
+    return ExtendedTextSelectionPointerHandler(
+      //default behavior
+      // child: result,
+      //custom your behavior
+      builder: (List<ExtendedTextSelectionState> states) {
+        return GestureDetector(
+          onTap: () {
+            //do not pop page
+          },
+          child: Listener(
+            child: result,
+            behavior: HitTestBehavior.translucent,
+            onPointerDown: (PointerDownEvent value) {
+              for (final ExtendedTextSelectionState state in states) {
+                if (!state.containsPosition(value.position)) {
+                  //clear other selection
+                  state.clearSelection();
+                }
+              }
+            },
+            onPointerMove: (PointerMoveEvent value) {
+              //clear other selection
+              for (final ExtendedTextSelectionState state in states) {
+                state.clearSelection();
+              }
+            },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class ImageDetailInfo {
+  ImageDetailInfo({
+    required this.imageDRect,
+    required this.pageSize,
+    required this.imageInfo,
+  });
+  final GlobalKey<State<StatefulWidget>> key = GlobalKey<State>();
+
+  final Rect imageDRect;
+
+  final Size pageSize;
+
+  final ImageInfo imageInfo;
+
+  double? _maxImageDetailY;
+  double get imageBottom => imageDRect.bottom - 20;
+  double get maxImageDetailY {
+    try {
+      //
+      return _maxImageDetailY ??= max(
+          key.currentContext!.size!.height - (pageSize.height - imageBottom),
+          0.1);
+    } catch (e) {
+      //currentContext is not ready
+      return 100.0;
+    }
+  }
+}
+
+class MySwiperPlugin extends StatelessWidget {
+  const MySwiperPlugin(this.pics, this.index, this.reBuild);
+  final List<PicSwiperItem>? pics;
+  final int? index;
+  final StreamController<int> reBuild;
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<int>(
+      builder: (BuildContext context, AsyncSnapshot<int> data) {
+        return DefaultTextStyle(
+          style: const TextStyle(color: Colors.blue),
+          child: Container(
+            height: 50.0,
+            width: double.infinity,
+            color: Colors.grey.withOpacity(0.2),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  width: 10.0,
+                ),
+                Text(
+                  '${data.data! + 1}',
+                ),
+                Text(
+                  ' / ${pics!.length}',
+                ),
+                const SizedBox(
+                  width: 10.0,
+                ),
+                Expanded(
+                    child: Text(pics![data.data!].des ?? '',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            fontSize: 16.0, color: Colors.blue))),
+                const SizedBox(
+                  width: 10.0,
+                ),
+                if (!kIsWeb)
+                  GestureDetector(
+                    child: Container(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Save',
+                        style: TextStyle(fontSize: 16.0, color: Colors.blue),
+                      ),
+                    ),
+                    onTap: () {
+                      saveNetworkImageToPhoto(pics![index!].picUrl)
+                          .then((bool done) {
+                        showToast(done ? 'save succeed' : 'save failed',
+                            position: const ToastPosition(
+                                align: Alignment.topCenter));
+                      });
+                    },
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
+      initialData: index,
+      stream: reBuild.stream,
+    );
+  }
+}
 
 @FFRoute(
   name: 'fluttercandies://picswiper',
@@ -64,39 +370,6 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
   double _imageDetailY = 0;
   Rect? imageDRect;
   @override
-  void initState() {
-    _currentIndex = widget.index;
-    _doubleClickAnimationController = AnimationController(
-        duration: const Duration(milliseconds: 150), vsync: this);
-
-    _slideEndAnimationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 150),
-    );
-    _slideEndAnimationController.addListener(() {
-      _imageDetailY = _slideEndAnimation.value;
-      if (_imageDetailY == 0) {
-        _showSwiper = true;
-        rebuildSwiper.add(_showSwiper);
-      }
-      rebuildDetail.sink.add(_imageDetailY);
-    });
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    rebuildIndex.close();
-    rebuildSwiper.close();
-    rebuildDetail.close();
-    _doubleClickAnimationController.dispose();
-    _slideEndAnimationController.dispose();
-    clearGestureDetailsCache();
-    //cancelToken?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
     imageDRect = Offset.zero & size;
@@ -110,9 +383,16 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
           fit: StackFit.expand,
           children: <Widget>[
             ExtendedImageGesturePageView.builder(
-              controller: PageController(
+              controller: ExtendedPageController(
                 initialPage: widget.index!,
+                pageSpacing: 50,
               ),
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              canScrollPage: (GestureDetails? gestureDetails) {
+                return _imageDetailY >= 0;
+                //return (gestureDetails?.totalScale ?? 1.0) <= 1.0;
+              },
               itemBuilder: (BuildContext context, int index) {
                 final String item = widget.pics![index].picUrl;
 
@@ -135,14 +415,15 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                                   .toDouble()));
                     }
                     return GestureConfig(
-                        inPageView: true,
-                        initialScale: initialScale!,
-                        maxScale: max(initialScale, 5.0),
-                        animationMaxScale: max(initialScale, 5.0),
-                        initialAlignment: InitialAlignment.center,
-                        //you can cache gesture state even though page view page change.
-                        //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
-                        cacheGesture: false);
+                      inPageView: true,
+                      initialScale: initialScale!,
+                      maxScale: max(initialScale, 5.0),
+                      animationMaxScale: max(initialScale, 5.0),
+                      initialAlignment: InitialAlignment.center,
+                      //you can cache gesture state even though page view page change.
+                      //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
+                      cacheGesture: false,
+                    );
                   },
                   onDoubleTap: (ExtendedImageGestureState state) {
                     ///you can use define pointerDownPosition as you can,
@@ -261,12 +542,10 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                 image = GestureDetector(
                   child: image,
                   onTap: () {
-                    // if (translateY != 0) {
-                    //   translateY = 0;
-                    //   rebuildDetail.sink.add(translateY);
-                    // }
-                    // else
-                    {
+                    if (_imageDetailY != 0) {
+                      _imageDetailY = 0;
+                      rebuildDetail.sink.add(_imageDetailY);
+                    } else {
                       slidePagekey.currentState!.popPage();
                       Navigator.pop(context);
                     }
@@ -286,15 +565,6 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                 _showSwiper = true;
                 rebuildSwiper.add(_showSwiper);
               },
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-//              //move page only when scale is not more than 1.0
-              // canMovePage: (GestureDetails gestureDetails) {
-              //   //gestureDetails.totalScale <= 1.0
-              //   //return translateY == 0.0;
-
-              // }
-              //physics: ClampingScrollPhysics(),
             ),
             StreamBuilder<bool>(
               builder: (BuildContext c, AsyncSnapshot<bool> d) {
@@ -319,7 +589,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
     result = ExtendedImageSlidePage(
       key: slidePagekey,
       child: result,
-      slideAxis: SlideAxis.both,
+      slideAxis: SlideAxis.vertical,
       slideType: SlideType.onlyImage,
       slideScaleHandler: (
         Offset offset, {
@@ -387,7 +657,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
 
             // do a significant magnitude
 
-            if (doubleCompare(magnitude, minMagnitude) >= 0) {
+            if (magnitude.greaterThanOrEqualTo(minMagnitude)) {
               final Offset direction =
                   details.velocity.pixelsPerSecond / magnitude * 1000;
 
@@ -426,307 +696,37 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
 
     return result;
   }
-}
 
-class MySwiperPlugin extends StatelessWidget {
-  const MySwiperPlugin(this.pics, this.index, this.reBuild);
-  final List<PicSwiperItem>? pics;
-  final int? index;
-  final StreamController<int> reBuild;
   @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<int>(
-      builder: (BuildContext context, AsyncSnapshot<int> data) {
-        return DefaultTextStyle(
-          style: const TextStyle(color: Colors.blue),
-          child: Container(
-            height: 50.0,
-            width: double.infinity,
-            color: Colors.grey.withOpacity(0.2),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  width: 10.0,
-                ),
-                Text(
-                  '${data.data! + 1}',
-                ),
-                Text(
-                  ' / ${pics!.length}',
-                ),
-                const SizedBox(
-                  width: 10.0,
-                ),
-                Expanded(
-                    child: Text(pics![data.data!].des ?? '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                            fontSize: 16.0, color: Colors.blue))),
-                const SizedBox(
-                  width: 10.0,
-                ),
-                if (!kIsWeb)
-                  GestureDetector(
-                    child: Container(
-                      padding: const EdgeInsets.only(right: 10.0),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        'Save',
-                        style: TextStyle(fontSize: 16.0, color: Colors.blue),
-                      ),
-                    ),
-                    onTap: () {
-                      saveNetworkImageToPhoto(pics![index!].picUrl)
-                          .then((bool done) {
-                        showToast(done ? 'save succeed' : 'save failed',
-                            position: const ToastPosition(
-                                align: Alignment.topCenter));
-                      });
-                    },
-                  ),
-              ],
-            ),
-          ),
-        );
-      },
-      initialData: index,
-      stream: reBuild.stream,
-    );
+  void dispose() {
+    rebuildIndex.close();
+    rebuildSwiper.close();
+    rebuildDetail.close();
+    _doubleClickAnimationController.dispose();
+    _slideEndAnimationController.dispose();
+    clearGestureDetailsCache();
+    //cancelToken?.cancel();
+    super.dispose();
   }
-}
 
-class ImageDetailInfo {
-  ImageDetailInfo({
-    required this.imageDRect,
-    required this.pageSize,
-    required this.imageInfo,
-  });
-
-  final GlobalKey<State<StatefulWidget>> key = GlobalKey<State>();
-
-  final Rect imageDRect;
-
-  final Size pageSize;
-
-  final ImageInfo imageInfo;
-
-  double get imageBottom => imageDRect.bottom - 20;
-
-  double? _maxImageDetailY;
-  double get maxImageDetailY {
-    try {
-      //
-      return _maxImageDetailY ??= max(
-          key.currentContext!.size!.height - (pageSize.height - imageBottom),
-          0.1);
-    } catch (e) {
-      //currentContext is not ready
-      return 100.0;
-    }
-  }
-}
-
-class ImageDetail extends StatelessWidget {
-  const ImageDetail(
-    this.info,
-    this.index,
-    this.tuChongItem,
-  );
-  final ImageDetailInfo? info;
-  final int index;
-  final TuChongItem? tuChongItem;
   @override
-  Widget build(BuildContext context) {
-    String content =
-        tuChongItem!.content ?? (tuChongItem!.excerpt ?? tuChongItem!.title!);
-    content += attachContent * 2;
-    final Widget result = Container(
-      // constraints: BoxConstraints(minHeight: 25.0),
-      key: info!.key,
-      margin: const EdgeInsets.only(
-        left: 5,
-        right: 5,
-      ),
-      padding: const EdgeInsets.all(20.0),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              buildTagsWidget(
-                tuChongItem!,
-                maxNum: tuChongItem!.tags!.length,
-              ),
-              const SizedBox(
-                height: 15.0,
-              ),
-              ExtendedText(
-                content,
-                onSpecialTextTap: (dynamic parameter) {
-                  if (parameter.toString().startsWith('\$')) {
-                    launch('https://github.com/fluttercandies');
-                  } else if (parameter.toString().startsWith('@')) {
-                    launch('mailto:zmtzawqlp@live.com');
-                  }
-                },
-                specialTextSpanBuilder: MySpecialTextSpanBuilder(),
-                //overflow: ExtendedTextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
-                maxLines: 10,
-                overflowWidget: TextOverflowWidget(
-                  //maxHeight: double.infinity,
-                  //align: TextOverflowAlign.right,
-                  //fixedOffset: Offset.zero,
-                  //debugOverflowRectColor: Colors.red,
-                  child: Material(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        const Text('\u2026 '),
-                        InkWell(
-                          child: const Text('more'),
-                          onTap: () {
-                            launch(
-                                'https://github.com/fluttercandies/extended_text');
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                selectionEnabled: true,
-                selectionControls: MyTextSelectionControls(),
-              ),
-              const SizedBox(
-                height: 20.0,
-              ),
-              const Divider(height: 1),
-              const SizedBox(
-                height: 20.0,
-              ),
-              buildBottomWidget(
-                tuChongItem!,
-                showAvatar: true,
-              ),
-            ],
-          ),
-          Positioned(
-            top: -30.0,
-            left: -15.0,
-            child: FloatText(
-              '${(index + 1).toString().padLeft(tuChongItem!.images!.length.toString().length, '0')}/${tuChongItem!.images!.length}',
-            ),
-          ),
-          if (tuChongItem != null)
-            Positioned(
-              top: -30.0,
-              right: -15.0,
-              child: FloatText(
-                '${tuChongItem?.imageSize.width.toInt()} * ${tuChongItem?.imageSize.height.toInt()}',
-              ),
-            ),
-          Positioned(
-            top: -33.0,
-            right: 0,
-            left: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: const <Widget>[
-                Icon(
-                  Icons.star,
-                  color: Colors.yellow,
-                ),
-                Icon(
-                  Icons.star,
-                  color: Colors.yellow,
-                ),
-                Icon(
-                  Icons.star,
-                  color: Colors.yellow,
-                ),
-                Icon(
-                  Icons.star,
-                  color: Colors.yellow,
-                ),
-                Icon(
-                  Icons.star,
-                  color: Colors.yellow,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          border: Border.all(
-            color: Colors.grey,
-          ),
-          boxShadow: const <BoxShadow>[
-            BoxShadow(color: Colors.grey, blurRadius: 15.0, spreadRadius: 20.0),
-          ]),
-    );
+  void initState() {
+    super.initState();
+    _currentIndex = widget.index;
+    _doubleClickAnimationController = AnimationController(
+        duration: const Duration(milliseconds: 150), vsync: this);
 
-    return ExtendedTextSelectionPointerHandler(
-      //default behavior
-      // child: result,
-      //custom your behavior
-      builder: (List<ExtendedTextSelectionState> states) {
-        return GestureDetector(
-          onTap: () {
-            //do not pop page
-          },
-          child: Listener(
-            child: result,
-            behavior: HitTestBehavior.translucent,
-            onPointerDown: (PointerDownEvent value) {
-              for (final ExtendedTextSelectionState state in states) {
-                if (!state.containsPosition(value.position)) {
-                  //clear other selection
-                  state.clearSelection();
-                }
-              }
-            },
-            onPointerMove: (PointerMoveEvent value) {
-              //clear other selection
-              for (final ExtendedTextSelectionState state in states) {
-                state.clearSelection();
-              }
-            },
-          ),
-        );
-      },
+    _slideEndAnimationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
     );
-  }
-}
-
-class FloatText extends StatelessWidget {
-  const FloatText(this.text);
-  final String text;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(3.0),
-      decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.6),
-        border: Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
-        borderRadius: const BorderRadius.all(
-          Radius.circular(5.0),
-        ),
-      ),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: const TextStyle(color: Colors.white),
-      ),
-    );
+    _slideEndAnimationController.addListener(() {
+      _imageDetailY = _slideEndAnimation.value;
+      if (_imageDetailY == 0) {
+        _showSwiper = true;
+        rebuildSwiper.add(_showSwiper);
+      }
+      rebuildDetail.sink.add(_imageDetailY);
+    });
   }
 }
