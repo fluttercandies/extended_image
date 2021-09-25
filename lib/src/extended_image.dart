@@ -2,7 +2,6 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:extended_image/src/border_painter.dart';
-import 'package:extended_image/src/editor/filtered_image.dart';
 import 'package:extended_image/src/gesture/gesture.dart';
 import 'package:extended_image/src/image/raw_image.dart';
 import 'package:extended_image/src/typedef.dart';
@@ -1089,13 +1088,11 @@ class _ExtendedImageState extends State<ExtendedImage>
         key: widget.extendedImageGestureKey,
       );
     } else if (widget.mode == ExtendedImageMode.editor) {
-      current = FilteredImage(
+      current = ExtendedImageEditor(
+        extendedImageState: this,
         brightness: widget.brightness,
         saturation: widget.saturation,
-        child: ExtendedImageEditor(
-          extendedImageState: this,
-          key: widget.extendedImageEditorKey,
-        ),
+        key: widget.extendedImageEditorKey,
       );
     } else {
       current = _buildExtendedRawImage();
