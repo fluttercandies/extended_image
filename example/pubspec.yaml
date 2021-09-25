@@ -37,7 +37,7 @@ dependencies:
   pull_to_refresh_notification: ^2.2.0
   url_launcher: ^6.0.10
   vm_service: ^7.3.0
-  wechat_assets_picker: ^6.1.2
+  wechat_assets_picker: any
 
 dependency_overrides:
   extended_image:

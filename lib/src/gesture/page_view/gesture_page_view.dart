@@ -202,7 +202,9 @@ class ExtendedImageGesturePageViewState
   void _initGestureRecognizers({ExtendedImageGesturePageView? oldWidget}) {
     if (oldWidget == null ||
         oldWidget.scrollDirection != widget.scrollDirection ||
-        oldWidget.physics.parent != widget.physics.parent) {
+        oldWidget.physics.parent != widget.physics.parent ||
+        oldWidget.controller.shouldIgnorePointerWhenScrolling !=
+            widget.controller.shouldIgnorePointerWhenScrolling) {
       bool canMove = true;
 
       ///user's physics
@@ -218,7 +220,9 @@ class ExtendedImageGesturePageViewState
                   GestureRecognizerFactoryWithHandlers<
                       ExtendedVerticalDragGestureRecognizer>(
                 () => ExtendedVerticalDragGestureRecognizer(
-                    canHorizontalOrVerticalDrag: canHorizontalOrVerticalDrag),
+                  canHorizontalOrVerticalDrag: canHorizontalOrVerticalDrag,
+                  debugOwner: this,
+                ),
                 (ExtendedVerticalDragGestureRecognizer instance) {
                   instance
                     ..onDown = onDragDown
@@ -239,7 +243,9 @@ class ExtendedImageGesturePageViewState
                   GestureRecognizerFactoryWithHandlers<
                       ExtendedHorizontalDragGestureRecognizer>(
                 () => ExtendedHorizontalDragGestureRecognizer(
-                    canHorizontalOrVerticalDrag: canHorizontalOrVerticalDrag),
+                  canHorizontalOrVerticalDrag: canHorizontalOrVerticalDrag,
+                  debugOwner: this,
+                ),
                 (ExtendedHorizontalDragGestureRecognizer instance) {
                   instance
                     ..onDown = onDragDown
@@ -255,18 +261,23 @@ class ExtendedImageGesturePageViewState
             };
             break;
         }
-        _gestureRecognizers[ExtendedScaleGestureRecognizer] =
-            GestureRecognizerFactoryWithHandlers<
-                ExtendedScaleGestureRecognizer>(
-          () => ExtendedScaleGestureRecognizer(debugOwner: this),
-          (ExtendedScaleGestureRecognizer instance) {
-            instance
-              ..onStart = onScaleStart
-              ..onUpdate = onScaleUpdate
-              ..onEnd = onScaleEnd
-              ..dragStartBehavior = DragStartBehavior.start;
-          },
-        );
+
+        /// if true, we should handle scale event in [ExtendedImageGesturePageView] before [ExtendedImageGesturePageView] stop scroll.
+        /// notice: there is one issue that we may be zoom two image at the same time, because we can't find out which one should be zoomed.
+        if (widget.controller.shouldIgnorePointerWhenScrolling) {
+          _gestureRecognizers[ExtendedScaleGestureRecognizer] =
+              GestureRecognizerFactoryWithHandlers<
+                  ExtendedScaleGestureRecognizer>(
+            () => ExtendedScaleGestureRecognizer(debugOwner: this),
+            (ExtendedScaleGestureRecognizer instance) {
+              instance
+                ..onStart = onScaleStart
+                ..onUpdate = onScaleUpdate
+                ..onEnd = onScaleEnd
+                ..dragStartBehavior = DragStartBehavior.start;
+            },
+          );
+        }
       }
     }
   }
@@ -316,11 +327,7 @@ class ExtendedImageGesturePageViewState
   ScrollHoldController? _hold;
 
   void onDragDown(DragDownDetails details) {
-    //print(details);
     _gestureAnimation.stop();
-    // if (focalPoint != null) {
-    //   return;
-    // }
     _hold?.cancel();
     _hold = null;
     _drag?.cancel();
@@ -332,9 +339,6 @@ class ExtendedImageGesturePageViewState
 
   // scale
   void onDragStart(DragStartDetails details) {
-    // if (focalPoint != null) {
-    //   return;
-    // }
     // It's possible for _hold to become null between _handleDragDown and
     // _handleDragStart, for example if some user code calls jumpTo or otherwise
     // triggers a new activity to begin.
