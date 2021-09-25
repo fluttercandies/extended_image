@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:extended_image/src/editor/filtered_image.dart';
 import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/image/extended_raw_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';
@@ -18,18 +17,13 @@ import 'extended_image_editor_utils.dart';
 ///
 
 class ExtendedImageEditor extends StatefulWidget {
-  ExtendedImageEditor({
-    required this.extendedImageState,
-    this.brightness = 0,
-    this.saturation = 0,
-    Key? key,
-  })  : assert(extendedImageState.imageWidget.fit == BoxFit.contain,
+  ExtendedImageEditor({required this.extendedImageState, Key? key})
+      : assert(extendedImageState.imageWidget.fit == BoxFit.contain,
             'Make sure the image is all painted to crop,the fit of image must be BoxFit.contain'),
         assert(extendedImageState.imageWidget.image is ExtendedImageProvider,
             'Make sure the image provider is ExtendedImageProvider, we will get raw image data from it'),
         super(key: key);
   final ExtendedImageState extendedImageState;
-  final double brightness, saturation;
   @override
   ExtendedImageEditorState createState() => ExtendedImageEditorState();
 }
@@ -88,27 +82,23 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   Widget build(BuildContext context) {
     assert(_editActionDetails != null && _editorConfig != null);
     final ExtendedImage extendedImage = widget.extendedImageState.imageWidget;
-    final Widget image = FilteredImage(
-      brightness: widget.brightness,
-      saturation: widget.saturation,
-      child: ExtendedRawImage(
-        image: widget.extendedImageState.extendedImageInfo?.image,
-        width: extendedImage.width,
-        height: extendedImage.height,
-        scale: widget.extendedImageState.extendedImageInfo?.scale ?? 1.0,
-        color: extendedImage.color,
-        colorBlendMode: extendedImage.colorBlendMode,
-        fit: extendedImage.fit,
-        alignment: extendedImage.alignment,
-        repeat: extendedImage.repeat,
-        centerSlice: extendedImage.centerSlice,
-        //matchTextDirection: extendedImage.matchTextDirection,
-        //don't support TextDirection for editor
-        matchTextDirection: false,
-        invertColors: widget.extendedImageState.invertColors,
-        filterQuality: extendedImage.filterQuality,
-        editActionDetails: _editActionDetails,
-      ),
+    final Widget image = ExtendedRawImage(
+      image: widget.extendedImageState.extendedImageInfo?.image,
+      width: extendedImage.width,
+      height: extendedImage.height,
+      scale: widget.extendedImageState.extendedImageInfo?.scale ?? 1.0,
+      color: extendedImage.color,
+      colorBlendMode: extendedImage.colorBlendMode,
+      fit: extendedImage.fit,
+      alignment: extendedImage.alignment,
+      repeat: extendedImage.repeat,
+      centerSlice: extendedImage.centerSlice,
+      //matchTextDirection: extendedImage.matchTextDirection,
+      //don't support TextDirection for editor
+      matchTextDirection: false,
+      invertColors: widget.extendedImageState.invertColors,
+      filterQuality: extendedImage.filterQuality,
+      editActionDetails: _editActionDetails,
     );
 
     Widget result = GestureDetector(
