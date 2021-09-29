@@ -1,4 +1,7 @@
 
+## 5.1.1
+
+* Bumping flutter sdk minimum version to 2.5.0
 ## 5.1.0
 
 * Improve:
