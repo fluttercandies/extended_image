@@ -167,8 +167,10 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     scale ??= _gestureConfig!.initialScale;
     //scale = scale.clamp(_gestureConfig.minScale, _gestureConfig.maxScale);
     handleScaleStart(ScaleStartDetails(focalPoint: doubleTapPosition!));
-    handleScaleUpdate(ScaleUpdateDetails(
-        focalPoint: doubleTapPosition, scale: scale / _startingScale!));
+    handleScaleUpdate(ExtendedScaleUpdateDetails(
+        focalPoint: doubleTapPosition,
+        scale: scale / _startingScale!,
+        actualDelta: Offset.zero));
     if (scale < _gestureConfig!.minScale || scale > _gestureConfig!.maxScale) {
       handleScaleEnd(ScaleEndDetails());
     }
@@ -228,12 +230,13 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       handleScaleStart(ScaleStartDetails(focalPoint: event.position));
       final double dy = event.scrollDelta.dy;
       final double dx = event.scrollDelta.dx;
-      handleScaleUpdate(ScaleUpdateDetails(
+      handleScaleUpdate(ExtendedScaleUpdateDetails(
           focalPoint: event.position,
           scale: 1.0 +
               _reverseIf((dy.abs() > dx.abs() ? dy : dx) *
                   _gestureConfig!.speed /
-                  1000.0)));
+                  1000.0),
+          actualDelta: Offset.zero));
       handleScaleEnd(ScaleEndDetails());
     }
   }
