@@ -386,6 +386,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
               controller: ExtendedPageController(
                 initialPage: widget.index!,
                 pageSpacing: 50,
+                shouldIgnorePointerWhenScrolling: false,
               ),
               scrollDirection: Axis.horizontal,
               physics: const BouncingScrollPhysics(),

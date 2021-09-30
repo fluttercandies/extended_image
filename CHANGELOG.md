@@ -1,9 +1,24 @@
+
+## 5.1.2
+
+* Issues:
+  1. fix issue that mouse wheel/double tap are not working.(#404)
+
+## 5.1.1
+
+* Bumping flutter sdk minimum version to 2.5.0
+## 5.1.0
+
+* Improve:
+  add [ExtendedPageController.shouldIgnorePointerWhenScrolling] to solve issue that we can's zoom image before [PageView] stop scroll in two way.  
+
 ## 5.0.0
 
 * Improve:
   1. solve gesture conflict between Scale and Horizontal/Vertical drag.
   2. support to set page spacing. [ExtendedPageController.pageSpacing]
   3. add [ExtendedImage.opacity].
+  4. fix that we can't zoom image before [PageView] stop scroll.
 
 * Breaking change:
   1. use [ExtendedPageController] instead of [PageController].
