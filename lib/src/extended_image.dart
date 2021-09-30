@@ -18,6 +18,8 @@ import 'editor/editor.dart';
 import 'gesture/slide_page.dart';
 import 'gesture/slide_page_handler.dart';
 
+typedef ImageDecoration = Widget Function(Widget image);
+
 /// extended image base on official
 class ExtendedImage extends StatefulWidget {
   ExtendedImage({
@@ -59,8 +61,7 @@ class ExtendedImage extends StatefulWidget {
     this.extendedImageGestureKey,
     this.isAntiAlias = false,
     this.handleLoadingProgress = false,
-    this.brightness = 0,
-    this.saturation = 0,
+    this.imageDecoration,
   })  : assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
@@ -240,8 +241,7 @@ class ExtendedImage extends StatefulWidget {
     int? maxBytes,
     bool cacheRawData = false,
     String? imageCacheName,
-    this.brightness = 0,
-    this.saturation = 0,
+    this.imageDecoration,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -338,8 +338,7 @@ class ExtendedImage extends StatefulWidget {
     int? maxBytes,
     bool cacheRawData = false,
     String? imageCacheName,
-    this.brightness = 0,
-    this.saturation = 0,
+    this.imageDecoration,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -423,8 +422,7 @@ class ExtendedImage extends StatefulWidget {
     int? maxBytes,
     bool cacheRawData = false,
     String? imageCacheName,
-    this.brightness = 0,
-    this.saturation = 0,
+    this.imageDecoration,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -503,8 +501,7 @@ class ExtendedImage extends StatefulWidget {
     bool cacheRawData = false,
     String? imageCacheName,
     Duration? cacheMaxAge,
-    this.brightness = 0,
-    this.saturation = 0,
+    this.imageDecoration,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -776,8 +773,8 @@ class ExtendedImage extends StatefulWidget {
   /// Anti-aliasing alleviates the sawtooth artifact when the image is rotated.
   final bool isAntiAlias;
 
-  final double brightness;
-  final double saturation;
+  // Decoration to be applied to the final image widget
+  final ImageDecoration? imageDecoration;
 
   @override
   _ExtendedImageState createState() => _ExtendedImageState();
@@ -1090,14 +1087,16 @@ class _ExtendedImageState extends State<ExtendedImage>
     } else if (widget.mode == ExtendedImageMode.editor) {
       current = ExtendedImageEditor(
         extendedImageState: this,
-        brightness: widget.brightness,
-        saturation: widget.saturation,
         key: widget.extendedImageEditorKey,
       );
     } else {
       current = _buildExtendedRawImage();
     }
-    return current;
+    if (widget.imageDecoration == null) {
+      return current;
+    } else {
+      return widget.imageDecoration!(current);
+    }
   }
 
   Widget _getIndicator(BuildContext context) {
