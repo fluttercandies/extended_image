@@ -773,7 +773,7 @@ class ExtendedImage extends StatefulWidget {
   /// Anti-aliasing alleviates the sawtooth artifact when the image is rotated.
   final bool isAntiAlias;
 
-  // Decoration to be applied to the final image widget
+  // Decoration to be applied to the raw image.
   final ImageDecoration? imageDecoration;
 
   @override
