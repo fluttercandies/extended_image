@@ -1,4 +1,9 @@
 
+## 5.1.3
+
+* Issues:
+  1. fix issue that solve gesture conflict between MovePage and vertical pan.
+
 ## 5.1.2
 
 * Issues:
