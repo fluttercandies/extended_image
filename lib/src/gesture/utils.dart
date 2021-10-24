@@ -314,12 +314,14 @@ class GestureDetails {
     switch (axis) {
       case Axis.horizontal:
         return delta.dx != 0 &&
+            delta.dx.abs() > delta.dy.abs() &&
             ((delta.dx < 0 && boundary.right) ||
                 (delta.dx > 0 && boundary.left) ||
                 !_computeHorizontalBoundary);
 
       case Axis.vertical:
         return delta.dy != 0 &&
+            delta.dy.abs() > delta.dx.abs() &&
             ((delta.dy < 0 && boundary.bottom) ||
                 (delta.dy > 0 && boundary.top) ||
                 !_computeVerticalBoundary);

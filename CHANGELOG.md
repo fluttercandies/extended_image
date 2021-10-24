@@ -1,5 +1,10 @@
 
-## 5.1.1-non-null-safety
+## 5.1.3-non-null-safety
+
+* Issues:
+  1. fix issue that solve gesture conflict between MovePage and vertical pan.
+
+## 5.1.2-non-null-safety
 
 * Issues:
   1. fix issue that mouse wheel/double tap are not working.(#404)
