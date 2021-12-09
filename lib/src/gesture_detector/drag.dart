@@ -169,8 +169,8 @@ abstract class ExtendedDragGestureRecognizer
           supportedDevices: supportedDevices,
         );
 
-  static VelocityTracker _defaultBuilder(PointerEvent event) =>
-      VelocityTracker.withKind(event.kind);
+  static ExtendedVelocityTracker _defaultBuilder(PointerEvent event) =>
+      ExtendedVelocityTracker.withKind(event.kind);
   final CanHorizontalOrVerticalDrag? canHorizontalOrVerticalDrag;
 
   /// Configure the behavior of offsets passed to [onStart].
