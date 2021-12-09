@@ -39,7 +39,7 @@ class MyTextSelectionControls extends TextSelectionControls {
       endpoints: endpoints,
       delegate: delegate,
       clipboardStatus: clipboardStatus,
-      handleCut: canCut(delegate) ? () => handleCut(delegate) : null,
+      handleCut: canCut(delegate) ? () => handleCut(delegate, null) : null,
       handleCopy: canCopy(delegate)
           ? () => handleCopy(delegate, clipboardStatus)
           : null,
@@ -53,7 +53,7 @@ class MyTextSelectionControls extends TextSelectionControls {
         delegate.userUpdateTextEditingValue(
           delegate.textEditingValue
               .copyWith(selection: const TextSelection.collapsed(offset: 0)),
-          SelectionChangedCause.toolBar,
+          SelectionChangedCause.toolbar,
         );
       },
     );

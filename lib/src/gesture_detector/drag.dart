@@ -43,7 +43,7 @@ class ExtendedHorizontalDragGestureRecognizer
   @override
   bool isFlingGesture(VelocityEstimate estimate, PointerDeviceKind kind) {
     final double minVelocity = minFlingVelocity ?? kMinFlingVelocity;
-    final double minDistance = minFlingDistance ?? computeHitSlop(kind);
+    final double minDistance = minFlingDistance ?? computeHitSlop(kind, null);
     return estimate.pixelsPerSecond.dx.abs() > minVelocity &&
         estimate.offset.dx.abs() > minDistance;
   }
@@ -51,7 +51,7 @@ class ExtendedHorizontalDragGestureRecognizer
   @override
   bool _hasSufficientGlobalDistanceToAccept(
       PointerDeviceKind pointerDeviceKind) {
-    return _globalDistanceMoved.abs() > computeHitSlop(pointerDeviceKind);
+    return _globalDistanceMoved.abs() > computeHitSlop(pointerDeviceKind, null);
   }
 
   @override
@@ -98,7 +98,7 @@ class ExtendedVerticalDragGestureRecognizer
   @override
   bool isFlingGesture(VelocityEstimate estimate, PointerDeviceKind kind) {
     final double minVelocity = minFlingVelocity ?? kMinFlingVelocity;
-    final double minDistance = minFlingDistance ?? computeHitSlop(kind);
+    final double minDistance = minFlingDistance ?? computeHitSlop(kind, null);
     return estimate.pixelsPerSecond.dy.abs() > minVelocity &&
         estimate.offset.dy.abs() > minDistance;
   }
@@ -106,7 +106,7 @@ class ExtendedVerticalDragGestureRecognizer
   @override
   bool _hasSufficientGlobalDistanceToAccept(
       PointerDeviceKind pointerDeviceKind) {
-    return _globalDistanceMoved.abs() > computeHitSlop(pointerDeviceKind);
+    return _globalDistanceMoved.abs() > computeHitSlop(pointerDeviceKind, null);
   }
 
   @override
