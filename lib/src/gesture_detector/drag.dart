@@ -1,7 +1,5 @@
 // ignore_for_file: deprecated_member_use_from_same_package, unnecessary_null_comparison, deprecated_member_use, always_put_control_body_on_new_line
 
-import 'dart:ui';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 
@@ -24,16 +22,19 @@ class ExtendedHorizontalDragGestureRecognizer
   /// Create a gesture recognizer for interactions in the horizontal axis.
   ///
   /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
-  ExtendedHorizontalDragGestureRecognizer(
-      {Object? debugOwner,
-      @Deprecated(
-        'Migrate to supportedDevices. '
-        'This feature was deprecated after v2.3.0-1.0.pre.',
-      )
-          PointerDeviceKind? kind,
-      Set<PointerDeviceKind>? supportedDevices,
-      CanHorizontalOrVerticalDrag? canHorizontalOrVerticalDrag})
-      : super(
+  /// Create a gesture recognizer for interactions in the horizontal axis.
+  ///
+  /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
+  ExtendedHorizontalDragGestureRecognizer({
+    Object? debugOwner,
+    @Deprecated(
+      'Migrate to supportedDevices. '
+      'This feature was deprecated after v2.3.0-1.0.pre.',
+    )
+        PointerDeviceKind? kind,
+    Set<PointerDeviceKind>? supportedDevices,
+    CanHorizontalOrVerticalDrag? canHorizontalOrVerticalDrag,
+  }) : super(
           debugOwner: debugOwner,
           kind: kind,
           supportedDevices: supportedDevices,
@@ -43,15 +44,17 @@ class ExtendedHorizontalDragGestureRecognizer
   @override
   bool isFlingGesture(VelocityEstimate estimate, PointerDeviceKind kind) {
     final double minVelocity = minFlingVelocity ?? kMinFlingVelocity;
-    final double minDistance = minFlingDistance ?? computeHitSlop(kind);
+    final double minDistance =
+        minFlingDistance ?? computeHitSlop(kind, gestureSettings);
     return estimate.pixelsPerSecond.dx.abs() > minVelocity &&
         estimate.offset.dx.abs() > minDistance;
   }
 
   @override
   bool _hasSufficientGlobalDistanceToAccept(
-      PointerDeviceKind pointerDeviceKind) {
-    return _globalDistanceMoved.abs() > computeHitSlop(pointerDeviceKind);
+      PointerDeviceKind pointerDeviceKind, double? deviceTouchSlop) {
+    return _globalDistanceMoved.abs() >
+        computeHitSlop(pointerDeviceKind, gestureSettings);
   }
 
   @override
@@ -79,16 +82,16 @@ class ExtendedVerticalDragGestureRecognizer
   /// Create a gesture recognizer for interactions in the vertical axis.
   ///
   /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
-  ExtendedVerticalDragGestureRecognizer(
-      {Object? debugOwner,
-      @Deprecated(
-        'Migrate to supportedDevices. '
-        'This feature was deprecated after v2.3.0-1.0.pre.',
-      )
-          PointerDeviceKind? kind,
-      Set<PointerDeviceKind>? supportedDevices,
-      CanHorizontalOrVerticalDrag? canHorizontalOrVerticalDrag})
-      : super(
+  ExtendedVerticalDragGestureRecognizer({
+    Object? debugOwner,
+    @Deprecated(
+      'Migrate to supportedDevices. '
+      'This feature was deprecated after v2.3.0-1.0.pre.',
+    )
+        PointerDeviceKind? kind,
+    Set<PointerDeviceKind>? supportedDevices,
+    CanHorizontalOrVerticalDrag? canHorizontalOrVerticalDrag,
+  }) : super(
           debugOwner: debugOwner,
           kind: kind,
           supportedDevices: supportedDevices,
@@ -98,15 +101,17 @@ class ExtendedVerticalDragGestureRecognizer
   @override
   bool isFlingGesture(VelocityEstimate estimate, PointerDeviceKind kind) {
     final double minVelocity = minFlingVelocity ?? kMinFlingVelocity;
-    final double minDistance = minFlingDistance ?? computeHitSlop(kind);
+    final double minDistance =
+        minFlingDistance ?? computeHitSlop(kind, gestureSettings);
     return estimate.pixelsPerSecond.dy.abs() > minVelocity &&
         estimate.offset.dy.abs() > minDistance;
   }
 
   @override
   bool _hasSufficientGlobalDistanceToAccept(
-      PointerDeviceKind pointerDeviceKind) {
-    return _globalDistanceMoved.abs() > computeHitSlop(pointerDeviceKind);
+      PointerDeviceKind pointerDeviceKind, double? deviceTouchSlop) {
+    return _globalDistanceMoved.abs() >
+        computeHitSlop(pointerDeviceKind, gestureSettings);
   }
 
   @override
@@ -164,10 +169,9 @@ abstract class ExtendedDragGestureRecognizer
           supportedDevices: supportedDevices,
         );
 
+  static VelocityTracker _defaultBuilder(PointerEvent event) =>
+      VelocityTracker.withKind(event.kind);
   final CanHorizontalOrVerticalDrag? canHorizontalOrVerticalDrag;
-
-  static ExtendedVelocityTracker _defaultBuilder(PointerEvent event) =>
-      ExtendedVelocityTracker.withKind(event.kind);
 
   /// Configure the behavior of offsets passed to [onStart].
   ///
@@ -185,10 +189,10 @@ abstract class ExtendedDragGestureRecognizer
   ///
   /// ## Example:
   ///
-  /// A [ExtendedHorizontalDragGestureRecognizer] and a [ExtendedVerticalDragGestureRecognizer]
+  /// A [HorizontalDragGestureRecognizer] and a [VerticalDragGestureRecognizer]
   /// compete with each other. A finger presses down on the screen with
   /// offset (500.0, 500.0), and then moves to position (510.0, 500.0) before
-  /// the [ExtendedHorizontalDragGestureRecognizer] wins the arena. With
+  /// the [HorizontalDragGestureRecognizer] wins the arena. With
   /// [dragStartBehavior] set to [DragStartBehavior.down], the [onStart]
   /// callback will be called with position (500.0, 500.0). If it is
   /// instead set to [DragStartBehavior.start], [onStart] will be called with
@@ -274,7 +278,7 @@ abstract class ExtendedDragGestureRecognizer
   /// Determines the type of velocity estimation method to use for a potential
   /// drag gesture, when a new pointer is added.
   ///
-  /// To estimate the velocity of a gesture, [ExtendedDragGestureRecognizer] calls
+  /// To estimate the velocity of a gesture, [DragGestureRecognizer] calls
   /// [velocityTrackerBuilder] when it starts to track a new pointer in
   /// [addAllowedPointer], and add subsequent updates on the pointer to the
   /// resulting velocity tracker, until the gesture recognizer stops tracking
@@ -320,7 +324,7 @@ abstract class ExtendedDragGestureRecognizer
   Offset _getDeltaForDetails(Offset delta);
   double? _getPrimaryValueFromOffset(Offset value);
   bool _hasSufficientGlobalDistanceToAccept(
-      PointerDeviceKind pointerDeviceKind);
+      PointerDeviceKind pointerDeviceKind, double? deviceTouchSlop);
 
   final Map<int, VelocityTracker> _velocityTrackers = <int, VelocityTracker>{};
 
@@ -404,8 +408,9 @@ abstract class ExtendedDragGestureRecognizer
               untransformedEndPosition: event.localPosition,
             ).distance *
             (_getPrimaryValueFromOffset(movedLocally) ?? 1).sign;
-        if (_hasSufficientGlobalDistanceToAccept(event.kind) && _shouldAccpet())
-          resolve(GestureDisposition.accepted);
+        if (_hasSufficientGlobalDistanceToAccept(
+                event.kind, gestureSettings?.touchSlop) &&
+            _shouldAccpet()) resolve(GestureDisposition.accepted);
       }
     }
     if (event is PointerUpEvent || event is PointerCancelEvent) {
@@ -595,7 +600,6 @@ abstract class ExtendedDragGestureRecognizer
       };
     } else {
       details = DragEndDetails(
-        velocity: Velocity.zero,
         primaryVelocity: 0.0,
       );
       debugReport = () {

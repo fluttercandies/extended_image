@@ -15,7 +15,6 @@ import 'package:example/common/widget/push_to_refresh_header.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide CircularProgressIndicator;
 import 'package:loading_more_list/loading_more_list.dart';
 import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart';
 import 'package:http_client_helper/http_client_helper.dart';
 import 'package:loading_more_list_library/loading_more_list_library.dart';
 

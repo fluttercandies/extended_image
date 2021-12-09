@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui';
 
 @FFArgumentImport()
 import 'package:example/common/data/tu_chong_source.dart' hide asT;
@@ -13,9 +12,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' hide Image;
-import 'package:flutter/rendering.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 

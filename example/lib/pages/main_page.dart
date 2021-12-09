@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:example/example_routes.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

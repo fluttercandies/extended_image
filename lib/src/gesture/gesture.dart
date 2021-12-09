@@ -1,12 +1,9 @@
 import 'package:extended_image/src/gesture/utils.dart';
-import 'package:extended_image/src/gesture_detector/gesture_detector.dart';
-import 'package:extended_image/src/gesture_detector/scale.dart';
 
 import 'package:extended_image/src/image/raw_image.dart';
 import 'package:extended_image/src/utils.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 import '../typedef.dart';
 import 'page_view/gesture_page_view.dart';
@@ -74,6 +71,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       _gestureDetailsCache[widget.extendedImageState.imageStreamKey] =
           _gestureDetails;
     }
+
     Widget image = ExtendedRawImage(
       image: widget.extendedImageState.extendedImageInfo?.image,
       width: widget.extendedImageState.imageWidget.width,
@@ -112,7 +110,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
 
     image = widget.imageBuilder?.call(image) ?? image;
 
-    image = ExtendedGestureDetector(
+    image = GestureDetector(
       onScaleStart: handleScaleStart,
       onScaleUpdate: handleScaleUpdate,
       onScaleEnd: handleScaleEnd,
@@ -167,10 +165,11 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     scale ??= _gestureConfig!.initialScale;
     //scale = scale.clamp(_gestureConfig.minScale, _gestureConfig.maxScale);
     handleScaleStart(ScaleStartDetails(focalPoint: doubleTapPosition!));
-    handleScaleUpdate(ExtendedScaleUpdateDetails(
-        focalPoint: doubleTapPosition,
-        scale: scale / _startingScale!,
-        actualDelta: Offset.zero));
+    handleScaleUpdate(ScaleUpdateDetails(
+      focalPoint: doubleTapPosition,
+      scale: scale / _startingScale!,
+      focalPointDelta: Offset.zero,
+    ));
     if (scale < _gestureConfig!.minScale || scale > _gestureConfig!.maxScale) {
       handleScaleEnd(ScaleEndDetails());
     }
@@ -230,13 +229,13 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       handleScaleStart(ScaleStartDetails(focalPoint: event.position));
       final double dy = event.scrollDelta.dy;
       final double dx = event.scrollDelta.dx;
-      handleScaleUpdate(ExtendedScaleUpdateDetails(
+      handleScaleUpdate(ScaleUpdateDetails(
           focalPoint: event.position,
           scale: 1.0 +
               _reverseIf((dy.abs() > dx.abs() ? dy : dx) *
                   _gestureConfig!.speed /
                   1000.0),
-          actualDelta: Offset.zero));
+          focalPointDelta: Offset.zero));
       handleScaleEnd(ScaleEndDetails());
     }
   }
@@ -306,16 +305,12 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   void handleScaleUpdate(ScaleUpdateDetails details) {
-    ///whether gesture page
-    if (details is! ExtendedScaleUpdateDetails) {
-      return;
-    }
     if (extendedImageSlidePageState != null &&
         details.scale == 1.0 &&
         (_gestureDetails!.totalScale ?? 1) <= 1 &&
         _gestureDetails!.userOffset &&
         _gestureDetails!.actionType == ActionType.pan) {
-      final Offset totalDelta = details.delta;
+      final Offset totalDelta = details.focalPointDelta;
       bool updateGesture = false;
       if (!extendedImageSlidePageState!.isSliding) {
         if (totalDelta.dx != 0 &&
@@ -346,10 +341,10 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
         updateGesture = true;
       }
 
-      if (details.delta.distance.greaterThan(minGesturePageDelta) &&
+      if (details.focalPointDelta.distance.greaterThan(minGesturePageDelta) &&
           updateGesture) {
         extendedImageSlidePageState!.slide(
-          details.actualDelta,
+          details.focalPointDelta,
           extendedImageGestureState: this,
         );
       }
@@ -368,7 +363,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       final bool movePage = _pageViewState!.isDraging ||
           (details.pointerCount == 1 &&
               details.scale == 1 &&
-              _gestureDetails!.movePage(details.delta, axis));
+              _gestureDetails!.movePage(details.focalPointDelta, axis));
 
       if (movePage) {
         if (!pageViewState.isDraging) {
@@ -378,7 +373,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
               DragStartDetails(globalPosition: details.focalPoint));
           //assert(!pageViewState.isDraging);
         }
-        Offset delta = details.actualDelta;
+        Offset delta = details.focalPointDelta;
         delta =
             axis == Axis.horizontal ? Offset(delta.dx, 0) : Offset(0, delta.dy);
 

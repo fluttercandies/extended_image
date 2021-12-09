@@ -1,12 +1,8 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_image/src/gesture_detector/drag.dart';
-import 'package:extended_image/src/gesture_detector/scale.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-
-import 'widgets/page_controller.dart';
-import 'widgets/sliver_fill.dart';
 
 export 'rendering/sliver_fill.dart';
 export 'widgets/page_controller.dart';
@@ -265,11 +261,10 @@ class ExtendedImageGesturePageViewState
         /// if true, we should handle scale event in [ExtendedImageGesturePageView] before [ExtendedImageGesturePageView] stop scroll.
         /// notice: there is one issue that we may be zoom two image at the same time, because we can't find out which one should be zoomed.
         if (widget.controller.shouldIgnorePointerWhenScrolling) {
-          _gestureRecognizers[ExtendedScaleGestureRecognizer] =
-              GestureRecognizerFactoryWithHandlers<
-                  ExtendedScaleGestureRecognizer>(
-            () => ExtendedScaleGestureRecognizer(debugOwner: this),
-            (ExtendedScaleGestureRecognizer instance) {
+          _gestureRecognizers[ScaleGestureRecognizer] =
+              GestureRecognizerFactoryWithHandlers<ScaleGestureRecognizer>(
+            () => ScaleGestureRecognizer(debugOwner: this),
+            (ScaleGestureRecognizer instance) {
               instance
                 ..onStart = onScaleStart
                 ..onUpdate = onScaleUpdate

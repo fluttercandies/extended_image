@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:extended_image/src/border_painter.dart';
 import 'package:extended_image/src/gesture/gesture.dart';
@@ -11,8 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/semantics.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
 import 'editor/editor.dart';
 import 'gesture/slide_page.dart';

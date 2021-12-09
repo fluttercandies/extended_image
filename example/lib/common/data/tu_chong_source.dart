@@ -1,6 +1,5 @@
 import 'dart:convert' show json, jsonEncode;
 import 'dart:math';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 
 void tryCatch(Function f) {
