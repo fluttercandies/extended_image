@@ -18,7 +18,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.3
   extended_sliver: ^2.0.1
-  extended_text: ^8.0.1
+  extended_text: ^9.0.0
   ff_annotation_route_library: ^3.0.0
   fl_chart: ^0.40.0
   flutter:
