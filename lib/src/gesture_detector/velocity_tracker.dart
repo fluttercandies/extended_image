@@ -4,14 +4,6 @@ import 'package:flutter/gestures.dart';
 
 class ExtendedVelocityTracker extends VelocityTracker {
   /// Create a new velocity tracker for a pointer [kind].
-  @Deprecated(
-    'Use VelocityTracker.withKind and provide the PointerDeviceKind associated with the gesture being tracked. '
-    'This feature was deprecated after v1.22.0-12.1.pre.',
-  )
-  ExtendedVelocityTracker([PointerDeviceKind kind = PointerDeviceKind.touch])
-      : super(kind);
-
-  /// Create a new velocity tracker for a pointer [kind].
   ExtendedVelocityTracker.withKind(PointerDeviceKind kind)
       : super.withKind(kind);
 
