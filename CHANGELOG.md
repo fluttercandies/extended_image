@@ -1,3 +1,8 @@
+## 6.0.2+1
+
+* Issues:
+  1. Hide `FileImage` from `extended_image_library` explicitly.
+
 ## 6.0.2
 
 * Issues:
