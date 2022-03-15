@@ -1,3 +1,8 @@
+## 6.0.2
+
+* Issues:
+  Remove the deprecated constructor for the `ExtendedVelocityTracker`. (#460)
+
 ## 6.0.1
 
 * Issues:
