@@ -1,6 +1,6 @@
 library extended_image;
 
-export 'package:extended_image_library/extended_image_library.dart';
+export 'package:extended_image_library/extended_image_library.dart' hide File;
 
 export 'src/border_painter.dart';
 export 'src/editor/editor.dart';
