@@ -8,8 +8,9 @@ import 'package:vm_service/vm_service_io.dart';
 
 class VMHelper with ChangeNotifier {
   factory VMHelper() => _vMHelper;
+
   VMHelper._() {
-    if (kDebugMode)
+    assert(() {
       _startConnect().whenComplete(() {
         _timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
           VMHelper()._updateMemoryUsage().whenComplete(() {
@@ -17,45 +18,67 @@ class VMHelper with ChangeNotifier {
           });
         });
       });
+      return true;
+    }());
   }
+
   static final VMHelper _vMHelper = VMHelper._();
-  late MemoryUsage mainMemoryUsage;
-  late Timer _timer;
-  List<MyMemoryUsage> mainHistoryMemoryInfo = <MyMemoryUsage>[];
-  IsolateRef? get main => vm!.isolates!
-      .firstWhereOrNull((IsolateRef element) => element.name == 'main');
-  int _count = 0;
-  int get count => _count;
+
   late bool connected;
   VmService? serviceClient;
   VM? vm;
-  Future<void> _startConnect() async {
-    final ServiceProtocolInfo info = await Service.getInfo();
-    if (info.serverUri == null) {
-      print('service  protocol url is null,start vm service fail');
-      return;
-    }
-    final Uri uri = convertToWebSocketUrl(serviceProtocolUrl: info.serverUri!);
-    serviceClient = await vmServiceConnectUri(uri.toString(), log: StdoutLog());
-    print('socket connected in service $info');
-    connected = true;
 
-    vm = await serviceClient!.getVM();
-    await _updateMemoryUsage();
+  late MemoryUsage mainMemoryUsage;
+  late Timer _timer;
+  List<MyMemoryUsage> mainHistoryMemoryInfo = <MyMemoryUsage>[];
+
+  IsolateRef? get main => vm!.isolates!
+      .firstWhereOrNull((IsolateRef element) => element.name == 'main');
+
+  int get count => _count;
+  int _count = 0;
+
+  Future<void> _startConnect() async {
+    try {
+      final ServiceProtocolInfo info = await Service.getInfo();
+      if (info.serverUri == null) {
+        print('Service protocol url is null, start vm service fail.');
+        return;
+      }
+      final Uri uri = convertToWebSocketUrl(
+        serviceProtocolUrl: info.serverUri!,
+      );
+      serviceClient = await vmServiceConnectUri(
+        uri.toString(),
+        log: StdoutLog(),
+      );
+      print('Socket connected in service $info');
+      connected = true;
+      vm = await serviceClient!.getVM();
+      await _updateMemoryUsage();
+    } catch (e) {
+      print(
+        'Socket connect failed due to $e. '
+        "Make sure you're not using simulators.",
+      );
+    }
   }
 
   Future<void> _updateMemoryUsage() async {
     if (vm != null && connected) {
-      final MemoryUsage memoryUsage =
-          await serviceClient!.getMemoryUsage(main!.id!);
+      final MemoryUsage memoryUsage = await serviceClient!.getMemoryUsage(
+        main!.id!,
+      );
       mainMemoryUsage = memoryUsage;
-      final MyMemoryUsage lastest =
-          MyMemoryUsage.copyFromMemoryUsage(memoryUsage);
-      mainHistoryMemoryInfo.add(lastest);
-
-      mainHistoryMemoryInfo.removeWhere((MyMemoryUsage element) => element
-          .dataTime
-          .isBefore(lastest.dataTime.subtract(const Duration(minutes: 1))));
+      final MyMemoryUsage latest = MyMemoryUsage.copyFromMemoryUsage(
+        memoryUsage,
+      );
+      mainHistoryMemoryInfo.add(latest);
+      mainHistoryMemoryInfo.removeWhere(
+        (MyMemoryUsage element) => element.dataTime.isBefore(
+          latest.dataTime.subtract(const Duration(minutes: 1)),
+        ),
+      );
     }
   }
 
@@ -112,7 +135,7 @@ class MyMemoryUsage {
         heapUsage: memoryUsage.heapUsage!,
       );
 
-  double todouble(double d) {
+  double toDouble(double d) {
     return double.parse(d.toStringAsFixed(2));
   }
 }
@@ -126,7 +149,8 @@ class StdoutLog extends Log {
 }
 
 class ByteUtil {
-  ByteUtil._();
+  const ByteUtil._();
+
   static String toByteString(int bytes) {
     if (bytes <= 1024) {
       return '${bytes}B';

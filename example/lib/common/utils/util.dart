@@ -8,8 +8,11 @@ import 'package:photo_manager/photo_manager.dart';
 ///
 ///  create by zmtzawqlp on 2020/1/31
 ///
-double? initScale(
-    {required Size imageSize, required Size size, double? initialScale}) {
+double? initScale({
+  required Size imageSize,
+  required Size size,
+  double? initialScale,
+}) {
   final double n1 = imageSize.height / imageSize.width;
   final double n2 = size.height / size.width;
   if (n1 > n2) {
@@ -29,15 +32,16 @@ double? initScale(
   return initialScale;
 }
 
-///save netwrok image to photo
+/// Save network image to the photo library.
 Future<bool> saveNetworkImageToPhoto(String url, {bool useCache = true}) async {
   if (kIsWeb) {
     return false;
   }
+  final String title = '${DateTime.now().millisecondsSinceEpoch}.jpg';
   final Uint8List? data = await getNetworkImageData(url, useCache: useCache);
-  // var filePath = await ImagePickerSaver.saveFile(fileData: data);
-  // return filePath != null && filePath != '';
-  final AssetEntity? imageEntity = await PhotoManager.editor.saveImage(data!);
-
+  final AssetEntity? imageEntity = await PhotoManager.editor.saveImage(
+    data!,
+    title: title,
+  );
   return imageEntity != null;
 }

@@ -130,11 +130,11 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
     final List<FlSpot> data3 = <FlSpot>[];
     for (final MyMemoryUsage item in VMHelper().mainHistoryMemoryInfo) {
       data1.add(FlSpot(item.dataTime.millisecondsSinceEpoch.toDouble(),
-          item.todouble(item.heapUsage)));
+          item.toDouble(item.heapUsage)));
       data2.add(FlSpot(item.dataTime.millisecondsSinceEpoch.toDouble(),
-          item.todouble(item.heapCapacity)));
+          item.toDouble(item.heapCapacity)));
       data3.add(FlSpot(item.dataTime.millisecondsSinceEpoch.toDouble(),
-          item.todouble(item.externalUsage)));
+          item.toDouble(item.externalUsage)));
 
       final double minValue =
           min(min(item.heapUsage, item.heapCapacity), item.externalUsage);

@@ -2,38 +2,36 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-//import 'package:image_picker/image_picker.dart' as picker;
 import 'package:flutter/cupertino.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 
 Future<Uint8List?> pickImage(BuildContext context) async {
-  List<AssetEntity> assets = <AssetEntity>[];
   final List<AssetEntity>? result = await AssetPicker.pickAssets(
     context,
-    maxAssets: 1,
-    pathThumbSize: 84,
-    gridCount: 3,
-    pageSize: 300,
-    selectedAssets: assets,
-    requestType: RequestType.image,
-    textDelegate: EnglishTextDelegate(),
+    pickerConfig: const AssetPickerConfig(
+      maxAssets: 1,
+      pathThumbnailSize: ThumbnailSize.square(84),
+      gridCount: 3,
+      pageSize: 300,
+      requestType: RequestType.image,
+      textDelegate: EnglishAssetPickerTextDelegate(),
+    ),
   );
   if (result != null) {
-    assets = List<AssetEntity>.from(result);
-    return assets.first.originBytes;
+    return result.first.originBytes;
   }
   return null;
-  // final File file =
-
-  //     await picker.ImagePicker.pickImage(source: picker.ImageSource.gallery);
-  // return file.readAsBytes();
 }
 
 class ImageSaver {
-  ImageSaver._();
+  const ImageSaver._();
+
   static Future<String?> save(String name, Uint8List fileData) async {
-    final AssetEntity? imageEntity =
-        await PhotoManager.editor.saveImage(fileData);
+    final String title = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final AssetEntity? imageEntity = await PhotoManager.editor.saveImage(
+      fileData,
+      title: title,
+    );
     final File? file = await imageEntity?.file;
     return file?.path;
   }
