@@ -373,6 +373,7 @@ class EditorConfig {
     this.animationDuration = const Duration(milliseconds: 200),
     this.tickerDuration = const Duration(milliseconds: 400),
     this.cropAspectRatio = CropAspectRatios.custom,
+    this.initialAspectRatio = CropAspectRatios.custom,
     this.initCropRectType = InitCropRectType.imageRect,
     this.cropLayerPainter = const EditorCropLayerPainter(),
     this.speed = 1.0,
@@ -427,6 +428,11 @@ class EditorConfig {
   /// Aspect ratio of crop rect
   /// default is custom
   final double? cropAspectRatio;
+
+  /// Initial Aspect ratio of crop rect
+  /// default is custom
+  /// This will appear only on init an will not persist
+  final double? initialAspectRatio;
 
   /// Init crop rect base on initial image rect or image layout rect
   final InitCropRectType initCropRectType;
