@@ -47,6 +47,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
             .extendedImageState.imageWidget.initEditorConfigHandler
             ?.call(widget.extendedImageState) ??
         EditorConfig();
+
+    print(_editorConfig?.initialAspectRatio ?? "-");
     if (cropAspectRatio != _editorConfig!.cropAspectRatio) {
       _editActionDetails = null;
     }
@@ -181,6 +183,15 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
 
   Rect _initCropRect(Rect rect) {
     Rect cropRect = _editActionDetails!.getRectWithScale(rect);
+
+    if (_editorConfig!.initialAspectRatio != null) {
+      final double aspectRatio = _editorConfig!.initialAspectRatio!;
+      double width = cropRect.width / aspectRatio;
+      final double height = min(cropRect.height, width);
+      width = height * aspectRatio;
+      cropRect = Rect.fromCenter(
+          center: cropRect.center, width: width, height: height);
+    }
 
     if (_editActionDetails!.cropAspectRatio != null) {
       final double aspectRatio = _editActionDetails!.cropAspectRatio!;
