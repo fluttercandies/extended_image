@@ -48,7 +48,6 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
             ?.call(widget.extendedImageState) ??
         EditorConfig();
 
-    print(_editorConfig?.initialAspectRatio ?? "-");
     if (cropAspectRatio != _editorConfig!.cropAspectRatio) {
       _editActionDetails = null;
     }
@@ -182,25 +181,27 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   }
 
   Rect _initCropRect(Rect rect) {
+    if (_editActionDetails!.cropAspectRatio != null) {
+      return _calculateCropRectFromAspectRatio(
+          rect, _editActionDetails!.cropAspectRatio!);
+    } else if (_editorConfig!.initialCropAspectRatio != null) {
+      return _calculateCropRectFromAspectRatio(
+          rect, _editorConfig!.initialCropAspectRatio!);
+    }
+    return _editActionDetails!.getRectWithScale(rect);
+  }
+
+  Rect _calculateCropRectFromAspectRatio(Rect rect, double aspectRatio) {
     Rect cropRect = _editActionDetails!.getRectWithScale(rect);
 
-    if (_editorConfig!.initialAspectRatio != null) {
-      final double aspectRatio = _editorConfig!.initialAspectRatio!;
-      double width = cropRect.width / aspectRatio;
-      final double height = min(cropRect.height, width);
-      width = height * aspectRatio;
-      cropRect = Rect.fromCenter(
-          center: cropRect.center, width: width, height: height);
-    }
-
-    if (_editActionDetails!.cropAspectRatio != null) {
-      final double aspectRatio = _editActionDetails!.cropAspectRatio!;
-      double width = cropRect.width / aspectRatio;
-      final double height = min(cropRect.height, width);
-      width = height * aspectRatio;
-      cropRect = Rect.fromCenter(
-          center: cropRect.center, width: width, height: height);
-    }
+    final double aspectRatio = _editorConfig!.initialCropAspectRatio!;
+    final double height = min(cropRect.height, cropRect.width / aspectRatio);
+    final double width = height * aspectRatio;
+    cropRect = Rect.fromCenter(
+      center: cropRect.center,
+      width: width,
+      height: height,
+    );
     return cropRect;
   }
 
