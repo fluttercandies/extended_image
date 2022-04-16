@@ -91,7 +91,6 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     return EditorConfig(
                       maxScale: 8.0,
                       cropRectPadding: const EdgeInsets.all(20.0),
-                      // initialAspectRatio: 1,
                       hitTestSize: 20.0,
                       cropLayerPainter: _cropLayerPainter!,
                       initCropRectType: InitCropRectType.imageRect,
@@ -111,7 +110,6 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       maxScale: 8.0,
                       cropRectPadding: const EdgeInsets.all(20.0),
                       hitTestSize: 20.0,
-                      // initialAspectRatio: 1,
                       cropLayerPainter: _cropLayerPainter!,
                       initCropRectType: InitCropRectType.imageRect,
                       cropAspectRatio: _aspectRatio!.value,

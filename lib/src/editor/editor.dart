@@ -183,26 +183,30 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
   Rect _initCropRect(Rect rect) {
     if (_editActionDetails!.cropAspectRatio != null) {
       return _calculateCropRectFromAspectRatio(
-          rect, _editActionDetails!.cropAspectRatio!);
+        rect,
+        _editActionDetails!.cropAspectRatio!,
+      );
     } else if (_editorConfig!.initialCropAspectRatio != null) {
       return _calculateCropRectFromAspectRatio(
-          rect, _editorConfig!.initialCropAspectRatio!);
+        rect,
+        _editorConfig!.initialCropAspectRatio!,
+      );
     }
     return _editActionDetails!.getRectWithScale(rect);
   }
 
   Rect _calculateCropRectFromAspectRatio(Rect rect, double aspectRatio) {
-    Rect cropRect = _editActionDetails!.getRectWithScale(rect);
+    final Rect cropRect = _editActionDetails!.getRectWithScale(rect);
 
     final double aspectRatio = _editorConfig!.initialCropAspectRatio!;
     final double height = min(cropRect.height, cropRect.width / aspectRatio);
     final double width = height * aspectRatio;
-    cropRect = Rect.fromCenter(
+
+    return Rect.fromCenter(
       center: cropRect.center,
       width: width,
       height: height,
     );
-    return cropRect;
   }
 
   void _handleScaleStart(ScaleStartDetails details) {
