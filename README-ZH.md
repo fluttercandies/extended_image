@@ -382,21 +382,23 @@ ExtendedImage
 
 EditorConfig
 
-| 参数                   | 描述                                                                               | 默认                                                         |
-| ---------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| maxScale               | 最大的缩放倍数                                                                     | 5.0                                                          |
+| 参数                   | 描述                                                         | 默认                                                         |
+| ---------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| maxScale               | 最大的缩放倍数                                               | 5.0                                                          |
 | cropRectPadding        | 裁剪框跟图片 layout 区域之间的距离。最好是保持一定距离，不然裁剪框边界很难进行拖拽 | EdgeInsets.all(20.0)                                         |
-| cornerSize             | 裁剪框四角图形的大小                                                               | Size(30.0, 5.0)                                              |
-| cornerColor            | 裁剪框四角图形的颜色                                                               | primaryColor                                                 |
-| lineColor              | 裁剪框线的颜色                                                                     | scaffoldBackgroundColor.withOpacity(0.7)                     |
-| lineHeight             | 裁剪框线的高度                                                                     | 0.6                                                          |
-| editorMaskColorHandler | 蒙层的颜色回调，你可以根据是否手指按下来设置不同的蒙层颜色                         | scaffoldBackgroundColor.withOpacity(pointerDown ? 0.4 : 0.8) |
-| hitTestSize            | 裁剪框四角以及边线能够拖拽的区域的大小                                             | 20.0                                                         |
-| animationDuration      | 当裁剪框拖拽变化结束之后，自动适应到中间的动画的时长                               | Duration(milliseconds: 200)                                  |
-| tickerDuration         | 当裁剪框拖拽变化结束之后，多少时间才触发自动适应到中间的动画                       | Duration(milliseconds: 400)                                  |
-| cropAspectRatio        | 裁剪框的宽高比                                                                     | null(无宽高比)                                               |
-| initCropRectType       | 剪切框的初始化类型(根据图片初始化区域或者图片的 layout 区域)                       | imageRect                                                    |
-| hitTestBehavior        | 设置hittest的行为                                                                  | HitTestBehavior.deferToChild                                 |
+| cornerSize             | 裁剪框四角图形的大小                                         | Size(30.0, 5.0)                                              |
+| cornerColor            | 裁剪框四角图形的颜色                                         | primaryColor                                                 |
+| lineColor              | 裁剪框线的颜色                                               | scaffoldBackgroundColor.withOpacity(0.7)                     |
+| lineHeight             | 裁剪框线的高度                                               | 0.6                                                          |
+| editorMaskColorHandler | 蒙层的颜色回调，你可以根据是否手指按下来设置不同的蒙层颜色   | scaffoldBackgroundColor.withOpacity(pointerDown ? 0.4 : 0.8) |
+| hitTestSize            | 裁剪框四角以及边线能够拖拽的区域的大小                       | 20.0                                                         |
+| animationDuration      | 当裁剪框拖拽变化结束之后，自动适应到中间的动画的时长         | Duration(milliseconds: 200)                                  |
+| tickerDuration         | 当裁剪框拖拽变化结束之后，多少时间才触发自动适应到中间的动画 | Duration(milliseconds: 400)                                  |
+| cropAspectRatio        | 裁剪框的宽高比                                               | null(无宽高比)                                               |
+| initialCropAspectRatio | 初始化的裁剪框的宽高比                                       | null(custom: 填充满图片原始宽高比)                           |
+| initCropRectType       | 剪切框的初始化类型(根据图片初始化区域或者图片的 layout 区域) | imageRect                                                    |
+| hitTestBehavior        | 设置hittest的行为                                            | HitTestBehavior.deferToChild                                 |
+
 ### 裁剪框的宽高比
 
 这是一个 double 类型，你可以自定义裁剪框的宽高比。

@@ -1,3 +1,9 @@
+## 6.0.3
+
+* Improve:
+  add [EditorConfig.initialCropAspectRatio] to support to set initial CropAspectRatio(#462 It's good for that you can set initial CropAspectRatio at first time and set CropAspectRatio to custom, so that the users can change CropAspectRatio as they want). 
+
+
 ## 6.0.2+1
 
 * Issues:

@@ -111,7 +111,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
   ) {
     const int numPoints = 1000;
     final List<Offset> points = <Offset>[];
-    final double dt = 2 * pi / numPoints;
+    const double dt = 2 * pi / numPoints;
 
     for (double t = 0.0; t <= 2 * pi; t += dt) {
       final Offset oo = Offset(doX(t), doY(t));
