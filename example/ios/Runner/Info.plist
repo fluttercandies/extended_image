@@ -47,5 +47,7 @@
 	<string>Take a photo for display</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Take a video for display</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 </dict>
 </plist>

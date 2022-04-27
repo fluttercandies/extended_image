@@ -1,6 +1,8 @@
 import 'dart:math' as math;
+import 'package:extended_text_library/extended_text_library.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 ///
@@ -15,6 +17,34 @@ const double _kToolbarContentDistance = 8.0;
 
 /// Android Material styled text selection controls.
 class MyTextSelectionControls extends TextSelectionControls {
+  MyTextSelectionControls({this.joinZeroWidthSpace = false});
+  final bool joinZeroWidthSpace;
+
+  @override
+  void handleCopy(TextSelectionDelegate delegate,
+      [ClipboardStatusNotifier? clipboardStatus]) {
+    final TextEditingValue value = delegate.textEditingValue;
+
+    String data = value.selection.textInside(value.text);
+    // remove zeroWidthSpace
+    if (joinZeroWidthSpace) {
+      data = data.replaceAll(zeroWidthSpace, '');
+    }
+    Clipboard.setData(ClipboardData(
+      text: value.selection.textInside(value.text),
+    ));
+    clipboardStatus?.update();
+    delegate.userUpdateTextEditingValue(
+      TextEditingValue(
+        text: value.text,
+        selection: TextSelection.collapsed(offset: value.selection.end),
+      ),
+      SelectionChangedCause.toolbar,
+    );
+    delegate.bringIntoView(delegate.textEditingValue.selection.extent);
+    delegate.hideToolbar();
+  }
+
   /// Returns the size of the Material handle.
   @override
   Size getHandleSize(double textLineHeight) =>
@@ -29,7 +59,7 @@ class MyTextSelectionControls extends TextSelectionControls {
     Offset selectionMidpoint,
     List<TextSelectionPoint> endpoints,
     TextSelectionDelegate delegate,
-    ClipboardStatusNotifier clipboardStatus,
+    ClipboardStatusNotifier? clipboardStatus,
     Offset? lastSecondaryTapDownPosition,
   ) {
     return _TextSelectionControlsToolbar(
@@ -39,11 +69,8 @@ class MyTextSelectionControls extends TextSelectionControls {
       endpoints: endpoints,
       delegate: delegate,
       clipboardStatus: clipboardStatus,
-      handleCut:
-          canCut(delegate) ? () => handleCut(delegate, clipboardStatus) : null,
-      handleCopy: canCopy(delegate)
-          ? () => handleCopy(delegate, clipboardStatus)
-          : null,
+      handleCut: canCut(delegate) ? () => handleCut(delegate) : null,
+      handleCopy: canCopy(delegate) ? () => handleCopy(delegate) : null,
       handlePaste: canPaste(delegate) ? () => handlePaste(delegate) : null,
       handleSelectAll:
           canSelectAll(delegate) ? () => handleSelectAll(delegate) : null,
@@ -63,7 +90,7 @@ class MyTextSelectionControls extends TextSelectionControls {
   /// Builder for material-style text selection handles.
   @override
   Widget buildHandle(
-      BuildContext context, TextSelectionHandleType type, double textHeight,
+      BuildContext context, TextSelectionHandleType type, double textLineHeight,
       [VoidCallback? onTap, double? startGlyphHeight, double? endGlyphHeight]) {
     final Widget handle = SizedBox(
       width: _kHandleSize,
@@ -134,7 +161,6 @@ class _TextSelectionToolbarItemData {
 // The highest level toolbar widget, built directly by buildToolbar.
 class _TextSelectionControlsToolbar extends StatefulWidget {
   const _TextSelectionControlsToolbar({
-    Key? key,
     required this.clipboardStatus,
     required this.delegate,
     required this.endpoints,
@@ -146,9 +172,9 @@ class _TextSelectionControlsToolbar extends StatefulWidget {
     required this.selectionMidpoint,
     required this.textLineHeight,
     required this.handleLike,
-  }) : super(key: key);
+  });
 
-  final ClipboardStatusNotifier clipboardStatus;
+  final ClipboardStatusNotifier? clipboardStatus;
   final TextSelectionDelegate delegate;
   final List<TextSelectionPoint> endpoints;
   final Rect globalEditableRegion;
@@ -156,7 +182,7 @@ class _TextSelectionControlsToolbar extends StatefulWidget {
   final VoidCallback? handleCopy;
   final VoidCallback? handlePaste;
   final VoidCallback? handleSelectAll;
-  final VoidCallback handleLike;
+  final VoidCallback? handleLike;
   final Offset selectionMidpoint;
   final double textLineHeight;
 
@@ -176,28 +202,22 @@ class _TextSelectionControlsToolbarState
   @override
   void initState() {
     super.initState();
-    widget.clipboardStatus.addListener(_onChangedClipboardStatus);
-    widget.clipboardStatus.update();
+    widget.clipboardStatus?.addListener(_onChangedClipboardStatus);
   }
 
   @override
   void didUpdateWidget(_TextSelectionControlsToolbar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.clipboardStatus != oldWidget.clipboardStatus) {
-      widget.clipboardStatus.addListener(_onChangedClipboardStatus);
-      oldWidget.clipboardStatus.removeListener(_onChangedClipboardStatus);
+      widget.clipboardStatus?.addListener(_onChangedClipboardStatus);
+      oldWidget.clipboardStatus?.removeListener(_onChangedClipboardStatus);
     }
-    widget.clipboardStatus.update();
   }
 
   @override
   void dispose() {
     super.dispose();
-    // When used in an Overlay, it can happen that this is disposed after its
-    // creator has already disposed _clipboardStatus.
-    if (!widget.clipboardStatus.disposed) {
-      widget.clipboardStatus.removeListener(_onChangedClipboardStatus);
-    }
+    widget.clipboardStatus?.removeListener(_onChangedClipboardStatus);
   }
 
   @override
@@ -212,7 +232,7 @@ class _TextSelectionControlsToolbarState
     // If the paste button is desired, don't render anything until the state of
     // the clipboard is known, since it's used to determine if paste is shown.
     if (widget.handlePaste != null &&
-        widget.clipboardStatus.value == ClipboardStatus.unknown) {
+        widget.clipboardStatus?.value == ClipboardStatus.unknown) {
       return const SizedBox.shrink();
     }
 
@@ -222,11 +242,12 @@ class _TextSelectionControlsToolbarState
     final TextSelectionPoint endTextSelectionPoint =
         widget.endpoints.length > 1 ? widget.endpoints[1] : widget.endpoints[0];
     final Offset anchorAbove = Offset(
-        widget.globalEditableRegion.left + widget.selectionMidpoint.dx,
-        widget.globalEditableRegion.top +
-            startTextSelectionPoint.point.dy -
-            widget.textLineHeight -
-            _kToolbarContentDistance);
+      widget.globalEditableRegion.left + widget.selectionMidpoint.dx,
+      widget.globalEditableRegion.top +
+          startTextSelectionPoint.point.dy -
+          widget.textLineHeight -
+          _kToolbarContentDistance,
+    );
     final Offset anchorBelow = Offset(
       widget.globalEditableRegion.left + widget.selectionMidpoint.dx,
       widget.globalEditableRegion.top +
@@ -245,23 +266,23 @@ class _TextSelectionControlsToolbarState
       if (widget.handleCut != null)
         _TextSelectionToolbarItemData(
           label: localizations.cutButtonLabel,
-          onPressed: widget.handleCut,
+          onPressed: widget.handleCut!,
         ),
       if (widget.handleCopy != null)
         _TextSelectionToolbarItemData(
           label: localizations.copyButtonLabel,
-          onPressed: widget.handleCopy,
+          onPressed: widget.handleCopy!,
         ),
       if (widget.handlePaste != null &&
-          widget.clipboardStatus.value == ClipboardStatus.pasteable)
+          widget.clipboardStatus?.value == ClipboardStatus.pasteable)
         _TextSelectionToolbarItemData(
           label: localizations.pasteButtonLabel,
-          onPressed: widget.handlePaste,
+          onPressed: widget.handlePaste!,
         ),
       if (widget.handleSelectAll != null)
         _TextSelectionToolbarItemData(
           label: localizations.selectAllButtonLabel,
-          onPressed: widget.handleSelectAll,
+          onPressed: widget.handleSelectAll!,
         ),
       _TextSelectionToolbarItemData(
         label: 'like',
@@ -285,9 +306,7 @@ class _TextSelectionControlsToolbarState
           padding: TextSelectionToolbarTextButton.getPadding(
               entry.key, itemDatas.length),
           onPressed: entry.value.onPressed,
-          child: entry.value.label == 'like'
-              ? const Icon(Icons.favorite)
-              : Text(entry.value.label),
+          child: Text(entry.value.label),
         );
       }).toList(),
     );
