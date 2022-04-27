@@ -390,6 +390,7 @@ EditorConfig
 | animationDuration      | auto center animation duration                                     | Duration(milliseconds: 200)                                  |
 | tickerDuration         | duration to begin auto center animation after crop rect is changed | Duration(milliseconds: 400)                                  |
 | cropAspectRatio        | aspect ratio of crop rect                                          | null(custom)                                                 |
+| initialCropAspectRatio | initial aspect ratio of crop rect                                  | null(custom: initial crop rect will fill the entire image)   |
 | initCropRectType       | init crop rect base on initial image rect or image layout rect     | imageRect                                                    |
 | cornerPainter          | corner shape                                                       | ExtendedImageCropLayerPainterNinetyDegreesCorner()           |
 | hitTestBehavior        | How to behave during hit tests                                     | HitTestBehavior.deferToChild                                 |

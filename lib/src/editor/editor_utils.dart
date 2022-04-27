@@ -373,6 +373,7 @@ class EditorConfig {
     this.animationDuration = const Duration(milliseconds: 200),
     this.tickerDuration = const Duration(milliseconds: 400),
     this.cropAspectRatio = CropAspectRatios.custom,
+    this.initialCropAspectRatio = CropAspectRatios.custom,
     this.initCropRectType = InitCropRectType.imageRect,
     this.cropLayerPainter = const EditorCropLayerPainter(),
     this.speed = 1.0,
@@ -426,7 +427,17 @@ class EditorConfig {
 
   /// Aspect ratio of crop rect
   /// default is custom
+  ///
+  /// Typically the aspect ratio will not be changed during the editing process,
+  /// but it might be relevant with states (e.g. [ExtendedImageState]).
   final double? cropAspectRatio;
+
+  /// Initial Aspect ratio of crop rect
+  /// default is custom
+  ///
+  /// The argument only affects the initial aspect ratio,
+  /// users can set it based on the desire despite of [cropAspectRatio].
+  final double? initialCropAspectRatio;
 
   /// Init crop rect base on initial image rect or image layout rect
   final InitCropRectType initCropRectType;
