@@ -427,13 +427,16 @@ class EditorConfig {
 
   /// Aspect ratio of crop rect
   /// default is custom
-  /// user can't change the ratio if this field is set
+  ///
+  /// Typically the aspect ratio will not be changed during the editing process,
+  /// but it might be relevant with states (e.g. [ExtendedImageState]).
   final double? cropAspectRatio;
 
   /// Initial Aspect ratio of crop rect
   /// default is custom
-  /// This argument will only set the initial aspect ration and user can change it based on desire
-  /// despite of cropAspectRatio
+  ///
+  /// The argument only affects the initial aspect ratio,
+  /// users can set it based on the desire despite of [cropAspectRatio].
   final double? initialCropAspectRatio;
 
   /// Init crop rect base on initial image rect or image layout rect
