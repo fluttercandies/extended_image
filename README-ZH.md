@@ -946,7 +946,7 @@ ExtendedImage
 | parameter                                                | description                                         | default   |
 | -------------------------------------------------------- | --------------------------------------------------- | --------- |
 | [ExtendedResizeImage.compressionRatio]                   | 图片压缩率，大于0小于1                              | null      |
-| [ExtendedResizeImage.maxBytes]                           | 图片的大小的最大值. 默认值为 500KB.                 | 500 << 10 |
+| [ExtendedResizeImage.maxBytes]                           | 图片的大小的最大值. 默认值为 50KB. 这是图片实际的的大小，而不是解码之后的大小                | 50 << 10 |
 | [ExtendedResizeImage.width]/[ExtendedResizeImage.height] | 宽和高用于decode和缓存. 跟官方的[ResizeImage]一致。 | null      |
 
 ```dart

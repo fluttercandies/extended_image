@@ -301,6 +301,10 @@ class EditActionDetails {
           }
           totalScale =
               totalScale / (rect.width / _screenDestinationRect!.width);
+          // init totalScale
+          if (_rawDestinationRect!.isSame(_rawDestinationRect!)) {
+            totalScale = 1.0;
+          }
           preTotalScale = totalScale;
           _screenDestinationRect = rect;
         }

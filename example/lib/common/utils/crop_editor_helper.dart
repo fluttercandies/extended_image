@@ -20,7 +20,7 @@ Future<Uint8List?> cropImageDataWithDartLibrary(
   print('dart library start cropping');
 
   ///crop rect base on raw image
-  final Rect? cropRect = state.getCropRect();
+  Rect cropRect = state.getCropRect()!;
 
   print('getCropRect : $cropRect');
 
@@ -45,6 +45,21 @@ Future<Uint8List?> cropImageDataWithDartLibrary(
       //     .asUint8List()
       : state.rawImageData;
 
+  if (data == state.rawImageData &&
+      state.widget.extendedImageState.imageProvider is ExtendedResizeImage) {
+    final ImmutableBuffer buffer =
+        await ImmutableBuffer.fromUint8List(state.rawImageData);
+    final ImageDescriptor descriptor = await ImageDescriptor.encoded(buffer);
+    final double widthRatio = descriptor.width / state.image!.width;
+    final double heightRatio = descriptor.height / state.image!.height;
+    cropRect = Rect.fromLTRB(
+      cropRect.left * widthRatio,
+      cropRect.top * heightRatio,
+      cropRect.right * widthRatio,
+      cropRect.bottom * heightRatio,
+    );
+  }
+
   final EditActionDetails editAction = state.editAction!;
 
   final DateTime time1 = DateTime.now();
@@ -65,7 +80,7 @@ Future<Uint8List?> cropImageDataWithDartLibrary(
       image = bakeOrientation(image);
 
       if (editAction.needCrop) {
-        image = copyCrop(image, cropRect!.left.toInt(), cropRect.top.toInt(),
+        image = copyCrop(image, cropRect.left.toInt(), cropRect.top.toInt(),
             cropRect.width.toInt(), cropRect.height.toInt());
       }
 
@@ -122,8 +137,22 @@ Future<Uint8List?> cropImageDataWithDartLibrary(
 Future<Uint8List?> cropImageDataWithNativeLibrary(
     {required ExtendedImageEditorState state}) async {
   print('native library start cropping');
+  Rect cropRect = state.getCropRect()!;
+  if (state.widget.extendedImageState.imageProvider is ExtendedResizeImage) {
+    final ImmutableBuffer buffer =
+        await ImmutableBuffer.fromUint8List(state.rawImageData);
+    final ImageDescriptor descriptor = await ImageDescriptor.encoded(buffer);
 
-  final Rect? cropRect = state.getCropRect();
+    final double widthRatio = descriptor.width / state.image!.width;
+    final double heightRatio = descriptor.height / state.image!.height;
+    cropRect = Rect.fromLTRB(
+      cropRect.left * widthRatio,
+      cropRect.top * heightRatio,
+      cropRect.right * widthRatio,
+      cropRect.bottom * heightRatio,
+    );
+  }
+
   final EditActionDetails action = state.editAction!;
 
   final int rotateAngle = action.rotateAngle.toInt();
@@ -134,7 +163,7 @@ Future<Uint8List?> cropImageDataWithNativeLibrary(
   final ImageEditorOption option = ImageEditorOption();
 
   if (action.needCrop) {
-    option.addOption(ClipOption.fromRect(cropRect!));
+    option.addOption(ClipOption.fromRect(cropRect));
   }
 
   if (action.needFlip) {

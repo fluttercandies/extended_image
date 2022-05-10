@@ -40,9 +40,10 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
         enableLoadState: true,
         extendedImageEditorKey: editorKey,
         cacheRawData: true,
+        //maxBytes: 1024 * 50,
         initEditorConfigHandler: (ExtendedImageState? state) {
           return EditorConfig(
-              maxScale: 8.0,
+              maxScale: 4.0,
               cropRectPadding: const EdgeInsets.all(20.0),
               hitTestSize: 20.0,
               initCropRectType: InitCropRectType.imageRect,

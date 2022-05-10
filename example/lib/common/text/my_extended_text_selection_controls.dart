@@ -69,7 +69,7 @@ class MyTextSelectionControls extends TextSelectionControls {
       endpoints: endpoints,
       delegate: delegate,
       clipboardStatus: clipboardStatus,
-      handleCut: canCut(delegate) ? () => handleCut(delegate) : null,
+      handleCut: canCut(delegate) ? () => handleCut(delegate, null) : null,
       handleCopy: canCopy(delegate) ? () => handleCopy(delegate) : null,
       handlePaste: canPaste(delegate) ? () => handlePaste(delegate) : null,
       handleSelectAll:

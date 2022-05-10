@@ -4,11 +4,11 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  flutter: '>=2.10.0'
+  sdk: '>=2.14.0 <3.0.0'
 
 dependencies:
   extended_sliver: ^2.0.1
-  extended_text: ^10.0.0-dev.1
+  extended_text: ^9.0.0
   ff_annotation_route_library: ^3.0.0
   fl_chart: ^0.46.0
   flutter:

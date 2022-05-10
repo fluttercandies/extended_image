@@ -136,4 +136,10 @@ extension RectExtension on Rect {
   bool leftIsSame(Rect other) => left.equalTo(other.left);
   bool rightIsSame(Rect other) => right.equalTo(other.right);
   bool bottomIsSame(Rect other) => bottom.equalTo(other.bottom);
+
+  bool isSame(Rect other) =>
+      topIsSame(other) &&
+      leftIsSame(other) &&
+      rightIsSame(other) &&
+      bottomIsSame(other);
 }
