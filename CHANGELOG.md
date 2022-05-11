@@ -1,6 +1,9 @@
-# 6.1.0
+## 6.2.0
 
-* Migrate to 2.13.0
+* Migrate to 3.0.0
+
+## 6.1.0
+
 * override == and hashCode for ExtendedResizeImage
 * fix issue that ExtendedResizeImage can't get rawImageData(#477)
 * ExtendedResizeImage.maxBytes is actual bytes of Image, not decode bytes.

@@ -40,6 +40,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
     this.gestureDetails,
     this.editActionDetails,
     this.isAntiAlias = false,
+    this.debugImageLabel,
   }) : super(key: key);
 
   @override
@@ -223,6 +224,9 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
   ///input Rect, you can use this to crop image.
   ///it work when centerSlice==null
   final Rect? sourceRect;
+
+  /// A string identifying the source of the image.
+  final String? debugImageLabel;
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
@@ -279,5 +283,11 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
       ..gestureDetails = gestureDetails
       ..editActionDetails = editActionDetails
       ..isAntiAlias = isAntiAlias;
+  }
+
+  @override
+  void didUnmountRenderObject(ExtendedRenderImage renderObject) {
+    // Have the render object dispose its image handle.
+    renderObject.image = null;
   }
 }

@@ -711,7 +711,7 @@ class ExtendedImage extends StatefulWidget {
   ///    specify an [AlignmentGeometry].
   ///  * [AlignmentDirectional], like [Alignment] for specifying alignments
   ///    relative to text direction.
-  final Alignment alignment;
+  final AlignmentGeometry alignment;
 
   /// How to paint any portions of the layout bounds not covered by the image.
   final ImageRepeat repeat;
@@ -743,7 +743,33 @@ class ExtendedImage extends StatefulWidget {
   final bool matchTextDirection;
 
   /// Whether to continue showing the old image (true), or briefly show nothing
-  /// (false), when the image provider changes.
+  /// (false), when the image provider changes. The default value is false.
+  ///
+  /// ## Design discussion
+  ///
+  /// ### Why is the default value of [gaplessPlayback] false?
+  ///
+  /// Having the default value of [gaplessPlayback] be false helps prevent
+  /// situations where stale or misleading information might be presented.
+  /// Consider the following case:
+  ///
+  /// We have constructed a 'Person' widget that displays an avatar [Image] of
+  /// the currently loaded person along with their name. We could request for a
+  /// new person to be loaded into the widget at any time. Suppose we have a
+  /// person currently loaded and the widget loads a new person. What happens
+  /// if the [Image] fails to load?
+  ///
+  /// * Option A ([gaplessPlayback] = false): The new person's name is coupled
+  /// with a blank image.
+  ///
+  /// * Option B ([gaplessPlayback] = true): The widget displays the avatar of
+  /// the previous person and the name of the newly loaded person.
+  ///
+  /// This is why the default value is false. Most of the time, when you change
+  /// the image provider you're not just changing the image, you're removing the
+  /// old widget and adding a new one and not expecting them to have any
+  /// relationship. With [gaplessPlayback] on you might accidentally break this
+  /// expectation and re-use the old widget.
   final bool gaplessPlayback;
 
   /// A Semantic description of the image.
@@ -765,6 +791,33 @@ class ExtendedImage extends StatefulWidget {
 
   @override
   _ExtendedImageState createState() => _ExtendedImageState();
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<ImageProvider>('image', image));
+    properties.add(DoubleProperty('width', width, defaultValue: null));
+    properties.add(DoubleProperty('height', height, defaultValue: null));
+    properties.add(ColorProperty('color', color, defaultValue: null));
+    properties.add(DiagnosticsProperty<Animation<double>?>('opacity', opacity,
+        defaultValue: null));
+    properties.add(EnumProperty<BlendMode>('colorBlendMode', colorBlendMode,
+        defaultValue: null));
+    properties.add(EnumProperty<BoxFit>('fit', fit, defaultValue: null));
+    properties.add(DiagnosticsProperty<AlignmentGeometry>(
+        'alignment', alignment,
+        defaultValue: null));
+    properties.add(EnumProperty<ImageRepeat>('repeat', repeat,
+        defaultValue: ImageRepeat.noRepeat));
+    properties.add(DiagnosticsProperty<Rect>('centerSlice', centerSlice,
+        defaultValue: null));
+    properties.add(FlagProperty('matchTextDirection',
+        value: matchTextDirection, ifTrue: 'match text direction'));
+    properties.add(
+        StringProperty('semanticLabel', semanticLabel, defaultValue: null));
+    properties.add(DiagnosticsProperty<bool>(
+        'this.excludeFromSemantics', excludeFromSemantics));
+    properties.add(EnumProperty<FilterQuality>('filterQuality', filterQuality));
+  }
 }
 
 class _ExtendedImageState extends State<ExtendedImage>
@@ -996,8 +1049,8 @@ class _ExtendedImageState extends State<ExtendedImage>
   @override
   void dispose() {
     assert(_imageStream != null);
-    // ignore: unnecessary_non_null_assertion
-    WidgetsBinding.instance!.removeObserver(this);
+
+    WidgetsBinding.instance.removeObserver(this);
     _stopListeningToStream();
     _completerHandle?.dispose();
     _scrollAwareContext.dispose();
@@ -1026,8 +1079,8 @@ class _ExtendedImageState extends State<ExtendedImage>
     super.initState();
     returnLoadStateChangedWidget = false;
     _loadState = LoadState.loading;
-    // ignore: unnecessary_non_null_assertion
-    WidgetsBinding.instance!.addObserver(this);
+
+    WidgetsBinding.instance.addObserver(this);
     _scrollAwareContext = DisposableBuildContext<State<ExtendedImage>>(this);
   }
 
@@ -1045,7 +1098,12 @@ class _ExtendedImageState extends State<ExtendedImage>
 
   Widget _buildExtendedRawImage() {
     return ExtendedRawImage(
+      // Do not clone the image, because RawImage is a stateless wrapper.
+      // The image will be disposed by this state object when it is not needed
+      // anymore, such as when it is unmounted or when the image stream pushes
+      // a new image.
       image: _imageInfo?.image,
+      debugImageLabel: _imageInfo?.debugLabel,
       width: widget.width,
       height: widget.height,
       scale: _imageInfo?.scale ?? 1.0,
@@ -1209,8 +1267,7 @@ class _ExtendedImageState extends State<ExtendedImage>
 
   void _updateInvertColors() {
     _invertColors = MediaQuery.maybeOf(context)?.invertColors ??
-        // ignore: unnecessary_non_null_assertion
-        SemanticsBinding.instance!.accessibilityFeatures.invertColors;
+        SemanticsBinding.instance.accessibilityFeatures.invertColors;
   }
 
   void _updateSourceStream(ImageStream newStream, {bool rebuild = false}) {
