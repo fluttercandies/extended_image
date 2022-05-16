@@ -87,9 +87,9 @@ class ImageDetail extends StatelessWidget {
                 content,
                 onSpecialTextTap: (dynamic parameter) {
                   if (parameter.toString().startsWith('\$')) {
-                    launch('https://github.com/fluttercandies');
+                    launchUrl(Uri.parse('https://github.com/fluttercandies'));
                   } else if (parameter.toString().startsWith('@')) {
-                    launch('mailto:zmtzawqlp@live.com');
+                    launchUrl(Uri.parse('mailto:zmtzawqlp@live.com'));
                   }
                 },
                 specialTextSpanBuilder: MySpecialTextSpanBuilder(),
@@ -110,8 +110,8 @@ class ImageDetail extends StatelessWidget {
                         GestureDetector(
                           child: const Text('more'),
                           onTap: () {
-                            launch(
-                                'https://github.com/fluttercandies/extended_text');
+                            launchUrl(Uri.parse(
+                                'https://github.com/fluttercandies/extended_text'));
                           },
                         )
                       ],

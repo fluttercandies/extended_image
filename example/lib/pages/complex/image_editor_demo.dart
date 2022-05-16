@@ -344,8 +344,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                                       decoration: TextDecoration.underline),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
-                                      launch(
-                                          'https://github.com/brendan-duncan/image');
+                                      launchUrl(Uri.parse(
+                                          'https://github.com/brendan-duncan/image'));
                                     }),
                               const TextSpan(
                                   text:
@@ -365,8 +365,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                                       decoration: TextDecoration.underline),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
-                                      launch(
-                                          'https://github.com/fluttercandies/flutter_image_editor');
+                                      launchUrl(Uri.parse(
+                                          'https://github.com/fluttercandies/flutter_image_editor'));
                                     }),
                               const TextSpan(
                                   text:

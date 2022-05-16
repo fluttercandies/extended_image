@@ -158,6 +158,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
 class ExtendedImageGesturePageViewState
     extends State<ExtendedImageGesturePageView>
     with SingleTickerProviderStateMixin {
+  MediaQueryData? _mediaQueryData;
   Map<Type, GestureRecognizerFactory> _gestureRecognizers =
       const <Type, GestureRecognizerFactory>{};
   late GestureAnimation _gestureAnimation;
@@ -192,7 +193,6 @@ class ExtendedImageGesturePageViewState
             gestureDetails: gestureDetails);
       }
     });
-    _initGestureRecognizers();
   }
 
   void _initGestureRecognizers({ExtendedImageGesturePageView? oldWidget}) {
@@ -228,7 +228,8 @@ class ExtendedImageGesturePageViewState
                     ..onCancel = onDragCancel
                     ..minFlingDistance = widget.physics.minFlingDistance
                     ..minFlingVelocity = widget.physics.minFlingVelocity
-                    ..maxFlingVelocity = widget.physics.maxFlingVelocity;
+                    ..maxFlingVelocity = widget.physics.maxFlingVelocity
+                    ..gestureSettings = _mediaQueryData?.gestureSettings;
                 },
               ),
             };
@@ -251,7 +252,8 @@ class ExtendedImageGesturePageViewState
                     ..onCancel = onDragCancel
                     ..minFlingDistance = widget.physics.minFlingDistance
                     ..minFlingVelocity = widget.physics.minFlingVelocity
-                    ..maxFlingVelocity = widget.physics.maxFlingVelocity;
+                    ..maxFlingVelocity = widget.physics.maxFlingVelocity
+                    ..gestureSettings = _mediaQueryData?.gestureSettings;
                 },
               ),
             };
@@ -269,12 +271,20 @@ class ExtendedImageGesturePageViewState
                 ..onStart = onScaleStart
                 ..onUpdate = onScaleUpdate
                 ..onEnd = onScaleEnd
-                ..dragStartBehavior = DragStartBehavior.start;
+                ..dragStartBehavior = DragStartBehavior.start
+                ..gestureSettings = _mediaQueryData?.gestureSettings;
             },
           );
         }
       }
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    _mediaQueryData = MediaQuery.maybeOf(context);
+    _initGestureRecognizers();
+    super.didChangeDependencies();
   }
 
   @override
