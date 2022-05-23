@@ -41,6 +41,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
   @override
   Widget build(BuildContext context) {
     final String url = imageTestUrl;
+
     return Material(
       child: Column(
         children: <Widget>[
@@ -65,6 +66,8 @@ class _CustomImageDemoState extends State<CustomImageDemo>
               child: ExtendedImage.network(
                 url,
                 fit: BoxFit.contain,
+                width: 300,
+                height: 200,
                 cache: true,
                 loadStateChanged: (ExtendedImageState state) {
                   switch (state.extendedImageLoadState) {
@@ -75,6 +78,9 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                         fit: BoxFit.fill,
                       );
                     case LoadState.completed:
+                      if (state.wasSynchronouslyLoaded) {
+                        return state.completedWidget;
+                      }
                       _controller.forward();
 
                       ///if you don't want override completed widget
@@ -83,11 +89,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                       //return state.completedWidget;
                       return FadeTransition(
                         opacity: _controller,
-                        child: ExtendedRawImage(
-                          image: state.extendedImageInfo?.image,
-                          width: 300,
-                          height: 200,
-                        ),
+                        child: state.completedWidget,
                       );
                     case LoadState.failed:
                       _controller.reset();
