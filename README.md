@@ -4,7 +4,7 @@
 
 Language: English| [中文简体](README-ZH.md)
 
-A powerful official extension library of image, which support placeholder(loading)/ failed state, cache network, zoom pan image, photo view, slide out page, editor(crop,rotate,flip), paint custom etc.
+A powerful official extension library of images, which supports placeholder(loading)/ failed state, cache network, zoom pan image, photo view, slide-out page, editor (crop, rotate, flip), paint custom etc.
 
 [Web demo for ExtendedImage](https://fluttercandies.github.io/extended_image/)
 
