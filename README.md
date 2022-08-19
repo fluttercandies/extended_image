@@ -925,6 +925,26 @@ ExtendedImage
   );
 ```
 
+## Notch
+
+By setting layoutInsets, you can ensure the image is positioned outside of obstructing elements such as
+the phone notch or home indicator if displayed in full screen. This will still allow the image margin to
+show underneath the notch if zoomed in. 
+
+ExtendedImage
+
+| parameter        | description                                       | default         |
+| ---------------- | ------------------------------------------------- | --------------- |
+| layoutInsets     | Amount to inset from the edge during image layout | EdgeInsets.zero |
+
+```dart
+  ExtendedImage.network(
+    url,
+    fit: BoxFit.contain,
+    layoutInsets: MediaQuery.of(context).padding
+  );
+```
+
 see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/simple/paint_image_demo.dart)
 and [push to refresh header which is used in crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/push_to_refresh_header.dart)
 

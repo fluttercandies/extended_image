@@ -90,6 +90,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       beforePaintImage: widget.extendedImageState.imageWidget.beforePaintImage,
       afterPaintImage: widget.extendedImageState.imageWidget.afterPaintImage,
       gestureDetails: _gestureDetails,
+      layoutInsets: widget.extendedImageState.imageWidget.layoutInsets,
     );
 
     if (extendedImageSlidePageState != null) {

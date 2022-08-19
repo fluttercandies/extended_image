@@ -26,10 +26,14 @@ void paintExtendedImage({
   GestureDetails? gestureDetails,
   EditActionDetails? editActionDetails,
   bool isAntiAlias = false,
+  EdgeInsets layoutInsets = EdgeInsets.zero
 }) {
   if (rect.isEmpty) {
     return;
   }
+
+  final Rect paintRect = rect;
+  rect = layoutInsets.deflateRect(rect);
 
   Size outputSize = rect.size;
   Size inputSize = Size(image.width.toDouble(), image.height.toDouble());
@@ -103,7 +107,7 @@ void paintExtendedImage({
 
     if (needClip) {
       canvas.save();
-      canvas.clipRect(rect);
+      canvas.clipRect(paintRect);
     }
   }
   bool hasEditAction = false;
@@ -131,7 +135,7 @@ void paintExtendedImage({
     if (needClip || hasEditAction) {
       canvas.save();
       if (needClip) {
-        canvas.clipRect(rect);
+        canvas.clipRect(paintRect);
       }
     }
 
@@ -178,7 +182,7 @@ void paintExtendedImage({
     canvas.save();
   }
   if (repeat != ImageRepeat.noRepeat) {
-    canvas.clipRect(rect);
+    canvas.clipRect(paintRect);
   }
   if (flipHorizontally) {
     final double dx = -(rect.left + rect.width / 2.0);

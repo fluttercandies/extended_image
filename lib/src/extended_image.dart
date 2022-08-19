@@ -54,6 +54,7 @@ class ExtendedImage extends StatefulWidget {
     this.extendedImageGestureKey,
     this.isAntiAlias = false,
     this.handleLoadingProgress = false,
+    this.layoutInsets = EdgeInsets.zero,
   })  : assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
             ? constraints?.tighten(width: width, height: height) ??
@@ -233,6 +234,7 @@ class ExtendedImage extends StatefulWidget {
     int? maxBytes,
     bool cacheRawData = false,
     String? imageCacheName,
+    this.layoutInsets = EdgeInsets.zero,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -329,6 +331,7 @@ class ExtendedImage extends StatefulWidget {
     int? maxBytes,
     bool cacheRawData = false,
     String? imageCacheName,
+    this.layoutInsets = EdgeInsets.zero,
   })  :
         // FileImage is not supported on Flutter Web therefore neither this method.
         assert(
@@ -419,6 +422,7 @@ class ExtendedImage extends StatefulWidget {
     int? maxBytes,
     bool cacheRawData = false,
     String? imageCacheName,
+    this.layoutInsets = EdgeInsets.zero,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -497,6 +501,7 @@ class ExtendedImage extends StatefulWidget {
     bool cacheRawData = false,
     String? imageCacheName,
     Duration? cacheMaxAge,
+    this.layoutInsets = EdgeInsets.zero,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -794,6 +799,11 @@ class ExtendedImage extends StatefulWidget {
   /// Anti-aliasing alleviates the sawtooth artifact when the image is rotated.
   final bool isAntiAlias;
 
+  /// Insets to apply before laying out the image.
+  ///
+  /// The image will still be painted in the full area.
+  final EdgeInsets layoutInsets;
+
   @override
   _ExtendedImageState createState() => _ExtendedImageState();
   @override
@@ -822,6 +832,7 @@ class ExtendedImage extends StatefulWidget {
     properties.add(DiagnosticsProperty<bool>(
         'this.excludeFromSemantics', excludeFromSemantics));
     properties.add(EnumProperty<FilterQuality>('filterQuality', filterQuality));
+    properties.add(DiagnosticsProperty<EdgeInsets>('layoutInsets', layoutInsets));
   }
 }
 
@@ -1125,6 +1136,7 @@ class _ExtendedImageState extends State<ExtendedImage>
       filterQuality: widget.filterQuality,
       beforePaintImage: widget.beforePaintImage,
       afterPaintImage: widget.afterPaintImage,
+      layoutInsets: widget.layoutInsets,
     );
   }
 
