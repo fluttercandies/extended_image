@@ -52,12 +52,11 @@ class ExtendedBallisticScrollActivity extends BallisticScrollActivity {
     ScrollActivityDelegate delegate,
     Simulation simulation,
     TickerProvider vsync,
-    this.shouldIgnorePointer,
+    bool shouldIgnorePointer,
   ) : super(
           delegate,
           simulation,
           vsync,
+          shouldIgnorePointer,
         );
-  @override
-  final bool shouldIgnorePointer;
 }
