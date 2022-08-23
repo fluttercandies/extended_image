@@ -467,4 +467,25 @@ class ExtendedScrollPositionWithSingleContext extends ScrollPosition
     description.add('$activity');
     description.add('$userScrollDirection');
   }
+
+  @override
+  Simulation? updateBallisticAnimation(double initVelocity, double initPosition) {
+    assert(hasPixels);
+    final FixedScrollMetrics initScrollMetrics = FixedScrollMetrics(
+      minScrollExtent: minScrollExtent,
+      maxScrollExtent: maxScrollExtent,
+      pixels: initPosition,
+      viewportDimension: viewportDimension,
+      axisDirection: axisDirection,
+    );
+    final Simulation? simulation = physics.createBallisticSimulation(
+      initScrollMetrics,
+      initVelocity,
+    );
+    if (simulation == null) {
+      goIdle();
+      return null;
+    }
+    return simulation;
+  }
 }
