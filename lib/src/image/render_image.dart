@@ -37,7 +37,6 @@ class ExtendedRenderImage extends RenderBox {
     BeforePaintImage? beforePaintImage,
     GestureDetails? gestureDetails,
     EditActionDetails? editActionDetails,
-  
   })  : _image = image,
         _width = width,
         _height = height,

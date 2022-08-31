@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:extended_image/src/border_painter.dart';
 import 'package:extended_image/src/gesture/gesture.dart';
 import 'package:extended_image/src/image/raw_image.dart';
@@ -331,7 +329,14 @@ class ExtendedImage extends StatefulWidget {
     int? maxBytes,
     bool cacheRawData = false,
     String? imageCacheName,
-  })  : assert(cacheWidth == null || cacheWidth > 0),
+  })  :
+        // FileImage is not supported on Flutter Web therefore neither this method.
+        assert(
+          !kIsWeb,
+          'ExtendedImage.file is not supported on Flutter Web. '
+          'Consider using either ExtendedImage.asset or ExtendedImage.network instead.',
+        ),
+        assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
           provider: ExtendedFileImageProvider(

@@ -4,13 +4,13 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.14.0 <3.0.0'
-
+  sdk: '>=2.18.0 <3.0.0'
+  flutter: '>=3.3.0'
 dependencies:
   extended_sliver: ^2.0.1
   extended_text: ^9.0.0
   ff_annotation_route_library: ^3.0.0
-  fl_chart: ^0.46.0
+  fl_chart: ^0.55.1
   flutter:
     sdk: flutter
 
@@ -20,13 +20,13 @@ dependencies:
   intl: ^0.17.0
   js: ^0.6.3
   like_button: ^2.0.4
-  loading_more_list: ^4.1.2
+  loading_more_list: ^5.0.2
   oktoast: ^3.1.4
   photo_manager: ^2.0.1
   pull_to_refresh_notification: ^2.3.0
   url_launcher: ^6.0.20
-  vm_service: ^8.2.1
-  wechat_assets_picker: ^7.0.4
+  vm_service: ^9.3.0
+  wechat_assets_picker: ^8.0.2
 
 dependency_overrides:
   extended_image:

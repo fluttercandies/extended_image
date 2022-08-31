@@ -344,11 +344,13 @@ class _GesturePageViewState extends State<GesturePageView> {
         }
         return false;
       },
-      child: Scrollable(
+      child: _Scrollable(
         dragStartBehavior: widget.dragStartBehavior,
         axisDirection: axisDirection,
         controller: widget.controller,
         physics: physics,
+        shouldIgnorePointerWhenScrolling:
+            widget.controller.shouldIgnorePointerWhenScrolling,
         restorationId: widget.restorationId,
         scrollBehavior: widget.scrollBehavior ??
             ScrollConfiguration.of(context).copyWith(scrollbars: false),
@@ -414,4 +416,46 @@ class _ForceImplicitScrollPhysics extends ScrollPhysics {
 
   @override
   final bool allowImplicitScrolling;
+}
+
+class _Scrollable extends Scrollable {
+  const _Scrollable({
+    Key? key,
+    AxisDirection axisDirection = AxisDirection.down,
+    ScrollController? controller,
+    ScrollPhysics? physics,
+    required ViewportBuilder viewportBuilder,
+    ScrollIncrementCalculator? incrementCalculator,
+    bool excludeFromSemantics = false,
+    int? semanticChildCount,
+    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
+    String? restorationId,
+    ScrollBehavior? scrollBehavior,
+    this.shouldIgnorePointerWhenScrolling = true,
+  }) : super(
+          key: key,
+          axisDirection: axisDirection,
+          controller: controller,
+          physics: physics,
+          viewportBuilder: viewportBuilder,
+          incrementCalculator: incrementCalculator,
+          excludeFromSemantics: excludeFromSemantics,
+          semanticChildCount: semanticChildCount,
+          dragStartBehavior: dragStartBehavior,
+          restorationId: restorationId,
+          scrollBehavior: scrollBehavior,
+        );
+  final bool shouldIgnorePointerWhenScrolling;
+  @override
+  _ExtendedScrollableState createState() => _ExtendedScrollableState();
+}
+
+class _ExtendedScrollableState extends ScrollableState {
+  @override
+  void setIgnorePointer(bool value) {
+    final _Scrollable scrollable = widget as _Scrollable;
+    if (scrollable.shouldIgnorePointerWhenScrolling) {
+      super.setIgnorePointer(value);
+    }
+  }
 }

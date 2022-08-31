@@ -1,3 +1,7 @@
+## 6.3.0
+
+* Migrate to 3.3.0
+
 ## 6.2.1
 
 * Add DeviceGestureSettings for ExtendedVerticalDragGestureRecognizer and ExtendedHorizontalDragGestureRecognizer.(#482,#483)

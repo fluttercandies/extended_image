@@ -66,6 +66,7 @@ class _ImageDemoState extends State<ImageDemo> {
                 TextButton(
                   child: const Text('clear all cache'),
                   onPressed: () {
+                    PaintingBinding.instance.imageCache.clear();
                     clearDiskCachedImages().then((bool done) {
                       showToast(done ? 'clear succeed' : 'clear failed',
                           position:

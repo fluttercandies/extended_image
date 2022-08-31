@@ -61,36 +61,46 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
         show: false,
       ),
       titlesData: FlTitlesData(
-        bottomTitles: SideTitles(
+        bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
           showTitles: true,
-          getTextStyles: (BuildContext b, double value) => const TextStyle(
-            color: Color(0xff72719b),
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-          margin: 10,
-          getTitles: (double value) {
+          getTitlesWidget: (double value, _) {
             final int millisecondsSinceEpoch = value.toInt();
             final DateTime dateTime =
                 DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
 
-            return DateFormat('HH:mm').format(dateTime);
+            return Padding(
+              padding: const EdgeInsets.all(0.0),
+              child: Text(
+                DateFormat('HH:mm').format(dateTime),
+                style: const TextStyle(
+                  color: Color(0xff72719b),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            );
           },
           interval: const Duration(minutes: 1).inMilliseconds.toDouble(),
-        ),
-        leftTitles: SideTitles(
+        )),
+        leftTitles: AxisTitles(
+            sideTitles: SideTitles(
           showTitles: true,
-          getTextStyles: (BuildContext b, double value) => const TextStyle(
-            color: Color(0xff75729e),
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
           interval: 100,
-          getTitles: (double value) {
-            return value.toInt().toString() + 'M';
+          getTitlesWidget: (double value, _) {
+            return Padding(
+              padding: const EdgeInsets.all(0.0),
+              child: Text(
+                value.toInt().toString() + 'M',
+                style: const TextStyle(
+                  color: Color(0xff75729e),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            );
           },
-          margin: 20,
-        ),
+        )),
       ),
       borderData: FlBorderData(
         show: true,
@@ -157,9 +167,7 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
     return LineChartBarData(
       spots: spots,
       isCurved: true,
-      colors: <Color>[
-        color,
-      ],
+      color: color,
       barWidth: 2,
       isStrokeCapRound: true,
       dotData: FlDotData(

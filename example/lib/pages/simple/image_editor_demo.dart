@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:example/common/image_picker/image_picker.dart';
 import 'package:example/common/utils/crop_editor_helper.dart';
 import 'package:extended_image/extended_image.dart';

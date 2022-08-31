@@ -30,7 +30,7 @@ class Boundary {
   }
 
   @override
-  int get hashCode => hashValues(left, right, top, bottom);
+  int get hashCode => Object.hash(left, right, top, bottom);
 
   @override
   bool operator ==(dynamic other) {
@@ -114,7 +114,7 @@ class GestureDetails {
   Offset? slidePageOffset;
 
   @override
-  int get hashCode => hashValues(
+  int get hashCode => Object.hash(
       offset,
       totalScale,
       computeVerticalBoundary,

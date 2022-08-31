@@ -166,7 +166,6 @@ class ExtendedPageController extends ScrollController {
       viewportFraction: viewportFraction,
       oldPosition: oldPosition,
       pageSpacing: pageSpacing,
-      shouldIgnorePointerWhenScrolling: shouldIgnorePointerWhenScrolling,
     );
   }
 
