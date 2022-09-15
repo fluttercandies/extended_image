@@ -1,3 +1,7 @@
+## 6.3.1
+
+* fix issue that rebuild viewportDimension is not right when pageSpacing is not zero(ExtendedImageGesturePageView #516)
+
 ## 6.3.0
 
 * Migrate to 3.3.0

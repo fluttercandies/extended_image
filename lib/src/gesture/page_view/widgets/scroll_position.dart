@@ -151,9 +151,10 @@ class ExtendedPagePosition extends ScrollPositionWithSingleContext
   @override
   bool applyViewportDimension(double viewportDimension) {
     final double? oldViewportDimensions =
-        hasViewportDimension ? this.viewportDimension : null;
-    // fix viewportDimension
-    if (viewportDimension + pageSpacing == oldViewportDimensions) {
+        // fix viewportDimension
+        hasViewportDimension ? this.viewportDimension - pageSpacing : null;
+
+    if (viewportDimension == oldViewportDimensions) {
       return true;
     }
     final bool result = super.applyViewportDimension(viewportDimension);
