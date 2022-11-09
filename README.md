@@ -39,6 +39,7 @@ A powerful official extension library of images, which supports placeholder(load
     - [save network](#save-network)
   - [Show Crop Image](#show-crop-image)
   - [Paint](#paint)
+  - [Notch](#notch)
   - [MemoryUsage](#memoryusage)
   - [Other APIs](#other-apis)
 
@@ -925,6 +926,9 @@ ExtendedImage
   );
 ```
 
+see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/simple/paint_image_demo.dart)
+and [push to refresh header which is used in crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/push_to_refresh_header.dart)
+
 ## Notch
 
 By setting layoutInsets, you can ensure the image is positioned outside of obstructing elements such as
@@ -944,9 +948,6 @@ ExtendedImage
     layoutInsets: MediaQuery.of(context).padding
   );
 ```
-
-see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/simple/paint_image_demo.dart)
-and [push to refresh header which is used in crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/push_to_refresh_header.dart)
 
 ## MemoryUsage
 

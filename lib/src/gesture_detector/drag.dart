@@ -1,70 +1,14 @@
-// ignore_for_file: deprecated_member_use_from_same_package, unnecessary_null_comparison, deprecated_member_use, always_put_control_body_on_new_line
+// ignore_for_file: unnecessary_null_comparison
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/rendering.dart';
-
 import 'velocity_tracker.dart';
+part 'drag_gesture_recognizer_mixin.dart';
 
-typedef CanHorizontalOrVerticalDrag = bool Function();
-
-/// Recognizes movement in the horizontal direction.
-///
-/// Used for horizontal scrolling.
-///
-/// See also:
-///
-///  * [ExtendedVerticalDragGestureRecognizer], for a similar recognizer but for
-///    vertical movement.
-///  * [MultiDragGestureRecognizer], for a family of gesture recognizers that
-///    track each touch point independently.
-class ExtendedHorizontalDragGestureRecognizer
-    extends ExtendedDragGestureRecognizer {
-  /// Create a gesture recognizer for interactions in the horizontal axis.
-  ///
-  /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
-  /// Create a gesture recognizer for interactions in the horizontal axis.
-  ///
-  /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
-  ExtendedHorizontalDragGestureRecognizer({
-    Object? debugOwner,
-    @Deprecated(
-      'Migrate to supportedDevices. '
-      'This feature was deprecated after v2.3.0-1.0.pre.',
-    )
-        PointerDeviceKind? kind,
-    Set<PointerDeviceKind>? supportedDevices,
-    CanHorizontalOrVerticalDrag? canHorizontalOrVerticalDrag,
-  }) : super(
-          debugOwner: debugOwner,
-          kind: kind,
-          supportedDevices: supportedDevices,
-          canHorizontalOrVerticalDrag: canHorizontalOrVerticalDrag,
-        );
-
-  @override
-  bool isFlingGesture(VelocityEstimate estimate, PointerDeviceKind kind) {
-    final double minVelocity = minFlingVelocity ?? kMinFlingVelocity;
-    final double minDistance =
-        minFlingDistance ?? computeHitSlop(kind, gestureSettings);
-    return estimate.pixelsPerSecond.dx.abs() > minVelocity &&
-        estimate.offset.dx.abs() > minDistance;
-  }
-
-  @override
-  bool _hasSufficientGlobalDistanceToAccept(
-      PointerDeviceKind pointerDeviceKind, double? deviceTouchSlop) {
-    return _globalDistanceMoved.abs() >
-        computeHitSlop(pointerDeviceKind, gestureSettings);
-  }
-
-  @override
-  Offset _getDeltaForDetails(Offset delta) => Offset(delta.dx, 0.0);
-
-  @override
-  double _getPrimaryValueFromOffset(Offset value) => value.dx;
-
-  @override
-  String get debugDescription => 'horizontal drag';
+enum _DragState {
+  ready,
+  possible,
+  accepted,
 }
 
 /// Recognizes movement in the vertical direction.
@@ -73,7 +17,7 @@ class ExtendedHorizontalDragGestureRecognizer
 ///
 /// See also:
 ///
-///  * [HorizontalDragGestureRecognizer], for a similar recognizer but for
+///  * [ExtendedHorizontalDragGestureRecognizer], for a similar recognizer but for
 ///    horizontal movement.
 ///  * [MultiDragGestureRecognizer], for a family of gesture recognizers that
 ///    track each touch point independently.
@@ -83,20 +27,15 @@ class ExtendedVerticalDragGestureRecognizer
   ///
   /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
   ExtendedVerticalDragGestureRecognizer({
-    Object? debugOwner,
+    super.debugOwner,
     @Deprecated(
       'Migrate to supportedDevices. '
       'This feature was deprecated after v2.3.0-1.0.pre.',
     )
-        PointerDeviceKind? kind,
-    Set<PointerDeviceKind>? supportedDevices,
-    CanHorizontalOrVerticalDrag? canHorizontalOrVerticalDrag,
-  }) : super(
-          debugOwner: debugOwner,
-          kind: kind,
-          supportedDevices: supportedDevices,
-          canHorizontalOrVerticalDrag: canHorizontalOrVerticalDrag,
-        );
+        super.kind,
+    super.supportedDevices,
+    super.canHorizontalOrVerticalDrag,
+  });
 
   @override
   bool isFlingGesture(VelocityEstimate estimate, PointerDeviceKind kind) {
@@ -124,6 +63,58 @@ class ExtendedVerticalDragGestureRecognizer
   String get debugDescription => 'vertical drag';
 }
 
+/// Recognizes movement in the horizontal direction.
+///
+/// Used for horizontal scrolling.
+///
+/// See also:
+///
+///  * [VerticalDragGestureRecognizer], for a similar recognizer but for
+///    vertical movement.
+///  * [MultiDragGestureRecognizer], for a family of gesture recognizers that
+///    track each touch point independently.
+class ExtendedHorizontalDragGestureRecognizer
+    extends ExtendedDragGestureRecognizer {
+  /// Create a gesture recognizer for interactions in the horizontal axis.
+  ///
+  /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
+  ExtendedHorizontalDragGestureRecognizer({
+    super.debugOwner,
+    @Deprecated(
+      'Migrate to supportedDevices. '
+      'This feature was deprecated after v2.3.0-1.0.pre.',
+    )
+        super.kind,
+    super.supportedDevices,
+    super.canHorizontalOrVerticalDrag,
+  });
+
+  @override
+  bool isFlingGesture(VelocityEstimate estimate, PointerDeviceKind kind) {
+    final double minVelocity = minFlingVelocity ?? kMinFlingVelocity;
+    final double minDistance =
+        minFlingDistance ?? computeHitSlop(kind, gestureSettings);
+    return estimate.pixelsPerSecond.dx.abs() > minVelocity &&
+        estimate.offset.dx.abs() > minDistance;
+  }
+
+  @override
+  bool _hasSufficientGlobalDistanceToAccept(
+      PointerDeviceKind pointerDeviceKind, double? deviceTouchSlop) {
+    return _globalDistanceMoved.abs() >
+        computeHitSlop(pointerDeviceKind, gestureSettings);
+  }
+
+  @override
+  Offset _getDeltaForDetails(Offset delta) => Offset(delta.dx, 0.0);
+
+  @override
+  double _getPrimaryValueFromOffset(Offset value) => value.dx;
+
+  @override
+  String get debugDescription => 'horizontal drag';
+}
+
 /// Recognizes movement.
 ///
 /// In contrast to [MultiDragGestureRecognizer], [ExtendedDragGestureRecognizer]
@@ -142,36 +133,33 @@ class ExtendedVerticalDragGestureRecognizer
 /// See also:
 ///
 ///  * [ExtendedHorizontalDragGestureRecognizer], for left and right drags.
-///  * [ExtendedVerticalDragGestureRecognizer], for up and down drags.
+///  * [VerticalDragGestureRecognizer], for up and down drags.
 ///  * [PanGestureRecognizer], for drags that are not locked to a single axis.
 abstract class ExtendedDragGestureRecognizer
-    extends OneSequenceGestureRecognizer {
+    extends OneSequenceGestureRecognizer with DragGestureRecognizerMixin {
   /// Initialize the object.
   ///
   /// [dragStartBehavior] must not be null.
   ///
   /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
   ExtendedDragGestureRecognizer({
-    Object? debugOwner,
+    super.debugOwner,
     @Deprecated(
       'Migrate to supportedDevices. '
       'This feature was deprecated after v2.3.0-1.0.pre.',
     )
-        PointerDeviceKind? kind,
+        super.kind,
     this.dragStartBehavior = DragStartBehavior.start,
     this.velocityTrackerBuilder = _defaultBuilder,
-    Set<PointerDeviceKind>? supportedDevices,
+    super.supportedDevices,
     this.canHorizontalOrVerticalDrag,
-  })  : assert(dragStartBehavior != null),
-        super(
-          debugOwner: debugOwner,
-          kind: kind,
-          supportedDevices: supportedDevices,
-        );
+  }) : assert(dragStartBehavior != null);
+
+  @override
+  final CanHorizontalOrVerticalDrag? canHorizontalOrVerticalDrag;
 
   static ExtendedVelocityTracker _defaultBuilder(PointerEvent event) =>
       ExtendedVelocityTracker.withKind(event.kind);
-  final CanHorizontalOrVerticalDrag? canHorizontalOrVerticalDrag;
 
   /// Configure the behavior of offsets passed to [onStart].
   ///
@@ -189,10 +177,10 @@ abstract class ExtendedDragGestureRecognizer
   ///
   /// ## Example:
   ///
-  /// A [HorizontalDragGestureRecognizer] and a [VerticalDragGestureRecognizer]
+  /// A [ExtendedHorizontalDragGestureRecognizer] and a [VerticalDragGestureRecognizer]
   /// compete with each other. A finger presses down on the screen with
   /// offset (500.0, 500.0), and then moves to position (510.0, 500.0) before
-  /// the [HorizontalDragGestureRecognizer] wins the arena. With
+  /// the [ExtendedHorizontalDragGestureRecognizer] wins the arena. With
   /// [dragStartBehavior] set to [DragStartBehavior.down], the [onStart]
   /// callback will be called with position (500.0, 500.0). If it is
   /// instead set to [DragStartBehavior.start], [onStart] will be called with
@@ -278,7 +266,7 @@ abstract class ExtendedDragGestureRecognizer
   /// Determines the type of velocity estimation method to use for a potential
   /// drag gesture, when a new pointer is added.
   ///
-  /// To estimate the velocity of a gesture, [DragGestureRecognizer] calls
+  /// To estimate the velocity of a gesture, [ExtendedDragGestureRecognizer] calls
   /// [velocityTrackerBuilder] when it starts to track a new pointer in
   /// [addAllowedPointer], and add subsequent updates on the pointer to the
   /// resulting velocity tracker, until the gesture recognizer stops tracking
@@ -326,6 +314,7 @@ abstract class ExtendedDragGestureRecognizer
   bool _hasSufficientGlobalDistanceToAccept(
       PointerDeviceKind pointerDeviceKind, double? deviceTouchSlop);
 
+  @override
   final Map<int, VelocityTracker> _velocityTrackers = <int, VelocityTracker>{};
 
   @override
@@ -337,7 +326,9 @@ abstract class ExtendedDragGestureRecognizer
               onStart == null &&
               onUpdate == null &&
               onEnd == null &&
-              onCancel == null) return false;
+              onCancel == null) {
+            return false;
+          }
           break;
         default:
           return false;
@@ -351,15 +342,12 @@ abstract class ExtendedDragGestureRecognizer
     return super.isPointerAllowed(event as PointerDownEvent);
   }
 
-  @override
-  void addAllowedPointer(PointerDownEvent event) {
-    super.addAllowedPointer(event);
+  void _addPointer(PointerEvent event) {
     _velocityTrackers[event.pointer] = velocityTrackerBuilder(event);
     if (_state == _DragState.ready) {
       _state = _DragState.possible;
       _initialPosition =
           OffsetPair(global: event.position, local: event.localPosition);
-      _initialButtons = event.buttons;
       _pendingDragOffset = OffsetPair.zero;
       _globalDistanceMoved = 0.0;
       _lastPendingEventTimestamp = event.timeStamp;
@@ -371,75 +359,95 @@ abstract class ExtendedDragGestureRecognizer
   }
 
   @override
+  void addAllowedPointer(PointerDownEvent event) {
+    super.addAllowedPointer(event);
+    if (_state == _DragState.ready) {
+      _initialButtons = event.buttons;
+    }
+    _addPointer(event);
+  }
+
+  @override
+  void addAllowedPointerPanZoom(PointerPanZoomStartEvent event) {
+    super.addAllowedPointerPanZoom(event);
+    startTrackingPointer(event.pointer, event.transform);
+    if (_state == _DragState.ready) {
+      _initialButtons = kPrimaryButton;
+    }
+    _addPointer(event);
+  }
+
+  @override
   void handleEvent(PointerEvent event) {
     assert(_state != _DragState.ready);
     if (!event.synthesized &&
-        (event is PointerDownEvent || event is PointerMoveEvent)) {
+        (event is PointerDownEvent ||
+            event is PointerMoveEvent ||
+            event is PointerPanZoomStartEvent ||
+            event is PointerPanZoomUpdateEvent)) {
       final VelocityTracker tracker = _velocityTrackers[event.pointer]!;
       assert(tracker != null);
-      tracker.addPosition(event.timeStamp, event.localPosition);
-    }
-
-    if (event is PointerMoveEvent) {
-      if (event.buttons != _initialButtons) {
-        _giveUpPointer(event.pointer);
-        return;
+      if (event is PointerPanZoomStartEvent) {
+        tracker.addPosition(event.timeStamp, Offset.zero);
+      } else if (event is PointerPanZoomUpdateEvent) {
+        tracker.addPosition(event.timeStamp, event.pan);
+      } else {
+        tracker.addPosition(event.timeStamp, event.localPosition);
       }
+    }
+    if (event is PointerMoveEvent && event.buttons != _initialButtons) {
+      _giveUpPointer(event.pointer);
+      return;
+    }
+    if (event is PointerMoveEvent || event is PointerPanZoomUpdateEvent) {
+      final Offset delta = (event is PointerMoveEvent)
+          ? event.delta
+          : (event as PointerPanZoomUpdateEvent).panDelta;
+      final Offset localDelta = (event is PointerMoveEvent)
+          ? event.localDelta
+          : (event as PointerPanZoomUpdateEvent).localPanDelta;
+      final Offset position = (event is PointerMoveEvent)
+          ? event.position
+          : (event.position + (event as PointerPanZoomUpdateEvent).pan);
+      final Offset localPosition = (event is PointerMoveEvent)
+          ? event.localPosition
+          : (event.localPosition +
+              (event as PointerPanZoomUpdateEvent).localPan);
       if (_state == _DragState.accepted) {
         _checkUpdate(
           sourceTimeStamp: event.timeStamp,
-          delta: _getDeltaForDetails(event.localDelta),
-          primaryDelta: _getPrimaryValueFromOffset(event.localDelta),
-          globalPosition: event.position,
-          localPosition: event.localPosition,
+          delta: _getDeltaForDetails(localDelta),
+          primaryDelta: _getPrimaryValueFromOffset(localDelta),
+          globalPosition: position,
+          localPosition: localPosition,
         );
       } else {
-        _pendingDragOffset +=
-            OffsetPair(local: event.localDelta, global: event.delta);
+        _pendingDragOffset += OffsetPair(local: localDelta, global: delta);
         _lastPendingEventTimestamp = event.timeStamp;
         _lastTransform = event.transform;
-        final Offset movedLocally = _getDeltaForDetails(event.localDelta);
+        final Offset movedLocally = _getDeltaForDetails(localDelta);
         final Matrix4? localToGlobalTransform = event.transform == null
             ? null
             : Matrix4.tryInvert(event.transform!);
         _globalDistanceMoved += PointerEvent.transformDeltaViaPositions(
-              transform: localToGlobalTransform,
-              untransformedDelta: movedLocally,
-              untransformedEndPosition: event.localPosition,
-            ).distance *
+                    transform: localToGlobalTransform,
+                    untransformedDelta: movedLocally,
+                    untransformedEndPosition: localPosition)
+                .distance *
             (_getPrimaryValueFromOffset(movedLocally) ?? 1).sign;
         if (_hasSufficientGlobalDistanceToAccept(
                 event.kind, gestureSettings?.touchSlop) &&
-            _shouldAccpet()) resolve(GestureDisposition.accepted);
+            // zmtzawqlp
+            _shouldAccpet()) {
+          resolve(GestureDisposition.accepted);
+        }
       }
     }
-    if (event is PointerUpEvent || event is PointerCancelEvent) {
+    if (event is PointerUpEvent ||
+        event is PointerCancelEvent ||
+        event is PointerPanZoomEndEvent) {
       _giveUpPointer(event.pointer);
     }
-  }
-
-  bool get canDrag =>
-      canHorizontalOrVerticalDrag == null || canHorizontalOrVerticalDrag!();
-
-  bool _shouldAccpet() {
-    if (!canDrag) {
-      return false;
-    }
-    if (_velocityTrackers.keys.length == 1) {
-      return true;
-    }
-
-    // if pointers are not the only, check whether they are in the negative
-    // maybe this is a Horizontal/Vertical zoom
-    Offset offset = const Offset(1, 1);
-    for (final VelocityTracker tracker in _velocityTrackers.values) {
-      final Offset delta =
-          (tracker as ExtendedVelocityTracker).getSamplesDelta();
-      offset = Offset(offset.dx * (delta.dx == 0 ? 1 : delta.dx),
-          offset.dy * (delta.dy == 0 ? 1 : delta.dy));
-    }
-
-    return !(offset.dx < 0 || offset.dy < 0);
   }
 
   final Set<int> _acceptedActivePointers = <int>{};
@@ -527,8 +535,9 @@ abstract class ExtendedDragGestureRecognizer
     stopTrackingPointer(pointer);
     // If we never accepted the pointer, we reject it since we are no longer
     // interested in winning the gesture arena for it.
-    if (!_acceptedActivePointers.remove(pointer))
+    if (!_acceptedActivePointers.remove(pointer)) {
       resolvePointer(pointer, GestureDisposition.rejected);
+    }
   }
 
   void _checkDown() {
@@ -577,7 +586,9 @@ abstract class ExtendedDragGestureRecognizer
 
   void _checkEnd(int pointer) {
     assert(_initialButtons == kPrimaryButton);
-    if (onEnd == null) return;
+    if (onEnd == null) {
+      return;
+    }
 
     final VelocityTracker tracker = _velocityTrackers[pointer]!;
     assert(tracker != null);
@@ -603,7 +614,9 @@ abstract class ExtendedDragGestureRecognizer
         primaryVelocity: 0.0,
       );
       debugReport = () {
-        if (estimate == null) return 'Could not estimate velocity.';
+        if (estimate == null) {
+          return 'Could not estimate velocity.';
+        }
         return '$estimate; judged to not be a fling.';
       };
     }
@@ -613,7 +626,9 @@ abstract class ExtendedDragGestureRecognizer
 
   void _checkCancel() {
     assert(_initialButtons == kPrimaryButton);
-    if (onCancel != null) invokeCallback<void>('onCancel', onCancel!);
+    if (onCancel != null) {
+      invokeCallback<void>('onCancel', onCancel!);
+    }
   }
 
   @override
@@ -628,10 +643,4 @@ abstract class ExtendedDragGestureRecognizer
     properties.add(
         EnumProperty<DragStartBehavior>('start behavior', dragStartBehavior));
   }
-}
-
-enum _DragState {
-  ready,
-  possible,
-  accepted,
 }

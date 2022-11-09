@@ -1,3 +1,8 @@
+## 6.3.2
+
+* support to set insets for paint image at the beginning.(#417)
+* merge code from official (#515)
+  
 ## 6.3.1
 
 * fix issue that rebuild viewportDimension is not right when pageSpacing is not zero(ExtendedImageGesturePageView #516)

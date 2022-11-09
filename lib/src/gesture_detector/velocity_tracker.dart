@@ -1,8 +1,22 @@
-// ignore_for_file: always_put_control_body_on_new_line, unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison
 
 import 'package:flutter/gestures.dart';
+part 'velocity_tracker_mixin.dart';
 
-class ExtendedVelocityTracker extends VelocityTracker {
+class _PointAtTime {
+  const _PointAtTime(this.point, this.time)
+      : assert(point != null),
+        assert(time != null);
+
+  final Duration time;
+  final Offset point;
+
+  @override
+  String toString() => '_PointAtTime($point at $time)';
+}
+
+class ExtendedVelocityTracker extends VelocityTracker
+    with VelocityTrackerMixin {
   /// Create a new velocity tracker for a pointer [kind].
   ExtendedVelocityTracker.withKind(PointerDeviceKind kind)
       : super.withKind(kind);
@@ -12,16 +26,23 @@ class ExtendedVelocityTracker extends VelocityTracker {
   static const int _horizonMilliseconds = 100;
   static const int _minSampleSize = 3;
 
+  // /// The kind of pointer this tracker is for.
+  // @override
+  // final PointerDeviceKind kind;
+
   // Circular buffer; current sample at _index.
+  @override
   final List<_PointAtTime?> _samples =
-      List<_PointAtTime?>.filled(_historySize, null, growable: false);
+      List<_PointAtTime?>.filled(_historySize, null);
   int _index = 0;
 
   /// Adds a position as the given time to the tracker.
   @override
   void addPosition(Duration time, Offset position) {
     _index += 1;
-    if (_index == _historySize) _index = 0;
+    if (_index == _historySize) {
+      _index = 0;
+    }
     _samples[_index] = _PointAtTime(position, time);
   }
 
@@ -41,7 +62,9 @@ class ExtendedVelocityTracker extends VelocityTracker {
     int index = _index;
 
     final _PointAtTime? newestSample = _samples[index];
-    if (newestSample == null) return null;
+    if (newestSample == null) {
+      return null;
+    }
 
     _PointAtTime previousSample = newestSample;
     _PointAtTime oldestSample = newestSample;
@@ -50,7 +73,9 @@ class ExtendedVelocityTracker extends VelocityTracker {
     // the samples represent continuous motion.
     do {
       final _PointAtTime? sample = _samples[index];
-      if (sample == null) break;
+      if (sample == null) {
+        break;
+      }
 
       final double age =
           (newestSample.time - sample.time).inMicroseconds.toDouble() / 1000;
@@ -59,7 +84,9 @@ class ExtendedVelocityTracker extends VelocityTracker {
               1000;
       previousSample = sample;
       if (age > _horizonMilliseconds ||
-          delta > _assumePointerMoveStoppedMilliseconds) break;
+          delta > _assumePointerMoveStoppedMilliseconds) {
+        break;
+      }
 
       oldestSample = sample;
       final Offset position = sample.point;
@@ -111,43 +138,9 @@ class ExtendedVelocityTracker extends VelocityTracker {
   @override
   Velocity getVelocity() {
     final VelocityEstimate? estimate = getVelocityEstimate();
-    if (estimate == null || estimate.pixelsPerSecond == Offset.zero)
+    if (estimate == null || estimate.pixelsPerSecond == Offset.zero) {
       return Velocity.zero;
+    }
     return Velocity(pixelsPerSecond: estimate.pixelsPerSecond);
   }
-
-  Offset getSamplesDelta() {
-    Offset? first;
-    Offset? last;
-    for (int i = 0; i < _samples.length; i++) {
-      final _PointAtTime? d = _samples[i];
-      if (d != null && first == null) {
-        first = d.point;
-        break;
-      }
-    }
-
-    for (int i = _samples.length - 1; i >= 0; i--) {
-      final _PointAtTime? d = _samples[i];
-      if (d != null && last == null) {
-        last = d.point;
-        break;
-      }
-    }
-    last ??= Offset.zero;
-    first ??= Offset.zero;
-    return last - first;
-  }
-}
-
-class _PointAtTime {
-  const _PointAtTime(this.point, this.time)
-      : assert(point != null),
-        assert(time != null);
-
-  final Duration time;
-  final Offset point;
-
-  @override
-  String toString() => '_PointAtTime($point at $time)';
 }

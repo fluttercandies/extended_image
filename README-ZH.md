@@ -937,6 +937,24 @@ ExtendedImage
 [绘制例子](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/simple/paint_image_demo.dart)
 [下拉刷新头当中，也使用了这个技巧](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/push_to_refresh_header.dart)
 
+## Notch
+
+设置图片初始化的 Insets，不会影响放大。
+
+ExtendedImage
+
+| parameter        | description                                       | default         |
+| ---------------- | ------------------------------------------------- | --------------- |
+| layoutInsets     | 设置图片初始化时候的边距 | EdgeInsets.zero |
+
+```dart
+  ExtendedImage.network(
+    url,
+    fit: BoxFit.contain,
+    layoutInsets: MediaQuery.of(context).padding
+  );
+```
+
 ## 内存使用
 
 现在你可以通过下面设置来减少图片内存的占用.

@@ -400,6 +400,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                   enableSlideOutPage: true,
                   mode: ExtendedImageMode.gesture,
                   imageCacheName: 'CropImage',
+                  //layoutInsets: EdgeInsets.all(20),
                   initGestureConfigHandler: (ExtendedImageState state) {
                     double? initialScale = 1.0;
 
