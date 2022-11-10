@@ -37,6 +37,8 @@ class ExtendedRenderImage extends RenderBox {
     BeforePaintImage? beforePaintImage,
     GestureDetails? gestureDetails,
     EditActionDetails? editActionDetails,
+    EdgeInsets layoutInsets = EdgeInsets.zero,
+  
   })  : _image = image,
         _width = width,
         _height = height,
@@ -57,8 +59,19 @@ class ExtendedRenderImage extends RenderBox {
         _beforePaintImage = beforePaintImage,
         _afterPaintImage = afterPaintImage,
         _gestureDetails = gestureDetails,
-        _editActionDetails = editActionDetails {
+        _editActionDetails = editActionDetails,
+        _layoutInsets = layoutInsets {
     _updateColorFilter();
+  }
+
+  EdgeInsets _layoutInsets;
+  EdgeInsets get layoutInsets => _layoutInsets;
+  set layoutInsets(EdgeInsets value) {
+    if (value == _layoutInsets) {
+      return;
+    }
+    _layoutInsets = value;
+    markNeedsPaint();
   }
 
   EditActionDetails? _editActionDetails;
@@ -509,6 +522,7 @@ class ExtendedRenderImage extends RenderBox {
       afterPaintImage: afterPaintImage,
       gestureDetails: gestureDetails,
       editActionDetails: editActionDetails,
+      layoutInsets: layoutInsets,
     );
   }
 
