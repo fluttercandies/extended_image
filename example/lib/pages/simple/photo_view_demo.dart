@@ -38,6 +38,7 @@ class _SimplePhotoViewDemoState extends State<SimplePhotoViewDemo> {
           initialPage: 0,
           pageSpacing: 50,
         ),
+        preloadPagesCount: 2,
         itemCount: images.length,
         itemBuilder: (BuildContext context, int index) {
           return ExtendedImage.network(

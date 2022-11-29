@@ -36,6 +36,7 @@ class GesturePageView extends StatefulWidget {
     this.clipBehavior = Clip.hardEdge,
     this.scrollBehavior,
     this.padEnds = true,
+    this.preloadPagesCount = 0,
   })  : assert(allowImplicitScrolling != null),
         assert(clipBehavior != null),
         controller = controller ?? _defaultPageController,
@@ -76,6 +77,7 @@ class GesturePageView extends StatefulWidget {
     this.clipBehavior = Clip.hardEdge,
     this.scrollBehavior,
     this.padEnds = true,
+    this.preloadPagesCount = 0,
   })  : assert(allowImplicitScrolling != null),
         assert(clipBehavior != null),
         controller = controller ?? _defaultPageController,
@@ -182,6 +184,7 @@ class GesturePageView extends StatefulWidget {
     this.clipBehavior = Clip.hardEdge,
     this.scrollBehavior,
     this.padEnds = true,
+    this.preloadPagesCount = 0,
   })  : assert(childrenDelegate != null),
         assert(allowImplicitScrolling != null),
         assert(clipBehavior != null),
@@ -290,6 +293,9 @@ class GesturePageView extends StatefulWidget {
   /// This property defaults to true and must not be null.
   final bool padEnds;
 
+  /// The count of pre-built pages
+  final int preloadPagesCount;
+
   @override
   State<GesturePageView> createState() => _GesturePageViewState();
 }
@@ -355,11 +361,19 @@ class _GesturePageViewState extends State<GesturePageView> {
         scrollBehavior: widget.scrollBehavior ??
             ScrollConfiguration.of(context).copyWith(scrollbars: false),
         viewportBuilder: (BuildContext context, ViewportOffset position) {
+          final double cacheExtent;
+          if (widget.preloadPagesCount > 0) {
+            cacheExtent = widget.preloadPagesCount.toDouble();
+          } else if (widget.allowImplicitScrolling) {
+            cacheExtent = 1.0;
+          } else {
+            cacheExtent = 0.0;
+          }
           return Viewport(
             // TODO(dnfield): we should provide a way to set cacheExtent
             // independent of implicit scrolling:
             // https://github.com/flutter/flutter/issues/45632
-            cacheExtent: widget.allowImplicitScrolling ? 1.0 : 0.0,
+            cacheExtent: cacheExtent,
             cacheExtentStyle: CacheExtentStyle.viewport,
             axisDirection: axisDirection,
             offset: position,
