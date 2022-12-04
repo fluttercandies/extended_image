@@ -1,3 +1,7 @@
+## 6.3.3
+
+* draw editor with BlendMode.clear.
+
 ## 6.3.2
 
 * support to set insets for paint image at the beginning.(#417)
