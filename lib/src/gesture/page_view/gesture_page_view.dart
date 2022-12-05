@@ -42,6 +42,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     this.onPageChanged,
     List<Widget> children = const <Widget>[],
     CanScrollPage? canScrollPage,
+    this.preloadPagesCount = 0,
   })  : controller = controller ?? _defaultPageController,
         childrenDelegate = SliverChildListDelegate(children),
         physics = physics != null
@@ -73,6 +74,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     required IndexedWidgetBuilder itemBuilder,
     int? itemCount,
     CanScrollPage? canScrollPage,
+    this.preloadPagesCount = 0,
   })  : controller = controller ?? _defaultPageController,
         childrenDelegate =
             SliverChildBuilderDelegate(itemBuilder, childCount: itemCount),
@@ -94,6 +96,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     this.onPageChanged,
     CanScrollPage? canScrollPage,
     required this.childrenDelegate,
+    this.preloadPagesCount = 0,
   })  : controller = controller ?? _defaultPageController,
         physics = _defaultScrollPhysics,
         canScrollPage = canScrollPage ?? _defaultCanScrollPage,
@@ -149,6 +152,9 @@ class ExtendedImageGesturePageView extends StatefulWidget {
   /// [childrenDelegate] that wraps the given [List] and [IndexedWidgetBuilder],
   /// respectively.
   final SliverChildDelegate childrenDelegate;
+
+  /// The count of pre-built pages
+  final int preloadPagesCount;
 
   @override
   ExtendedImageGesturePageViewState createState() =>
@@ -307,6 +313,7 @@ class ExtendedImageGesturePageViewState
 //    }
 
     Widget result = GesturePageView.custom(
+      key: widget.key,
       scrollDirection: widget.scrollDirection,
       reverse: widget.reverse,
       controller: widget.controller,
@@ -314,7 +321,7 @@ class ExtendedImageGesturePageViewState
       pageSnapping: widget.pageSnapping,
       physics: widget.physics,
       onPageChanged: widget.onPageChanged,
-      key: widget.key,
+      preloadPagesCount: widget.preloadPagesCount,
     );
 
     if (widget.physics.parent == null ||
