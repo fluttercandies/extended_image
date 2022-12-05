@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:extended_image/src/typedef.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../utils.dart';
@@ -628,18 +629,22 @@ class EditorCropLayerPainter {
     final Rect rect = Offset.zero & size;
     final Rect cropRect = painter.cropRect;
     final Color maskColor = painter.maskColor;
-    // canvas.saveLayer(rect, Paint());
-    // canvas.drawRect(
-    //     rect,
-    //     Paint()
-    //       ..style = PaintingStyle.fill
-    //       ..color = maskColor);
-    //   canvas.drawRect(cropRect, Paint()..blendMode = BlendMode.clear);
-    // canvas.restore();
 
-    // draw mask rect instead use BlendMode.clear, web doesn't support now.
+    // Extract [cropRect] from the layout [rect]
+    // Cannot be used on web for now, because of https://github.com/flutter/flutter/issues/44572
+    if (!kIsWeb) {
+      canvas.drawPath(
+        Path.combine(
+          PathOperation.difference,
+          Path()..addRect(rect),
+          Path()..addRect(cropRect),
+        ),
+        Paint()..color = maskColor,
+      );
+      return;
+    }
+
     //left
-
     canvas.drawRect(
         Offset.zero & Size(cropRect.left, rect.height),
         Paint()
