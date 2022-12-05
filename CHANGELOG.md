@@ -1,3 +1,7 @@
+## 6.3.4
+
+* add preloadPagesCount for ExtendedImageGesturePageView
+
 ## 6.3.3
 
 * draw editor with BlendMode.clear.
