@@ -38,7 +38,6 @@ class ExtendedRenderImage extends RenderBox {
     GestureDetails? gestureDetails,
     EditActionDetails? editActionDetails,
     EdgeInsets layoutInsets = EdgeInsets.zero,
-  
   })  : _image = image,
         _width = width,
         _height = height,

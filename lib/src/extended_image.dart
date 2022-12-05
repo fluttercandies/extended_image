@@ -832,7 +832,8 @@ class ExtendedImage extends StatefulWidget {
     properties.add(DiagnosticsProperty<bool>(
         'this.excludeFromSemantics', excludeFromSemantics));
     properties.add(EnumProperty<FilterQuality>('filterQuality', filterQuality));
-    properties.add(DiagnosticsProperty<EdgeInsets>('layoutInsets', layoutInsets));
+    properties
+        .add(DiagnosticsProperty<EdgeInsets>('layoutInsets', layoutInsets));
   }
 }
 

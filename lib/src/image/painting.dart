@@ -3,31 +3,30 @@ import 'dart:ui' as ui show Image;
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
-void paintExtendedImage({
-  required Canvas canvas,
-  required Rect rect,
-  required ui.Image image,
-  String? debugImageLabel,
-  double scale = 1.0,
-  double opacity = 1.0,
-  ColorFilter? colorFilter,
-  BoxFit? fit,
-  Alignment alignment = Alignment.center,
-  Rect? centerSlice,
-  ImageRepeat repeat = ImageRepeat.noRepeat,
-  bool flipHorizontally = false,
-  bool invertColors = false,
-  FilterQuality filterQuality = FilterQuality.low,
-  Rect? customSourceRect,
-  //you can paint anything if you want before paint image.
-  BeforePaintImage? beforePaintImage,
-  //you can paint anything if you want after paint image.
-  AfterPaintImage? afterPaintImage,
-  GestureDetails? gestureDetails,
-  EditActionDetails? editActionDetails,
-  bool isAntiAlias = false,
-  EdgeInsets layoutInsets = EdgeInsets.zero
-}) {
+void paintExtendedImage(
+    {required Canvas canvas,
+    required Rect rect,
+    required ui.Image image,
+    String? debugImageLabel,
+    double scale = 1.0,
+    double opacity = 1.0,
+    ColorFilter? colorFilter,
+    BoxFit? fit,
+    Alignment alignment = Alignment.center,
+    Rect? centerSlice,
+    ImageRepeat repeat = ImageRepeat.noRepeat,
+    bool flipHorizontally = false,
+    bool invertColors = false,
+    FilterQuality filterQuality = FilterQuality.low,
+    Rect? customSourceRect,
+    //you can paint anything if you want before paint image.
+    BeforePaintImage? beforePaintImage,
+    //you can paint anything if you want after paint image.
+    AfterPaintImage? afterPaintImage,
+    GestureDetails? gestureDetails,
+    EditActionDetails? editActionDetails,
+    bool isAntiAlias = false,
+    EdgeInsets layoutInsets = EdgeInsets.zero}) {
   if (rect.isEmpty) {
     return;
   }

@@ -258,7 +258,8 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
         value: matchTextDirection, ifTrue: 'match text direction'));
     properties.add(DiagnosticsProperty<bool>('invertColors', invertColors));
     properties.add(EnumProperty<FilterQuality>('filterQuality', filterQuality));
-    properties.add(DiagnosticsProperty<EdgeInsets>('layoutInsets', layoutInsets));
+    properties
+        .add(DiagnosticsProperty<EdgeInsets>('layoutInsets', layoutInsets));
   }
 
   @override
