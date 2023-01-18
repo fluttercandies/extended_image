@@ -1,3 +1,7 @@
+## 6.4.0
+
+* add [ExtendedImage.globalStateWidgetBuilder] to support to override State Widget if loadStateChanged is not define.(#541)
+
 ## 6.3.4
 
 * add preloadPagesCount for ExtendedImageGesturePageView
