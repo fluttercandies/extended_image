@@ -1,7 +1,4 @@
-import 'dart:math' as math;
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
+part of 'page_controller.dart';
 // ignore_for_file: unnecessary_null_comparison, always_put_control_body_on_new_line
 
 class ExtendedPagePosition extends ScrollPositionWithSingleContext
@@ -33,6 +30,10 @@ class ExtendedPagePosition extends ScrollPositionWithSingleContext
 
   final int initialPage;
   double _pageToUseOnStartup;
+  // When the viewport has a zero-size, the `page` can not
+  // be retrieved by `getPageFromPixels`, so we need to cache the page
+  // for use when resizing the viewport to non-zero next time.
+  double? _cachedPage;
 
   @override
   Future<void> ensureVisible(
@@ -108,33 +109,39 @@ class ExtendedPagePosition extends ScrollPositionWithSingleContext
   @override
   double? get page {
     assert(
-      !hasPixels || (minScrollExtent != null && maxScrollExtent != null),
+      !hasPixels || hasContentDimensions,
       'Page value is only available after content dimensions are established.',
     );
-    return !hasPixels
+    return !hasPixels || !hasContentDimensions
         ? null
-        : getPageFromPixels(
-            pixels.clamp(minScrollExtent, maxScrollExtent), viewportDimension);
+        : _cachedPage ??
+            getPageFromPixels(
+                clampDouble(pixels, minScrollExtent, maxScrollExtent),
+                viewportDimension);
   }
 
   @override
   void saveScrollOffset() {
-    PageStorage.of(context.storageContext)?.writeState(
-        context.storageContext, getPageFromPixels(pixels, viewportDimension));
+    PageStorage.maybeOf(context.storageContext)?.writeState(
+        context.storageContext,
+        _cachedPage ?? getPageFromPixels(pixels, viewportDimension));
   }
 
   @override
   void restoreScrollOffset() {
     if (!hasPixels) {
-      final double? value = PageStorage.of(context.storageContext)
+      final double? value = PageStorage.maybeOf(context.storageContext)
           ?.readState(context.storageContext) as double?;
-      if (value != null) _pageToUseOnStartup = value;
+      if (value != null) {
+        _pageToUseOnStartup = value;
+      }
     }
   }
 
   @override
   void saveOffset() {
-    context.saveOffset(getPageFromPixels(pixels, viewportDimension));
+    context.saveOffset(
+        _cachedPage ?? getPageFromPixels(pixels, viewportDimension));
   }
 
   @override
@@ -159,16 +166,39 @@ class ExtendedPagePosition extends ScrollPositionWithSingleContext
     }
     final bool result = super.applyViewportDimension(viewportDimension);
     final double? oldPixels = hasPixels ? pixels : null;
-    final double page = (oldPixels == null || oldViewportDimensions == 0.0)
-        ? _pageToUseOnStartup
-        : getPageFromPixels(oldPixels, oldViewportDimensions!);
+    double page;
+    if (oldPixels == null) {
+      page = _pageToUseOnStartup;
+    } else if (oldViewportDimensions == 0.0) {
+      // If resize from zero, we should use the _cachedPage to recover the state.
+      page = _cachedPage!;
+    } else {
+      page = getPageFromPixels(oldPixels, oldViewportDimensions!);
+    }
     final double newPixels = getPixelsFromPage(page);
 
+    // If the viewportDimension is zero, cache the page
+    // in case the viewport is resized to be non-zero.
+    _cachedPage = (viewportDimension == 0.0) ? page : null;
     if (newPixels != oldPixels) {
       correctPixels(newPixels);
       return false;
     }
     return result;
+  }
+
+  @override
+  void absorb(ScrollPosition other) {
+    super.absorb(other);
+    assert(_cachedPage == null);
+
+    if (other is! ExtendedPagePosition) {
+      return;
+    }
+
+    if (other._cachedPage != null) {
+      _cachedPage = other._cachedPage;
+    }
   }
 
   @override
