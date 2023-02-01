@@ -124,7 +124,6 @@ Widget buildWaterfallFlowItem(
             if (value.extendedImageLoadState == LoadState.loading) {
               Widget loadingWidget = CommonCircularProgressIndicator();
               if (!konwSized) {
-                //todo: not work in web
                 loadingWidget = AspectRatio(
                   aspectRatio: 1.0,
                   child: loadingWidget,

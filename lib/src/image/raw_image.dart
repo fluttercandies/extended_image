@@ -54,6 +54,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
         'needed it.');
     return ExtendedRenderImage(
       image: image?.clone(),
+      debugImageLabel: debugImageLabel,
       width: width,
       height: height,
       scale: scale,
@@ -271,6 +272,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
         'needed it.');
     renderObject
       ..image = image?.clone()
+      ..debugImageLabel = debugImageLabel
       ..width = width
       ..height = height
       ..scale = scale

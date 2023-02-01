@@ -1,8 +1,10 @@
 // ignore_for_file: unnecessary_null_comparison, always_put_control_body_on_new_line
-
+import 'dart:math' as math;
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import 'scroll_position.dart';
+part 'scroll_position.dart';
 
 class ExtendedPageController extends ScrollController {
   /// Creates a page controller.
@@ -118,6 +120,10 @@ class ExtendedPageController extends ScrollController {
     required Curve curve,
   }) {
     final ExtendedPagePosition position = this.position as ExtendedPagePosition;
+    if (position._cachedPage != null) {
+      position._cachedPage = page.toDouble();
+      return Future<void>.value();
+    }
     return position.animateTo(
       position.getPixelsFromPage(page.toDouble()),
       duration: duration,
@@ -131,6 +137,10 @@ class ExtendedPageController extends ScrollController {
   /// without animation, and without checking if the new value is in range.
   void jumpToPage(int page) {
     final ExtendedPagePosition position = this.position as ExtendedPagePosition;
+    if (position._cachedPage != null) {
+      position._cachedPage = page.toDouble();
+      return;
+    }
     position.jumpTo(position.getPixelsFromPage(page.toDouble()));
   }
 
