@@ -11,4 +11,4 @@ dependencies:
   extended_image_library: ^3.4.1
   flutter:
     sdk: flutter
-  meta: ^1.8.0
+  meta: ^1.9.0

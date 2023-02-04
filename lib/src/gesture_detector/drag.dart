@@ -28,11 +28,6 @@ class ExtendedVerticalDragGestureRecognizer
   /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
   ExtendedVerticalDragGestureRecognizer({
     super.debugOwner,
-    @Deprecated(
-      'Migrate to supportedDevices. '
-      'This feature was deprecated after v2.3.0-1.0.pre.',
-    )
-        super.kind,
     super.supportedDevices,
     super.canHorizontalOrVerticalDrag,
   });
@@ -80,11 +75,6 @@ class ExtendedHorizontalDragGestureRecognizer
   /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
   ExtendedHorizontalDragGestureRecognizer({
     super.debugOwner,
-    @Deprecated(
-      'Migrate to supportedDevices. '
-      'This feature was deprecated after v2.3.0-1.0.pre.',
-    )
-        super.kind,
     super.supportedDevices,
     super.canHorizontalOrVerticalDrag,
   });
@@ -144,11 +134,6 @@ abstract class ExtendedDragGestureRecognizer
   /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
   ExtendedDragGestureRecognizer({
     super.debugOwner,
-    @Deprecated(
-      'Migrate to supportedDevices. '
-      'This feature was deprecated after v2.3.0-1.0.pre.',
-    )
-        super.kind,
     this.dragStartBehavior = DragStartBehavior.start,
     this.velocityTrackerBuilder = _defaultBuilder,
     super.supportedDevices,
