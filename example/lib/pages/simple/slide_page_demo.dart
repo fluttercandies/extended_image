@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 @FFRoute(
   name: 'fluttercandies://slidepage',
   routeName: 'SlidePage',
-  description: 'Simple demo for.',
+  description: 'Simple demo for slide page.',
   exts: <String, dynamic>{
     'group': 'Simple',
     'order': 5,
