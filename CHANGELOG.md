@@ -1,10 +1,10 @@
-## 7.0.1
+## 7.0.1
 
 * update judging condition of delta(minGesturePageDelta) at it's sliding page when set ExtendedImageMode.gesture
 
-## 7.0.0
+## 7.0.0
 
-* Migrate to 3.7.0 (#545)
+* Migrate to 3.7.0 (#545)
 
 ## 6.4.0
 
