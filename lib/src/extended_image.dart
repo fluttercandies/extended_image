@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:extended_image/src/border_painter.dart';
 import 'package:extended_image/src/gesture/gesture.dart';
 import 'package:extended_image/src/image/raw_image.dart';

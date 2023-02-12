@@ -31,6 +31,11 @@
 
 * Migrate to 3.3.0
 
+
+## 6.2.2
+
+* 7.0.1 on Flutter 3.0.5
+
 ## 6.2.1
 
 * Add DeviceGestureSettings for ExtendedVerticalDragGestureRecognizer and ExtendedHorizontalDragGestureRecognizer.(#482,#483)

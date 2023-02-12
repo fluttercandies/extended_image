@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
