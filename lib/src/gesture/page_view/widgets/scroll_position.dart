@@ -122,15 +122,14 @@ class ExtendedPagePosition extends ScrollPositionWithSingleContext
 
   @override
   void saveScrollOffset() {
-    PageStorage.maybeOf(context.storageContext)?.writeState(
-        context.storageContext,
+    PageStorage.of(context.storageContext)?.writeState(context.storageContext,
         _cachedPage ?? getPageFromPixels(pixels, viewportDimension));
   }
 
   @override
   void restoreScrollOffset() {
     if (!hasPixels) {
-      final double? value = PageStorage.maybeOf(context.storageContext)
+      final double? value = PageStorage.of(context.storageContext)
           ?.readState(context.storageContext) as double?;
       if (value != null) {
         _pageToUseOnStartup = value;

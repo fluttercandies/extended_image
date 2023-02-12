@@ -6,6 +6,10 @@
 
 * Migrate to 3.7.0 (#545)
 
+## 6.4.1
+
+* 7.0.1 on Flutter 3.3.0
+
 ## 6.4.0
 
 * add [ExtendedImage.globalStateWidgetBuilder] to support to override State Widget if loadStateChanged is not define.(#541)
