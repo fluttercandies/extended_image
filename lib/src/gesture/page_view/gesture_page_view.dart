@@ -25,6 +25,8 @@ final PageMetrics _testPageMetrics = PageMetrics(
   pixels: 5,
   viewportDimension: 10,
   viewportFraction: 1.0,
+  devicePixelRatio:
+      WidgetsBinding.instance.platformDispatcher.views.first.devicePixelRatio,
 );
 
 /// whether should scoll page
