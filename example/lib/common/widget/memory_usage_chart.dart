@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:example/common/utils/vm_helper.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -37,7 +36,7 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
     }
     return Container(
       padding: const EdgeInsets.only(left: 30, right: 30, top: 20, bottom: 5),
-      width: window.physicalSize.width,
+      width: View.of(context).physicalSize.width,
       height: 150,
       child: LineChart(
         getData(),

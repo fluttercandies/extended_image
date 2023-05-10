@@ -7,6 +7,7 @@ import 'package:extended_image_library/extended_image_library.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Image;
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/semantics.dart';
 
 import 'editor/editor.dart';
@@ -1239,7 +1240,9 @@ class _ExtendedImageState extends State<ExtendedImage>
   }
 
   void _replaceImage({required ImageInfo? info}) {
-    _imageInfo?.dispose();
+    final ImageInfo? oldImageInfo = _imageInfo;
+    SchedulerBinding.instance
+        .addPostFrameCallback((_) => oldImageInfo?.dispose());
     _imageInfo = info;
   }
 

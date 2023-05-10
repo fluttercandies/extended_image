@@ -6,19 +6,16 @@ import 'dart:async';
 
 import 'package:example/common/data/tu_chong_repository.dart';
 import 'package:example/common/data/tu_chong_source.dart';
-import 'package:example/common/text/my_extended_text_selection_controls.dart';
-import 'package:example/common/text/my_special_text_span_builder.dart';
 import 'package:example/common/utils/vm_helper.dart';
 import 'package:example/common/widget/item_builder.dart';
 import 'package:example/common/widget/pic_grid_view.dart';
 import 'package:example/common/widget/push_to_refresh_header.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:extended_text/extended_text.dart';
+// import 'package:extended_text/extended_text.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:flutter/material.dart' hide CircularProgressIndicator;
 import 'package:loading_more_list/loading_more_list.dart';
 import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 @FFRoute(
   name: 'fluttercandies://photoview',
@@ -35,7 +32,7 @@ class PhotoViewDemo extends StatefulWidget {
 }
 
 class _PhotoViewDemoState extends State<PhotoViewDemo> {
-  MyTextSelectionControls? _myExtendedMaterialTextSelectionControls;
+  // MyTextSelectionControls? _myExtendedMaterialTextSelectionControls;
   final String _attachContent =
       '[love]Extended text help you to build rich text quickly. any special text you will have with extended text.It\'s my pleasure to invite you to join \$FlutterCandies\$ if you want to improve flutter .[love] if you meet any problem, please let me konw @zmtzawqlp .[sun_glasses]';
   TuChongRepository listSourceRepository = TuChongRepository();
@@ -137,43 +134,43 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                 ),
                               ),
                               Padding(
-                                child: ExtendedText(
+                                child: Text(
                                   content,
-                                  onSpecialTextTap: (dynamic parameter) {
-                                    if (parameter.toString().startsWith('\$')) {
-                                      launchUrl(Uri.parse(
-                                          'https://github.com/fluttercandies'));
-                                    } else if (parameter
-                                        .toString()
-                                        .startsWith('@')) {
-                                      launchUrl(Uri.parse(
-                                          'mailto:zmtzawqlp@live.com'));
-                                    }
-                                  },
-                                  specialTextSpanBuilder:
-                                      MySpecialTextSpanBuilder(),
+                                  // onSpecialTextTap: (dynamic parameter) {
+                                  //   if (parameter.toString().startsWith('\$')) {
+                                  //     launchUrl(Uri.parse(
+                                  //         'https://github.com/fluttercandies'));
+                                  //   } else if (parameter
+                                  //       .toString()
+                                  //       .startsWith('@')) {
+                                  //     launchUrl(Uri.parse(
+                                  //         'mailto:zmtzawqlp@live.com'));
+                                  //   }
+                                  // },
+                                  // specialTextSpanBuilder:
+                                  //     MySpecialTextSpanBuilder(),
                                   //overflow: ExtendedTextOverflow.ellipsis,
                                   style: const TextStyle(
                                       fontSize: 14, color: Colors.grey),
                                   maxLines: 5,
-                                  overflowWidget: TextOverflowWidget(
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        const Text('\u2026 '),
-                                        InkWell(
-                                          child: const Text('more'),
-                                          onTap: () {
-                                            launchUrl(Uri.parse(
-                                                'https://github.com/fluttercandies/extended_text'));
-                                          },
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  selectionEnabled: true,
-                                  selectionControls:
-                                      _myExtendedMaterialTextSelectionControls,
+                                  // overflowWidget: TextOverflowWidget(
+                                  //   child: Row(
+                                  //     mainAxisSize: MainAxisSize.min,
+                                  //     children: <Widget>[
+                                  //       const Text('\u2026 '),
+                                  //       InkWell(
+                                  //         child: const Text('more'),
+                                  //         onTap: () {
+                                  //           launchUrl(Uri.parse(
+                                  //               'https://github.com/fluttercandies/extended_text'));
+                                  //         },
+                                  //       )
+                                  //     ],
+                                  //   ),
+                                  // ),
+                                  // selectionEnabled: true,
+                                  // selectionControls:
+                                  //     _myExtendedMaterialTextSelectionControls,
                                 ),
                                 padding: const EdgeInsets.only(
                                     left: margin,
@@ -212,32 +209,32 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
         ],
       ),
     );
-
-    return ExtendedTextSelectionPointerHandler(
-      //default behavior
-      // child: result,
-      //custom your behavior
-      builder: (List<ExtendedTextSelectionState> states) {
-        return Listener(
-          child: result,
-          behavior: HitTestBehavior.translucent,
-          onPointerDown: (PointerDownEvent value) {
-            for (final ExtendedTextSelectionState state in states) {
-              if (!state.containsPosition(value.position)) {
-                //clear other selection
-                state.clearSelection();
-              }
-            }
-          },
-          onPointerMove: (PointerMoveEvent value) {
-            //clear other selection
-            for (final ExtendedTextSelectionState state in states) {
-              state.clearSelection();
-            }
-          },
-        );
-      },
-    );
+    return result;
+    // return ExtendedTextSelectionPointerHandler(
+    //   //default behavior
+    //   // child: result,
+    //   //custom your behavior
+    //   builder: (List<ExtendedTextSelectionState> states) {
+    //     return Listener(
+    //       child: result,
+    //       behavior: HitTestBehavior.translucent,
+    //       onPointerDown: (PointerDownEvent value) {
+    //         for (final ExtendedTextSelectionState state in states) {
+    //           if (!state.containsPosition(value.position)) {
+    //             //clear other selection
+    //             state.clearSelection();
+    //           }
+    //         }
+    //       },
+    //       onPointerMove: (PointerMoveEvent value) {
+    //         //clear other selection
+    //         for (final ExtendedTextSelectionState state in states) {
+    //           state.clearSelection();
+    //         }
+    //       },
+    //     );
+    //   },
+    // );
   }
 
   @override
@@ -251,7 +248,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
 
   @override
   void initState() {
-    _myExtendedMaterialTextSelectionControls = MyTextSelectionControls();
+    // _myExtendedMaterialTextSelectionControls = MyTextSelectionControls();
     super.initState();
   }
 

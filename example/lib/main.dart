@@ -49,17 +49,6 @@ class MyApp extends StatelessWidget {
         return onGenerateRoute(
           settings: settings,
           getRouteSettings: getRouteSettings,
-          // routeSettingsWrapper: (FFRouteSettings ffRouteSettings) {
-          //   if (ffRouteSettings.name == Routes.fluttercandiesMainpage ||
-          //       ffRouteSettings.name == Routes.fluttercandiesDemogrouppage) {
-          //     return ffRouteSettings;
-          //   }
-          //   return ffRouteSettings.copyWith(
-          //       widget: CommonWidget(
-          //     child: ffRouteSettings.widget,
-          //     title: ffRouteSettings.routeName,
-          //   ));
-          // },
         );
       },
     ));

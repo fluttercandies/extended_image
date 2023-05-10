@@ -221,9 +221,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                   initialValue: _cropLayerPainter,
                   itemBuilder: (BuildContext context) {
                     return <PopupMenuEntry<EditorCropLayerPainter>>[
-                      PopupMenuItem<EditorCropLayerPainter>(
+                      const PopupMenuItem<EditorCropLayerPainter>(
                         child: Row(
-                          children: const <Widget>[
+                          children: <Widget>[
                             Icon(
                               Icons.rounded_corner_sharp,
                               color: Colors.blue,
@@ -234,12 +234,12 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             Text('Default'),
                           ],
                         ),
-                        value: const EditorCropLayerPainter(),
+                        value: EditorCropLayerPainter(),
                       ),
                       const PopupMenuDivider(),
-                      PopupMenuItem<EditorCropLayerPainter>(
+                      const PopupMenuItem<EditorCropLayerPainter>(
                         child: Row(
-                          children: const <Widget>[
+                          children: <Widget>[
                             Icon(
                               Icons.circle,
                               color: Colors.blue,
@@ -250,12 +250,12 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             Text('Custom'),
                           ],
                         ),
-                        value: const CustomEditorCropLayerPainter(),
+                        value: CustomEditorCropLayerPainter(),
                       ),
                       const PopupMenuDivider(),
-                      PopupMenuItem<EditorCropLayerPainter>(
+                      const PopupMenuItem<EditorCropLayerPainter>(
                         child: Row(
-                          children: const <Widget>[
+                          children: <Widget>[
                             Icon(
                               CupertinoIcons.circle,
                               color: Colors.blue,
@@ -266,7 +266,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             Text('Circle'),
                           ],
                         ),
-                        value: const CircleEditorCropLayerPainter(),
+                        value: CircleEditorCropLayerPainter(),
                       ),
                     ];
                   },

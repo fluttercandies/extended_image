@@ -13,7 +13,7 @@ enum LoadState {
   failed
 }
 
-abstract class ExtendedImageState {
+mixin ExtendedImageState {
   void reLoadImage();
   ImageInfo? get extendedImageInfo;
   LoadState get extendedImageLoadState;

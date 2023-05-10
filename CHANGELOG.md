@@ -1,3 +1,13 @@
+## 8.0.1
+
+* Dart sdk: '>=2.18.0 <4.0.0'
+
+## 8.0.0
+
+* Migrate to Flutter 3.10.0 and Dart 3.0.0 (#557,#563,#570,#572,#573)
+* Cherry Pick https://github.com/flutter/flutter/pull/110131
+* Cherry Pick https://github.com/flutter/flutter/pull/119495
+
 ## 7.0.2
 
 * publish v6.4.1 for flutter 3.3.0 and v6.2.2 for flutter 3.0.5

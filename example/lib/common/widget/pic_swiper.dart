@@ -5,16 +5,16 @@ import 'dart:math';
 import 'package:example/common/data/tu_chong_source.dart' hide asT;
 @FFArgumentImport()
 import 'package:example/common/model/pic_swiper_item.dart';
-import 'package:example/common/text/my_extended_text_selection_controls.dart';
-import 'package:example/common/text/my_special_text_span_builder.dart';
+// import 'package:example/common/text/my_extended_text_selection_controls.dart';
+// import 'package:example/common/text/my_special_text_span_builder.dart';
 import 'package:example/common/utils/util.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:extended_text/extended_text.dart';
+//import 'package:extended_text/extended_text.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:oktoast/oktoast.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
 import 'hero.dart';
 import 'item_builder.dart';
@@ -83,43 +83,43 @@ class ImageDetail extends StatelessWidget {
               const SizedBox(
                 height: 15.0,
               ),
-              ExtendedText(
+              Text(
                 content,
-                onSpecialTextTap: (dynamic parameter) {
-                  if (parameter.toString().startsWith('\$')) {
-                    launchUrl(Uri.parse('https://github.com/fluttercandies'));
-                  } else if (parameter.toString().startsWith('@')) {
-                    launchUrl(Uri.parse('mailto:zmtzawqlp@live.com'));
-                  }
-                },
-                specialTextSpanBuilder: MySpecialTextSpanBuilder(),
+                // onSpecialTextTap: (dynamic parameter) {
+                //   if (parameter.toString().startsWith('\$')) {
+                //     launchUrl(Uri.parse('https://github.com/fluttercandies'));
+                //   } else if (parameter.toString().startsWith('@')) {
+                //     launchUrl(Uri.parse('mailto:zmtzawqlp@live.com'));
+                //   }
+                // },
+                // specialTextSpanBuilder: MySpecialTextSpanBuilder(),
                 //overflow: ExtendedTextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 14, color: Colors.grey),
                 maxLines: 10,
-                overflowWidget: TextOverflowWidget(
-                  //maxHeight: double.infinity,
-                  //align: TextOverflowAlign.right,
-                  //fixedOffset: Offset.zero,
-                  //debugOverflowRectColor: Colors.red,
-                  child: DefaultTextStyle(
-                    style: const TextStyle(fontSize: 12, color: Colors.blue),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        const Text('\u2026 '),
-                        GestureDetector(
-                          child: const Text('more'),
-                          onTap: () {
-                            launchUrl(Uri.parse(
-                                'https://github.com/fluttercandies/extended_text'));
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                selectionEnabled: true,
-                selectionControls: MyTextSelectionControls(),
+                // overflowWidget: TextOverflowWidget(
+                //   //maxHeight: double.infinity,
+                //   //align: TextOverflowAlign.right,
+                //   //fixedOffset: Offset.zero,
+                //   //debugOverflowRectColor: Colors.red,
+                //   child: DefaultTextStyle(
+                //     style: const TextStyle(fontSize: 12, color: Colors.blue),
+                //     child: Row(
+                //       mainAxisSize: MainAxisSize.min,
+                //       children: <Widget>[
+                //         const Text('\u2026 '),
+                //         GestureDetector(
+                //           child: const Text('more'),
+                //           onTap: () {
+                //             launchUrl(Uri.parse(
+                //                 'https://github.com/fluttercandies/extended_text'));
+                //           },
+                //         )
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                // selectionEnabled: true,
+                // selectionControls: MyTextSelectionControls(),
               ),
               const SizedBox(
                 height: 20.0,
@@ -149,7 +149,7 @@ class ImageDetail extends StatelessWidget {
                 '${tuChongItem?.imageSize.width.toInt()} * ${tuChongItem?.imageSize.height.toInt()}',
               ),
             ),
-          Positioned(
+          const Positioned(
             top: -33.0,
             right: 0,
             left: 0,
@@ -157,7 +157,7 @@ class ImageDetail extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: const <Widget>[
+                children: <Widget>[
                   Icon(
                     Icons.star,
                     color: Colors.yellow,
@@ -197,37 +197,37 @@ class ImageDetail extends StatelessWidget {
             BoxShadow(color: Colors.grey, blurRadius: 15.0, spreadRadius: 20.0),
           ]),
     );
-
-    return ExtendedTextSelectionPointerHandler(
-      //default behavior
-      // child: result,
-      //custom your behavior
-      builder: (List<ExtendedTextSelectionState> states) {
-        return GestureDetector(
-          onTap: () {
-            //do not pop page
-          },
-          child: Listener(
-            child: result,
-            behavior: HitTestBehavior.translucent,
-            onPointerDown: (PointerDownEvent value) {
-              for (final ExtendedTextSelectionState state in states) {
-                if (!state.containsPosition(value.position)) {
-                  //clear other selection
-                  state.clearSelection();
-                }
-              }
-            },
-            onPointerMove: (PointerMoveEvent value) {
-              //clear other selection
-              for (final ExtendedTextSelectionState state in states) {
-                state.clearSelection();
-              }
-            },
-          ),
-        );
-      },
-    );
+    return result;
+    // return ExtendedTextSelectionPointerHandler(
+    //   //default behavior
+    //   // child: result,
+    //   //custom your behavior
+    //   builder: (List<ExtendedTextSelectionState> states) {
+    //     return GestureDetector(
+    //       onTap: () {
+    //         //do not pop page
+    //       },
+    //       child: Listener(
+    //         child: result,
+    //         behavior: HitTestBehavior.translucent,
+    //         onPointerDown: (PointerDownEvent value) {
+    //           for (final ExtendedTextSelectionState state in states) {
+    //             if (!state.containsPosition(value.position)) {
+    //               //clear other selection
+    //               state.clearSelection();
+    //             }
+    //           }
+    //         },
+    //         onPointerMove: (PointerMoveEvent value) {
+    //           //clear other selection
+    //           for (final ExtendedTextSelectionState state in states) {
+    //             state.clearSelection();
+    //           }
+    //         },
+    //       ),
+    //     );
+    //   },
+    // );
   }
 }
 
