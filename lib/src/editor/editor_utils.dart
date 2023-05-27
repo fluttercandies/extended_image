@@ -628,14 +628,42 @@ class EditorCropLayerPainter {
     final Rect rect = Offset.zero & size;
     final Rect cropRect = painter.cropRect;
     final Color maskColor = painter.maskColor;
-    canvas.saveLayer(rect, Paint());
+    // canvas.saveLayer(rect, Paint());
+    // canvas.drawRect(
+    //     rect,
+    //     Paint()
+    //       ..style = PaintingStyle.fill
+    //       ..color = maskColor);
+    //   canvas.drawRect(cropRect, Paint()..blendMode = BlendMode.clear);
+    // canvas.restore();
+
+    // draw mask rect instead use BlendMode.clear, --web-renderer html doesn't support now.
+    // left
     canvas.drawRect(
-        rect,
+        Offset.zero & Size(cropRect.left, rect.height),
         Paint()
           ..style = PaintingStyle.fill
           ..color = maskColor);
-    canvas.drawRect(cropRect, Paint()..blendMode = BlendMode.clear);
-    canvas.restore();
+    //top
+    canvas.drawRect(
+        Offset(cropRect.left, 0.0) & Size(cropRect.width, cropRect.top),
+        Paint()
+          ..style = PaintingStyle.fill
+          ..color = maskColor);
+    //right
+    canvas.drawRect(
+        Offset(cropRect.right, 0.0) &
+            Size(rect.width - cropRect.right, rect.height),
+        Paint()
+          ..style = PaintingStyle.fill
+          ..color = maskColor);
+    //bottom
+    canvas.drawRect(
+        Offset(cropRect.left, cropRect.bottom) &
+            Size(cropRect.width, rect.height - cropRect.bottom),
+        Paint()
+          ..style = PaintingStyle.fill
+          ..color = maskColor);
   }
 
   /// draw crop layer lines

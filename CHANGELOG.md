@@ -1,3 +1,7 @@
+## 8.0.2
+
+* [EditorCropLayerPainter.paintMask] not use BlendMode.clear now, due to '--web-renderer html' is not support.
+
 ## 8.0.1
 
 * Dart sdk: '>=2.18.0 <4.0.0'
