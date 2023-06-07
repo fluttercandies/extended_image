@@ -14,7 +14,18 @@ import 'package:image_editor/image_editor.dart';
 // final Future<LoadBalancer> loadBalancer =
 //     LoadBalancer.create(1, IsolateRunner.spawn);
 
-Future<Uint8List?> cropImageDataWithDartLibrary(
+enum ImageType { gif, jpg }
+
+class EditImageInfo {
+  EditImageInfo(
+    this.data,
+    this.imageType,
+  );
+  final Uint8List? data;
+  final ImageType imageType;
+}
+
+Future<EditImageInfo> cropImageDataWithDartLibrary(
     {required ExtendedImageEditorState state}) async {
   print('dart library start cropping');
 
@@ -64,12 +75,12 @@ Future<Uint8List?> cropImageDataWithDartLibrary(
   final DateTime time1 = DateTime.now();
 
   //Decode source to Animation. It can holds multi frame.
-  Animation? src;
+  Image? src;
   //LoadBalancer lb;
   if (kIsWeb) {
-    src = decodeAnimation(data);
+    src = decodeImage(data);
   } else {
-    src = await compute(decodeAnimation, data);
+    src = await compute(decodeImage, data);
   }
   if (src != null) {
     //handle every frame.
@@ -79,29 +90,35 @@ Future<Uint8List?> cropImageDataWithDartLibrary(
       image = bakeOrientation(image);
 
       if (editAction.needCrop) {
-        image = copyCrop(image, cropRect.left.toInt(), cropRect.top.toInt(),
-            cropRect.width.toInt(), cropRect.height.toInt());
+        image = copyCrop(
+          image,
+          x: cropRect.left.toInt(),
+          y: cropRect.top.toInt(),
+          width: cropRect.width.toInt(),
+          height: cropRect.height.toInt(),
+        );
       }
 
       if (editAction.needFlip) {
-        late Flip mode;
+        late FlipDirection mode;
         if (editAction.flipY && editAction.flipX) {
-          mode = Flip.both;
+          mode = FlipDirection.both;
         } else if (editAction.flipY) {
-          mode = Flip.horizontal;
+          mode = FlipDirection.horizontal;
         } else if (editAction.flipX) {
-          mode = Flip.vertical;
+          mode = FlipDirection.vertical;
         }
-        image = flip(image, mode);
+        image = flip(image, direction: mode);
       }
 
       if (editAction.hasRotateAngle) {
-        image = copyRotate(image, editAction.rotateAngle);
+        image = copyRotate(image, angle: editAction.rotateAngle);
       }
       final DateTime time3 = DateTime.now();
       print('${time3.difference(time2)} : crop/flip/rotate');
       return image;
     }).toList();
+    if (src.frames.length == 1) {}
   }
 
   /// you can encode your image
@@ -112,28 +129,33 @@ Future<Uint8List?> cropImageDataWithDartLibrary(
   /// it will not block ui with using isolate.
   //var fileData = await compute(encodeJpg, src);
   //var fileData = await isolateEncodeImage(src);
+  assert(src != null);
   List<int>? fileData;
   print('start encode');
   final DateTime time4 = DateTime.now();
-  if (src != null) {
-    final bool onlyOneFrame = src.numFrames == 1;
-    //If there's only one frame, encode it to jpg.
-    if (kIsWeb) {
-      fileData = onlyOneFrame ? encodeJpg(src.first) : encodeGifAnimation(src);
-    } else {
-      //fileData = await lb.run<List<int>, Image>(encodeJpg, src);
-      fileData = onlyOneFrame
-          ? await compute(encodeJpg, src.first)
-          : await compute(encodeGifAnimation, src);
-    }
+  final bool onlyOneFrame = src!.numFrames == 1;
+
+  //If there's only one frame, encode it to jpg.
+  if (kIsWeb) {
+    fileData =
+        onlyOneFrame ? encodeJpg(Image.from(src.frames.first)) : encodeGif(src);
+  } else {
+    //fileData = await lb.run<List<int>, Image>(encodeJpg, src);
+    fileData = (onlyOneFrame
+        ? await compute(encodeJpg, Image.from(src.frames.first))
+        : await compute(encodeGif, src));
   }
+
   final DateTime time5 = DateTime.now();
   print('${time5.difference(time4)} : encode');
   print('${time5.difference(time1)} : total time');
-  return Uint8List.fromList(fileData!);
+  return EditImageInfo(
+    Uint8List.fromList(fileData!),
+    onlyOneFrame ? ImageType.jpg : ImageType.gif,
+  );
 }
 
-Future<Uint8List?> cropImageDataWithNativeLibrary(
+Future<EditImageInfo> cropImageDataWithNativeLibrary(
     {required ExtendedImageEditorState state}) async {
   print('native library start cropping');
   Rect cropRect = state.getCropRect()!;
@@ -181,7 +203,7 @@ Future<Uint8List?> cropImageDataWithNativeLibrary(
   );
 
   print('${DateTime.now().difference(start)} ：total time');
-  return result;
+  return EditImageInfo(result, ImageType.jpg);
 }
 
 Future<dynamic> isolateDecodeImage(List<int> data) async {
@@ -210,7 +232,7 @@ void _isolateDecodeImage(SendPort port) {
   rPort.listen((dynamic message) {
     final SendPort send = message[0] as SendPort;
     final List<int> data = message[1] as List<int>;
-    send.send(decodeImage(data));
+    send.send(decodeImage(Uint8List.fromList(data)));
   });
 }
 
