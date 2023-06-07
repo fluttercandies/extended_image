@@ -8,9 +8,21 @@ A powerful official extension library of images, which supports placeholder(load
 
 [Web demo for ExtendedImage](https://fluttercandies.github.io/extended_image/)
 
+ExtendedImage is an third-party library that extends the functionality of Flutter's Image component. The main extended features are as follows:
+
+| Feature                                                | ExtendedImage                                           |  Image            |
+| ------------------------------------------------------ | ------------------------------------------------------- | --------------------------------- |
+| Cache network images locally and load from cache        | Supported                                               | Not supported                     |
+| Compression display                                    | Supported, with additional options (compressionRatio and maxBytes)            | Supported, with cacheHeight, cacheWidth |
+| Automatic release of image resources                    | Supported                                               | Requires manual management        |
+| Scaling mode                                           | Supported                                               | Not supported                     |
+| Editing mode                                           | Supported                                               | Not supported                     |
+| Drag-to-dismiss effect for images in a page transition | Supported                                               | Not supported                     |
+
+
 ## Table of contents
 
-- [extended_image](#extended_image)
+- [extended\_image](#extended_image)
   - [Table of contents](#table-of-contents)
   - [Import](#import)
   - [Cache Network](#cache-network)

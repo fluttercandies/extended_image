@@ -13,6 +13,20 @@
 - [Flutter 仿掘金微信图片滑动退出页面效果](https://juejin.im/post/5cf62ab0e51d45776031afb2)
 - [Flutter 图片裁剪旋转翻转编辑器](https://juejin.im/post/5d77dfbb6fb9a06b160f55fc)
 
+
+ExtendedImage 是官方 Image 的扩展三方库，主要扩展功能如下:
+
+| 功能                                           | ExtendedImage                                            | Flutter 官方 Image                 |
+| ---------------------------------------------- | -------------------------------------------------------- | ---------------------------------- |
+| 缓存网络图片资源本地以及从本地加载网络缓存资源 | 支持                                                     | 不支持                             |
+| 压缩显示                                       | 支持，在官方的基础上，更多的灵活选项 compressionRatio 和 maxBytes 进行压缩显示 | 支持 cacheHeight,cacheWidth                            |
+| 自动释放图片资源                               | 支持                                                     | 需手动管理图片资源                 |
+| 缩放模式                                       | 支持                                                     | 不支持                               |
+| 编辑模式                                       | 支持                                                     | 不支持                             |
+| 拖动图片退出页面效果                           | 支持                                                     | 不支持                             |
+
+
+
 ## 目录
 
 - [extended_image](#extendedimage)
@@ -382,22 +396,22 @@ ExtendedImage
 
 EditorConfig
 
-| 参数                   | 描述                                                         | 默认                                                         |
-| ---------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| maxScale               | 最大的缩放倍数                                               | 5.0                                                          |
+| 参数                   | 描述                                                                               | 默认                                                         |
+| ---------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| maxScale               | 最大的缩放倍数                                                                     | 5.0                                                          |
 | cropRectPadding        | 裁剪框跟图片 layout 区域之间的距离。最好是保持一定距离，不然裁剪框边界很难进行拖拽 | EdgeInsets.all(20.0)                                         |
-| cornerSize             | 裁剪框四角图形的大小                                         | Size(30.0, 5.0)                                              |
-| cornerColor            | 裁剪框四角图形的颜色                                         | primaryColor                                                 |
-| lineColor              | 裁剪框线的颜色                                               | scaffoldBackgroundColor.withOpacity(0.7)                     |
-| lineHeight             | 裁剪框线的高度                                               | 0.6                                                          |
-| editorMaskColorHandler | 蒙层的颜色回调，你可以根据是否手指按下来设置不同的蒙层颜色   | scaffoldBackgroundColor.withOpacity(pointerDown ? 0.4 : 0.8) |
-| hitTestSize            | 裁剪框四角以及边线能够拖拽的区域的大小                       | 20.0                                                         |
-| animationDuration      | 当裁剪框拖拽变化结束之后，自动适应到中间的动画的时长         | Duration(milliseconds: 200)                                  |
-| tickerDuration         | 当裁剪框拖拽变化结束之后，多少时间才触发自动适应到中间的动画 | Duration(milliseconds: 400)                                  |
-| cropAspectRatio        | 裁剪框的宽高比                                               | null(无宽高比)                                               |
-| initialCropAspectRatio | 初始化的裁剪框的宽高比                                       | null(custom: 填充满图片原始宽高比)                           |
-| initCropRectType       | 剪切框的初始化类型(根据图片初始化区域或者图片的 layout 区域) | imageRect                                                    |
-| hitTestBehavior        | 设置hittest的行为                                            | HitTestBehavior.deferToChild                                 |
+| cornerSize             | 裁剪框四角图形的大小                                                               | Size(30.0, 5.0)                                              |
+| cornerColor            | 裁剪框四角图形的颜色                                                               | primaryColor                                                 |
+| lineColor              | 裁剪框线的颜色                                                                     | scaffoldBackgroundColor.withOpacity(0.7)                     |
+| lineHeight             | 裁剪框线的高度                                                                     | 0.6                                                          |
+| editorMaskColorHandler | 蒙层的颜色回调，你可以根据是否手指按下来设置不同的蒙层颜色                         | scaffoldBackgroundColor.withOpacity(pointerDown ? 0.4 : 0.8) |
+| hitTestSize            | 裁剪框四角以及边线能够拖拽的区域的大小                                             | 20.0                                                         |
+| animationDuration      | 当裁剪框拖拽变化结束之后，自动适应到中间的动画的时长                               | Duration(milliseconds: 200)                                  |
+| tickerDuration         | 当裁剪框拖拽变化结束之后，多少时间才触发自动适应到中间的动画                       | Duration(milliseconds: 400)                                  |
+| cropAspectRatio        | 裁剪框的宽高比                                                                     | null(无宽高比)                                               |
+| initialCropAspectRatio | 初始化的裁剪框的宽高比                                                             | null(custom: 填充满图片原始宽高比)                           |
+| initCropRectType       | 剪切框的初始化类型(根据图片初始化区域或者图片的 layout 区域)                       | imageRect                                                    |
+| hitTestBehavior        | 设置hittest的行为                                                                  | HitTestBehavior.deferToChild                                 |
 
 ### 裁剪框的宽高比
 
@@ -943,9 +957,9 @@ ExtendedImage
 
 ExtendedImage
 
-| parameter        | description                                       | default         |
-| ---------------- | ------------------------------------------------- | --------------- |
-| layoutInsets     | 设置图片初始化时候的边距 | EdgeInsets.zero |
+| parameter    | description              | default         |
+| ------------ | ------------------------ | --------------- |
+| layoutInsets | 设置图片初始化时候的边距 | EdgeInsets.zero |
 
 ```dart
   ExtendedImage.network(
@@ -961,11 +975,11 @@ ExtendedImage
 
 * ExtendedResizeImage
 
-| parameter                                                | description                                         | default   |
-| -------------------------------------------------------- | --------------------------------------------------- | --------- |
-| [ExtendedResizeImage.compressionRatio]                   | 图片压缩率，大于0小于1                              | null      |
-| [ExtendedResizeImage.maxBytes]                           | 图片的大小的最大值. 默认值为 50KB. 这是图片实际的的大小，而不是解码之后的大小                | 50 << 10 |
-| [ExtendedResizeImage.width]/[ExtendedResizeImage.height] | 宽和高用于decode和缓存. 跟官方的[ResizeImage]一致。 | null      |
+| parameter                                                | description                                                                   | default  |
+| -------------------------------------------------------- | ----------------------------------------------------------------------------- | -------- |
+| [ExtendedResizeImage.compressionRatio]                   | 图片压缩率，大于0小于1                                                        | null     |
+| [ExtendedResizeImage.maxBytes]                           | 图片的大小的最大值. 默认值为 50KB. 这是图片实际的的大小，而不是解码之后的大小 | 50 << 10 |
+| [ExtendedResizeImage.width]/[ExtendedResizeImage.height] | 宽和高用于decode和缓存. 跟官方的[ResizeImage]一致。                           | null     |
 
 ```dart
     ExtendedImage.network(
@@ -991,8 +1005,8 @@ ExtendedImage
 
 * clearMemoryCacheWhenDispose
 
-| parameter                   | description                                                  | default |
-| --------------------------- | ------------------------------------------------------------ | ------- |
+| parameter                   | description                                                                                                                                                    | default |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
 | clearMemoryCacheWhenDispose | 在Flutter 2.0之后也许不会起作用, 因为没法在图片没有完成之前释放掉(https://github.com/fluttercandies/extended_image/issues/317).  现在只会释放已完成的图片资源. | false   |
 
 
@@ -1006,8 +1020,8 @@ ExtendedImage
 
 * imageCacheName
 
-| parameter      | description                                                  | default |
-| -------------- | ------------------------------------------------------------ | ------- |
+| parameter      | description                                                                               | default |
+| -------------- | ----------------------------------------------------------------------------------------- | ------- |
 | imageCacheName | 你可以指定一个 ImageCache 来缓存一些图片。这样你可以一起处理它们，不会影响其他的图片缓存. | null    |
 
 ```dart
