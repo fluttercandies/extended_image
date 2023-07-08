@@ -183,7 +183,7 @@ class _PagePosition extends ScrollPositionWithSingleContext
     RenderObject object, {
     double alignment = 0.0,
     Duration duration = Duration.zero,
-    Curve curve = Curves.ease,
+    Curve curve = Curves.easeIn,
     ScrollPositionAlignmentPolicy alignmentPolicy =
         ScrollPositionAlignmentPolicy.explicit,
     RenderObject? targetRenderObject,
