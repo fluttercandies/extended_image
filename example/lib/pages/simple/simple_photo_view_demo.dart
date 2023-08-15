@@ -95,6 +95,29 @@ class _SimplePicsWiperState extends State<SimplePicsWiper> {
   GlobalKey<ExtendedImageSlidePageState> slidePagekey =
       GlobalKey<ExtendedImageSlidePageState>();
 
+  final List<int> _cachedIndexes = <int>[];
+  @override
+  void initState() {
+    super.initState();
+    final int index = widget.images.indexOf(widget.url);
+    _preloadImage(index - 1);
+    _preloadImage(index + 1);
+  }
+
+  void _preloadImage(int index) {
+    if (_cachedIndexes.contains(index)) {
+      return;
+    }
+    if (0 <= index && index < widget.images.length) {
+      final String url = widget.images[index];
+      if (url.startsWith('https:')) {
+        precacheImage(ExtendedNetworkImageProvider(url, cache: true), context);
+      }
+
+      _cachedIndexes.add(index);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -108,8 +131,11 @@ class _SimplePicsWiperState extends State<SimplePicsWiper> {
               pageSpacing: 50,
               shouldIgnorePointerWhenScrolling: false,
             ),
-            preloadPagesCount: 2,
             itemCount: widget.images.length,
+            onPageChanged: (int page) {
+              _preloadImage(page - 1);
+              _preloadImage(page + 1);
+            },
             itemBuilder: (BuildContext context, int index) {
               final String url = widget.images[index];
 

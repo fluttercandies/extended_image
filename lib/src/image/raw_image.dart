@@ -44,48 +44,6 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
     this.layoutInsets = EdgeInsets.zero,
   }) : super(key: key);
 
-  @override
-  ExtendedRenderImage createRenderObject(BuildContext context) {
-    assert((!matchTextDirection && alignment is Alignment) ||
-        debugCheckHasDirectionality(context));
-    assert(
-        image?.debugGetOpenHandleStackTraces()?.isNotEmpty ?? true,
-        'Creator of a RawImage disposed of the image when the RawImage still '
-        'needed it.');
-    return ExtendedRenderImage(
-      image: image?.clone(),
-      debugImageLabel: debugImageLabel,
-      width: width,
-      height: height,
-      scale: scale,
-      color: color,
-      opacity: opacity,
-      colorBlendMode: colorBlendMode,
-      fit: fit,
-      alignment: alignment,
-      repeat: repeat,
-      centerSlice: centerSlice,
-      matchTextDirection: matchTextDirection,
-      textDirection: matchTextDirection || alignment is! Alignment
-          ? Directionality.of(context)
-          : null,
-      invertColors: invertColors,
-      filterQuality: filterQuality,
-      sourceRect: sourceRect,
-      beforePaintImage: beforePaintImage,
-      afterPaintImage: afterPaintImage,
-      gestureDetails: gestureDetails,
-      editActionDetails: editActionDetails,
-      isAntiAlias: isAntiAlias,
-      layoutInsets: layoutInsets,
-    );
-  }
-
-  /// Whether to paint the image with anti-aliasing.
-  ///
-  /// Anti-aliasing alleviates the sawtooth artifact when the image is rotated.
-  final bool isAntiAlias;
-
   /// details about edit
   final EditActionDetails? editActionDetails;
 
@@ -100,6 +58,9 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
 
   /// The image to display.
   final ui.Image? image;
+
+  /// A string identifying the source of the image.
+  final String? debugImageLabel;
 
   /// If non-null, require the image to have this width.
   ///
@@ -125,20 +86,13 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
   /// of each image pixel before painting onto the canvas.
   ///
   /// This is more efficient than using [FadeTransition] to change the opacity
-  /// of an image, since this avoids creating a new composited layer. Composited
-  /// layers may double memory usage as the image is painted onto an offscreen
-  /// render target.
-  ///
-  /// See also:
-  ///
-  ///  * [AlwaysStoppedAnimation], which allows you to create an [Animation]
-  ///    from a single opacity value.
+  /// of an image.
   final Animation<double>? opacity;
 
-  /// Used to set the filterQuality of the image
-  /// Use the "low" quality setting to scale the image, which corresponds to
-  /// bilinear interpolation, rather than the default "none" which corresponds
-  /// to nearest-neighbor.
+  /// Used to set the filterQuality of the image.
+  ///
+  /// Defaults to [FilterQuality.low] to scale the image, which corresponds to
+  /// bilinear interpolation.
   final FilterQuality filterQuality;
 
   /// Used to combine [color] with this image.
@@ -228,39 +182,52 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
   ///it work when centerSlice==null
   final Rect? sourceRect;
 
-  /// A string identifying the source of the image.
-  final String? debugImageLabel;
-
   /// Insets to apply before laying out the image.
   ///
   /// The image will still be painted in the full area.
   final EdgeInsets layoutInsets;
 
+  /// Whether to paint the image with anti-aliasing.
+  ///
+  /// Anti-aliasing alleviates the sawtooth artifact when the image is rotated.
+  final bool isAntiAlias;
+
   @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty<ui.Image>('image', image));
-    properties.add(DoubleProperty('width', width, defaultValue: null));
-    properties.add(DoubleProperty('height', height, defaultValue: null));
-    properties.add(DoubleProperty('scale', scale, defaultValue: 1.0));
-    properties
-        .add(DiagnosticsProperty<Color>('color', color, defaultValue: null));
-    properties.add(EnumProperty<BlendMode>('colorBlendMode', colorBlendMode,
-        defaultValue: null));
-    properties.add(EnumProperty<BoxFit>('fit', fit, defaultValue: null));
-    properties.add(DiagnosticsProperty<AlignmentGeometry>(
-        'alignment', alignment,
-        defaultValue: null));
-    properties.add(EnumProperty<ImageRepeat>('repeat', repeat,
-        defaultValue: ImageRepeat.noRepeat));
-    properties.add(DiagnosticsProperty<Rect>('centerSlice', centerSlice,
-        defaultValue: null));
-    properties.add(FlagProperty('matchTextDirection',
-        value: matchTextDirection, ifTrue: 'match text direction'));
-    properties.add(DiagnosticsProperty<bool>('invertColors', invertColors));
-    properties.add(EnumProperty<FilterQuality>('filterQuality', filterQuality));
-    properties
-        .add(DiagnosticsProperty<EdgeInsets>('layoutInsets', layoutInsets));
+  ExtendedRenderImage createRenderObject(BuildContext context) {
+    assert((!matchTextDirection && alignment is Alignment) ||
+        debugCheckHasDirectionality(context));
+    assert(
+      image?.debugGetOpenHandleStackTraces()?.isNotEmpty ?? true,
+      'Creator of a RawImage disposed of the image when the RawImage still '
+      'needed it.',
+    );
+    return ExtendedRenderImage(
+      image: image?.clone(),
+      debugImageLabel: debugImageLabel,
+      width: width,
+      height: height,
+      scale: scale,
+      color: color,
+      opacity: opacity,
+      colorBlendMode: colorBlendMode,
+      fit: fit,
+      alignment: alignment,
+      repeat: repeat,
+      centerSlice: centerSlice,
+      matchTextDirection: matchTextDirection,
+      textDirection: matchTextDirection || alignment is! Alignment
+          ? Directionality.of(context)
+          : null,
+      invertColors: invertColors,
+      isAntiAlias: isAntiAlias,
+      filterQuality: filterQuality,
+      sourceRect: sourceRect,
+      beforePaintImage: beforePaintImage,
+      afterPaintImage: afterPaintImage,
+      gestureDetails: gestureDetails,
+      editActionDetails: editActionDetails,
+      layoutInsets: layoutInsets,
+    );
   }
 
   @override
@@ -279,8 +246,8 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
       ..color = color
       ..opacity = opacity
       ..colorBlendMode = colorBlendMode
-      ..alignment = alignment
       ..fit = fit
+      ..alignment = alignment
       ..repeat = repeat
       ..centerSlice = centerSlice
       ..matchTextDirection = matchTextDirection
@@ -288,19 +255,47 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
           ? Directionality.of(context)
           : null
       ..invertColors = invertColors
+      ..isAntiAlias = isAntiAlias
       ..filterQuality = filterQuality
+      ..layoutInsets = layoutInsets
       ..afterPaintImage = afterPaintImage
       ..beforePaintImage = beforePaintImage
       ..sourceRect = sourceRect
       ..gestureDetails = gestureDetails
-      ..editActionDetails = editActionDetails
-      ..isAntiAlias = isAntiAlias
-      ..layoutInsets = layoutInsets;
+      ..editActionDetails = editActionDetails;
   }
 
   @override
   void didUnmountRenderObject(ExtendedRenderImage renderObject) {
     // Have the render object dispose its image handle.
     renderObject.image = null;
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<ui.Image>('image', image));
+    properties.add(DoubleProperty('width', width, defaultValue: null));
+    properties.add(DoubleProperty('height', height, defaultValue: null));
+    properties.add(DoubleProperty('scale', scale, defaultValue: 1.0));
+    properties.add(ColorProperty('color', color, defaultValue: null));
+    properties.add(DiagnosticsProperty<Animation<double>?>('opacity', opacity,
+        defaultValue: null));
+    properties.add(EnumProperty<BlendMode>('colorBlendMode', colorBlendMode,
+        defaultValue: null));
+    properties.add(EnumProperty<BoxFit>('fit', fit, defaultValue: null));
+    properties.add(DiagnosticsProperty<AlignmentGeometry>(
+        'alignment', alignment,
+        defaultValue: null));
+    properties.add(EnumProperty<ImageRepeat>('repeat', repeat,
+        defaultValue: ImageRepeat.noRepeat));
+    properties.add(DiagnosticsProperty<Rect>('centerSlice', centerSlice,
+        defaultValue: null));
+    properties.add(FlagProperty('matchTextDirection',
+        value: matchTextDirection, ifTrue: 'match text direction'));
+    properties.add(DiagnosticsProperty<bool>('invertColors', invertColors));
+    properties.add(EnumProperty<FilterQuality>('filterQuality', filterQuality));
+    properties
+        .add(DiagnosticsProperty<EdgeInsets>('layoutInsets', layoutInsets));
   }
 }

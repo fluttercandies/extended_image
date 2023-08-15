@@ -40,7 +40,7 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
       height: 150,
       child: LineChart(
         getData(),
-        swapAnimationDuration: const Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
       ),
     );
   }
@@ -56,7 +56,7 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
         ),
         handleBuiltInTouches: true,
       ),
-      gridData: FlGridData(
+      gridData: const FlGridData(
         show: false,
       ),
       titlesData: FlTitlesData(
@@ -169,7 +169,7 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
       color: color,
       barWidth: 2,
       isStrokeCapRound: true,
-      dotData: FlDotData(
+      dotData: const FlDotData(
         show: false,
       ),
       belowBarData: BarAreaData(

@@ -27,6 +27,33 @@ class _SimplePhotoViewDemoState extends State<SimplePhotoViewDemo> {
     'https://photo.tuchong.com/5040418/f/43305517.jpg',
     'https://photo.tuchong.com/3019649/f/302699092.jpg'
   ];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _preloadImage(1);
+  }
+
+  final List<int> _cachedIndexes = <int>[];
+
+  void _preloadImage(int index) {
+    if (_cachedIndexes.contains(index)) {
+      return;
+    }
+    if (0 <= index && index < images.length) {
+      final String url = images[index];
+
+      precacheImage(ExtendedNetworkImageProvider(url, cache: true), context);
+
+      _cachedIndexes.add(index);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +65,10 @@ class _SimplePhotoViewDemoState extends State<SimplePhotoViewDemo> {
           initialPage: 0,
           pageSpacing: 50,
         ),
-        preloadPagesCount: 2,
+        onPageChanged: (int page) {
+          _preloadImage(page - 1);
+          _preloadImage(page + 1);
+        },
         itemCount: images.length,
         itemBuilder: (BuildContext context, int index) {
           return ExtendedImage.network(

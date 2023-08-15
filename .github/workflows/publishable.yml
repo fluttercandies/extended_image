@@ -1,0 +1,26 @@
+name: Publishable
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "**.md"
+      - "**.yaml"
+      - "**.yml"
+
+jobs:
+  publish-dry-run:
+    name: Publish dry-run with packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: k-paxian/dart-package-publisher@master
+        with:
+          credentialJson: 'MockCredentialJson'
+          flutter: true
+          dryRunOnly: true
+          skipTests: true

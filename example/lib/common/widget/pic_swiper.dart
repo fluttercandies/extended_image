@@ -366,6 +366,35 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
   bool _showSwiper = true;
   double _imageDetailY = 0;
   Rect? imageDRect;
+
+  final List<int> _cachedIndexes = <int>[];
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _preloadImage(widget.index! - 1);
+    _preloadImage(widget.index! + 1);
+  }
+
+  void _preloadImage(int index) {
+    if (_cachedIndexes.contains(index)) {
+      return;
+    }
+    if (0 <= index && index < widget.pics!.length) {
+      final String url = widget.pics![index].picUrl;
+
+      precacheImage(
+        ExtendedNetworkImageProvider(
+          url,
+          cache: true,
+          imageCacheName: 'CropImage',
+        ),
+        context,
+      );
+
+      _cachedIndexes.add(index);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -563,6 +592,8 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                 }
                 _showSwiper = true;
                 rebuildSwiper.add(_showSwiper);
+                _preloadImage(index - 1);
+                _preloadImage(index + 1);
               },
             ),
             StreamBuilder<bool>(

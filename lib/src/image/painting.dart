@@ -1,9 +1,98 @@
-// ignore_for_file: invalid_use_of_visible_for_testing_member
-
-import 'dart:math';
+import 'dart:math' as math;
 import 'dart:ui' as ui show Image;
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+
+// /// Used by [paintImage] to report image sizes drawn at the end of the frame.
+// Map<String, ImageSizeInfo> _pendingImageSizeInfo = <String, ImageSizeInfo>{};
+
+// /// [ImageSizeInfo]s that were reported on the last frame.
+// ///
+// /// Used to prevent duplicative reports from frame to frame.
+// Set<ImageSizeInfo> _lastFrameImageSizeInfo = <ImageSizeInfo>{};
+
+// /// Flushes inter-frame tracking of image size information from [paintImage].
+// ///
+// /// Has no effect if asserts are disabled.
+// @visibleForTesting
+// void debugFlushLastFrameImageSizeInfo() {
+//   assert(() {
+//     _lastFrameImageSizeInfo = <ImageSizeInfo>{};
+//     return true;
+//   }());
+// }
+
+/// Paints an image into the given rectangle on the canvas.
+///
+/// The arguments have the following meanings:
+///
+///  * `canvas`: The canvas onto which the image will be painted.
+///
+///  * `rect`: The region of the canvas into which the image will be painted.
+///    The image might not fill the entire rectangle (e.g., depending on the
+///    `fit`). If `rect` is empty, nothing is painted.
+///
+///  * `image`: The image to paint onto the canvas.
+///
+///  * `scale`: The number of image pixels for each logical pixel.
+///
+///  * `opacity`: The opacity to paint the image onto the canvas with.
+///
+///  * `colorFilter`: If non-null, the color filter to apply when painting the
+///    image.
+///
+///  * `fit`: How the image should be inscribed into `rect`. If null, the
+///    default behavior depends on `centerSlice`. If `centerSlice` is also null,
+///    the default behavior is [BoxFit.scaleDown]. If `centerSlice` is
+///    non-null, the default behavior is [BoxFit.fill]. See [BoxFit] for
+///    details.
+///
+///  * `alignment`: How the destination rectangle defined by applying `fit` is
+///    aligned within `rect`. For example, if `fit` is [BoxFit.contain] and
+///    `alignment` is [Alignment.bottomRight], the image will be as large
+///    as possible within `rect` and placed with its bottom right corner at the
+///    bottom right corner of `rect`. Defaults to [Alignment.center].
+///
+///  * `centerSlice`: The image is drawn in nine portions described by splitting
+///    the image by drawing two horizontal lines and two vertical lines, where
+///    `centerSlice` describes the rectangle formed by the four points where
+///    these four lines intersect each other. (This forms a 3-by-3 grid
+///    of regions, the center region being described by `centerSlice`.)
+///    The four regions in the corners are drawn, without scaling, in the four
+///    corners of the destination rectangle defined by applying `fit`. The
+///    remaining five regions are drawn by stretching them to fit such that they
+///    exactly cover the destination rectangle while maintaining their relative
+///    positions.
+///
+///  * `repeat`: If the image does not fill `rect`, whether and how the image
+///    should be repeated to fill `rect`. By default, the image is not repeated.
+///    See [ImageRepeat] for details.
+///
+///  * `flipHorizontally`: Whether to flip the image horizontally. This is
+///    occasionally used with images in right-to-left environments, for images
+///    that were designed for left-to-right locales (or vice versa). Be careful,
+///    when using this, to not flip images with integral shadows, text, or other
+///    effects that will look incorrect when flipped.
+///
+///  * `invertColors`: Inverting the colors of an image applies a new color
+///    filter to the paint. If there is another specified color filter, the
+///    invert will be applied after it. This is primarily used for implementing
+///    smart invert on iOS.
+///
+///  * `filterQuality`: Use this to change the quality when scaling an image.
+///     Use the [FilterQuality.low] quality setting to scale the image, which corresponds to
+///     bilinear interpolation, rather than the default [FilterQuality.none] which corresponds
+///     to nearest-neighbor.
+///
+/// The `canvas`, `rect`, `image`, `scale`, `alignment`, `repeat`, `flipHorizontally` and `filterQuality`
+/// arguments must not be null.
+///
+/// See also:
+///
+///  * [paintBorder], which paints a border around a rectangle on a canvas.
+///  * [DecorationImage], which holds a configuration for calling this function.
+///  * [BoxDecoration], which uses this function to paint a [DecorationImage].
 
 void paintExtendedImage(
     {required Canvas canvas,
@@ -29,6 +118,12 @@ void paintExtendedImage(
     EditActionDetails? editActionDetails,
     bool isAntiAlias = false,
     EdgeInsets layoutInsets = EdgeInsets.zero}) {
+  assert(
+    image.debugGetOpenHandleStackTraces()?.isNotEmpty ?? true,
+    'Cannot paint an image that is disposed.\n'
+    'The caller of paintImage is expected to wait to dispose the image until '
+    'after painting has completed.',
+  );
   if (rect.isEmpty) {
     return;
   }
@@ -49,7 +144,7 @@ void paintExtendedImage(
   //       .topLeft;
   // }
 
-  late Offset sliceBorder;
+  Offset? sliceBorder;
   if (centerSlice != null) {
     sliceBorder = Offset(centerSlice.left + inputSize.width - centerSlice.right,
         centerSlice.top + inputSize.height - centerSlice.bottom);
@@ -63,7 +158,7 @@ void paintExtendedImage(
   final Size sourceSize = fittedSizes.source * scale;
   Size destinationSize = fittedSizes.destination;
   if (centerSlice != null) {
-    outputSize += sliceBorder;
+    outputSize += sliceBorder!;
     destinationSize += sliceBorder;
     // We don't have the ability to draw a subset of the image at the same time
     // as we apply a nine-patch stretch.
@@ -158,11 +253,11 @@ void paintExtendedImage(
       }
 
       if (editAction.flipY) {
-        result.multiply(Matrix4.rotationY(pi));
+        result.multiply(Matrix4.rotationY(math.pi));
       }
 
       if (editAction.flipX) {
-        result.multiply(Matrix4.rotationX(pi));
+        result.multiply(Matrix4.rotationX(math.pi));
       }
 
       result.translate(-origin.dx, -origin.dy);
@@ -177,7 +272,110 @@ void paintExtendedImage(
       return;
     }
   }
+  // // Output size and destination rect are fully calculated.
+  // if (!kReleaseMode) {
+  //   // We can use the devicePixelRatio of the views directly here (instead of
+  //   // going through a MediaQuery) because if it changes, whatever is aware of
+  //   // the MediaQuery will be repainting the image anyways.
+  //   // Furthermore, for the memory check below we just assume that all images
+  //   // are decoded for the view with the highest device pixel ratio and use that
+  //   // as an upper bound for the display size of the image.
+  //   final double maxDevicePixelRatio =
+  //       PaintingBinding.instance.platformDispatcher.views.fold(
+  //     0.0,
+  //     (double previousValue, ui.FlutterView view) =>
+  //         math.max(previousValue, view.devicePixelRatio),
+  //   );
 
+  //   final ImageSizeInfo sizeInfo = ImageSizeInfo(
+  //     // Some ImageProvider implementations may not have given this.
+  //     source:
+  //         debugImageLabel ?? '<Unknown Image(${image.width}×${image.height})>',
+  //     imageSize: Size(image.width.toDouble(), image.height.toDouble()),
+  //     displaySize: outputSize * maxDevicePixelRatio,
+  //   );
+  //   assert(() {
+  //     if (debugInvertOversizedImages &&
+  //         sizeInfo.decodedSizeInBytes >
+  //             sizeInfo.displaySizeInBytes + debugImageOverheadAllowance) {
+  //       final int overheadInKilobytes =
+  //           (sizeInfo.decodedSizeInBytes - sizeInfo.displaySizeInBytes) ~/ 1024;
+  //       final int outputWidth = sizeInfo.displaySize.width.toInt();
+  //       final int outputHeight = sizeInfo.displaySize.height.toInt();
+  //       FlutterError.reportError(FlutterErrorDetails(
+  //         exception: 'Image $debugImageLabel has a display size of '
+  //             '$outputWidth×$outputHeight but a decode size of '
+  //             '${image.width}×${image.height}, which uses an additional '
+  //             '${overheadInKilobytes}KB (assuming a device pixel ratio of '
+  //             '$maxDevicePixelRatio).\n\n'
+  //             'Consider resizing the asset ahead of time, supplying a cacheWidth '
+  //             'parameter of $outputWidth, a cacheHeight parameter of '
+  //             '$outputHeight, or using a ResizeImage.',
+  //         library: 'painting library',
+  //         context: ErrorDescription('while painting an image'),
+  //       ));
+  //       // Invert the colors of the canvas.
+  //       canvas.saveLayer(
+  //         destinationRect,
+  //         Paint()
+  //           ..colorFilter = const ColorFilter.matrix(<double>[
+  //             -1,
+  //             0,
+  //             0,
+  //             0,
+  //             255,
+  //             0,
+  //             -1,
+  //             0,
+  //             0,
+  //             255,
+  //             0,
+  //             0,
+  //             -1,
+  //             0,
+  //             255,
+  //             0,
+  //             0,
+  //             0,
+  //             1,
+  //             0,
+  //           ]),
+  //       );
+  //       // Flip the canvas vertically.
+  //       final double dy = -(rect.top + rect.height / 2.0);
+  //       canvas.translate(0.0, -dy);
+  //       canvas.scale(1.0, -1.0);
+  //       canvas.translate(0.0, dy);
+  //       needClip = true;
+  //     }
+  //     return true;
+  //   }());
+  //   // Avoid emitting events that are the same as those emitted in the last frame.
+  //   if (!kReleaseMode && !_lastFrameImageSizeInfo.contains(sizeInfo)) {
+  //     final ImageSizeInfo? existingSizeInfo =
+  //         _pendingImageSizeInfo[sizeInfo.source];
+  //     if (existingSizeInfo == null ||
+  //         existingSizeInfo.displaySizeInBytes < sizeInfo.displaySizeInBytes) {
+  //       _pendingImageSizeInfo[sizeInfo.source!] = sizeInfo;
+  //     }
+  //     debugOnPaintImage?.call(sizeInfo);
+  //     SchedulerBinding.instance.addPostFrameCallback((Duration timeStamp) {
+  //       _lastFrameImageSizeInfo = _pendingImageSizeInfo.values.toSet();
+  //       if (_pendingImageSizeInfo.isEmpty) {
+  //         return;
+  //       }
+  //       developer.postEvent(
+  //         'Flutter.ImageSizesForFrame',
+  //         <String, Object>{
+  //           for (final ImageSizeInfo imageSizeInfo
+  //               in _pendingImageSizeInfo.values)
+  //             imageSizeInfo.source!: imageSizeInfo.toJson(),
+  //         },
+  //       );
+  //       _pendingImageSizeInfo = <String, ImageSizeInfo>{};
+  //     });
+  //   }
+  // }
   final bool needSave = repeat != ImageRepeat.noRepeat || flipHorizontally;
   if (needSave) {
     canvas.save();
@@ -199,12 +397,9 @@ void paintExtendedImage(
     if (repeat == ImageRepeat.noRepeat) {
       canvas.drawImageRect(image, sourceRect, destinationRect, paint);
     } else {
-      final ImageTilingInfo info =
-          createTilingInfo(repeat, rect, destinationRect, sourceRect);
-      final ImageShader shader = ImageShader(
-          image, info.tmx, info.tmy, info.transform.storage,
-          filterQuality: filterQuality);
-      canvas.drawRect(rect, paint..shader = shader);
+      for (final Rect tileRect
+          in _generateImageTileRects(rect, destinationRect, repeat))
+        canvas.drawImageRect(image, sourceRect, tileRect, paint);
     }
   } else {
     canvas.scale(1 / scale);
