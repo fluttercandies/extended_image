@@ -973,7 +973,7 @@ class _ExtendedImageState extends State<ExtendedImage>
           if (widget.borderRadius != null) {
             current = ClipRRect(
               child: current,
-              borderRadius: widget.borderRadius,
+              borderRadius: widget.borderRadius!,
               clipBehavior: widget.clipBehavior,
             );
           }

@@ -40,7 +40,7 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
       height: 150,
       child: LineChart(
         getData(),
-        swapAnimationDuration: const Duration(milliseconds: 250),
+        duration: const Duration(milliseconds: 250),
       ),
     );
   }

@@ -199,12 +199,10 @@ void paintExtendedImage(
     if (repeat == ImageRepeat.noRepeat) {
       canvas.drawImageRect(image, sourceRect, destinationRect, paint);
     } else {
-      final ImageTilingInfo info =
-          createTilingInfo(repeat, rect, destinationRect, sourceRect);
-      final ImageShader shader = ImageShader(
-          image, info.tmx, info.tmy, info.transform.storage,
-          filterQuality: filterQuality);
-      canvas.drawRect(rect, paint..shader = shader);
+      for (final Rect tileRect
+          in _generateImageTileRects(rect, destinationRect, repeat)) {
+        canvas.drawImageRect(image, sourceRect, tileRect, paint);
+      }
     }
   } else {
     canvas.scale(1 / scale);
