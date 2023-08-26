@@ -96,9 +96,10 @@ class _SimplePicsWiperState extends State<SimplePicsWiper> {
       GlobalKey<ExtendedImageSlidePageState>();
 
   final List<int> _cachedIndexes = <int>[];
+
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     final int index = widget.images.indexOf(widget.url);
     _preloadImage(index - 1);
     _preloadImage(index + 1);
