@@ -423,10 +423,10 @@ class ExtendedImageGesturePageViewState
     // _drag might be null if the drag activity ended and called _disposeDrag.
     assert(_hold == null || _drag == null);
     if (!widget.canScrollPage(extendedImageGestureState?.gestureDetails)) {
-      _drag!.end(DragEndDetails(primaryVelocity: 0.0));
+      _drag?.end(DragEndDetails(primaryVelocity: 0.0));
       return;
     }
-    _drag!.end(details);
+    _drag?.end(details);
     assert(_drag == null);
     // return;
     // DragEndDetails temp = details;

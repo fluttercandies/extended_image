@@ -1,3 +1,7 @@
+## 8.1.1
+
+* Fix issue with onDragEnd
+
 ## 8.1.0
 
 * Migrate to 3.13.0 
