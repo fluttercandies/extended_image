@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 
 /// A sliver that contains multiple box children that each fill the viewport.
 ///
-/// [ExtendedRenderSliverFillViewport] places its children in a linear array along the
+/// [RenderSliverFillViewport] places its children in a linear array along the
 /// main axis. Each child is sized to fill the viewport, both in the main and
 /// cross axis. A [viewportFraction] factor can be provided to size the children
 /// to a multiple of the viewport's main axis dimension (typically a fraction

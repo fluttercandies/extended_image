@@ -17,6 +17,7 @@ import 'gesture/slide_page.dart';
 import 'gesture/slide_page_handler.dart';
 
 /// extended image base on official
+/// [Image]
 class ExtendedImage extends StatefulWidget {
   ExtendedImage({
     Key? key,

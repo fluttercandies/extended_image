@@ -91,7 +91,12 @@ mixin DragGestureRecognizerMixin on _DragGestureRecognizer {
                 event.kind, gestureSettings?.touchSlop) &&
             // zmtzawqlp
             _shouldAccpet()) {
-          resolve(GestureDisposition.accepted);
+          _hasDragThresholdBeenMet = true;
+          if (_acceptedActivePointers.contains(event.pointer)) {
+            _checkDrag(event.pointer);
+          } else {
+            resolve(GestureDisposition.accepted);
+          }
         }
       }
     }

@@ -83,6 +83,9 @@ class MainPage extends StatelessWidget {
     routeNames.remove(Routes.fluttercandiesMainpage);
     routeNames.remove(Routes.fluttercandiesSlidepageitem);
     routeNames.remove(Routes.fluttercandiesDemogrouppage);
+    if (kIsWeb) {
+      routeNames.remove(Routes.fluttercandiesMemoryUsageDemo);
+    }
 
     routesGroup.addAll(groupBy<DemoRouteResult, String>(
         routeNames

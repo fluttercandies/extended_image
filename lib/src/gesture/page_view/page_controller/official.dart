@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 part 'page_position.dart';
 part 'page_controller.dart';
 
+/// [PageController]
 class _PageController extends ScrollController {
   /// Creates a page controller.
   ///
@@ -45,18 +46,18 @@ class _PageController extends ScrollController {
 
   /// The current page displayed in the controlled [PageView].
   ///
-  /// There are circumstances that this [_PageController] can't know the current
+  /// There are circumstances that this [PageController] can't know the current
   /// page. Reading [page] will throw an [AssertionError] in the following cases:
   ///
-  /// 1. No [PageView] is currently using this [_PageController]. Once a
-  /// [PageView] starts using this [_PageController], the new [page]
+  /// 1. No [PageView] is currently using this [PageController]. Once a
+  /// [PageView] starts using this [PageController], the new [page]
   /// position will be derived:
   ///
   ///   * First, based on the attached [PageView]'s [BuildContext] and the
   ///     position saved at that context's [PageStorage] if [keepPage] is true.
-  ///   * Second, from the [_PageController]'s [initialPage].
+  ///   * Second, from the [PageController]'s [initialPage].
   ///
-  /// 2. More than one [PageView] using the same [_PageController].
+  /// 2. More than one [PageView] using the same [PageController].
   ///
   /// The [hasClients] property can be used to check if a [PageView] is attached
   /// prior to accessing [page].
@@ -78,8 +79,6 @@ class _PageController extends ScrollController {
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
-  ///
-  /// The `duration` and `curve` arguments must not be null.
   Future<void> animateToPage(
     int page, {
     required Duration duration,
@@ -116,8 +115,6 @@ class _PageController extends ScrollController {
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
-  ///
-  /// The `duration` and `curve` arguments must not be null.
   Future<void> nextPage({required Duration duration, required Curve curve}) {
     return animateToPage(page!.round() + 1, duration: duration, curve: curve);
   }
@@ -126,8 +123,6 @@ class _PageController extends ScrollController {
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
-  ///
-  /// The `duration` and `curve` arguments must not be null.
   Future<void> previousPage(
       {required Duration duration, required Curve curve}) {
     return animateToPage(page!.round() - 1, duration: duration, curve: curve);

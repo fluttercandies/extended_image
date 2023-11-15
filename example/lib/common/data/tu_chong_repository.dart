@@ -40,7 +40,7 @@ class TuChongRepository extends LoadingMoreBase<TuChongItem> {
   }
 
   @override
-  Future<bool> loadData([bool isloadMoreAction = false]) async {
+  Future<bool> loadData([bool isLoadMoreAction = false]) async {
     String url = '';
     if (isEmpty) {
       url = 'https://api.tuchong.com/feed-app';

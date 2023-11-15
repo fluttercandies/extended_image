@@ -6,7 +6,7 @@ import '../utils.dart';
 import 'editor_utils.dart';
 
 ///
-///  create by zhoumaotuo on 2019/8/22
+///  create by zmtzawqlp on 2019/8/22
 ///
 
 enum _MoveType {
