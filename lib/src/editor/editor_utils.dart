@@ -41,6 +41,8 @@ class EditActionDetails {
     _cropAspectRatio = value;
   }
 
+  double? initialCropAspectRatio;
+
   ///image
   Rect? get screenDestinationRect => _screenDestinationRect;
 
