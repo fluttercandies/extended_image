@@ -50,10 +50,10 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
     final List<LineChartBarData> data = getLineData(now);
 
     return LineChartData(
-      lineTouchData: LineTouchData(
+      lineTouchData: const LineTouchData(
         touchTooltipData: LineTouchTooltipData(
-          tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
-        ),
+            // tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+            ),
         handleBuiltInTouches: true,
       ),
       gridData: const FlGridData(

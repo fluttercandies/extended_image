@@ -17,7 +17,7 @@ class FlatButtonWithIcon extends TextButton {
           focusNode: focusNode,
           style: textColor != null
               ? ButtonStyle(
-                  textStyle: MaterialStateProperty.all<TextStyle>(
+                  textStyle: WidgetStateProperty.all<TextStyle>(
                   TextStyle(color: textColor),
                 ))
               : null,

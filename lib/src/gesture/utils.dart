@@ -33,7 +33,7 @@ class Boundary {
   int get hashCode => Object.hash(left, right, top, bottom);
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     if (other.runtimeType != runtimeType) {
       return false;
     }
@@ -128,7 +128,7 @@ class GestureDetails {
       slidePageOffset);
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     if (other.runtimeType != runtimeType) {
       return false;
     }
