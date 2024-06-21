@@ -316,7 +316,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
   void handleScaleUpdate(ScaleUpdateDetails details) {
     if (extendedImageSlidePageState != null &&
         details.scale == 1.0 &&
-        (_gestureDetails!.totalScale ?? 1) <= 1 &&
+        _gestureDetails!.layoutRect!.size >= _gestureDetails!.destinationRect!.size &&
         _gestureDetails!.userOffset &&
         _gestureDetails!.actionType == ActionType.pan) {
       final Offset totalDelta = details.focalPointDelta;
