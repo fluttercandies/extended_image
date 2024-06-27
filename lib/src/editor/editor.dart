@@ -64,10 +64,17 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
               widget.extendedImageState.extendedImageInfo!.image.height;
     }
     _editActionDetails!.cropAspectRatio = _editorConfig!.cropAspectRatio;
+    _editActionDetails!.initialCropAspectRatio =
+        _editorConfig!.initialCropAspectRatio;
 
     if (_editorConfig!.cropAspectRatio != null &&
         _editorConfig!.cropAspectRatio! <= 0) {
       _editActionDetails!.cropAspectRatio =
+          _editActionDetails!.originalAspectRatio;
+    }
+    if (_editorConfig!.initialCropAspectRatio != null &&
+        _editorConfig!.initialCropAspectRatio! <= 0) {
+      _editActionDetails!.initialCropAspectRatio =
           _editActionDetails!.originalAspectRatio;
     }
   }
@@ -197,10 +204,10 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
         _editActionDetails!.cropAspectRatio!,
       );
     }
-    if (_editorConfig!.initialCropAspectRatio != null) {
+    if (_editActionDetails!.initialCropAspectRatio != null) {
       return _calculateCropRectFromAspectRatio(
         rect,
-        _editorConfig!.initialCropAspectRatio!,
+        _editActionDetails!.initialCropAspectRatio!,
       );
     }
     return _editActionDetails!.getRectWithScale(rect);
