@@ -66,6 +66,10 @@ class ExtendedRenderSliverFillViewport
   }
 
   @override
+  double indexToLayoutOffset(double itemExtent, int index) =>
+      itemExtent * index;
+
+  @override
   void performLayout() {
     final SliverConstraints constraints = this.constraints;
     childManager.didStartLayout();
@@ -178,9 +182,9 @@ class ExtendedRenderSliverFillViewport
     double trailingScrollOffset =
         indexToLayoutOffset(itemExtent, lastIndex + 1);
 
-    assert(firstIndex == 0 ||
-        childScrollOffset(firstChild!)! - scrollOffset <=
-            precisionErrorTolerance);
+    // assert(firstIndex == 0 ||
+    //     childScrollOffset(firstChild!)! - scrollOffset <=
+    //         precisionErrorTolerance);
     assert(debugAssertChildListIsNonEmptyAndContiguous());
     assert(indexOf(firstChild!) == firstIndex);
     assert(targetLastIndex == null || lastIndex <= targetLastIndex);

@@ -1,3 +1,7 @@
+## 8.2.2
+
+* Fix issue that pageSpacing not work as expected after flutter 3.22.0 (#692)
+
 ## 8.2.1
 
 * dart fix
