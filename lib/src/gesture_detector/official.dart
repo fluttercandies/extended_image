@@ -31,7 +31,7 @@ enum _DragState {
 ///  * [HorizontalDragGestureRecognizer], for left and right drags.
 ///  * [VerticalDragGestureRecognizer], for up and down drags.
 ///  * [PanGestureRecognizer], for drags that are not locked to a single axis.
-abstract class _DragGestureRecognizer extends DragGestureRecognizer {
+abstract class _DragGestureRecognizer extends OneSequenceGestureRecognizer {
   /// Initialize the object.
   ///
   /// [dragStartBehavior] must not be null.
@@ -80,7 +80,6 @@ abstract class _DragGestureRecognizer extends DragGestureRecognizer {
   /// callback will be called with position (500.0, 500.0). If it is
   /// instead set to [DragStartBehavior.start], [onStart] will be called with
   /// position (510.0, 500.0).
-  @override
   DragStartBehavior dragStartBehavior;
 
   /// A pointer has contacted the screen with a primary button and might begin
@@ -93,7 +92,6 @@ abstract class _DragGestureRecognizer extends DragGestureRecognizer {
   ///
   ///  * [allowedButtonsFilter], which decides which button will be allowed.
   ///  * [DragDownDetails], which is passed as an argument to this callback.
-  @override
   GestureDragDownCallback? onDown;
 
   /// {@template flutter.gestures.monodrag.DragGestureRecognizer.onStart}
@@ -109,7 +107,6 @@ abstract class _DragGestureRecognizer extends DragGestureRecognizer {
   ///
   ///  * [allowedButtonsFilter], which decides which button will be allowed.
   ///  * [DragStartDetails], which is passed as an argument to this callback.
-  @override
   GestureDragStartCallback? onStart;
 
   /// {@template flutter.gestures.monodrag.DragGestureRecognizer.onUpdate}
@@ -132,7 +129,6 @@ abstract class _DragGestureRecognizer extends DragGestureRecognizer {
   ///
   ///  * [allowedButtonsFilter], which decides which button will be allowed.
   ///  * [DragUpdateDetails], which is passed as an argument to this callback.
-  @override
   GestureDragUpdateCallback? onUpdate;
 
   /// {@template flutter.gestures.monodrag.DragGestureRecognizer.onEnd}
@@ -156,7 +152,6 @@ abstract class _DragGestureRecognizer extends DragGestureRecognizer {
   ///
   ///  * [allowedButtonsFilter], which decides which button will be allowed.
   ///  * [DragEndDetails], which is passed as an argument to this callback.
-  @override
   GestureDragEndCallback? onEnd;
 
   /// The pointer that previously triggered [onDown] did not complete.
@@ -164,7 +159,6 @@ abstract class _DragGestureRecognizer extends DragGestureRecognizer {
   /// See also:
   ///
   ///  * [allowedButtonsFilter], which decides which button will be allowed.
-  @override
   GestureDragCancelCallback? onCancel;
 
   /// The minimum distance an input pointer drag must have moved
@@ -172,7 +166,6 @@ abstract class _DragGestureRecognizer extends DragGestureRecognizer {
   ///
   /// This value is typically compared with the distance traveled along the
   /// scrolling axis. If null then [kTouchSlop] is used.
-  @override
   double? minFlingDistance;
 
   /// The minimum velocity for an input pointer drag to be considered fling.
@@ -180,13 +173,11 @@ abstract class _DragGestureRecognizer extends DragGestureRecognizer {
   /// This value is typically compared with the magnitude of fling gesture's
   /// velocity along the scrolling axis. If null then [kMinFlingVelocity]
   /// is used.
-  @override
   double? minFlingVelocity;
 
   /// Fling velocity magnitudes will be clamped to this value.
   ///
   /// If null then [kMaxFlingVelocity] is used.
-  @override
   double? maxFlingVelocity;
 
   /// Whether the drag threshold should be met before dispatching any drag callbacks.
@@ -206,7 +197,6 @@ abstract class _DragGestureRecognizer extends DragGestureRecognizer {
   /// has won the arena.
   ///
   /// This value defaults to false.
-  @override
   bool onlyAcceptDragOnThreshold;
 
   /// Determines the type of velocity estimation method to use for a potential
@@ -231,7 +221,6 @@ abstract class _DragGestureRecognizer extends DragGestureRecognizer {
   ///  * [IOSScrollViewFlingVelocityTracker], a specialized velocity tracker for
   ///    determining the initial fling velocity for a [Scrollable] on iOS, to
   ///    match the native behavior on that platform.
-  @override
   GestureVelocityTrackerBuilder velocityTrackerBuilder;
 
   _DragState _state = _DragState.ready;
@@ -246,7 +235,6 @@ abstract class _DragGestureRecognizer extends DragGestureRecognizer {
   ///
   /// This getter is intended for use in framework unit tests. Applications must
   /// not depend on its value.
-  @override
   @visibleForTesting
   Duration? get debugLastPendingEventTimestamp {
     Duration? lastPendingEventTimestamp;
@@ -273,7 +261,6 @@ abstract class _DragGestureRecognizer extends DragGestureRecognizer {
   /// A fling calls its gesture end callback with a velocity, allowing the
   /// provider of the callback to respond by carrying the gesture forward with
   /// inertia, for example.
-  @override
   bool isFlingGesture(VelocityEstimate estimate, PointerDeviceKind kind);
 
   /// Determines if a gesture is a fling or not, and if so its effective velocity.

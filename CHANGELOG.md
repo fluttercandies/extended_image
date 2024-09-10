@@ -1,3 +1,7 @@
+## 8.2.3
+
+* fix _DragGestureRecognizer build error after https://github.com/flutter/flutter/pull/151627
+
 ## 8.2.2
 
 * Fix issue that pageSpacing not work as expected after flutter 3.22.0 (#692)
