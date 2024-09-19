@@ -515,7 +515,10 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                           return ExtendedImageGesture(
                             state,
                             canScaleImage: (_) => _imageDetailY == 0,
-                            imageBuilder: (Widget image) {
+                            imageBuilder: (
+                              Widget image, {
+                              ExtendedImageGestureState? imageGestureState,
+                            }) {
                               return Stack(
                                 children: <Widget>[
                                   Positioned.fill(

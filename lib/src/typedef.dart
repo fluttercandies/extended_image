@@ -89,7 +89,10 @@ typedef EditorMaskColorHandler = Color Function(
 typedef HeroBuilderForSlidingPage = Widget Function(Widget widget);
 
 /// Build image for gesture, we can handle custom Widget about gesture
-typedef ImageBuilderForGesture = Widget Function(Widget image);
+typedef ImageBuilderForGesture = Widget Function(
+  Widget image, {
+  ExtendedImageGestureState? imageGestureState,
+});
 
 /// Whether should scale image
 typedef CanScaleImage = bool Function(GestureDetails? details);

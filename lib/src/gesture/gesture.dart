@@ -1,3 +1,4 @@
+import 'package:extended_image/src/editor/editor_utils.dart';
 import 'package:extended_image/src/gesture/utils.dart';
 
 import 'package:extended_image/src/image/raw_image.dart';
@@ -109,7 +110,11 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       }
     }
 
-    image = widget.imageBuilder?.call(image) ?? image;
+    image = widget.imageBuilder?.call(
+          image,
+          imageGestureState: this,
+        ) ??
+        image;
 
     image = GestureDetector(
       onScaleStart: handleScaleStart,
@@ -480,5 +485,89 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     } else {
       return scaleDetal;
     }
+  }
+
+  Widget wrapGestureWidget(Widget child) {
+    if (extendedImageSlidePageState != null) {
+      child = widget.extendedImageState.imageWidget.heroBuilderForSlidingPage
+              ?.call(child) ??
+          child;
+      if (extendedImageSlidePageState!.widget.slideType ==
+          SlideType.onlyImage) {
+        child = Transform.translate(
+          offset: extendedImageSlidePageState!.offset,
+          child: Transform.scale(
+            scale: extendedImageSlidePageState!.scale,
+            child: child,
+          ),
+        );
+      }
+    }
+
+    return ClipRect(
+      child: CustomSingleChildLayout(
+        delegate: GestureWidgetDelegate(
+          this,
+        ),
+        child: child,
+      ),
+    );
+  }
+}
+
+class GestureWidgetDelegate extends SingleChildLayoutDelegate {
+  GestureWidgetDelegate(this.state);
+
+  final ExtendedImageGestureState state;
+  Rect? rect;
+  @override
+  Offset getPositionForChild(Size size, Size childSize) {
+    return (rect ??= _getRect(size)).topLeft;
+  }
+
+  @override
+  bool shouldRelayout(GestureWidgetDelegate oldDelegate) {
+    return rect != oldDelegate.rect;
+  }
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
+    return BoxConstraints.tight((rect ??= _getRect(constraints.biggest)).size);
+  }
+
+  @override
+  Size getSize(BoxConstraints constraints) {
+    rect = _getRect(constraints.biggest);
+    return super.getSize(constraints);
+  }
+
+  Rect _getRect(Size size) {
+    final GestureDetails? gestureDetails = state.gestureDetails;
+    Rect rect = Offset.zero & size;
+    if (gestureDetails != null && gestureDetails.slidePageOffset != null) {
+      rect = rect.shift(-gestureDetails.slidePageOffset!);
+    }
+
+    Rect destinationRect = getDestinationRect(
+      rect: rect,
+      inputSize: Size(
+        state.widget.extendedImageState.extendedImageInfo!.image.width
+            .toDouble(),
+        state.widget.extendedImageState.extendedImageInfo!.image.height
+            .toDouble(),
+      ),
+      fit: state.widget.extendedImageState.imageWidget.fit,
+    );
+
+    if (gestureDetails != null) {
+      destinationRect =
+          gestureDetails.calculateFinalDestinationRect(rect, destinationRect);
+
+      if (gestureDetails.slidePageOffset != null) {
+        destinationRect =
+            destinationRect.shift(gestureDetails.slidePageOffset!);
+      }
+    }
+    return destinationRect;
   }
 }
