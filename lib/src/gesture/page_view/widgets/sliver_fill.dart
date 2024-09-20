@@ -158,8 +158,9 @@ class _RenderSliverFractionalPadding extends RenderSliverEdgeInsetsPadding {
   }
 
   void _resolve() {
-    if (_resolvedPadding != null && _lastResolvedConstraints == constraints)
+    if (_resolvedPadding != null && _lastResolvedConstraints == constraints) {
       return;
+    }
 
     assert(constraints.axis != null);
     final double paddingValue =
