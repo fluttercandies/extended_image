@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 
-@FFArgumentImport()
+@FFAutoImport()
 import 'package:example/common/data/tu_chong_source.dart' hide asT;
-@FFArgumentImport()
+@FFAutoImport()
 import 'package:example/common/model/pic_swiper_item.dart';
 // import 'package:example/common/text/my_extended_text_selection_controls.dart';
 // import 'package:example/common/text/my_special_text_span_builder.dart';

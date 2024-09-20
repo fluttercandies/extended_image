@@ -40,13 +40,13 @@ FFRouteSettings getRouteSettings({
   final Map<String, dynamic> safeArguments =
       arguments ?? const <String, dynamic>{};
   switch (name) {
-    case 'fluttercandies://LivePhotoPage':
+    case 'fluttercandies://LivePhotoDemo':
       return FFRouteSettings(
         name: name,
         arguments: arguments,
-        builder: () => LivePhotoPage(),
-        routeName: 'LivePhotoPage',
-        description: 'Simple demo for PhotoView.',
+        builder: () => LivePhotoDemo(),
+        routeName: 'LivePhoto',
+        description: 'a live photho demo.',
         exts: <String, dynamic>{
           'group': 'Complex',
           'order': 5,

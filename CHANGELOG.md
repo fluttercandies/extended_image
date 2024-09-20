@@ -1,3 +1,9 @@
+## 8.3.0
+
+* Add [imageGestureState] parameter for ImageBuilderForGesture call back, add [wrapGestureWidget] method for [ExtendedImageGestureState] and add [GestureWidgetDelegate]. All of them are using to build a custom gesture widget when the image is in ExtendedImageMode.gesture mode.
+
+* Add Live Photo Demo to show how to use the new feature.
+
 ## 8.2.4
 
 * Fix issue that pageSpacing not work as expected after flutter 3.22.0 (#692)

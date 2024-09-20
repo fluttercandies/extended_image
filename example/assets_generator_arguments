@@ -1,1 +1,1 @@
--s --no-watch
+-s --no-watch --const-array

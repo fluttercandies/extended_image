@@ -31,8 +31,7 @@ dependency_overrides:
   extended_image:
     path: ../
   path_provider: ^2.0.15 
-  photo_manager: 3.0.0-dev.1
-  wechat_assets_picker: 8.9.0-dev.1
+ 
   # extended_image_library:
   #   path: ../../extended_image_library  
 flutter:
@@ -47,5 +46,6 @@ flutter:
   # **************************************************************************
 
     - assets/
+    - assets/live_photo/
 
   # assets end

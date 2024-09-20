@@ -11,22 +11,23 @@ import 'package:path/path.dart' as path;
 import 'package:video_player/video_player.dart';
 
 @FFRoute(
-  name: 'fluttercandies://LivePhotoPage',
-  routeName: 'LivePhotoPage',
-  description: 'Simple demo for PhotoView.',
+  name: 'fluttercandies://LivePhotoDemo',
+  routeName: 'LivePhoto',
+  description: 'a live photho demo.',
   exts: <String, dynamic>{
     'group': 'Complex',
     'order': 5,
   },
 )
-class LivePhotoPage extends StatefulWidget {
+class LivePhotoDemo extends StatefulWidget {
   @override
-  _LivePhotoPageState createState() => _LivePhotoPageState();
+  _LivePhotoDemoState createState() => _LivePhotoDemoState();
 }
 
-class _LivePhotoPageState extends State<LivePhotoPage> {
+class _LivePhotoDemoState extends State<LivePhotoDemo> {
   List<String> images = <String>[
-    Assets.assets_c8abd91c6f1a5dbf4e4cc6811b0173d8_jpg,
+    Assets.assets_live_photo_1_jpg,
+    Assets.assets_live_photo_2_jpg,
     'https://photo.tuchong.com/14649482/f/601672690.jpg',
     'https://photo.tuchong.com/17325605/f/641585173.jpg',
     'https://photo.tuchong.com/3541468/f/256561232.jpg',
@@ -260,8 +261,16 @@ class _LivePhotoPicsWiperState extends State<LivePhotoPicsWiper> {
                       String assetName =
                           (state.imageProvider as ExtendedAssetImageProvider)
                               .assetName;
-                      assetName = assetName.replaceAll(
-                          path.extension(assetName), '.mov');
+                      final String fileName =
+                          assetName.replaceAll(path.extension(assetName), '');
+                      for (final String element in assetsArray) {
+                        if (element.startsWith(fileName) &&
+                            element != assetName) {
+                          assetName = element;
+                          break;
+                        }
+                      }
+
                       return LivePhotoWidget(
                         videoUrl: assetName,
                         fit: _fit,

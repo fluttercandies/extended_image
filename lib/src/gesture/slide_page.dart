@@ -256,8 +256,10 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   }
 
   void popPage() {
-    setState(() {
-      _popping = true;
-    });
+    if (mounted) {
+      setState(() {
+        _popping = true;
+      });
+    }
   }
 }

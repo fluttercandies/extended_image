@@ -13,13 +13,6 @@ class Assets {
   /// {@macro assets_generator.assets_avatar_jpg.preview}
   static const String assets_avatar_jpg = 'assets/avatar.jpg';
 
-  /// {@macro assets_generator.assets_c8abd91c6f1a5dbf4e4cc6811b0173d8_jpg.preview}
-  static const String assets_c8abd91c6f1a5dbf4e4cc6811b0173d8_jpg =
-      'assets/c8abd91c6f1a5dbf4e4cc6811b0173d8.JPG';
-
-  static const String assets_c8abd91c6f1a5dbf4e4cc6811b0173d8_mov =
-      'assets/c8abd91c6f1a5dbf4e4cc6811b0173d8.mov';
-
   /// {@macro assets_generator.assets_failed_jpg.preview}
   static const String assets_failed_jpg = 'assets/failed.jpg';
 
@@ -30,6 +23,16 @@ class Assets {
   /// {@macro assets_generator.assets_image_jpg.preview}
   static const String assets_image_jpg = 'assets/image.jpg';
 
+  /// {@macro assets_generator.assets_live_photo_1_jpg.preview}
+  static const String assets_live_photo_1_jpg = 'assets/live_photo/1.jpg';
+
+  static const String assets_live_photo_1_mp4 = 'assets/live_photo/1.mp4';
+
+  /// {@macro assets_generator.assets_live_photo_2_jpg.preview}
+  static const String assets_live_photo_2_jpg = 'assets/live_photo/2.jpg';
+
+  static const String assets_live_photo_2_mp4 = 'assets/live_photo/2.mp4';
+
   /// {@macro assets_generator.assets_loading_gif.preview}
   static const String assets_loading_gif = 'assets/loading.gif';
 
@@ -39,3 +42,37 @@ class Assets {
   /// {@macro assets_generator.assets_sun_glasses_png.preview}
   static const String assets_sun_glasses_png = 'assets/sun_glasses.png';
 }
+
+final List<String> assetsArray = <String>[
+  /// {@macro assets_generator.assets_40_png.preview}
+  Assets.assets_40_png,
+
+  /// {@macro assets_generator.assets_avatar_jpg.preview}
+  Assets.assets_avatar_jpg,
+
+  /// {@macro assets_generator.assets_failed_jpg.preview}
+  Assets.assets_failed_jpg,
+
+  /// {@macro assets_generator.assets_fluttercandies_grey_png.preview}
+  Assets.assets_fluttercandies_grey_png,
+
+  /// {@macro assets_generator.assets_image_jpg.preview}
+  Assets.assets_image_jpg,
+
+  /// {@macro assets_generator.assets_live_photo_1_jpg.preview}
+  Assets.assets_live_photo_1_jpg,
+  Assets.assets_live_photo_1_mp4,
+
+  /// {@macro assets_generator.assets_live_photo_2_jpg.preview}
+  Assets.assets_live_photo_2_jpg,
+  Assets.assets_live_photo_2_mp4,
+
+  /// {@macro assets_generator.assets_loading_gif.preview}
+  Assets.assets_loading_gif,
+
+  /// {@macro assets_generator.assets_love_png.preview}
+  Assets.assets_love_png,
+
+  /// {@macro assets_generator.assets_sun_glasses_png.preview}
+  Assets.assets_sun_glasses_png,
+];
