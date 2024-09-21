@@ -370,21 +370,6 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
     widget.gestureDetailsIsChanging.addListener(_onGestureDetailsIsChanged);
   }
 
-  // @override
-  // void onForeground() {
-  //   _controller = VideoPlayerController.asset(
-  //     widget.videoUrl,
-  //   );
-  //   _controller.initialize();
-  // }
-
-  // @override
-  // Future<void> onBackground() async {
-  //   _controller.removeListener(_notfiy);
-  //   await _controller.pause();
-  //   await _controller.dispose();
-  // }
-
   Future<void> _onGestureDetailsIsChanged() async {
     if (!_showVideo.value) {
       return;
@@ -482,9 +467,36 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
               builder: (BuildContext b, bool showVideo, Widget? child) {
                 late Widget child;
                 if (showVideo) {
-                  child = imageGestureState!.wrapGestureWidget(
-                    VideoPlayer(_controller),
-                  );
+                  final Size size = MediaQuery.of(context).size;
+
+                  final double aspectRatio =
+                      widget.state.extendedImageInfo!.image.width /
+                          widget.state.extendedImageInfo!.image.height;
+
+                  child = VideoPlayer(_controller);
+
+                  if (_controller.value.aspectRatio != aspectRatio) {
+                    final Rect widgetDestinationRect =
+                        GestureWidgetDelegateFromState.getRectFormState(
+                      Offset.zero & size,
+                      imageGestureState!,
+                      width: _controller.value.size.width,
+                      height: _controller.value.size.height,
+                      copy: true,
+                    );
+                    child = FittedBox(
+                      child: SizedBox(
+                        child: child,
+                        width: widgetDestinationRect.width,
+                        height: widgetDestinationRect.height,
+                      ),
+                      fit: BoxFit.cover,
+                      clipBehavior: Clip.hardEdge,
+                    );
+                  }
+
+                  child = imageGestureState!.wrapGestureWidget(child);
+
                   // _buildVideo method is the same as wrapGestureWidget
                   // if you want to custom your own, you can use _buildVideo
                   // child = _buildVideo(imageGestureState);
@@ -523,11 +535,11 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
                     ],
                   );
                 }
-
-                return AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 200),
-                  child: child,
-                );
+                return child;
+                // return AnimatedSwitcher(
+                //   duration: const Duration(milliseconds: 200),
+                //   child: child,
+                // );
               },
               child: image,
             );
@@ -567,6 +579,30 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
           ),
         );
       }
+    }
+    final double aspectRatio = widget.state.extendedImageInfo!.image.width /
+        widget.state.extendedImageInfo!.image.height;
+
+    child = VideoPlayer(_controller);
+
+    if (_controller.value.aspectRatio != aspectRatio) {
+      final Rect widgetDestinationRect =
+          GestureWidgetDelegateFromState.getRectFormState(
+        Offset.zero & size,
+        imageGestureState,
+        width: _controller.value.size.width,
+        height: _controller.value.size.height,
+        copy: true,
+      );
+      child = FittedBox(
+        child: SizedBox(
+          child: child,
+          width: widgetDestinationRect.width,
+          height: widgetDestinationRect.height,
+        ),
+        fit: BoxFit.cover,
+        clipBehavior: Clip.hardEdge,
+      );
     }
 
     return ClipRect(

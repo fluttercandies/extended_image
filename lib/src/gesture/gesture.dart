@@ -196,7 +196,8 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     gestureDetails = GestureDetails(
       totalScale: _gestureConfig!.initialScale,
       offset: Offset.zero,
-    )..initialAlignment = _gestureConfig!.initialAlignment;
+      initialAlignment: _gestureConfig!.initialAlignment,
+    );
   }
 
   void slide() {
@@ -449,7 +450,8 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       _gestureDetails = GestureDetails(
         totalScale: _gestureConfig!.initialScale,
         offset: Offset.zero,
-      )..initialAlignment = _gestureConfig!.initialAlignment;
+        initialAlignment: _gestureConfig!.initialAlignment,
+      );
     }
 
     if (_gestureConfig!.cacheGesture) {
@@ -510,17 +512,15 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       }
     }
 
-    return ClipRect(
-      child: CustomSingleChildLayout(
-        delegate: GestureWidgetDelegateFromState(
-          this,
-          imageWidth: imageWidth,
-          imageHeight: imageHeight,
-          imageFit: imageFit,
-          rect: rect,
-        ),
-        child: child,
+    return CustomSingleChildLayout(
+      delegate: GestureWidgetDelegateFromState(
+        this,
+        imageWidth: imageWidth,
+        imageHeight: imageHeight,
+        imageFit: imageFit,
+        rect: rect,
       ),
+      child: child,
     );
   }
 }
@@ -555,10 +555,11 @@ class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
 
   @override
   bool shouldRelayout(GestureWidgetDelegateFromState oldDelegate) {
-    return destinationRect != oldDelegate.destinationRect &&
-        imageWidth != oldDelegate.imageWidth &&
-        imageHeight != oldDelegate.imageHeight &&
-        imageFit != oldDelegate.imageFit;
+    return destinationRect != oldDelegate.destinationRect ||
+        imageWidth != oldDelegate.imageWidth ||
+        imageHeight != oldDelegate.imageHeight ||
+        imageFit != oldDelegate.imageFit ||
+        rect != oldDelegate.rect;
   }
 
   @override
@@ -592,6 +593,7 @@ class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
     double? width,
     double? height,
     BoxFit? fit,
+    bool copy = false,
   }) {
     final GestureDetails? gestureDetails = state.gestureDetails;
 
@@ -613,12 +615,14 @@ class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
     );
 
     if (gestureDetails != null) {
-      destinationRect =
-          gestureDetails.calculateFinalDestinationRect(rect, destinationRect);
+      GestureDetails gd = gestureDetails;
+      if (copy) {
+        gd = gestureDetails.copy();
+      }
+      destinationRect = gd.calculateFinalDestinationRect(rect, destinationRect);
 
-      if (gestureDetails.slidePageOffset != null) {
-        destinationRect =
-            destinationRect.shift(gestureDetails.slidePageOffset!);
+      if (gd.slidePageOffset != null) {
+        destinationRect = destinationRect.shift(gd.slidePageOffset!);
       }
     }
     return destinationRect;
