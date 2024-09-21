@@ -5,6 +5,7 @@ import 'package:example/common/widget/hero.dart';
 import 'package:example/example_routes.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
+import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:path/path.dart' as path;
@@ -93,15 +94,40 @@ class _LivePhotoDemoState extends State<LivePhotoDemo> {
                     } else {
                       image = ExtendedAssetImageProvider(url);
                     }
+
+                    final Widget imageWidget = ExtendedImage(
+                      image: image,
+                      fit: BoxFit.cover,
+                      loadStateChanged: (ExtendedImageState state) {
+                        if (state.extendedImageLoadState ==
+                                LoadState.completed &&
+                            !url.startsWith('https')) {
+                          return Stack(
+                            children: <Widget>[
+                              Positioned.fill(child: state.completedWidget),
+                              const Positioned(
+                                left: 5,
+                                bottom: 5,
+                                child: Text(
+                                  'Live',
+                                  style: TextStyle(
+                                      color: Colors.pink, fontSize: 12),
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+
+                        return null;
+                      },
+                    );
+
                     return GestureDetector(
                       child: AspectRatio(
                         aspectRatio: 1.0,
                         child: Hero(
                           tag: url,
-                          child: ExtendedImage(
-                            image: image,
-                            fit: BoxFit.cover,
-                          ),
+                          child: imageWidget,
                         ),
                       ),
                       onTap: () {
@@ -229,59 +255,60 @@ class _LivePhotoPicsWiperState extends State<LivePhotoPicsWiper> {
                 image = ExtendedAssetImageProvider(url);
               }
 
+              final Widget imageWidget = ExtendedImage(
+                image: image,
+                fit: _fit,
+                mode: ExtendedImageMode.gesture,
+                enableSlideOutPage: true,
+                initGestureConfigHandler: (ExtendedImageState state) {
+                  return GestureConfig(
+                    //you must set inPageView true if you want to use ExtendedImageGesturePageView
+                    inPageView: true,
+                    initialScale: 1.0,
+                    maxScale: 5.0,
+                    animationMaxScale: 6.0,
+                    initialAlignment: InitialAlignment.center,
+                    gestureDetailsIsChanged: widget.stopPlayLivePhotoWhenGesture
+                        ? (GestureDetails? details) {
+                            _gestureDetailsIsChanging.value = true;
+                            _gestureDetailsChangeCompleted();
+                          }
+                        : null,
+                  );
+                },
+                loadStateChanged: (ExtendedImageState state) {
+                  if (state.extendedImageLoadState == LoadState.completed &&
+                      state.imageProvider is ExtendedAssetImageProvider) {
+                    String assetName =
+                        (state.imageProvider as ExtendedAssetImageProvider)
+                            .assetName;
+                    final String fileName =
+                        assetName.replaceAll(path.extension(assetName), '');
+                    for (final String element in assetsArray) {
+                      if (element.startsWith(fileName) &&
+                          element != assetName) {
+                        assetName = element;
+                        break;
+                      }
+                    }
+
+                    return LivePhotoWidget(
+                      videoUrl: assetName,
+                      fit: _fit,
+                      state: state,
+                      isSliding: _isSliding,
+                      gestureDetailsIsChanging: _gestureDetailsIsChanging,
+                    );
+                  }
+                  return null;
+                },
+              );
+
               return HeroWidget(
                 tag: url,
                 slideType: SlideType.wholePage,
                 slidePagekey: slidePagekey,
-                child: ExtendedImage(
-                  image: image,
-                  fit: _fit,
-                  mode: ExtendedImageMode.gesture,
-                  enableSlideOutPage: true,
-                  initGestureConfigHandler: (ExtendedImageState state) {
-                    return GestureConfig(
-                      //you must set inPageView true if you want to use ExtendedImageGesturePageView
-                      inPageView: true,
-                      initialScale: 1.0,
-                      maxScale: 5.0,
-                      animationMaxScale: 6.0,
-                      initialAlignment: InitialAlignment.center,
-                      gestureDetailsIsChanged:
-                          widget.stopPlayLivePhotoWhenGesture
-                              ? (GestureDetails? details) {
-                                  _gestureDetailsIsChanging.value = true;
-                                  _gestureDetailsChangeCompleted();
-                                }
-                              : null,
-                    );
-                  },
-                  loadStateChanged: (ExtendedImageState state) {
-                    if (state.extendedImageLoadState == LoadState.completed &&
-                        state.imageProvider is ExtendedAssetImageProvider) {
-                      String assetName =
-                          (state.imageProvider as ExtendedAssetImageProvider)
-                              .assetName;
-                      final String fileName =
-                          assetName.replaceAll(path.extension(assetName), '');
-                      for (final String element in assetsArray) {
-                        if (element.startsWith(fileName) &&
-                            element != assetName) {
-                          assetName = element;
-                          break;
-                        }
-                      }
-
-                      return LivePhotoWidget(
-                        videoUrl: assetName,
-                        fit: _fit,
-                        state: state,
-                        isSliding: _isSliding,
-                        gestureDetailsIsChanging: _gestureDetailsIsChanging,
-                      );
-                    }
-                    return null;
-                  },
-                ),
+                child: imageWidget,
               );
             },
           ),
@@ -343,6 +370,21 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
     widget.gestureDetailsIsChanging.addListener(_onGestureDetailsIsChanged);
   }
 
+  // @override
+  // void onForeground() {
+  //   _controller = VideoPlayerController.asset(
+  //     widget.videoUrl,
+  //   );
+  //   _controller.initialize();
+  // }
+
+  // @override
+  // Future<void> onBackground() async {
+  //   _controller.removeListener(_notfiy);
+  //   await _controller.pause();
+  //   await _controller.dispose();
+  // }
+
   Future<void> _onGestureDetailsIsChanged() async {
     if (!_showVideo.value) {
       return;
@@ -372,6 +414,7 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
   }
 
   Future<void> _notfiy() async {
+    // finish and change to image ui
     if (_controller.value.position >= _controller.value.duration) {
       await _controller.pause();
       await _controller.seekTo(Duration.zero);
@@ -394,9 +437,10 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
   void dispose() {
     widget.gestureDetailsIsChanging.removeListener(_onGestureDetailsIsChanged);
     widget.isSliding.removeListener(_isSlidingChanged);
-    _controller.pause();
     _controller.removeListener(_notfiy);
+    _controller.pause();
     _controller.dispose();
+
     super.dispose();
   }
 
@@ -436,15 +480,54 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
             return ValueListenableBuilder<bool>(
               valueListenable: _showVideo,
               builder: (BuildContext b, bool showVideo, Widget? child) {
+                late Widget child;
                 if (showVideo) {
-                  return imageGestureState!.wrapGestureWidget(
+                  child = imageGestureState!.wrapGestureWidget(
                     VideoPlayer(_controller),
                   );
                   // _buildVideo method is the same as wrapGestureWidget
                   // if you want to custom your own, you can use _buildVideo
-                  // return _buildVideo(imageGestureState);
+                  // child = _buildVideo(imageGestureState);
                 }
-                return image;
+                // zooming has no live mark logo
+                else if (imageGestureState?.gestureDetails?.totalScale !=
+                    imageGestureState?.imageGestureConfig?.initialScale) {
+                  child = image;
+                } else {
+                  // live mark logo
+                  final Size size = MediaQuery.of(context).size;
+
+                  final Rect destinationRect =
+                      GestureWidgetDelegateFromState.getRectFormState(
+                    Offset.zero & size,
+                    imageGestureState!,
+                  );
+
+                  // add mark live
+                  child = Stack(
+                    children: <Widget>[
+                      Positioned.fromRect(
+                        rect: destinationRect,
+                        child: image,
+                      ),
+                      Positioned.fromRect(
+                        rect: destinationRect.shift(const Offset(5, -5)),
+                        child: const Align(
+                          child: Text(
+                            'Live',
+                            style: TextStyle(color: Colors.pink, fontSize: 20),
+                          ),
+                          alignment: Alignment.bottomLeft,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: child,
+                );
               },
               child: image,
             );
@@ -456,42 +539,23 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
 
   // ignore: unused_element
   Widget _buildVideo(ExtendedImageGestureState? imageGestureState) {
-    final GestureDetails? gestureDetails = imageGestureState?.gestureDetails;
-
     // The image to render into the area rect.
     // in demo case, it is the page size.
     // and you can also get it from LayoutBuilder base on your case.
     final Size size = MediaQuery.of(context).size;
-    Rect rect = Offset.zero & size;
-    if (gestureDetails != null && gestureDetails.slidePageOffset != null) {
-      rect = rect.shift(-gestureDetails.slidePageOffset!);
-    }
 
-    Rect destinationRect = getDestinationRect(
-      rect: rect,
-      inputSize: Size(
-        widget.state.extendedImageInfo!.image.width.toDouble(),
-        widget.state.extendedImageInfo!.image.height.toDouble(),
-      ),
-      fit: widget.fit,
+    final Rect destinationRect =
+        GestureWidgetDelegateFromState.getRectFormState(
+      Offset.zero & size,
+      imageGestureState!,
     );
-
-    if (gestureDetails != null) {
-      destinationRect =
-          gestureDetails.calculateFinalDestinationRect(rect, destinationRect);
-
-      if (gestureDetails.slidePageOffset != null) {
-        destinationRect =
-            destinationRect.shift(gestureDetails.slidePageOffset!);
-      }
-    }
     final ExtendedImageSlidePageState? extendedImageSlidePageState =
-        imageGestureState?.extendedImageSlidePageState;
+        imageGestureState.extendedImageSlidePageState;
 
     Widget child = VideoPlayer(_controller);
     if (extendedImageSlidePageState != null) {
       child = imageGestureState
-              ?.widget.extendedImageState.imageWidget.heroBuilderForSlidingPage
+              .widget.extendedImageState.imageWidget.heroBuilderForSlidingPage
               ?.call(child) ??
           child;
       if (extendedImageSlidePageState.widget.slideType == SlideType.onlyImage) {

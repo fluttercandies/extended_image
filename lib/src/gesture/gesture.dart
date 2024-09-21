@@ -487,7 +487,13 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     }
   }
 
-  Widget wrapGestureWidget(Widget child) {
+  Widget wrapGestureWidget(
+    Widget child, {
+    double? imageWidth,
+    double? imageHeight,
+    BoxFit? imageFit,
+    Rect? rect,
+  }) {
     if (extendedImageSlidePageState != null) {
       child = widget.extendedImageState.imageWidget.heroBuilderForSlidingPage
               ?.call(child) ??
@@ -508,6 +514,10 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       child: CustomSingleChildLayout(
         delegate: GestureWidgetDelegateFromState(
           this,
+          imageWidth: imageWidth,
+          imageHeight: imageHeight,
+          imageFit: imageFit,
+          rect: rect,
         ),
         child: child,
       ),
@@ -516,34 +526,75 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
 }
 
 class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
-  GestureWidgetDelegateFromState(this.state);
+  GestureWidgetDelegateFromState(
+    this.state, {
+    this.imageFit,
+    this.imageHeight,
+    this.imageWidth,
+    this.rect,
+  });
 
   final ExtendedImageGestureState state;
-  Rect? rect;
+  final double? imageWidth;
+  final double? imageHeight;
+  final BoxFit? imageFit;
+  final Rect? rect;
+
+  Rect? destinationRect;
   @override
   Offset getPositionForChild(Size size, Size childSize) {
-    return (rect ??= _getRect(size)).topLeft;
+    return (destinationRect ??= GestureWidgetDelegateFromState.getRectFormState(
+      rect ?? (Offset.zero & size),
+      state,
+      width: imageWidth,
+      height: imageHeight,
+      fit: imageFit,
+    ))
+        .topLeft;
   }
 
   @override
   bool shouldRelayout(GestureWidgetDelegateFromState oldDelegate) {
-    return rect != oldDelegate.rect;
+    return destinationRect != oldDelegate.destinationRect &&
+        imageWidth != oldDelegate.imageWidth &&
+        imageHeight != oldDelegate.imageHeight &&
+        imageFit != oldDelegate.imageFit;
   }
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
-    return BoxConstraints.tight((rect ??= _getRect(constraints.biggest)).size);
+    return BoxConstraints.tight(
+        (destinationRect ??= GestureWidgetDelegateFromState.getRectFormState(
+      rect ?? Offset.zero & constraints.biggest,
+      state,
+      width: imageWidth,
+      height: imageHeight,
+      fit: imageFit,
+    ))
+            .size);
   }
 
   @override
   Size getSize(BoxConstraints constraints) {
-    rect = _getRect(constraints.biggest);
+    destinationRect = GestureWidgetDelegateFromState.getRectFormState(
+      rect ?? Offset.zero & constraints.biggest,
+      state,
+      width: imageWidth,
+      height: imageHeight,
+      fit: imageFit,
+    );
     return super.getSize(constraints);
   }
 
-  Rect _getRect(Size size) {
+  static Rect getRectFormState(
+    Rect rect,
+    ExtendedImageGestureState state, {
+    double? width,
+    double? height,
+    BoxFit? fit,
+  }) {
     final GestureDetails? gestureDetails = state.gestureDetails;
-    Rect rect = Offset.zero & size;
+
     if (gestureDetails != null && gestureDetails.slidePageOffset != null) {
       rect = rect.shift(-gestureDetails.slidePageOffset!);
     }
@@ -551,12 +602,14 @@ class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
     Rect destinationRect = getDestinationRect(
       rect: rect,
       inputSize: Size(
-        state.widget.extendedImageState.extendedImageInfo!.image.width
-            .toDouble(),
-        state.widget.extendedImageState.extendedImageInfo!.image.height
-            .toDouble(),
+        width ??
+            state.widget.extendedImageState.extendedImageInfo!.image.width
+                .toDouble(),
+        height ??
+            state.widget.extendedImageState.extendedImageInfo!.image.height
+                .toDouble(),
       ),
-      fit: state.widget.extendedImageState.imageWidget.fit,
+      fit: fit ?? state.widget.extendedImageState.imageWidget.fit,
     );
 
     if (gestureDetails != null) {
@@ -573,21 +626,21 @@ class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
 }
 
 class GestureWidgetDelegateFromRect extends SingleChildLayoutDelegate {
-  GestureWidgetDelegateFromRect(this.rect);
+  GestureWidgetDelegateFromRect(this.destinationRect);
 
-  final Rect rect;
+  final Rect destinationRect;
   @override
   Offset getPositionForChild(Size size, Size childSize) {
-    return rect.topLeft;
+    return destinationRect.topLeft;
   }
 
   @override
   bool shouldRelayout(GestureWidgetDelegateFromState oldDelegate) {
-    return rect != oldDelegate.rect;
+    return destinationRect != oldDelegate.destinationRect;
   }
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
-    return BoxConstraints.tight(rect.size);
+    return BoxConstraints.tight(destinationRect.size);
   }
 }
