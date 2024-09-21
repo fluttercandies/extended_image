@@ -496,6 +496,17 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     BoxFit? imageFit,
     Rect? rect,
   }) {
+    child = CustomSingleChildLayout(
+      delegate: GestureWidgetDelegateFromState(
+        this,
+        imageWidth: imageWidth,
+        imageHeight: imageHeight,
+        imageFit: imageFit,
+        rect: rect,
+      ),
+      child: child,
+    );
+
     if (extendedImageSlidePageState != null) {
       child = widget.extendedImageState.imageWidget.heroBuilderForSlidingPage
               ?.call(child) ??
@@ -512,16 +523,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       }
     }
 
-    return CustomSingleChildLayout(
-      delegate: GestureWidgetDelegateFromState(
-        this,
-        imageWidth: imageWidth,
-        imageHeight: imageHeight,
-        imageFit: imageFit,
-        rect: rect,
-      ),
-      child: child,
-    );
+    return child;
   }
 }
 

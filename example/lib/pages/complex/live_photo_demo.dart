@@ -565,25 +565,9 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
         imageGestureState.extendedImageSlidePageState;
 
     Widget child = VideoPlayer(_controller);
-    if (extendedImageSlidePageState != null) {
-      child = imageGestureState
-              .widget.extendedImageState.imageWidget.heroBuilderForSlidingPage
-              ?.call(child) ??
-          child;
-      if (extendedImageSlidePageState.widget.slideType == SlideType.onlyImage) {
-        child = Transform.translate(
-          offset: extendedImageSlidePageState.offset,
-          child: Transform.scale(
-            scale: extendedImageSlidePageState.scale,
-            child: child,
-          ),
-        );
-      }
-    }
+
     final double aspectRatio = widget.state.extendedImageInfo!.image.width /
         widget.state.extendedImageInfo!.image.height;
-
-    child = VideoPlayer(_controller);
 
     if (_controller.value.aspectRatio != aspectRatio) {
       final Rect widgetDestinationRect =
@@ -605,17 +589,15 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
       );
     }
 
-    return ClipRect(
-      child: CustomSingleChildLayout(
-        delegate: GestureWidgetDelegateFromRect(
-          destinationRect,
-        ),
-        child: child,
+    child = CustomSingleChildLayout(
+      delegate: GestureWidgetDelegateFromRect(
+        destinationRect,
       ),
+      child: child,
     );
 
     // The same as use CustomSingleChildLayout
-    // return Stack(
+    // child = Stack(
     //   children: <Widget>[
     //     Positioned.fromRect(
     //       rect: destinationRect,
@@ -623,5 +605,23 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
     //     ),
     //   ],
     // );
+
+    if (extendedImageSlidePageState != null) {
+      child = imageGestureState
+              .widget.extendedImageState.imageWidget.heroBuilderForSlidingPage
+              ?.call(child) ??
+          child;
+      if (extendedImageSlidePageState.widget.slideType == SlideType.onlyImage) {
+        child = Transform.translate(
+          offset: extendedImageSlidePageState.offset,
+          child: Transform.scale(
+            scale: extendedImageSlidePageState.scale,
+            child: child,
+          ),
+        );
+      }
+    }
+
+    return child;
   }
 }
