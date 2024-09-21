@@ -506,7 +506,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
 
     return ClipRect(
       child: CustomSingleChildLayout(
-        delegate: GestureWidgetDelegate(
+        delegate: GestureWidgetDelegateFromState(
           this,
         ),
         child: child,
@@ -515,8 +515,8 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 }
 
-class GestureWidgetDelegate extends SingleChildLayoutDelegate {
-  GestureWidgetDelegate(this.state);
+class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
+  GestureWidgetDelegateFromState(this.state);
 
   final ExtendedImageGestureState state;
   Rect? rect;
@@ -526,7 +526,7 @@ class GestureWidgetDelegate extends SingleChildLayoutDelegate {
   }
 
   @override
-  bool shouldRelayout(GestureWidgetDelegate oldDelegate) {
+  bool shouldRelayout(GestureWidgetDelegateFromState oldDelegate) {
     return rect != oldDelegate.rect;
   }
 
@@ -569,5 +569,25 @@ class GestureWidgetDelegate extends SingleChildLayoutDelegate {
       }
     }
     return destinationRect;
+  }
+}
+
+class GestureWidgetDelegateFromRect extends SingleChildLayoutDelegate {
+  GestureWidgetDelegateFromRect(this.rect);
+
+  final Rect rect;
+  @override
+  Offset getPositionForChild(Size size, Size childSize) {
+    return rect.topLeft;
+  }
+
+  @override
+  bool shouldRelayout(GestureWidgetDelegateFromState oldDelegate) {
+    return rect != oldDelegate.rect;
+  }
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
+    return BoxConstraints.tight(rect.size);
   }
 }

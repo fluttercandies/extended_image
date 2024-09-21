@@ -343,39 +343,51 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
     widget.gestureDetailsIsChanging.addListener(_onGestureDetailsIsChanged);
   }
 
-  void _onGestureDetailsIsChanged() {
+  Future<void> _onGestureDetailsIsChanged() async {
     if (!_showVideo.value) {
       return;
     }
     if (widget.gestureDetailsIsChanging.value) {
-      _controller.pause();
+      await _controller.pause();
     } else if (!_pointerDown) {
-      continuePlay();
+      await continuePlay();
     }
   }
 
-  void continuePlay() {
+  Future<void> continuePlay() async {
     if (_showVideo.value && _controller.value.position != Duration.zero) {
-      _controller.play();
+      await _controller.play();
     }
   }
 
-  void _isSlidingChanged() {
+  Future<void> _isSlidingChanged() async {
     if (!_showVideo.value) {
       return;
     }
     if (widget.isSliding.value) {
-      _controller.pause();
+      await _controller.pause();
     } else {
-      continuePlay();
+      await continuePlay();
     }
   }
 
-  void _notfiy() {
+  Future<void> _notfiy() async {
     if (_controller.value.position >= _controller.value.duration) {
-      _controller.seekTo(Duration.zero);
+      await _controller.pause();
+      await _controller.seekTo(Duration.zero);
       _showVideo.value = false;
     }
+  }
+
+  Future<void> _showVideoAndPlay() async {
+    _showVideo.value = true;
+    await _controller.play();
+  }
+
+  Future<void> _hideVideoAndStop() async {
+    await _controller.pause();
+    await _controller.seekTo(Duration.zero);
+    _showVideo.value = false;
   }
 
   @override
@@ -410,13 +422,10 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
       },
       child: GestureDetector(
         onLongPress: () {
-          _showVideo.value = true;
-          _controller.play();
+          _showVideoAndPlay();
         },
         onLongPressUp: () {
-          _showVideo.value = false;
-          _controller.pause();
-          _controller.seekTo(Duration.zero);
+          _hideVideoAndStop();
         },
         child: ExtendedImageGesture(
           widget.state,
@@ -428,72 +437,12 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
               valueListenable: _showVideo,
               builder: (BuildContext b, bool showVideo, Widget? child) {
                 if (showVideo) {
-                  // may be you want to stop video when slide page
-                  // ignore: unused_local_variable
-
-                  // if (totalScale != 1) {
-                  //   _controller.pause();
-                  // } else {
-                  //   _controller.play();
-
-                  // }
-                  return imageGestureState!
-                      .wrapGestureWidget(VideoPlayer(_controller));
-                  // final GestureDetails? gestureDetails =
-                  //     imageGestureState?.gestureDetails;
-                  // Rect rect = Offset.zero & widget.size;
-                  // if (gestureDetails != null &&
-                  //     gestureDetails.slidePageOffset != null) {
-                  //   rect = rect.shift(-gestureDetails.slidePageOffset!);
-                  // }
-
-                  // Rect destinationRect = getDestinationRect(
-                  //   rect: rect,
-                  //   inputSize: Size(
-                  //     widget.state.extendedImageInfo!.image.width.toDouble(),
-                  //     widget.state.extendedImageInfo!.image.height.toDouble(),
-                  //   ),
-                  //   fit: widget.fit,
-                  // );
-
-                  // if (gestureDetails != null) {
-                  //   destinationRect = gestureDetails
-                  //       .calculateFinalDestinationRect(rect, destinationRect);
-
-                  //   if (gestureDetails.slidePageOffset != null) {
-                  //     destinationRect =
-                  //         destinationRect.shift(gestureDetails.slidePageOffset!);
-                  //   }
-                  // }
-                  // final ExtendedImageSlidePageState? extendedImageSlidePageState =
-                  //     imageGestureState?.extendedImageSlidePageState;
-
-                  // Widget child = VideoPlayer(_controller);
-                  // if (extendedImageSlidePageState != null) {
-                  //   child = imageGestureState?.widget.extendedImageState
-                  //           .imageWidget.heroBuilderForSlidingPage
-                  //           ?.call(child) ??
-                  //       child;
-                  //   if (extendedImageSlidePageState.widget.slideType ==
-                  //       SlideType.onlyImage) {
-                  //     child = Transform.translate(
-                  //       offset: extendedImageSlidePageState.offset,
-                  //       child: Transform.scale(
-                  //         scale: extendedImageSlidePageState.scale,
-                  //         child: child,
-                  //       ),
-                  //     );
-                  //   }
-                  // }
-
-                  // return Stack(
-                  //   children: <Widget>[
-                  //     Positioned.fromRect(
-                  //       rect: destinationRect,
-                  //       child: child,
-                  //     ),
-                  //   ],
-                  // );
+                  return imageGestureState!.wrapGestureWidget(
+                    VideoPlayer(_controller),
+                  );
+                  // _buildVideo method is the same as wrapGestureWidget
+                  // if you want to custom your own, you can use _buildVideo
+                  // return _buildVideo(imageGestureState);
                 }
                 return image;
               },
@@ -503,5 +452,76 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
         ),
       ),
     );
+  }
+
+  // ignore: unused_element
+  Widget _buildVideo(ExtendedImageGestureState? imageGestureState) {
+    final GestureDetails? gestureDetails = imageGestureState?.gestureDetails;
+
+    // The image to render into the area rect.
+    // in demo case, it is the page size.
+    // and you can also get it from LayoutBuilder base on your case.
+    final Size size = MediaQuery.of(context).size;
+    Rect rect = Offset.zero & size;
+    if (gestureDetails != null && gestureDetails.slidePageOffset != null) {
+      rect = rect.shift(-gestureDetails.slidePageOffset!);
+    }
+
+    Rect destinationRect = getDestinationRect(
+      rect: rect,
+      inputSize: Size(
+        widget.state.extendedImageInfo!.image.width.toDouble(),
+        widget.state.extendedImageInfo!.image.height.toDouble(),
+      ),
+      fit: widget.fit,
+    );
+
+    if (gestureDetails != null) {
+      destinationRect =
+          gestureDetails.calculateFinalDestinationRect(rect, destinationRect);
+
+      if (gestureDetails.slidePageOffset != null) {
+        destinationRect =
+            destinationRect.shift(gestureDetails.slidePageOffset!);
+      }
+    }
+    final ExtendedImageSlidePageState? extendedImageSlidePageState =
+        imageGestureState?.extendedImageSlidePageState;
+
+    Widget child = VideoPlayer(_controller);
+    if (extendedImageSlidePageState != null) {
+      child = imageGestureState
+              ?.widget.extendedImageState.imageWidget.heroBuilderForSlidingPage
+              ?.call(child) ??
+          child;
+      if (extendedImageSlidePageState.widget.slideType == SlideType.onlyImage) {
+        child = Transform.translate(
+          offset: extendedImageSlidePageState.offset,
+          child: Transform.scale(
+            scale: extendedImageSlidePageState.scale,
+            child: child,
+          ),
+        );
+      }
+    }
+
+    return ClipRect(
+      child: CustomSingleChildLayout(
+        delegate: GestureWidgetDelegateFromRect(
+          destinationRect,
+        ),
+        child: child,
+      ),
+    );
+
+    // The same as use CustomSingleChildLayout
+    // return Stack(
+    //   children: <Widget>[
+    //     Positioned.fromRect(
+    //       rect: destinationRect,
+    //       child: child,
+    //     ),
+    //   ],
+    // );
   }
 }
