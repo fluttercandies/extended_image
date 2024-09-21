@@ -332,6 +332,7 @@ class LivePhotoWidget extends StatefulWidget {
     required this.state,
     required this.isSliding,
     required this.gestureDetailsIsChanging,
+    this.keepTheSameRectAsImage = true,
   });
 
   final String videoUrl;
@@ -339,6 +340,7 @@ class LivePhotoWidget extends StatefulWidget {
   final ExtendedImageState state;
   final ValueNotifier<bool> isSliding;
   final ValueNotifier<bool> gestureDetailsIsChanging;
+  final bool keepTheSameRectAsImage;
   @override
   State<LivePhotoWidget> createState() => _LivePhotoWidgetState();
 }
@@ -467,35 +469,42 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
               builder: (BuildContext b, bool showVideo, Widget? child) {
                 late Widget child;
                 if (showVideo) {
-                  final Size size = MediaQuery.of(context).size;
-
-                  final double aspectRatio =
-                      widget.state.extendedImageInfo!.image.width /
-                          widget.state.extendedImageInfo!.image.height;
-
                   child = VideoPlayer(_controller);
 
-                  if (_controller.value.aspectRatio != aspectRatio) {
-                    final Rect widgetDestinationRect =
-                        GestureWidgetDelegateFromState.getRectFormState(
-                      Offset.zero & size,
-                      imageGestureState!,
-                      width: _controller.value.size.width,
-                      height: _controller.value.size.height,
-                      copy: true,
-                    );
-                    child = FittedBox(
-                      child: SizedBox(
-                        child: child,
-                        width: widgetDestinationRect.width,
-                        height: widgetDestinationRect.height,
-                      ),
-                      fit: BoxFit.cover,
-                      clipBehavior: Clip.hardEdge,
+                  if (widget.keepTheSameRectAsImage) {
+                    final double aspectRatio =
+                        widget.state.extendedImageInfo!.image.width /
+                            widget.state.extendedImageInfo!.image.height;
+
+                    if (_controller.value.aspectRatio != aspectRatio) {
+                      final Size size = MediaQuery.of(context).size;
+                      final Rect widgetDestinationRect =
+                          GestureWidgetDelegateFromState.getRectFormState(
+                        Offset.zero & size,
+                        imageGestureState!,
+                        width: _controller.value.size.width,
+                        height: _controller.value.size.height,
+                        copy: true,
+                      );
+                      child = FittedBox(
+                        child: SizedBox(
+                          child: child,
+                          width: widgetDestinationRect.width,
+                          height: widgetDestinationRect.height,
+                        ),
+                        fit: BoxFit.cover,
+                        clipBehavior: Clip.hardEdge,
+                      );
+                    }
+
+                    child = imageGestureState!.wrapGestureWidget(child);
+                  } else {
+                    child = imageGestureState!.wrapGestureWidget(
+                      child,
+                      imageWidth: _controller.value.size.width,
+                      imageHeight: _controller.value.size.height,
                     );
                   }
-
-                  child = imageGestureState!.wrapGestureWidget(child);
 
                   // _buildVideo method is the same as wrapGestureWidget
                   // if you want to custom your own, you can use _buildVideo
@@ -556,37 +565,45 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
     // and you can also get it from LayoutBuilder base on your case.
     final Size size = MediaQuery.of(context).size;
 
-    final Rect destinationRect =
-        GestureWidgetDelegateFromState.getRectFormState(
-      Offset.zero & size,
-      imageGestureState!,
-    );
+    final Rect destinationRect = widget.keepTheSameRectAsImage
+        ? GestureWidgetDelegateFromState.getRectFormState(
+            Offset.zero & size,
+            imageGestureState!,
+          )
+        : GestureWidgetDelegateFromState.getRectFormState(
+            Offset.zero & size,
+            imageGestureState!,
+            width: _controller.value.size.width,
+            height: _controller.value.size.height,
+          );
     final ExtendedImageSlidePageState? extendedImageSlidePageState =
         imageGestureState.extendedImageSlidePageState;
 
     Widget child = VideoPlayer(_controller);
 
-    final double aspectRatio = widget.state.extendedImageInfo!.image.width /
-        widget.state.extendedImageInfo!.image.height;
+    if (widget.keepTheSameRectAsImage) {
+      final double aspectRatio = widget.state.extendedImageInfo!.image.width /
+          widget.state.extendedImageInfo!.image.height;
 
-    if (_controller.value.aspectRatio != aspectRatio) {
-      final Rect widgetDestinationRect =
-          GestureWidgetDelegateFromState.getRectFormState(
-        Offset.zero & size,
-        imageGestureState,
-        width: _controller.value.size.width,
-        height: _controller.value.size.height,
-        copy: true,
-      );
-      child = FittedBox(
-        child: SizedBox(
-          child: child,
-          width: widgetDestinationRect.width,
-          height: widgetDestinationRect.height,
-        ),
-        fit: BoxFit.cover,
-        clipBehavior: Clip.hardEdge,
-      );
+      if (_controller.value.aspectRatio != aspectRatio) {
+        final Rect widgetDestinationRect =
+            GestureWidgetDelegateFromState.getRectFormState(
+          Offset.zero & size,
+          imageGestureState,
+          width: _controller.value.size.width,
+          height: _controller.value.size.height,
+          copy: true,
+        );
+        child = FittedBox(
+          child: SizedBox(
+            child: child,
+            width: widgetDestinationRect.width,
+            height: widgetDestinationRect.height,
+          ),
+          fit: BoxFit.cover,
+          clipBehavior: Clip.hardEdge,
+        );
+      }
     }
 
     child = CustomSingleChildLayout(
