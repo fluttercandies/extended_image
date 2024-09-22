@@ -475,8 +475,8 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
                     final double aspectRatio =
                         widget.state.extendedImageInfo!.image.width /
                             widget.state.extendedImageInfo!.image.height;
-
-                    if (_controller.value.aspectRatio != aspectRatio) {
+                    if ((_controller.value.aspectRatio - aspectRatio).abs() >
+                        0.01) {
                       final Size size = MediaQuery.of(context).size;
                       final Rect widgetDestinationRect =
                           GestureWidgetDelegateFromState.getRectFormState(
@@ -585,7 +585,7 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
       final double aspectRatio = widget.state.extendedImageInfo!.image.width /
           widget.state.extendedImageInfo!.image.height;
 
-      if (_controller.value.aspectRatio != aspectRatio) {
+      if ((_controller.value.aspectRatio - aspectRatio).abs() > 0.01) {
         final Rect widgetDestinationRect =
             GestureWidgetDelegateFromState.getRectFormState(
           Offset.zero & size,
