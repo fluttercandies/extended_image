@@ -495,6 +495,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     double? imageHeight,
     BoxFit? imageFit,
     Rect? rect,
+    bool copy = false,
   }) {
     child = CustomSingleChildLayout(
       delegate: GestureWidgetDelegateFromState(
@@ -503,6 +504,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
         imageHeight: imageHeight,
         imageFit: imageFit,
         rect: rect,
+        copy: copy,
       ),
       child: child,
     );
@@ -534,6 +536,7 @@ class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
     this.imageHeight,
     this.imageWidth,
     this.rect,
+    this.copy = false,
   });
 
   final ExtendedImageGestureState state;
@@ -541,18 +544,24 @@ class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
   final double? imageHeight;
   final BoxFit? imageFit;
   final Rect? rect;
+  final bool copy;
 
   Rect? destinationRect;
-  @override
-  Offset getPositionForChild(Size size, Size childSize) {
-    return (destinationRect ??= GestureWidgetDelegateFromState.getRectFormState(
-      rect ?? (Offset.zero & size),
+
+  Rect _getDestinationRect(Rect rect) {
+    return destinationRect ??= GestureWidgetDelegateFromState.getRectFormState(
+      rect,
       state,
       width: imageWidth,
       height: imageHeight,
       fit: imageFit,
-    ))
-        .topLeft;
+      copy: copy,
+    );
+  }
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) {
+    return _getDestinationRect(rect ?? (Offset.zero & size)).topLeft;
   }
 
   @override
@@ -561,30 +570,21 @@ class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
         imageWidth != oldDelegate.imageWidth ||
         imageHeight != oldDelegate.imageHeight ||
         imageFit != oldDelegate.imageFit ||
-        rect != oldDelegate.rect;
+        rect != oldDelegate.rect ||
+        copy != oldDelegate.copy;
   }
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
     return BoxConstraints.tight(
-        (destinationRect ??= GestureWidgetDelegateFromState.getRectFormState(
-      rect ?? Offset.zero & constraints.biggest,
-      state,
-      width: imageWidth,
-      height: imageHeight,
-      fit: imageFit,
-    ))
-            .size);
+      _getDestinationRect(rect ?? Offset.zero & constraints.biggest).size,
+    );
   }
 
   @override
   Size getSize(BoxConstraints constraints) {
-    destinationRect = GestureWidgetDelegateFromState.getRectFormState(
+    destinationRect = _getDestinationRect(
       rect ?? Offset.zero & constraints.biggest,
-      state,
-      width: imageWidth,
-      height: imageHeight,
-      fit: imageFit,
     );
     return super.getSize(constraints);
   }

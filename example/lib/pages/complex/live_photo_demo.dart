@@ -332,7 +332,7 @@ class LivePhotoWidget extends StatefulWidget {
     required this.state,
     required this.isSliding,
     required this.gestureDetailsIsChanging,
-    this.keepTheSameRectAsImage = true,
+    this.buildWithImageRect = true,
   });
 
   final String videoUrl;
@@ -340,7 +340,7 @@ class LivePhotoWidget extends StatefulWidget {
   final ExtendedImageState state;
   final ValueNotifier<bool> isSliding;
   final ValueNotifier<bool> gestureDetailsIsChanging;
-  final bool keepTheSameRectAsImage;
+  final bool buildWithImageRect;
   @override
   State<LivePhotoWidget> createState() => _LivePhotoWidgetState();
 }
@@ -402,22 +402,23 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
 
   Future<void> _notfiy() async {
     // finish and change to image ui
-    if (_controller.value.position >= _controller.value.duration) {
-      await _controller.pause();
-      await _controller.seekTo(Duration.zero);
+    if (_showVideo.value && _controller.value.isCompleted) {
       _showVideo.value = false;
     }
   }
 
   Future<void> _showVideoAndPlay() async {
+    await _controller.seekTo(Duration.zero);
     _showVideo.value = true;
     await _controller.play();
   }
 
   Future<void> _hideVideoAndStop() async {
-    await _controller.pause();
-    await _controller.seekTo(Duration.zero);
     _showVideo.value = false;
+    await _controller.pause();
+
+    // keep position animation
+    // await _controller.seekTo(Duration.zero);
   }
 
   @override
@@ -467,88 +468,21 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
             return ValueListenableBuilder<bool>(
               valueListenable: _showVideo,
               builder: (BuildContext b, bool showVideo, Widget? child) {
-                late Widget child;
-                if (showVideo) {
-                  child = VideoPlayer(_controller);
-
-                  if (widget.keepTheSameRectAsImage) {
-                    final double aspectRatio =
-                        widget.state.extendedImageInfo!.image.width /
-                            widget.state.extendedImageInfo!.image.height;
-                    if ((_controller.value.aspectRatio - aspectRatio).abs() >
-                        0.01) {
-                      final Size size = MediaQuery.of(context).size;
-                      final Rect widgetDestinationRect =
-                          GestureWidgetDelegateFromState.getRectFormState(
-                        Offset.zero & size,
-                        imageGestureState!,
-                        width: _controller.value.size.width,
-                        height: _controller.value.size.height,
-                        copy: true,
-                      );
-                      child = FittedBox(
-                        child: SizedBox(
-                          child: child,
-                          width: widgetDestinationRect.width,
-                          height: widgetDestinationRect.height,
-                        ),
-                        fit: BoxFit.cover,
-                        clipBehavior: Clip.hardEdge,
-                      );
-                    }
-
-                    child = imageGestureState!.wrapGestureWidget(child);
-                  } else {
-                    child = imageGestureState!.wrapGestureWidget(
-                      child,
-                      imageWidth: _controller.value.size.width,
-                      imageHeight: _controller.value.size.height,
-                    );
-                  }
-
-                  // _buildVideo method is the same as wrapGestureWidget
-                  // if you want to custom your own, you can use _buildVideo
-                  // child = _buildVideo(imageGestureState);
-                }
-                // zooming has no live mark logo
-                else if (imageGestureState?.gestureDetails?.totalScale !=
-                    imageGestureState?.imageGestureConfig?.initialScale) {
-                  child = image;
-                } else {
-                  // live mark logo
-                  final Size size = MediaQuery.of(context).size;
-
-                  final Rect destinationRect =
-                      GestureWidgetDelegateFromState.getRectFormState(
-                    Offset.zero & size,
-                    imageGestureState!,
-                  );
-
-                  // add mark live
-                  child = Stack(
-                    children: <Widget>[
-                      Positioned.fromRect(
-                        rect: destinationRect,
-                        child: image,
-                      ),
-                      Positioned.fromRect(
-                        rect: destinationRect.shift(const Offset(5, -5)),
-                        child: const Align(
-                          child: Text(
-                            'Live',
-                            style: TextStyle(color: Colors.pink, fontSize: 20),
-                          ),
-                          alignment: Alignment.bottomLeft,
-                        ),
-                      ),
-                    ],
+                if (widget.buildWithImageRect) {
+                  return _buildContentWithImageRect(
+                    context,
+                    imageGestureState,
+                    showVideo,
+                    image,
                   );
                 }
-                return child;
-                // return AnimatedSwitcher(
-                //   duration: const Duration(milliseconds: 200),
-                //   child: child,
-                // );
+
+                return _buildContent(
+                  showVideo,
+                  context,
+                  imageGestureState,
+                  image,
+                );
               },
               child: image,
             );
@@ -558,6 +492,144 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
     );
   }
 
+  Stack _buildContentWithImageRect(
+      BuildContext context,
+      ExtendedImageGestureState? imageGestureState,
+      bool showVideo,
+      Widget image) {
+    final Size size = MediaQuery.of(context).size;
+
+    final Rect destinationRect =
+        GestureWidgetDelegateFromState.getRectFormState(
+      Offset.zero & size,
+      imageGestureState!,
+      copy: true,
+    );
+
+    final double aspectRatio = widget.state.extendedImageInfo!.image.width /
+        widget.state.extendedImageInfo!.image.height;
+
+    Widget videoWidget = VideoPlayer(_controller);
+    final bool converVideo =
+        showVideo && (_controller.value.aspectRatio - aspectRatio).abs() > 0.01;
+    if (converVideo) {
+      final Rect widgetDestinationRect =
+          GestureWidgetDelegateFromState.getRectFormState(
+        Offset.zero & size,
+        imageGestureState,
+        width: _controller.value.size.width,
+        height: _controller.value.size.height,
+        copy: true,
+      );
+      videoWidget = FittedBox(
+        child: SizedBox(
+          child: videoWidget,
+          width: widgetDestinationRect.width,
+          height: widgetDestinationRect.height,
+        ),
+        fit: BoxFit.cover,
+        clipBehavior: Clip.hardEdge,
+      );
+    }
+
+    final bool showLive = imageGestureState.gestureDetails?.totalScale ==
+            imageGestureState.imageGestureConfig?.initialScale &&
+        !showVideo;
+
+    return Stack(
+      children: <Widget>[
+        Positioned.fromRect(
+          rect: destinationRect,
+          child: videoWidget,
+        ),
+        Positioned.fill(
+          child: AnimatedOpacity(
+            // always show image to calculate gesture
+            opacity: showVideo ? 0.001 : 1,
+            onEnd: () {
+              if (!showVideo) {
+                _controller.seekTo(Duration.zero);
+              }
+            },
+            duration: const Duration(milliseconds: 300),
+            child: image,
+          ),
+        ),
+        Positioned.fromRect(
+          rect: destinationRect.shift(const Offset(5, -5)),
+          child: AnimatedOpacity(
+            opacity: showLive ? 1 : 0,
+            duration: const Duration(milliseconds: 300),
+            child: const Align(
+              child: Text(
+                'Live',
+                style: TextStyle(color: Colors.pink, fontSize: 20),
+              ),
+              alignment: Alignment.bottomLeft,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContent(bool showVideo, BuildContext context,
+      ExtendedImageGestureState? imageGestureState, Widget image) {
+    late Widget child;
+    if (showVideo) {
+      child = VideoPlayer(_controller);
+
+      child = imageGestureState!.wrapGestureWidget(
+        child,
+        imageWidth: _controller.value.size.width,
+        imageHeight: _controller.value.size.height,
+      );
+
+      // _buildVideo method is the same as wrapGestureWidget
+      // if you want to custom your own, you can use _buildVideo
+      // child = _buildVideo(imageGestureState);
+    }
+    // zooming has no live mark logo
+    else if (imageGestureState?.gestureDetails?.totalScale !=
+        imageGestureState?.imageGestureConfig?.initialScale) {
+      child = image;
+    } else {
+      // live mark logo
+      final Size size = MediaQuery.of(context).size;
+
+      final Rect destinationRect =
+          GestureWidgetDelegateFromState.getRectFormState(
+        Offset.zero & size,
+        imageGestureState!,
+        copy: true,
+      );
+
+      // add mark live
+      child = Stack(
+        children: <Widget>[
+          Positioned.fill(
+            child: image,
+          ),
+          Positioned.fromRect(
+            rect: destinationRect.shift(const Offset(5, -5)),
+            child: const Align(
+              child: Text(
+                'Live',
+                style: TextStyle(color: Colors.pink, fontSize: 20),
+              ),
+              alignment: Alignment.bottomLeft,
+            ),
+          ),
+        ],
+      );
+    }
+    return child;
+    // return AnimatedSwitcher(
+    //   duration: const Duration(milliseconds: 200),
+    //   child: child,
+    // );
+  }
+
   // ignore: unused_element
   Widget _buildVideo(ExtendedImageGestureState? imageGestureState) {
     // The image to render into the area rect.
@@ -565,7 +637,7 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
     // and you can also get it from LayoutBuilder base on your case.
     final Size size = MediaQuery.of(context).size;
 
-    final Rect destinationRect = widget.keepTheSameRectAsImage
+    final Rect destinationRect = widget.buildWithImageRect
         ? GestureWidgetDelegateFromState.getRectFormState(
             Offset.zero & size,
             imageGestureState!,
@@ -581,7 +653,7 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
 
     Widget child = VideoPlayer(_controller);
 
-    if (widget.keepTheSameRectAsImage) {
+    if (widget.buildWithImageRect) {
       final double aspectRatio = widget.state.extendedImageInfo!.image.width /
           widget.state.extendedImageInfo!.image.height;
 
