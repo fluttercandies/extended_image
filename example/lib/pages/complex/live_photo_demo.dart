@@ -492,11 +492,12 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
     );
   }
 
-  Stack _buildContentWithImageRect(
-      BuildContext context,
-      ExtendedImageGestureState? imageGestureState,
-      bool showVideo,
-      Widget image) {
+  Widget _buildContentWithImageRect(
+    BuildContext context,
+    ExtendedImageGestureState? imageGestureState,
+    bool showVideo,
+    Widget image,
+  ) {
     final Size size = MediaQuery.of(context).size;
 
     final Rect destinationRect =
@@ -578,12 +579,37 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
     late Widget child;
     if (showVideo) {
       child = VideoPlayer(_controller);
-
-      child = imageGestureState!.wrapGestureWidget(
-        child,
-        imageWidth: _controller.value.size.width,
-        imageHeight: _controller.value.size.height,
-      );
+      if (widget.buildWithImageRect) {
+        final double aspectRatio = widget.state.extendedImageInfo!.image.width /
+            widget.state.extendedImageInfo!.image.height;
+        if ((_controller.value.aspectRatio - aspectRatio).abs() > 0.01) {
+          final Size size = MediaQuery.of(context).size;
+          final Rect widgetDestinationRect =
+              GestureWidgetDelegateFromState.getRectFormState(
+            Offset.zero & size,
+            imageGestureState!,
+            width: _controller.value.size.width,
+            height: _controller.value.size.height,
+            copy: true,
+          );
+          child = FittedBox(
+            child: SizedBox(
+              child: child,
+              width: widgetDestinationRect.width,
+              height: widgetDestinationRect.height,
+            ),
+            fit: BoxFit.cover,
+            clipBehavior: Clip.hardEdge,
+          );
+        }
+        child = imageGestureState!.wrapGestureWidget(child);
+      } else {
+        child = imageGestureState!.wrapGestureWidget(
+          child,
+          imageWidth: _controller.value.size.width,
+          imageHeight: _controller.value.size.height,
+        );
+      }
 
       // _buildVideo method is the same as wrapGestureWidget
       // if you want to custom your own, you can use _buildVideo
