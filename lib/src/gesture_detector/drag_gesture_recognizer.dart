@@ -6,26 +6,52 @@ mixin DragGestureRecognizerMixin on _DragGestureRecognizer {
   bool get canDrag =>
       canHorizontalOrVerticalDrag == null || canHorizontalOrVerticalDrag!();
 
-  bool _shouldAccpet() {
+  bool _shouldAccept() {
+    // If dragging is not allowed, return false immediately
     if (!canDrag) {
       return false;
     }
-    if (_velocityTrackers.keys.length == 1) {
+
+    // Get the number of current touch points
+    int pointerCount = _velocityTrackers.keys.length;
+
+    // If there's only one touch point, allow dragging
+    if (pointerCount == 1) {
       return true;
     }
 
-    // if pointers are not the only, check whether they are in the negative
-    // maybe this is a Horizontal/Vertical zoom
-    Offset offset = const Offset(1, 1);
-    for (final VelocityTracker tracker in _velocityTrackers.values) {
-      if (tracker is ExtendedVelocityTracker) {
-        final Offset delta = tracker.getSamplesDelta();
-        offset = Offset(offset.dx * (delta.dx == 0 ? 1 : delta.dx),
-            offset.dy * (delta.dy == 0 ? 1 : delta.dy));
+    // For multiple touch points, check if it's a zooming operation
+    return !_isZoomingOrOppositeMovement();
+  }
+
+// Check if it's a zooming operation or if there's movement in opposite directions
+  bool _isZoomingOrOppositeMovement() {
+    List<Offset> deltas = _velocityTrackers.values
+        .whereType<ExtendedVelocityTracker>()
+        .map((tracker) => tracker.getSamplesDelta())
+        .toList();
+
+    // Check for opposite directions in x or y axis
+    for (int i = 0; i < deltas.length - 1; i++) {
+      for (int j = i + 1; j < deltas.length; j++) {
+        if (deltas[i].dx * deltas[j].dx < 0 ||
+            deltas[i].dy * deltas[j].dy < 0) {
+          return true; // Found opposite directions, likely zooming
+        }
       }
     }
 
-    return !(offset.dx < 0 || offset.dy < 0);
+    // Check if all movements are in the same direction
+    Offset combinedOffset = deltas.fold(
+      Offset.zero,
+      (prev, delta) => Offset(
+        prev.dx * (delta.dx == 0 ? 1 : delta.dx),
+        prev.dy * (delta.dy == 0 ? 1 : delta.dy),
+      ),
+    );
+
+    // If combinedOffset's x or y is less than 0, it means there's movement in opposite directions
+    return combinedOffset.dx < 0 || combinedOffset.dy < 0;
   }
 
   CanHorizontalOrVerticalDrag? get canHorizontalOrVerticalDrag;
@@ -90,7 +116,7 @@ mixin DragGestureRecognizerMixin on _DragGestureRecognizer {
         if (_hasSufficientGlobalDistanceToAccept(
                 event.kind, gestureSettings?.touchSlop) &&
             // zmtzawqlp
-            _shouldAccpet()) {
+            _shouldAccept()) {
           _hasDragThresholdBeenMet = true;
           if (_acceptedActivePointers.contains(event.pointer)) {
             _checkDrag(event.pointer);
