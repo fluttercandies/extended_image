@@ -1,3 +1,8 @@
+## 8.0.3
+
+* Fix issue that unsmooth zooming when using ExtendedImageGesturePageView (#631)
+* Add [ExtendedImageGesturePageView.shouldAccpetHorizontalOrVerticalDrag] to custum whether should accpet horizontal or vertical drag at that time.
+
 ## 8.0.2
 
 * [EditorCropLayerPainter.paintMask] not use BlendMode.clear now, due to '--web-renderer html' is not support.
