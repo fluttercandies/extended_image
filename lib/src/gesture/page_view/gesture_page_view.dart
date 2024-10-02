@@ -47,6 +47,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     this.onPageChanged,
     List<Widget> children = const <Widget>[],
     CanScrollPage? canScrollPage,
+    this.shouldAccpetHorizontalOrVerticalDrag,
   })  : controller = controller ?? _defaultPageController,
         childrenDelegate = SliverChildListDelegate(children),
         physics = physics != null
@@ -78,6 +79,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     required IndexedWidgetBuilder itemBuilder,
     int? itemCount,
     CanScrollPage? canScrollPage,
+    this.shouldAccpetHorizontalOrVerticalDrag,
   })  : controller = controller ?? _defaultPageController,
         childrenDelegate =
             SliverChildBuilderDelegate(itemBuilder, childCount: itemCount),
@@ -99,6 +101,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     this.onPageChanged,
     CanScrollPage? canScrollPage,
     required this.childrenDelegate,
+    this.shouldAccpetHorizontalOrVerticalDrag,
   })  : controller = controller ?? _defaultPageController,
         physics = _defaultScrollPhysics,
         canScrollPage = canScrollPage ?? _defaultCanScrollPage,
@@ -154,6 +157,11 @@ class ExtendedImageGesturePageView extends StatefulWidget {
   /// [childrenDelegate] that wraps the given [List] and [IndexedWidgetBuilder],
   /// respectively.
   final SliverChildDelegate childrenDelegate;
+
+  /// Whether should accpet horizontal or vertical drag at that time
+  /// You can custom it by your base
+  final ShouldAccpetHorizontalOrVerticalDrag?
+      shouldAccpetHorizontalOrVerticalDrag;
 
   @override
   ExtendedImageGesturePageViewState createState() =>
@@ -224,6 +232,8 @@ class ExtendedImageGesturePageViewState
                 () => ExtendedVerticalDragGestureRecognizer(
                   canHorizontalOrVerticalDrag: canHorizontalOrVerticalDrag,
                   debugOwner: this,
+                  shouldAccpetHorizontalOrVerticalDrag:
+                      widget.shouldAccpetHorizontalOrVerticalDrag,
                 ),
                 (ExtendedVerticalDragGestureRecognizer instance) {
                   instance
@@ -248,6 +258,8 @@ class ExtendedImageGesturePageViewState
                 () => ExtendedHorizontalDragGestureRecognizer(
                   canHorizontalOrVerticalDrag: canHorizontalOrVerticalDrag,
                   debugOwner: this,
+                  shouldAccpetHorizontalOrVerticalDrag:
+                      widget.shouldAccpetHorizontalOrVerticalDrag,
                 ),
                 (ExtendedHorizontalDragGestureRecognizer instance) {
                   instance

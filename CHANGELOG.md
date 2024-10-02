@@ -1,3 +1,8 @@
+## 8.3.1
+
+* Fix issue that unsmooth zooming when using ExtendedImageGesturePageView (#631)
+* Add [ExtendedImageGesturePageView.shouldAccpetHorizontalOrVerticalDrag] to custum whether should accpet horizontal or vertical drag at that time.
+
 ## 8.3.0
 
 * Add [imageGestureState] parameter for ImageBuilderForGesture call back, add [wrapGestureWidget] method for [ExtendedImageGestureState] and add [GestureWidgetDelegate]. All of them are using to build a custom gesture widget when the image is in ExtendedImageMode.gesture mode.

@@ -2,6 +2,10 @@ part of 'official.dart';
 
 typedef CanHorizontalOrVerticalDrag = bool Function();
 
+typedef ShouldAccpetHorizontalOrVerticalDrag = bool Function(
+  Map<int, VelocityTracker> velocityTrackers,
+);
+
 mixin DragGestureRecognizerMixin on _DragGestureRecognizer {
   bool get canDrag =>
       canHorizontalOrVerticalDrag == null || canHorizontalOrVerticalDrag!();
@@ -10,6 +14,10 @@ mixin DragGestureRecognizerMixin on _DragGestureRecognizer {
     if (!canDrag) {
       return false;
     }
+    if (shouldAccpetHorizontalOrVerticalDrag != null) {
+      return shouldAccpetHorizontalOrVerticalDrag!(_velocityTrackers);
+    }
+
     if (_velocityTrackers.keys.length == 1) {
       return true;
     }
@@ -29,6 +37,8 @@ mixin DragGestureRecognizerMixin on _DragGestureRecognizer {
   }
 
   CanHorizontalOrVerticalDrag? get canHorizontalOrVerticalDrag;
+  ShouldAccpetHorizontalOrVerticalDrag?
+      get shouldAccpetHorizontalOrVerticalDrag;
 
   @override
   void handleEvent(PointerEvent event) {
@@ -106,24 +116,13 @@ mixin DragGestureRecognizerMixin on _DragGestureRecognizer {
       _giveUpPointer(event.pointer);
     }
   }
-}
 
-abstract class ExtendedDragGestureRecognizer extends _DragGestureRecognizer
-    with DragGestureRecognizerMixin {
-  ExtendedDragGestureRecognizer({
-    super.debugOwner,
-    super.dragStartBehavior = DragStartBehavior.start,
-    super.velocityTrackerBuilder = _defaultBuilder,
-    super.supportedDevices,
-    super.allowedButtonsFilter,
-    this.canHorizontalOrVerticalDrag,
-  });
-
-  static ExtendedVelocityTracker _defaultBuilder(PointerEvent event) =>
-      ExtendedVelocityTracker.withKind(event.kind);
   @override
-  final CanHorizontalOrVerticalDrag? canHorizontalOrVerticalDrag;
+  GestureVelocityTrackerBuilder get velocityTrackerBuilder => _defaultBuilder;
 }
+
+ExtendedVelocityTracker _defaultBuilder(PointerEvent event) =>
+    ExtendedVelocityTracker.withKind(event.kind);
 
 class ExtendedHorizontalDragGestureRecognizer
     extends _HorizontalDragGestureRecognizer with DragGestureRecognizerMixin {
@@ -132,10 +131,15 @@ class ExtendedHorizontalDragGestureRecognizer
     super.supportedDevices,
     super.allowedButtonsFilter,
     this.canHorizontalOrVerticalDrag,
+    this.shouldAccpetHorizontalOrVerticalDrag,
   });
 
   @override
   final CanHorizontalOrVerticalDrag? canHorizontalOrVerticalDrag;
+
+  @override
+  final ShouldAccpetHorizontalOrVerticalDrag?
+      shouldAccpetHorizontalOrVerticalDrag;
 }
 
 class ExtendedVerticalDragGestureRecognizer
@@ -145,8 +149,12 @@ class ExtendedVerticalDragGestureRecognizer
     super.supportedDevices,
     super.allowedButtonsFilter,
     this.canHorizontalOrVerticalDrag,
+    this.shouldAccpetHorizontalOrVerticalDrag,
   });
 
   @override
   final CanHorizontalOrVerticalDrag? canHorizontalOrVerticalDrag;
+  @override
+  final ShouldAccpetHorizontalOrVerticalDrag?
+      shouldAccpetHorizontalOrVerticalDrag;
 }
