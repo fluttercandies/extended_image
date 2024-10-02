@@ -1,3 +1,9 @@
+## 8.1.2
+
+* Fix issue that unsmooth zooming when using ExtendedImageGesturePageView (#631)
+* Add [ExtendedImageGesturePageView.shouldAccpetHorizontalOrVerticalDrag] to custum whether should accpet horizontal or vertical drag at that time.
+
+
 ## 8.1.1
 
 * Fix issue with onDragEnd
