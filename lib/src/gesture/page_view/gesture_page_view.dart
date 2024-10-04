@@ -1,7 +1,5 @@
 import 'package:extended_image/extended_image.dart';
 
-import 'package:extended_image/src/gesture_detector/official.dart';
-
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';

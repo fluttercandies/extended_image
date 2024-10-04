@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:example/assets.dart';
 import 'package:example/common/image_picker/image_picker.dart';
 import 'package:example/common/utils/crop_editor_helper.dart';
 import 'package:example/common/widget/common_widget.dart';
@@ -57,6 +58,20 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
   @override
   Widget build(BuildContext context) {
+    late ImageProvider imageProvider;
+
+    if (_memoryImage != null) {
+      imageProvider = ExtendedMemoryImageProvider(
+        _memoryImage!,
+        cacheRawData: true,
+      );
+    } else {
+      imageProvider = const ExtendedAssetImageProvider(
+        Assets.assets_image_jpg,
+        cacheRawData: true,
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('image editor demo'),
@@ -82,43 +97,24 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         child: Column(
           children: <Widget>[
             Expanded(
-              child: _memoryImage != null
-                  ? ExtendedImage.memory(
-                      _memoryImage!,
-                      fit: BoxFit.contain,
-                      mode: ExtendedImageMode.editor,
-                      enableLoadState: true,
-                      extendedImageEditorKey: editorKey,
-                      initEditorConfigHandler: (ExtendedImageState? state) {
-                        return EditorConfig(
-                          maxScale: 8.0,
-                          cropRectPadding: const EdgeInsets.all(20.0),
-                          hitTestSize: 20.0,
-                          cropLayerPainter: _cropLayerPainter!,
-                          initCropRectType: InitCropRectType.imageRect,
-                          cropAspectRatio: _aspectRatio!.value,
-                        );
-                      },
-                      cacheRawData: true,
-                    )
-                  : ExtendedImage.asset(
-                      'assets/image.jpg',
-                      fit: BoxFit.contain,
-                      mode: ExtendedImageMode.editor,
-                      enableLoadState: true,
-                      extendedImageEditorKey: editorKey,
-                      initEditorConfigHandler: (ExtendedImageState? state) {
-                        return EditorConfig(
-                          maxScale: 8.0,
-                          cropRectPadding: const EdgeInsets.all(20.0),
-                          hitTestSize: 20.0,
-                          cropLayerPainter: _cropLayerPainter!,
-                          initCropRectType: InitCropRectType.imageRect,
-                          cropAspectRatio: _aspectRatio!.value,
-                        );
-                      },
-                      cacheRawData: true,
-                    ),
+              child: ExtendedImage(
+                image: imageProvider,
+                fit: BoxFit.contain,
+                mode: ExtendedImageMode.editor,
+                enableLoadState: true,
+                extendedImageEditorKey: editorKey,
+                initEditorConfigHandler: (ExtendedImageState? state) {
+                  return EditorConfig(
+                    maxScale: 8.0,
+                    cropRectPadding: const EdgeInsets.all(20.0),
+                    hitTestSize: 20.0,
+                    cropLayerPainter: _cropLayerPainter!,
+                    initCropRectType: InitCropRectType.imageRect,
+                    cropAspectRatio: _aspectRatio!.value,
+                    gestureRotate: true,
+                  );
+                },
+              ),
             ),
             ButtonTheme(
               minWidth: 0.0,
@@ -182,7 +178,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     ),
                     textColor: Colors.white,
                     onPressed: () {
-                      editorKey.currentState!.flip();
+                      editorKey.currentState!.flip(
+                        animation: true,
+                      );
                     },
                   ),
                   FlatButtonWithIcon(
@@ -193,7 +191,10 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     ),
                     textColor: Colors.white,
                     onPressed: () {
-                      editorKey.currentState!.rotate(right: false);
+                      editorKey.currentState!.rotate(
+                        angle: -90,
+                        animation: true,
+                      );
                     },
                   ),
                   FlatButtonWithIcon(
@@ -204,7 +205,10 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     ),
                     textColor: Colors.white,
                     onPressed: () {
-                      editorKey.currentState!.rotate(right: true);
+                      editorKey.currentState!.rotate(
+                        angle: 90,
+                        animation: true,
+                      );
                     },
                   ),
                   FlatButtonWithIcon(

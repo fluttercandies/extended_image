@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import '../extended_image.dart';
 import 'crop_layer.dart';
+import 'edit_action_details.dart';
 import 'editor_utils.dart';
 
 ///
@@ -27,18 +28,47 @@ class ExtendedImageEditor extends StatefulWidget {
   ExtendedImageEditorState createState() => ExtendedImageEditorState();
 }
 
-class ExtendedImageEditorState extends State<ExtendedImageEditor> {
+class ExtendedImageEditorState extends State<ExtendedImageEditor>
+    with SingleTickerProviderStateMixin {
   EditActionDetails? _editActionDetails;
   EditorConfig? _editorConfig;
   late double _startingScale;
+  late double _startingRotation;
   late Offset _startingOffset;
   double _detailsScale = 1.0;
   final GlobalKey<ExtendedImageCropLayerState> _layerKey =
       GlobalKey<ExtendedImageCropLayerState>();
+
+  late AnimationController _animationController;
+
+  Animation<double>? _rotationYAnimation;
+  Animation<double>? _rotateRadianAnimation;
   @override
   void initState() {
     super.initState();
     _initGestureConfig();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration.zero,
+    );
+    _animationController.addListener(_onAnimation);
+  }
+
+  void _onAnimation() {
+    _updateRotate(
+      _rotationYAnimation?.value ?? _editActionDetails!.rotationY,
+      _rotateRadianAnimation?.value ?? _editActionDetails!.rotateRadian,
+    );
+    if (_animationController.isCompleted) {
+      _rotationYAnimation = null;
+      _rotateRadianAnimation = null;
+    }
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   void _initGestureConfig() {
@@ -101,78 +131,83 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       editActionDetails: _editActionDetails,
     );
 
-    Widget result = GestureDetector(
-        onScaleStart: _handleScaleStart,
-        onScaleUpdate: _handleScaleUpdate,
-        behavior: _editorConfig!.hitTestBehavior,
-        child: Stack(
-          children: <Widget>[
-            Positioned.fill(child: image),
-            Positioned.fill(
-              child: LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                Rect layoutRect = Offset.zero &
-                    Size(constraints.maxWidth, constraints.maxHeight);
-                final EdgeInsets padding = _editorConfig!.cropRectPadding;
+    Widget result = ClipRect(
+      child: GestureDetector(
+          onScaleStart: _handleScaleStart,
+          onScaleUpdate: _handleScaleUpdate,
+          behavior: _editorConfig!.hitTestBehavior,
+          child: IgnorePointer(
+            ignoring: _animationController.isAnimating,
+            child: Stack(
+              children: <Widget>[
+                Positioned.fill(child: image),
+                Positioned.fill(
+                  child: LayoutBuilder(builder:
+                      (BuildContext context, BoxConstraints constraints) {
+                    Rect layoutRect = Offset.zero &
+                        Size(constraints.maxWidth, constraints.maxHeight);
+                    final EdgeInsets padding = _editorConfig!.cropRectPadding;
 
-                layoutRect = padding.deflateRect(layoutRect);
+                    layoutRect = padding.deflateRect(layoutRect);
 
-                if (_editActionDetails!.cropRect == null) {
-                  final AlignmentGeometry alignment =
-                      widget.extendedImageState.imageWidget.alignment;
-                  //matchTextDirection: extendedImage.matchTextDirection,
-                  //don't support TextDirection for editor
-                  final TextDirection? textDirection =
-                      //extendedImage.matchTextDirection ||
-                      alignment is! Alignment
-                          ? Directionality.of(context)
-                          : null;
-                  final Alignment resolvedAlignment =
-                      alignment.resolve(textDirection);
-                  final Rect destinationRect = getDestinationRect(
-                      rect: layoutRect,
-                      inputSize: Size(
-                          widget
-                              .extendedImageState.extendedImageInfo!.image.width
-                              .toDouble(),
-                          widget.extendedImageState.extendedImageInfo!.image
-                              .height
-                              .toDouble()),
-                      flipHorizontally: false,
-                      fit: widget.extendedImageState.imageWidget.fit,
-                      centerSlice:
-                          widget.extendedImageState.imageWidget.centerSlice,
-                      alignment: resolvedAlignment,
-                      scale:
-                          widget.extendedImageState.extendedImageInfo!.scale);
+                    if (_editActionDetails!.cropRect == null) {
+                      final AlignmentGeometry alignment =
+                          widget.extendedImageState.imageWidget.alignment;
+                      //matchTextDirection: extendedImage.matchTextDirection,
+                      //don't support TextDirection for editor
+                      final TextDirection? textDirection =
+                          //extendedImage.matchTextDirection ||
+                          alignment is! Alignment
+                              ? Directionality.of(context)
+                              : null;
+                      final Alignment resolvedAlignment =
+                          alignment.resolve(textDirection);
+                      final Rect destinationRect = getDestinationRect(
+                          rect: layoutRect,
+                          inputSize: Size(
+                              widget.extendedImageState.extendedImageInfo!.image
+                                  .width
+                                  .toDouble(),
+                              widget.extendedImageState.extendedImageInfo!.image
+                                  .height
+                                  .toDouble()),
+                          flipHorizontally: false,
+                          fit: widget.extendedImageState.imageWidget.fit,
+                          centerSlice:
+                              widget.extendedImageState.imageWidget.centerSlice,
+                          alignment: resolvedAlignment,
+                          scale: widget
+                              .extendedImageState.extendedImageInfo!.scale);
 
-                  Rect cropRect = _initCropRect(destinationRect);
-                  if (_editorConfig!.initCropRectType ==
-                          InitCropRectType.layoutRect &&
-                      _editorConfig!.cropAspectRatio != null &&
-                      _editorConfig!.cropAspectRatio! > 0) {
-                    final Rect rect = _initCropRect(layoutRect);
-                    _editActionDetails!.totalScale = _editActionDetails!
-                        .preTotalScale = destinationRect.width
-                            .greaterThan(destinationRect.height)
-                        ? rect.height / cropRect.height
-                        : rect.width / cropRect.width;
-                    cropRect = rect;
-                  }
-                  _editActionDetails!.cropRect = cropRect;
-                }
+                      Rect cropRect = _initCropRect(destinationRect);
+                      if (_editorConfig!.initCropRectType ==
+                              InitCropRectType.layoutRect &&
+                          _editorConfig!.cropAspectRatio != null &&
+                          _editorConfig!.cropAspectRatio! > 0) {
+                        final Rect rect = _initCropRect(layoutRect);
+                        _editActionDetails!.totalScale = _editActionDetails!
+                            .preTotalScale = destinationRect.width
+                                .greaterThan(destinationRect.height)
+                            ? rect.height / cropRect.height
+                            : rect.width / cropRect.width;
+                        cropRect = rect;
+                      }
+                      _editActionDetails!.cropRect = cropRect;
+                    }
 
-                return ExtendedImageCropLayer(
-                  _editActionDetails!,
-                  _editorConfig!,
-                  layoutRect,
-                  key: _layerKey,
-                  fit: BoxFit.contain,
-                );
-              }),
+                    return ExtendedImageCropLayer(
+                      _editActionDetails!,
+                      _editorConfig!,
+                      layoutRect,
+                      key: _layerKey,
+                      fit: BoxFit.contain,
+                    );
+                  }),
+                ),
+              ],
             ),
-          ],
-        ));
+          )),
+    );
     result = Listener(
       child: result,
       onPointerDown: (_) {
@@ -223,6 +258,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     _startingOffset = details.focalPoint;
     _editActionDetails!.screenFocalPoint = details.focalPoint;
     _startingScale = _editActionDetails!.totalScale;
+    _startingRotation = _editActionDetails!.rotateRadian;
     _detailsScale = 1.0;
   }
 
@@ -242,25 +278,34 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     _detailsScale = details.scale;
 
     _startingOffset = details.focalPoint;
-    //no more zoom
+    // no more zoom
     if ((_editActionDetails!.reachCropRectEdge && zoomOut) ||
         _editActionDetails!.totalScale.equalTo(_editorConfig!.maxScale) &&
             zoomIn) {
-      //correct _startingScale
-      //details.scale was not calcuated at the moment
+      // correct _startingScale
+      // details.scale was not calcuated at the moment
       _startingScale = _editActionDetails!.totalScale / details.scale;
       return;
     }
 
     totalScale = min(totalScale, _editorConfig!.maxScale);
 
-    if (mounted && (scaleDelta != 1.0 || delta != Offset.zero)) {
+    if (mounted &&
+        (scaleDelta != 1.0 ||
+            delta != Offset.zero ||
+            (_editorConfig!.gestureRotate && details.rotation != 0))) {
       setState(() {
         _editActionDetails!.totalScale = totalScale;
+        if (_editorConfig!.gestureRotate && details.rotation != 0) {
+          _editActionDetails!.rotateRadian = _startingRotation +
+              _editActionDetails!.reverseRotateRadian(details.rotation);
+        }
 
         ///if we have shift offset, we should clear delta.
         ///we should += delta in case miss delta
-        _editActionDetails!.delta += delta;
+        // _editActionDetails!.delta += delta;
+        _editActionDetails!.setDelta(delta);
+
         _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
       });
     }
@@ -342,29 +387,80 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
 
   EditActionDetails? get editAction => _editActionDetails;
 
-  void rotate({bool right = true}) {
+  void rotate({
+    double angle = 90,
+    bool animation = false,
+    Duration duration = const Duration(milliseconds: 500),
+  }) {
+    if (_animationController.isAnimating) {
+      return;
+    }
     if (_layerKey.currentState == null) {
       return;
     }
+
+    final double begin = _editActionDetails!.rotateRadian;
+    final double end =
+        begin + _editActionDetails!.reverseRotateRadian(angle / 180 * pi);
+
+    if (animation) {
+      _animationController.duration = duration;
+      _rotateRadianAnimation = Tween<double>(
+        begin: begin,
+        end: end,
+      ).animate(_animationController);
+      _animationController.forward(from: 0);
+    } else {
+      _updateRotate(_editActionDetails!.rotationY, end);
+    }
+  }
+
+  void flip({
+    bool animation = false,
+    Duration duration = const Duration(milliseconds: 500),
+  }) {
+    if (_animationController.isAnimating) {
+      return;
+    }
+
+    assert(_editActionDetails != null && _editorConfig != null);
+
+    final double begin = _editActionDetails!.rotationY;
+
+    double end = 0.0;
+
+    if (begin == 0.0) {
+      end = pi;
+    } else {
+      end = 0.0;
+    }
+
+    if (animation) {
+      _animationController.duration = duration;
+      _rotationYAnimation = Tween<double>(
+        begin: begin,
+        end: end,
+      ).animate(_animationController);
+      _animationController.forward(from: 0);
+    } else {
+      _updateRotate(end, _editActionDetails!.rotateRadian);
+    }
+  }
+
+  void _updateRotate(double rotationY, double rotateRadian) {
     setState(() {
-      _editActionDetails!.rotate(
-        right ? pi / 2.0 : -pi / 2.0,
-        _layerKey.currentState!.layoutRect,
-        BoxFit.contain,
+      _editActionDetails = _editActionDetails!.copyWith(
+        rotationY: rotationY,
+        rotateRadian: rotateRadian,
       );
       _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
     });
   }
 
-  void flip() {
-    assert(_editActionDetails != null && _editorConfig != null);
-    setState(() {
-      _editActionDetails!.flip();
-      _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
-    });
-  }
-
   void reset() {
+    if (_animationController.isAnimating) {
+      _animationController.stop();
+    }
     setState(() {
       _editorConfig = null;
       _editActionDetails = null;

@@ -188,8 +188,7 @@ Future<EditImageInfo> cropImageDataWithNativeLibrary(
   }
 
   if (action.needFlip) {
-    option.addOption(
-        FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
+    option.addOption(FlipOption(horizontal: flipHorizontal, vertical: false));
   }
 
   if (action.hasRotateAngle) {

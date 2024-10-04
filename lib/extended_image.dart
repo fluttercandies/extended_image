@@ -4,6 +4,7 @@ export 'package:extended_image_library/extended_image_library.dart'
     hide File, FileImage;
 
 export 'src/border_painter.dart';
+export 'src/editor/edit_action_details.dart';
 export 'src/editor/editor.dart';
 export 'src/editor/editor_utils.dart';
 export 'src/extended_image.dart';

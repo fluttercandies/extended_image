@@ -44,11 +44,13 @@ mixin ExtendedImageState {
 }
 
 enum ExtendedImageMode {
-  //just show image
+  /// just show image
   none,
-  //support be to zoom,scroll
+
+  /// support be to zoom,scroll
   gesture,
-  //support be to crop,rotate,flip
+
+  /// support be to crop,rotate,flip
   editor
 }
 
