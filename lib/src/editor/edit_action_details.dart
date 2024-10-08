@@ -563,7 +563,7 @@ class EditActionDetails {
       return Offset(newCornerVector.x, newCornerVector.y);
     }).toList();
 
-    final double scaleDelta = _scaleToFit(rectVertices, rect);
+    final double scaleDelta = _scaleToFit(rectVertices, rect, rect.center);
 
     if (scaleDelta > 0) {
       screenFocalPoint = _screenDestinationRect!.center;
@@ -574,12 +574,12 @@ class EditActionDetails {
     }
   }
 
-  double _scaleToFit(List<Offset> rectVertices, Rect rect) {
+  double _scaleToFit(List<Offset> rectVertices, Rect rect, Offset center) {
     double scaleDelta = 0.0;
-    final Offset center = rect.center;
+
     int contains = 0;
     for (final Offset element in rectVertices) {
-      if (_screenDestinationRect!.contains(element)) {
+      if (_screenDestinationRect!.containsOffset(element)) {
         contains++;
         continue;
       }
@@ -625,7 +625,7 @@ class EditActionDetails {
     }).toList();
 
     for (final Offset element in rectVertices) {
-      if (rect.contains(element)) {
+      if (rect.containsOffset(element)) {
         continue;
       }
 
@@ -644,5 +644,72 @@ class EditActionDetails {
     }
 
     this.delta += offset;
+  }
+
+  void updateScale(double totalScale) {
+    final double scaleDelta = totalScale / preTotalScale;
+    if (scaleDelta == 1.0) {
+      return;
+    }
+    final Matrix4 result = getTransform();
+
+    final List<Offset> rectVertices = <Offset>[
+      screenCropRect!.topLeft,
+      screenCropRect!.topRight,
+      screenCropRect!.bottomRight,
+      screenCropRect!.bottomLeft,
+    ].map((Offset element) {
+      final Vector4 cornerVector = Vector4(element.dx, element.dy, 0.0, 1.0);
+      final Vector4 newCornerVector = result.transform(cornerVector);
+      return Offset(newCornerVector.x, newCornerVector.y);
+    }).toList();
+
+    Offset focalPoint = screenFocalPoint ?? _screenDestinationRect!.center;
+
+    focalPoint = Offset(
+      focalPoint.dx
+          .clamp(_screenDestinationRect!.left, _screenDestinationRect!.right)
+          .toDouble(),
+      focalPoint.dy
+          .clamp(_screenDestinationRect!.top, _screenDestinationRect!.bottom)
+          .toDouble(),
+    );
+
+    Rect rect = Rect.fromLTWH(
+        focalPoint.dx -
+            (focalPoint.dx - _screenDestinationRect!.left) * scaleDelta,
+        focalPoint.dy -
+            (focalPoint.dy - _screenDestinationRect!.top) * scaleDelta,
+        _screenDestinationRect!.width * scaleDelta,
+        _screenDestinationRect!.height * scaleDelta);
+    bool fixed = false;
+    for (final Offset element in rectVertices) {
+      if (rect.containsOffset(element)) {
+        continue;
+      }
+      // find nearest point on rect
+      final double nearestX = element.dx.clamp(rect.left, rect.right);
+      final double nearestY = element.dy.clamp(rect.top, rect.bottom);
+
+      final Offset nearestOffset = Offset(nearestX, nearestY);
+
+      if (nearestOffset != element) {
+        fixed = true;
+        rect = rect.shift(-(nearestOffset - element));
+      }
+    }
+
+    for (final Offset element in rectVertices) {
+      if (!rect.containsOffset(element)) {
+        return;
+      }
+    }
+    if (fixed == true) {
+      _screenDestinationRect = rect;
+      // scale has already apply
+      preTotalScale = totalScale;
+    }
+
+    this.totalScale = totalScale;
   }
 }

@@ -144,4 +144,11 @@ extension RectExtension on Rect {
       leftIsSame(other) &&
       rightIsSame(other) &&
       bottomIsSame(other);
+
+  bool containsOffset(Offset offset) {
+    return offset.dx >= left &&
+        offset.dx <= right &&
+        offset.dy >= top &&
+        offset.dy <= bottom;
+  }
 }

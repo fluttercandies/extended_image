@@ -278,6 +278,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     _detailsScale = details.scale;
 
     _startingOffset = details.focalPoint;
+    _editActionDetails!.screenFocalPoint = details.focalPoint;
     // no more zoom
     if ((_editActionDetails!.reachCropRectEdge && zoomOut) ||
         _editActionDetails!.totalScale.equalTo(_editorConfig!.maxScale) &&
@@ -301,7 +302,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
           //       _editActionDetails!.reverseRotateRadian(details.rotation),
           //   totalScale,
           // );
-          _editActionDetails!.totalScale = totalScale;
+          _editActionDetails!.updateScale(totalScale);
           // _startingScale = _editActionDetails!.totalScale /
           //     details.scale /
           //     _editorConfig!.speed;
