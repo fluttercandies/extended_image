@@ -284,20 +284,27 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
             zoomIn) {
       // correct _startingScale
       // details.scale was not calcuated at the moment
-      _startingScale = _editActionDetails!.totalScale / details.scale;
+      _startingScale =
+          _editActionDetails!.totalScale / details.scale / _editorConfig!.speed;
+
       return;
     }
 
     totalScale = min(totalScale, _editorConfig!.maxScale);
     if (mounted) {
       setState(() {
-        if ((_editorConfig!.gestureRotate && details.rotation != 0) ||
+        if (
+            // (_editorConfig!.gestureRotate && details.rotation != 0) ||
             scaleDelta != 1.0) {
-          _editActionDetails!.updateRotateRadian(
-            _startingRotation +
-                _editActionDetails!.reverseRotateRadian(details.rotation),
-            totalScale,
-          );
+          // _editActionDetails!.updateRotateRadian(
+          //   _startingRotation +
+          //       _editActionDetails!.reverseRotateRadian(details.rotation),
+          //   totalScale,
+          // );
+          _editActionDetails!.totalScale = totalScale;
+          // _startingScale = _editActionDetails!.totalScale /
+          //     details.scale /
+          //     _editorConfig!.speed;
         } else if (delta != Offset.zero) {
           ///if we have shift offset, we should clear delta.
           ///we should += delta in case miss delta

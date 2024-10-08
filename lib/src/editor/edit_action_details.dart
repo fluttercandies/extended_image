@@ -565,7 +565,7 @@ class EditActionDetails {
 
     final double scaleDelta = _scaleToFit(rectVertices, rect);
 
-    if (scaleDelta != 0) {
+    if (scaleDelta > 0) {
       screenFocalPoint = _screenDestinationRect!.center;
       preTotalScale = this.totalScale;
       this.totalScale = max(this.totalScale * scaleDelta, totalScale);
@@ -608,107 +608,41 @@ class EditActionDetails {
     final double transformedDy =
         dy * cos(rotateRadian) - dx * sin(rotateRadian);
 
-    var offset = Offset(transformedDx, transformedDy);
-    final Rect rect = _screenDestinationRect!.shift(offset);
+    Offset offset = Offset(transformedDx, transformedDy);
+    Rect rect = _screenDestinationRect!.shift(offset);
+
+    final Matrix4 result = getTransform();
+
+    final List<Offset> rectVertices = <Offset>[
+      screenCropRect!.topLeft,
+      screenCropRect!.topRight,
+      screenCropRect!.bottomRight,
+      screenCropRect!.bottomLeft,
+    ].map((Offset element) {
+      final Vector4 cornerVector = Vector4(element.dx, element.dy, 0.0, 1.0);
+      final Vector4 newCornerVector = result.transform(cornerVector);
+      return Offset(newCornerVector.x, newCornerVector.y);
+    }).toList();
+
+    for (final Offset element in rectVertices) {
+      if (rect.contains(element)) {
+        continue;
+      }
+
+      // find nearest point on rect
+      final double nearestX = element.dx.clamp(rect.left, rect.right);
+      final double nearestY = element.dy.clamp(rect.top, rect.bottom);
+
+      final Offset nearestOffset = Offset(nearestX, nearestY);
+
+      if (nearestOffset != element) {
+        offset -= nearestOffset - element;
+        rect = _screenDestinationRect = _screenDestinationRect!.shift(offset);
+        // clear
+        offset = Offset.zero;
+      }
+    }
 
     this.delta += offset;
   }
-}
-
-// 向量结构
-class Vector {
-  double x, y;
-  Vector(this.x, this.y);
-
-  // 向量的长度
-  double length() {
-    return sqrt(x * x + y * y);
-  }
-
-  // 向量点积
-  double dot(Vector other) {
-    return x * other.x + y * other.y;
-  }
-
-  // 向量投影到另一个向量上
-  Vector projectionOnto(Vector other) {
-    final double scalar = dot(other) / other.dot(other);
-    return Vector(scalar * other.x, scalar * other.y);
-  }
-}
-
-// 判断点是否在旋转矩形内
-bool isPointInRotatedRect(
-  Offset center,
-  List<Offset> rectVertices,
-  Offset point,
-) {
-  // 计算矩形中心点到待判断点的向量
-  final Vector centerToPoint =
-      Vector(point.dx - center.dx, point.dy - center.dy);
-
-  // 计算矩形边框的向量
-  final Vector rightEdge = Vector(rectVertices[1].dx - rectVertices[0].dx,
-      rectVertices[1].dy - rectVertices[0].dy); // 水平向量
-  final Vector topEdge = Vector(rectVertices[2].dx - rectVertices[1].dx,
-      rectVertices[2].dy - rectVertices[1].dy); // 垂直向量
-
-  // 计算中心向量在矩形边框向量上的投影
-  final Vector projectionOnRightEdge = centerToPoint.projectionOnto(rightEdge);
-  final Vector projectionOnTopEdge = centerToPoint.projectionOnto(topEdge);
-
-  // 计算投影长度
-  final double L1 = projectionOnRightEdge.length();
-  final double L2 = projectionOnTopEdge.length();
-
-  // 矩形对应边长的一半
-  final double H1 = rightEdge.length() / 2;
-  final double H2 = topEdge.length() / 2;
-
-  // 判断是否超出边界
-  if (L1 > H1 || L2 > H2) {
-    return false;
-  }
-  return true;
-}
-
-// 计算放大系数 S
-double calculateScaleFactor(
-  Rect rect,
-  Offset point,
-) {
-  final Offset center = rect.center;
-  // 计算矩形中心点到待判断点的向量
-  final Vector centerToPoint =
-      Vector(point.dx - center.dx, point.dy - center.dy);
-
-  final List<Offset> rectVertices = <Offset>[
-    rect.topLeft,
-    rect.topRight,
-    rect.bottomRight,
-    rect.bottomLeft,
-  ];
-  // 计算矩形边框的向量
-  final Vector rightEdge = Vector(rectVertices[1].dx - rectVertices[0].dx,
-      rectVertices[1].dy - rectVertices[0].dy); // 水平向量
-  final Vector topEdge = Vector(rectVertices[2].dx - rectVertices[1].dx,
-      rectVertices[2].dy - rectVertices[1].dy); // 垂直向量
-
-  // 计算中心向量在矩形边框向量上的投影
-  final Vector projectionOnRightEdge = centerToPoint.projectionOnto(rightEdge);
-  final Vector projectionOnTopEdge = centerToPoint.projectionOnto(topEdge);
-
-  // 计算投影长度
-  final double L1 = projectionOnRightEdge.length();
-  final double L2 = projectionOnTopEdge.length();
-
-  // 矩形对应边长的一半
-  final double H1 = rightEdge.length() / 2;
-  final double H2 = topEdge.length() / 2;
-
-  // 计算放大系数 S
-  final double scaleFactorL1 = (L1 / H1 > 1) ? L1 / H1 : 1;
-  final double scaleFactorL2 = (L2 / H2 > 1) ? L2 / H2 : 1;
-
-  return max(scaleFactorL1, scaleFactorL2);
 }
