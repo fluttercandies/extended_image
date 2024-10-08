@@ -93,6 +93,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       alignment: extendedImage.alignment,
       repeat: extendedImage.repeat,
       centerSlice: extendedImage.centerSlice,
+      beforePaintImage: extendedImage.beforePaintImage,
+      afterPaintImage: extendedImage.afterPaintImage,
       //matchTextDirection: extendedImage.matchTextDirection,
       //don't support TextDirection for editor
       matchTextDirection: false,
