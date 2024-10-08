@@ -192,7 +192,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     textColor: Colors.white,
                     onPressed: () {
                       editorKey.currentState!.rotate(
-                        angle: -90,
+                        angle: -10,
                         animation: true,
                       );
                     },
@@ -206,7 +206,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     textColor: Colors.white,
                     onPressed: () {
                       editorKey.currentState!.rotate(
-                        angle: 90,
+                        angle: 10,
                         animation: true,
                       );
                     },

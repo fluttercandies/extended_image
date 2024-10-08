@@ -289,26 +289,42 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     }
 
     totalScale = min(totalScale, _editorConfig!.maxScale);
-
-    if (mounted &&
-        (scaleDelta != 1.0 ||
-            delta != Offset.zero ||
-            (_editorConfig!.gestureRotate && details.rotation != 0))) {
+    if (mounted) {
       setState(() {
-        _editActionDetails!.totalScale = totalScale;
-        if (_editorConfig!.gestureRotate && details.rotation != 0) {
-          _editActionDetails!.rotateRadian = _startingRotation +
-              _editActionDetails!.reverseRotateRadian(details.rotation);
+        if ((_editorConfig!.gestureRotate && details.rotation != 0) ||
+            scaleDelta != 1.0) {
+          _editActionDetails!.updateRotateRadian(
+            _startingRotation +
+                _editActionDetails!.reverseRotateRadian(details.rotation),
+            totalScale,
+          );
+        } else if (delta != Offset.zero) {
+          ///if we have shift offset, we should clear delta.
+          ///we should += delta in case miss delta
+          // _editActionDetails!.delta += delta;
+          _editActionDetails!.updateDelta(delta);
         }
-
-        ///if we have shift offset, we should clear delta.
-        ///we should += delta in case miss delta
-        // _editActionDetails!.delta += delta;
-        _editActionDetails!.setDelta(delta);
-
-        _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
       });
+      _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
     }
+
+    // if (mounted &&
+    //     (scaleDelta != 1.0 ||
+    //         delta != Offset.zero ||
+    //         (_editorConfig!.gestureRotate && details.rotation != 0))) {
+    //   setState(() {
+    //     _editActionDetails!.totalScale = totalScale;
+    //     _editActionDetails!.rotateRadian = _startingRotation +
+    //         _editActionDetails!.reverseRotateRadian(details.rotation);
+
+    //     ///if we have shift offset, we should clear delta.
+    //     ///we should += delta in case miss delta
+    //     // _editActionDetails!.delta += delta;
+    //     _editActionDetails!.setDelta(delta);
+
+    //     _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
+    //   });
+    // }
   }
 
   void _handlePointerSignal(PointerSignalEvent event) {
@@ -390,7 +406,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
   void rotate({
     double angle = 90,
     bool animation = false,
-    Duration duration = const Duration(milliseconds: 500),
+    Duration? duration,
   }) {
     if (_animationController.isAnimating) {
       return;
@@ -398,6 +414,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     if (_layerKey.currentState == null) {
       return;
     }
+
+    duration ??= Duration(milliseconds: (angle * 50).abs().toInt());
 
     final double begin = _editActionDetails!.rotateRadian;
     final double end =
@@ -451,8 +469,12 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     setState(() {
       _editActionDetails = _editActionDetails!.copyWith(
         rotationY: rotationY,
-        rotateRadian: rotateRadian,
       );
+      _editActionDetails!.updateRotateRadian(
+        rotateRadian,
+        _editActionDetails!.totalScale,
+      );
+
       _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
     });
   }

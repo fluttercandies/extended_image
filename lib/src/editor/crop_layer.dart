@@ -505,6 +505,8 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   }
 
   void _doCropAutoCenterAnimation({Rect? newScreenCropRect}) {
+    // TODO
+    return;
     if (mounted) {
       setState(() {
         final Rect oldScreenCropRect = widget.editActionDetails.screenCropRect!;

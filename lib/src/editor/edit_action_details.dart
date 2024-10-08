@@ -280,25 +280,36 @@ class EditActionDetails {
       final double scaleDelta = totalScale / preTotalScale;
       if (scaleDelta != 1.0) {
         Offset focalPoint = screenFocalPoint ?? _screenDestinationRect!.center;
-        focalPoint = Offset(
-          focalPoint.dx
-              .clamp(
-                  _screenDestinationRect!.left, _screenDestinationRect!.right)
-              .toDouble(),
-          focalPoint.dy
-              .clamp(
-                  _screenDestinationRect!.top, _screenDestinationRect!.bottom)
-              .toDouble(),
-        );
 
-        _screenDestinationRect = Rect.fromLTWH(
-            focalPoint.dx -
-                (focalPoint.dx - _screenDestinationRect!.left) * scaleDelta,
-            focalPoint.dy -
-                (focalPoint.dy - _screenDestinationRect!.top) * scaleDelta,
-            _screenDestinationRect!.width * scaleDelta,
-            _screenDestinationRect!.height * scaleDelta);
+        if (focalPoint == _screenDestinationRect!.center) {
+          _screenDestinationRect = Rect.fromCenter(
+            center: focalPoint,
+            width: _screenDestinationRect!.width * scaleDelta,
+            height: _screenDestinationRect!.height * scaleDelta,
+          );
+        } else {
+          focalPoint = Offset(
+            focalPoint.dx
+                .clamp(
+                    _screenDestinationRect!.left, _screenDestinationRect!.right)
+                .toDouble(),
+            focalPoint.dy
+                .clamp(
+                    _screenDestinationRect!.top, _screenDestinationRect!.bottom)
+                .toDouble(),
+          );
+
+          _screenDestinationRect = Rect.fromLTWH(
+              focalPoint.dx -
+                  (focalPoint.dx - _screenDestinationRect!.left) * scaleDelta,
+              focalPoint.dy -
+                  (focalPoint.dy - _screenDestinationRect!.top) * scaleDelta,
+              _screenDestinationRect!.width * scaleDelta,
+              _screenDestinationRect!.height * scaleDelta);
+        }
+
         preTotalScale = totalScale;
+
         delta = Offset.zero;
       }
 
@@ -470,9 +481,9 @@ class EditActionDetails {
     return Offset(x0, y0);
   }
 
-  Matrix4 getTransform() {
+  Matrix4 getTransform({Offset? center}) {
     final Offset origin =
-        screenCropRect?.center ?? _screenDestinationRect!.center;
+        center ?? screenCropRect?.center ?? _screenDestinationRect!.center;
     final Matrix4 result = Matrix4.identity();
 
     result.translate(
@@ -489,20 +500,6 @@ class EditActionDetails {
     result.translate(-origin.dx, -origin.dy);
 
     return result;
-  }
-
-  void setDelta(Offset delta) {
-    double dx = delta.dx;
-    final double dy = delta.dy;
-    if (rotationY == pi) {
-      dx = -dx;
-    }
-    final double transformedDx =
-        dx * cos(rotateRadian) + dy * sin(rotateRadian);
-    final double transformedDy =
-        dy * cos(rotateRadian) - dx * sin(rotateRadian);
-
-    this.delta += Offset(transformedDx, transformedDy);
   }
 
   // The copyWith method allows you to create a modified copy of an instance.
@@ -548,4 +545,170 @@ class EditActionDetails {
   double reverseRotateRadian(double rotateRadian) {
     return rotationY == 0 ? rotateRadian : -rotateRadian;
   }
+
+  void updateRotateRadian(double rotateRadian, double totalScale) {
+    this.rotateRadian = rotateRadian;
+    final Rect rect = _screenDestinationRect!;
+
+    final Matrix4 result = getTransform();
+
+    final List<Offset> rectVertices = <Offset>[
+      screenCropRect!.topLeft,
+      screenCropRect!.topRight,
+      screenCropRect!.bottomRight,
+      screenCropRect!.bottomLeft,
+    ].map((Offset element) {
+      final Vector4 cornerVector = Vector4(element.dx, element.dy, 0.0, 1.0);
+      final Vector4 newCornerVector = result.transform(cornerVector);
+      return Offset(newCornerVector.x, newCornerVector.y);
+    }).toList();
+
+    final double scaleDelta = _scaleToFit(rectVertices, rect);
+
+    if (scaleDelta != 0) {
+      screenFocalPoint = _screenDestinationRect!.center;
+      preTotalScale = this.totalScale;
+      this.totalScale = max(this.totalScale * scaleDelta, totalScale);
+    } else {
+      this.totalScale = totalScale;
+    }
+  }
+
+  double _scaleToFit(List<Offset> rectVertices, Rect rect) {
+    double scaleDelta = 0.0;
+    final Offset center = rect.center;
+    int contains = 0;
+    for (final Offset element in rectVertices) {
+      if (_screenDestinationRect!.contains(element)) {
+        contains++;
+        continue;
+      }
+      final double x = (element.dx - center.dx).abs();
+      final double y = (element.dy - center.dy).abs();
+      final double halfWidth = rect.width / 2;
+      final double halfHeight = rect.height / 2;
+      if (x > halfWidth || y > halfHeight) {
+        scaleDelta = max(scaleDelta, max(x / halfWidth, y / halfHeight));
+      }
+    }
+    if (contains == 4) {
+      return -1;
+    }
+    return scaleDelta;
+  }
+
+  void updateDelta(Offset delta) {
+    double dx = delta.dx;
+    final double dy = delta.dy;
+    if (rotationY == pi) {
+      dx = -dx;
+    }
+    final double transformedDx =
+        dx * cos(rotateRadian) + dy * sin(rotateRadian);
+    final double transformedDy =
+        dy * cos(rotateRadian) - dx * sin(rotateRadian);
+
+    var offset = Offset(transformedDx, transformedDy);
+    final Rect rect = _screenDestinationRect!.shift(offset);
+
+    this.delta += offset;
+  }
+}
+
+// 向量结构
+class Vector {
+  double x, y;
+  Vector(this.x, this.y);
+
+  // 向量的长度
+  double length() {
+    return sqrt(x * x + y * y);
+  }
+
+  // 向量点积
+  double dot(Vector other) {
+    return x * other.x + y * other.y;
+  }
+
+  // 向量投影到另一个向量上
+  Vector projectionOnto(Vector other) {
+    final double scalar = dot(other) / other.dot(other);
+    return Vector(scalar * other.x, scalar * other.y);
+  }
+}
+
+// 判断点是否在旋转矩形内
+bool isPointInRotatedRect(
+  Offset center,
+  List<Offset> rectVertices,
+  Offset point,
+) {
+  // 计算矩形中心点到待判断点的向量
+  final Vector centerToPoint =
+      Vector(point.dx - center.dx, point.dy - center.dy);
+
+  // 计算矩形边框的向量
+  final Vector rightEdge = Vector(rectVertices[1].dx - rectVertices[0].dx,
+      rectVertices[1].dy - rectVertices[0].dy); // 水平向量
+  final Vector topEdge = Vector(rectVertices[2].dx - rectVertices[1].dx,
+      rectVertices[2].dy - rectVertices[1].dy); // 垂直向量
+
+  // 计算中心向量在矩形边框向量上的投影
+  final Vector projectionOnRightEdge = centerToPoint.projectionOnto(rightEdge);
+  final Vector projectionOnTopEdge = centerToPoint.projectionOnto(topEdge);
+
+  // 计算投影长度
+  final double L1 = projectionOnRightEdge.length();
+  final double L2 = projectionOnTopEdge.length();
+
+  // 矩形对应边长的一半
+  final double H1 = rightEdge.length() / 2;
+  final double H2 = topEdge.length() / 2;
+
+  // 判断是否超出边界
+  if (L1 > H1 || L2 > H2) {
+    return false;
+  }
+  return true;
+}
+
+// 计算放大系数 S
+double calculateScaleFactor(
+  Rect rect,
+  Offset point,
+) {
+  final Offset center = rect.center;
+  // 计算矩形中心点到待判断点的向量
+  final Vector centerToPoint =
+      Vector(point.dx - center.dx, point.dy - center.dy);
+
+  final List<Offset> rectVertices = <Offset>[
+    rect.topLeft,
+    rect.topRight,
+    rect.bottomRight,
+    rect.bottomLeft,
+  ];
+  // 计算矩形边框的向量
+  final Vector rightEdge = Vector(rectVertices[1].dx - rectVertices[0].dx,
+      rectVertices[1].dy - rectVertices[0].dy); // 水平向量
+  final Vector topEdge = Vector(rectVertices[2].dx - rectVertices[1].dx,
+      rectVertices[2].dy - rectVertices[1].dy); // 垂直向量
+
+  // 计算中心向量在矩形边框向量上的投影
+  final Vector projectionOnRightEdge = centerToPoint.projectionOnto(rightEdge);
+  final Vector projectionOnTopEdge = centerToPoint.projectionOnto(topEdge);
+
+  // 计算投影长度
+  final double L1 = projectionOnRightEdge.length();
+  final double L2 = projectionOnTopEdge.length();
+
+  // 矩形对应边长的一半
+  final double H1 = rightEdge.length() / 2;
+  final double H2 = topEdge.length() / 2;
+
+  // 计算放大系数 S
+  final double scaleFactorL1 = (L1 / H1 > 1) ? L1 / H1 : 1;
+  final double scaleFactorL2 = (L2 / H2 > 1) ? L2 / H2 : 1;
+
+  return max(scaleFactorL1, scaleFactorL2);
 }
