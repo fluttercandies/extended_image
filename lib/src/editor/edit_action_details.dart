@@ -29,10 +29,13 @@ class EditActionDetails {
   ///  aspect ratio of crop rect
   double? _cropAspectRatio;
   double? get cropAspectRatio {
+    // TODO，when rotate 90° or 270°, aspect ratio should be 1/aspectRatio
+    // pi/2 , should be 1/aspectRatio ?
+    // return _cropAspectRatio;
     if (_cropAspectRatio != null) {
       return isHalfPi ? 1.0 / _cropAspectRatio! : _cropAspectRatio;
     }
-    return null;
+    // return null;
   }
 
   set cropAspectRatio(double? value) {
@@ -64,9 +67,9 @@ class EditActionDetails {
   bool get flipY => rotationY != 0;
   bool get flipX => false;
 
-  bool get isHalfPi => (rotateRadian % pi) != 0;
+  bool get isHalfPi => (rotateRadian % (2 * pi)) == pi / 2;
 
-  bool get isPi => !isHalfPi && !isTwoPi;
+  bool get isPi => (rotateRadian % (2 * pi)) == pi;
 
   bool get isTwoPi => (rotateRadian % (2 * pi)) == 0;
 
@@ -98,7 +101,6 @@ class EditActionDetails {
     //     rotateRect(screenDestinationRect, screenCropRect.center, -angle);
 
     /// take care of boundary
-    // TODO
     // final Rect newCropRect = getDestinationRect(
     //   rect: layoutRect,
     //   inputSize: Size(cropRect!.height, cropRect!.width),
@@ -483,7 +485,7 @@ class EditActionDetails {
 
   Matrix4 getTransform({Offset? center}) {
     final Offset origin =
-        center ?? screenCropRect?.center ?? _screenDestinationRect!.center;
+        center ?? _layoutRect?.center ?? _screenDestinationRect!.center;
     final Matrix4 result = Matrix4.identity();
 
     result.translate(
@@ -711,5 +713,119 @@ class EditActionDetails {
     }
 
     this.totalScale = totalScale;
+  }
+
+  Rect updateCropRect(Rect cropRect) {
+    Rect screenCropRect = cropRect.shift(layoutTopLeft!);
+    final Matrix4 result = getTransform();
+    final Rect rect = _screenDestinationRect!;
+
+    final List<Offset> rectVertices = <Offset>[
+      screenCropRect.topLeft,
+      screenCropRect.topRight,
+      screenCropRect.bottomRight,
+      screenCropRect.bottomLeft,
+    ].map((Offset element) {
+      final Vector4 cornerVector = Vector4(element.dx, element.dy, 0.0, 1.0);
+      final Vector4 newCornerVector = result.transform(cornerVector);
+      return Offset(newCornerVector.x, newCornerVector.y);
+    }).toList();
+
+    final List<Offset> list = rectVertices.toList();
+    bool hasOffsetOutSide = false;
+    for (int i = 0; i < rectVertices.length; i++) {
+      final Offset element = rectVertices[i];
+      if (rect.containsOffset(element)) {
+        continue;
+      }
+      late final Offset other = rectVertices[(i + 2) % 4];
+
+      final Offset center = (element + other) / 2;
+
+      final List<Offset> xxx =
+          getLineRectIntersections(_screenDestinationRect!, element, center);
+      if (xxx.isNotEmpty) {
+        hasOffsetOutSide = true;
+        list[i] = xxx.first;
+        break;
+      }
+    }
+
+    if (hasOffsetOutSide) {
+      result.invert();
+      final List<Offset> newOffsets = list.map((Offset element) {
+        final Vector4 cornerVector = Vector4(element.dx, element.dy, 0.0, 1.0);
+        final Vector4 newCornerVector = result.transform(cornerVector);
+        return Offset(newCornerVector.x, newCornerVector.y);
+      }).toList();
+
+      final Rect rect1 = Rect.fromPoints(newOffsets[0], newOffsets[2]);
+
+      final Rect rect2 = Rect.fromPoints(newOffsets[1], newOffsets[3]);
+
+      if (rect1.size < rect2.size) {
+        screenCropRect = rect1;
+      } else {
+        screenCropRect = rect2;
+      }
+    }
+
+    screenCropRect = screenCropRect.shift(-layoutTopLeft!);
+
+    return screenCropRect;
+  }
+
+  Offset? getIntersection(Offset p1, Offset p2, Offset p3, Offset p4) {
+    final double s1X = p2.dx - p1.dx;
+    final double s1Y = p2.dy - p1.dy;
+    final double s2X = p4.dx - p3.dx;
+    final double s2Y = p4.dy - p3.dy;
+
+    final double s = (-s1Y * (p1.dx - p3.dx) + s1X * (p1.dy - p3.dy)) /
+        (-s2X * s1Y + s1X * s2Y);
+    final double t = (s2X * (p1.dy - p3.dy) - s2Y * (p1.dx - p3.dx)) /
+        (-s2X * s1Y + s1X * s2Y);
+
+    if (s >= 0 && s <= 1 && t >= 0 && t <= 1) {
+      final double intersectionX = p1.dx + (t * s1X);
+      final double intersectionY = p1.dy + (t * s1Y);
+      return Offset(intersectionX, intersectionY);
+    }
+
+    return null;
+  }
+
+  List<Offset> getLineRectIntersections(Rect rect, Offset p1, Offset p2) {
+    final List<Offset> intersections = <Offset>[];
+
+    final Offset topLeft = Offset(rect.left, rect.top);
+    final Offset topRight = Offset(rect.right, rect.top);
+    final Offset bottomLeft = Offset(rect.left, rect.bottom);
+    final Offset bottomRight = Offset(rect.right, rect.bottom);
+
+    final Offset? topIntersection = getIntersection(p1, p2, topLeft, topRight);
+    if (topIntersection != null) {
+      intersections.add(topIntersection);
+    }
+
+    final Offset? bottomIntersection =
+        getIntersection(p1, p2, bottomLeft, bottomRight);
+    if (bottomIntersection != null) {
+      intersections.add(bottomIntersection);
+    }
+
+    final Offset? leftIntersection =
+        getIntersection(p1, p2, topLeft, bottomLeft);
+    if (leftIntersection != null) {
+      intersections.add(leftIntersection);
+    }
+
+    final Offset? rightIntersection =
+        getIntersection(p1, p2, topRight, bottomRight);
+    if (rightIntersection != null) {
+      intersections.add(rightIntersection);
+    }
+
+    return intersections;
   }
 }

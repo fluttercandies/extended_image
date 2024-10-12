@@ -60,6 +60,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _rotateRadianAnimation?.value ?? _editActionDetails!.rotateRadian,
     );
     if (_animationController.isCompleted) {
+      _layerKey.currentState?.pointerDown(false);
       _rotationYAnimation = null;
       _rotateRadianAnimation = null;
     }
@@ -435,6 +436,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
         begin: begin,
         end: end,
       ).animate(_animationController);
+      _layerKey.currentState?.pointerDown(true);
       _animationController.forward(from: 0);
     } else {
       _updateRotate(_editActionDetails!.rotationY, end);
@@ -467,6 +469,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
         begin: begin,
         end: end,
       ).animate(_animationController);
+      _layerKey.currentState?.pointerDown(true);
       _animationController.forward(from: 0);
     } else {
       _updateRotate(end, _editActionDetails!.rotateRadian);

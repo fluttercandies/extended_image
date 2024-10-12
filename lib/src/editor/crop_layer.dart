@@ -335,9 +335,17 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             min(result.bottom, layerDestinationRect.bottom)));
 
     result = _handleAspectRatio(
-        gWidth, moveType, result, layerDestinationRect, delta);
+      gWidth,
+      moveType,
+      result,
+      layerDestinationRect,
+      delta,
+    );
 
     ///move and scale image rect when crop rect is bigger than layout rect
+    ///
+
+    result = widget.editActionDetails.updateCropRect(result);
 
     if (result.beyond(layoutRect)) {
       cropRect = result;
@@ -505,8 +513,6 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   }
 
   void _doCropAutoCenterAnimation({Rect? newScreenCropRect}) {
-    // TODO
-    return;
     if (mounted) {
       setState(() {
         final Rect oldScreenCropRect = widget.editActionDetails.screenCropRect!;
