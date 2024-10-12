@@ -555,7 +555,7 @@ bool defaultSlideEndHandler({
   Size pageSize = const Size(100, 100),
   SlideAxis pageGestureAxis = SlideAxis.both,
 }) {
-  const int parameter = 6;
+  const int parameter = 15;
   if (pageGestureAxis == SlideAxis.both) {
     return offset.distance.greaterThan(
         Offset(pageSize.width, pageSize.height).distance / parameter);

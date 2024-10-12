@@ -24,7 +24,7 @@ class ExtendedImageSlidePage extends StatefulWidget {
     this.slideOffsetHandler,
     this.slideEndHandler,
     this.slideAxis = SlideAxis.both,
-    this.resetPageDuration = const Duration(milliseconds: 500),
+    this.resetPageDuration = const Duration(milliseconds: 150),
     this.slideType = SlideType.onlyImage,
     this.onSlidingPage,
     Key? key,

@@ -18,6 +18,11 @@ mixin DragGestureRecognizerMixin on _DragGestureRecognizer {
       return shouldAccpetHorizontalOrVerticalDrag!(_velocityTrackers);
     }
 
+    //处理滑动与缩放事件冲突
+    if (_velocityTrackers.keys.length >= 2) {
+      return false;
+    }
+
     if (_velocityTrackers.keys.length == 1) {
       return true;
     }
