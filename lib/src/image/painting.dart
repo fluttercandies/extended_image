@@ -235,7 +235,6 @@ void paintExtendedImage(
 
     if (hasEditAction) {
       canvas.transform(editActionDetails.getTransform().storage);
-      //  destinationRect = editAction.paintRect(destinationRect);
     }
   }
 

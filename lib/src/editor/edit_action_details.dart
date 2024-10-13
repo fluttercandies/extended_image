@@ -5,20 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 class EditActionDetails {
-  bool _computeHorizontalBoundary = false;
-  bool _computeVerticalBoundary = false;
   Rect? _layoutRect;
   Rect? _screenDestinationRect;
   Rect? _rawDestinationRect;
 
-  /// #235
-  /// when we reach edge, we should not allow to zoom out.
-  bool _reachCropRectEdge = false;
-
   double totalScale = 1.0;
   double preTotalScale = 1.0;
 
-  late Offset delta;
+  Offset delta = Offset.zero;
   Offset? screenFocalPoint;
   EdgeInsets? cropRectPadding;
   Rect? cropRect;
@@ -32,44 +26,45 @@ class EditActionDetails {
     // TODO，when rotate 90° or 270°, aspect ratio should be 1/aspectRatio
     // pi/2 , should be 1/aspectRatio ?
     // return _cropAspectRatio;
-    if (_cropAspectRatio != null) {
-      return isHalfPi ? 1.0 / _cropAspectRatio! : _cropAspectRatio;
-    }
+    // if (_cropAspectRatio != null) {
+    //   return isHalfPi ? 1.0 / _cropAspectRatio! : _cropAspectRatio;
+    // }
     // return null;
+    return _cropAspectRatio;
   }
 
   set cropAspectRatio(double? value) {
     _cropAspectRatio = value;
   }
 
-  ///image
+  /// image
   Rect? get screenDestinationRect => _screenDestinationRect;
 
   void setScreenDestinationRect(Rect value) {
     _screenDestinationRect = value;
   }
 
-  double rotateRadian = 0.0;
+  double rotateRadians = 0.0;
 
-  double rotationY = 0.0;
+  double rotationYRadians = 0.0;
 
   bool get hasRotateAngle => !isTwoPi;
 
-  bool get hasEditAction => hasRotateAngle || rotationY != 0;
+  bool get hasEditAction => hasRotateAngle || rotationYRadians != 0;
 
   bool get needCrop => screenCropRect != screenDestinationRect;
 
-  double get rotateAngle => (rotateRadian / pi) * 180.0;
+  double get rotateAngle => (rotateRadians / pi) * 180.0;
 
-  bool get needFlip => rotationY != 0;
+  bool get needFlip => rotationYRadians != 0;
 
-  bool get flipY => rotationY != 0;
+  bool get flipY => rotationYRadians != 0;
 
-  bool get isHalfPi => (rotateRadian % (2 * pi)) == pi / 2;
+  bool get isHalfPi => (rotateRadians % (2 * pi)) == pi / 2;
 
-  bool get isPi => (rotateRadian % (2 * pi)) == pi;
+  bool get isPi => (rotateRadians % (2 * pi)) == pi;
 
-  bool get isTwoPi => (rotateRadian % (2 * pi)) == 0;
+  bool get isTwoPi => (rotateRadians % (2 * pi)) == 0;
 
   /// destination rect base on layer
   Rect? get layerDestinationRect =>
@@ -81,14 +76,12 @@ class EditActionDetails {
 
   Rect? get screenCropRect => cropRect?.shift(layoutTopLeft!);
 
-  bool get reachCropRectEdge => _reachCropRectEdge;
-
   void rotate(double rotation, Rect layoutRect, BoxFit? fit) {
     if (cropRect == null) {
       return;
     }
-    rotateRadian += rotation;
-    rotateRadian %= 2 * pi;
+    rotateRadians += rotation;
+    rotateRadians %= 2 * pi;
     // if (_flipX && _flipY && isPi) {
     //   _flipX = _flipY = false;
     //   rotateRadian = 0.0;
@@ -129,15 +122,15 @@ class EditActionDetails {
       return;
     }
 
-    if (rotationY == 0.0) {
-      rotationY = pi;
+    if (rotationYRadians == 0.0) {
+      rotationYRadians = pi;
     } else {
-      rotationY = 0.0;
+      rotationYRadians = 0.0;
     }
 
-    rotateRadian = -rotateRadian;
+    rotateRadians = -rotateRadians;
 
-    rotateRadian = (rotateRadian + 2 * pi) % (2 * pi);
+    rotateRadians = (rotateRadians + 2 * pi) % (2 * pi);
   }
 
   // @override
@@ -173,8 +166,6 @@ class EditActionDetails {
   }
 
   Rect getFinalDestinationRect() {
-    _reachCropRectEdge = false;
-
     if (screenDestinationRect != null) {
       /// scale
       final double scaleDelta = totalScale / preTotalScale;
@@ -215,8 +206,6 @@ class EditActionDetails {
       }
     } else {
       _screenDestinationRect = getRectWithScale(_rawDestinationRect!);
-      _screenDestinationRect =
-          computeBoundary(_screenDestinationRect!, screenCropRect!);
     }
     return _screenDestinationRect!;
   }
@@ -227,44 +216,6 @@ class EditActionDetails {
     final Offset center = rect.center;
     return Rect.fromLTWH(
         center.dx - width / 2.0, center.dy - height / 2.0, width, height);
-  }
-
-  Rect computeBoundary(Rect result, Rect layoutRect) {
-    if (_computeHorizontalBoundary) {
-      //move right
-      if (result.left.greaterThanOrEqualTo(layoutRect.left)) {
-        result = Rect.fromLTWH(
-            layoutRect.left, result.top, result.width, result.height);
-      }
-
-      ///move left
-      if (result.right.lessThanOrEqualTo(layoutRect.right)) {
-        result = Rect.fromLTWH(layoutRect.right - result.width, result.top,
-            result.width, result.height);
-      }
-    }
-
-    if (_computeVerticalBoundary) {
-      //move down
-      if (result.bottom.lessThanOrEqualTo(layoutRect.bottom)) {
-        result = Rect.fromLTWH(result.left, layoutRect.bottom - result.height,
-            result.width, result.height);
-      }
-
-      //move up
-      if (result.top.greaterThanOrEqualTo(layoutRect.top)) {
-        result = Rect.fromLTWH(
-            result.left, layoutRect.top, result.width, result.height);
-      }
-    }
-
-    _computeHorizontalBoundary =
-        result.left.lessThanOrEqualTo(layoutRect.left) &&
-            result.right.greaterThanOrEqualTo(layoutRect.right);
-
-    _computeVerticalBoundary = result.top.lessThanOrEqualTo(layoutRect.top) &&
-        result.bottom.greaterThanOrEqualTo(layoutRect.bottom);
-    return result;
   }
 
   /// The path of the processed image, displayed on the screen
@@ -318,11 +269,11 @@ class EditActionDetails {
       origin.dx,
       origin.dy,
     );
-    if (rotationY != 0) {
-      result.multiply(Matrix4.rotationY(rotationY));
+    if (rotationYRadians != 0) {
+      result.multiply(Matrix4.rotationY(rotationYRadians));
     }
     if (hasRotateAngle) {
-      result.multiply(Matrix4.rotationZ(rotateRadian));
+      result.multiply(Matrix4.rotationZ(rotateRadians));
     }
 
     result.translate(-origin.dx, -origin.dy);
@@ -330,53 +281,13 @@ class EditActionDetails {
     return result;
   }
 
-  // The copyWith method allows you to create a modified copy of an instance.
-  EditActionDetails copyWith({
-    bool? computeHorizontalBoundary,
-    bool? computeVerticalBoundary,
-    Rect? layoutRect,
-    Rect? screenDestinationRect,
-    Rect? rawDestinationRect,
-    bool? reachCropRectEdge,
-    double? totalScale,
-    double? preTotalScale,
-    Offset? delta,
-    Offset? screenFocalPoint,
-    EdgeInsets? cropRectPadding,
-    Rect? cropRect,
-    double? originalAspectRatio,
-    double? cropAspectRatio,
-    double? rotateRadian,
-    double? rotationY,
-  }) {
-    return EditActionDetails()
-      .._computeHorizontalBoundary =
-          computeHorizontalBoundary ?? _computeHorizontalBoundary
-      .._computeVerticalBoundary =
-          computeVerticalBoundary ?? _computeVerticalBoundary
-      .._layoutRect = layoutRect ?? _layoutRect
-      .._screenDestinationRect = screenDestinationRect ?? _screenDestinationRect
-      .._rawDestinationRect = rawDestinationRect ?? _rawDestinationRect
-      .._reachCropRectEdge = reachCropRectEdge ?? _reachCropRectEdge
-      ..totalScale = totalScale ?? this.totalScale
-      ..preTotalScale = preTotalScale ?? this.preTotalScale
-      ..delta = delta ?? this.delta
-      ..screenFocalPoint = screenFocalPoint ?? this.screenFocalPoint
-      ..cropRectPadding = cropRectPadding ?? this.cropRectPadding
-      ..cropRect = cropRect ?? this.cropRect
-      ..originalAspectRatio = originalAspectRatio ?? this.originalAspectRatio
-      .._cropAspectRatio = cropAspectRatio ?? _cropAspectRatio
-      ..rotateRadian = rotateRadian ?? this.rotateRadian
-      ..rotationY = rotationY ?? this.rotationY;
-  }
-
   double reverseRotateRadian(double rotateRadian) {
-    return rotationY == 0 ? rotateRadian : -rotateRadian;
+    return rotationYRadians == 0 ? rotateRadian : -rotateRadian;
   }
 
-  void updateRotateRadian(double rotateRadian, double maxScale) {
-    final double oldRotateRadian = this.rotateRadian;
-    this.rotateRadian = rotateRadian;
+  void updateRotateRadians(double rotateRadians, double maxScale) {
+    final double oldRotateRadian = this.rotateRadians;
+    this.rotateRadians = rotateRadians;
     final Rect rect = _screenDestinationRect!;
 
     final Matrix4 result = getTransform();
@@ -398,7 +309,7 @@ class EditActionDetails {
       // can't scale
       if (totalScale * scaleDelta > maxScale) {
         // roll back to old value
-        this.rotateRadian = oldRotateRadian;
+        this.rotateRadians = oldRotateRadian;
       } else {
         screenFocalPoint = _screenDestinationRect!.center;
         preTotalScale = totalScale;
@@ -433,13 +344,13 @@ class EditActionDetails {
   void updateDelta(Offset delta) {
     double dx = delta.dx;
     final double dy = delta.dy;
-    if (rotationY == pi) {
+    if (rotationYRadians == pi) {
       dx = -dx;
     }
     final double transformedDx =
-        dx * cos(rotateRadian) + dy * sin(rotateRadian);
+        dx * cos(rotateRadians) + dy * sin(rotateRadians);
     final double transformedDy =
-        dy * cos(rotateRadian) - dx * sin(rotateRadian);
+        dy * cos(rotateRadians) - dx * sin(rotateRadians);
 
     Offset offset = Offset(transformedDx, transformedDy);
     Rect rect = _screenDestinationRect!.shift(offset);
@@ -658,5 +569,76 @@ class EditActionDetails {
     }
 
     return intersections;
+  }
+
+  ///  The copyWith method allows you to create a modified copy of an instance.
+  EditActionDetails copyWith({
+    Rect? layoutRect,
+    Rect? screenDestinationRect,
+    Rect? rawDestinationRect,
+    double? totalScale,
+    double? preTotalScale,
+    Offset? delta,
+    Offset? screenFocalPoint,
+    EdgeInsets? cropRectPadding,
+    Rect? cropRect,
+    double? originalAspectRatio,
+    double? cropAspectRatio,
+    double? rotateRadians,
+    double? rotationYRadians,
+  }) {
+    return EditActionDetails()
+      .._layoutRect = layoutRect ?? _layoutRect
+      .._screenDestinationRect = screenDestinationRect ?? _screenDestinationRect
+      .._rawDestinationRect = rawDestinationRect ?? _rawDestinationRect
+      ..totalScale = totalScale ?? this.totalScale
+      ..preTotalScale = preTotalScale ?? this.preTotalScale
+      ..delta = delta ?? this.delta
+      ..screenFocalPoint = screenFocalPoint ?? this.screenFocalPoint
+      ..cropRectPadding = cropRectPadding ?? this.cropRectPadding
+      ..cropRect = cropRect ?? this.cropRect
+      ..originalAspectRatio = originalAspectRatio ?? this.originalAspectRatio
+      .._cropAspectRatio = cropAspectRatio ?? _cropAspectRatio
+      ..rotateRadians = rotateRadians ?? this.rotateRadians
+      ..rotationYRadians = rotationYRadians ?? this.rotationYRadians;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (!identical(this, other)) {
+      return false;
+    }
+
+    return other is EditActionDetails &&
+        _layoutRect == other._layoutRect &&
+        _screenDestinationRect == other._screenDestinationRect &&
+        _rawDestinationRect == other._rawDestinationRect &&
+        totalScale == other.totalScale &&
+        preTotalScale == other.preTotalScale &&
+        delta == other.delta &&
+        screenFocalPoint == other.screenFocalPoint &&
+        cropRectPadding == other.cropRectPadding &&
+        cropRect == other.cropRect &&
+        originalAspectRatio == other.originalAspectRatio &&
+        _cropAspectRatio == other._cropAspectRatio &&
+        rotateRadians == other.rotateRadians &&
+        rotationYRadians == other.rotationYRadians;
+  }
+
+  @override
+  int get hashCode {
+    return _layoutRect.hashCode ^
+        _screenDestinationRect.hashCode ^
+        _rawDestinationRect.hashCode ^
+        totalScale.hashCode ^
+        preTotalScale.hashCode ^
+        delta.hashCode ^
+        screenFocalPoint.hashCode ^
+        cropRectPadding.hashCode ^
+        cropRect.hashCode ^
+        originalAspectRatio.hashCode ^
+        _cropAspectRatio.hashCode ^
+        rotateRadians.hashCode ^
+        rotationYRadians.hashCode;
   }
 }

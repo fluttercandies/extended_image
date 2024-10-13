@@ -47,7 +47,7 @@ class AspectRatioWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      size: const Size(100, 100),
+      size: const Size(60, 60),
       painter: AspectRatioPainter(
         aspectRatio: aspectRatio,
         aspectRatioS: aspectRatioS,
@@ -82,7 +82,8 @@ class AspectRatioPainter extends CustomPainter {
         (aspectRatio != null && aspectRatio! > 0.0) ? aspectRatio! : 1.0;
     canvas.drawRect(
       getDestinationRect(
-          rect: const EdgeInsets.all(25.0).deflateRect(rect),
+          rect: const EdgeInsets.only(left: 10, right: 10, bottom: 20, top: 5)
+              .deflateRect(rect),
           inputSize: Size(
             aspectRatioResult * size.width / 2,
             size.width / 2,
@@ -97,7 +98,7 @@ class AspectRatioPainter extends CustomPainter {
             style: TextStyle(
               color:
                   color.computeLuminance() < 0.5 ? Colors.white : Colors.black,
-              fontSize: 16.0,
+              fontSize: 12.0,
             )),
         textDirection: TextDirection.ltr,
         maxLines: 1);

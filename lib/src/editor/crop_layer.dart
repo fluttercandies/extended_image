@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 import '../utils.dart';
 import 'edit_action_details.dart';
+import 'editor_config.dart';
+import 'editor_crop_layer_painter.dart';
 import 'editor_utils.dart';
 
 ///

@@ -6,11 +6,15 @@ import 'package:example/common/utils/crop_editor_helper.dart';
 import 'package:example/common/widget/common_widget.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
+
 import 'package:oktoast/oktoast.dart';
+// ignore: implementation_imports
+import 'package:oktoast/src/core/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 ///
@@ -31,8 +35,8 @@ class ImageEditorDemo extends StatefulWidget {
 }
 
 class _ImageEditorDemoState extends State<ImageEditorDemo> {
-  final GlobalKey<ExtendedImageEditorState> editorKey =
-      GlobalKey<ExtendedImageEditorState>();
+  // final GlobalKey<ExtendedImageEditorState> editorKey =
+  //     GlobalKey<ExtendedImageEditorState>();
   final GlobalKey<PopupMenuButtonState<EditorCropLayerPainter>> popupMenuKey =
       GlobalKey<PopupMenuButtonState<EditorCropLayerPainter>>();
   final List<AspectRatioItem> _aspectRatios = <AspectRatioItem>[
@@ -48,6 +52,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   bool _cropping = false;
 
   EditorCropLayerPainter? _cropLayerPainter;
+  final ImageEditorController _editorController = ImageEditorController();
+  final MyRulerPickerController _rulerPickerController =
+      MyRulerPickerController(value: 0.0);
 
   @override
   void initState() {
@@ -71,7 +78,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         cacheRawData: true,
       );
     }
-
+    final ToastTheme toastTheme = ToastTheme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('image editor demo'),
@@ -102,7 +109,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 fit: BoxFit.contain,
                 mode: ExtendedImageMode.editor,
                 enableLoadState: true,
-                extendedImageEditorKey: editorKey,
+                // extendedImageEditorKey: editorKey,
                 initEditorConfigHandler: (ExtendedImageState? state) {
                   return EditorConfig(
                     maxScale: 8.0,
@@ -111,59 +118,19 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     cropLayerPainter: _cropLayerPainter!,
                     initCropRectType: InitCropRectType.imageRect,
                     cropAspectRatio: _aspectRatio!.value,
-                    gestureRotate: true,
+                    controller: _editorController,
                   );
                 },
               ),
             ),
+            const Divider(),
             ButtonTheme(
               minWidth: 0.0,
               padding: EdgeInsets.zero,
-              child: Wrap(
+              child: Row(
                 // mainAxisAlignment: MainAxisAlignment.spaceAround,
                 // mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
-                  FlatButtonWithIcon(
-                    icon: const Icon(Icons.flip),
-                    label: const Text(
-                      'Flip',
-                      style: TextStyle(fontSize: 10.0),
-                    ),
-                    textColor: Colors.white,
-                    onPressed: () {
-                      editorKey.currentState!.flip(
-                        animation: true,
-                      );
-                    },
-                  ),
-                  FlatButtonWithIcon(
-                    icon: const Icon(Icons.rotate_left),
-                    label: const Text(
-                      'Rotate Left',
-                      style: TextStyle(fontSize: 8.0),
-                    ),
-                    textColor: Colors.white,
-                    onPressed: () {
-                      editorKey.currentState!.rotate(
-                        angle: -10,
-                        animation: true,
-                      );
-                    },
-                  ),
-                  FlatButtonWithIcon(
-                    icon: const Icon(Icons.rotate_right),
-                    label: const Text(
-                      'Rotate Right',
-                      style: TextStyle(fontSize: 8.0),
-                    ),
-                    textColor: Colors.white,
-                    onPressed: () {
-                      editorKey.currentState!.rotate(
-                        angle: 90,
-                        animation: true,
-                      );
-                    },
-                  ),
                   FlatButtonWithIcon(
                     icon: const Icon(Icons.rounded_corner_sharp),
                     label: PopupMenuButton<EditorCropLayerPainter>(
@@ -209,20 +176,28 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             value: CustomEditorCropLayerPainter(),
                           ),
                           const PopupMenuDivider(),
-                          const PopupMenuItem<EditorCropLayerPainter>(
+                          PopupMenuItem<EditorCropLayerPainter>(
                             child: Row(
                               children: <Widget>[
-                                Icon(
-                                  CupertinoIcons.circle,
-                                  color: Colors.blue,
+                                Container(
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 3),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.blue,
+                                    ),
+                                    borderRadius: BorderRadius.circular(25),
+                                  ),
+                                  width: 20,
+                                  height: 20,
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 5,
                                 ),
-                                Text('Circle'),
+                                const Text('Circle'),
                               ],
                             ),
-                            value: CircleEditorCropLayerPainter(),
+                            value: const CircleEditorCropLayerPainter(),
                           ),
                         ];
                       },
@@ -242,6 +217,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       popupMenuKey.currentState!.showButtonMenu();
                     },
                   ),
+                  const Spacer(),
                   FlatButtonWithIcon(
                     icon: const Icon(Icons.restore),
                     label: const Text(
@@ -250,15 +226,134 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     ),
                     textColor: Colors.white,
                     onPressed: () {
-                      editorKey.currentState!.reset();
+                      _editorController.reset();
+                    },
+                  ),
+                ],
+              ),
+            ),
+            ButtonTheme(
+              minWidth: 0.0,
+              padding: EdgeInsets.zero,
+              child: Row(
+                children: <Widget>[
+                  FlatButtonWithIcon(
+                    icon: const Icon(Icons.flip),
+                    label: const Text(
+                      'Flip',
+                      style: TextStyle(fontSize: 10.0),
+                    ),
+                    textColor: Colors.white,
+                    onPressed: () {
+                      _editorController.flip(
+                        animation: true,
+                      );
+                    },
+                  ),
+                  Expanded(
+                    child: LayoutBuilder(
+                      builder: (BuildContext c, BoxConstraints b) {
+                        return RulerPicker(
+                          controller: _rulerPickerController,
+                          onValueChanged: (num value) {
+                            if (_rulerPickerController.value == value) {
+                              return;
+                            }
+                            HapticFeedback.vibrate();
+
+                            showToastWidget(
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.circular(toastTheme.radius),
+                                  color: toastTheme.backgroundColor,
+                                ),
+                                padding: const EdgeInsets.all(5),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(
+                                      '$value°',
+                                      style: toastTheme.textStyle,
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        dismissAllToast();
+                                        _editorController.rotate(
+                                          angle: -_rulerPickerController.value
+                                              as double,
+                                        );
+                                        _rulerPickerController.value = 0;
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                          color: Colors.white,
+                                        ),
+                                        child: const Icon(
+                                          Icons.close,
+                                          color: Colors.black,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              position: const ToastPosition(
+                                align: Alignment.bottomCenter,
+                                offset: -180,
+                              ),
+                              handleTouch: true,
+                            );
+
+                            _editorController.rotate(
+                              angle: value.toDouble() -
+                                  _rulerPickerController.value,
+                            );
+
+                            _rulerPickerController.setValueWithOutNotify(value);
+                          },
+                          width: b.maxWidth,
+                          height: 50,
+                          onBuildRulerScaleText:
+                              (int index, num rulerScaleValue) {
+                            return '$rulerScaleValue';
+                          },
+                          ranges: const <RulerRange>[
+                            RulerRange(begin: -45, end: 45, scale: 1),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                  FlatButtonWithIcon(
+                    icon: const Icon(Icons.rotate_right),
+                    label: const Text(
+                      'Rotate Right',
+                      style: TextStyle(fontSize: 8.0),
+                    ),
+                    textColor: Colors.white,
+                    onPressed: () {
+                      _editorController.rotate(
+                        angle: 90,
+                        animation: true,
+                      );
                     },
                   ),
                 ],
               ),
             ),
             Container(
-              color: Colors.black.withOpacity(0.2),
-              height: 120,
+              // color: Colors.black.withOpacity(0.2),
+              height: 80,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (_, int index) {
@@ -415,7 +510,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
       /// native library
       if (useNative) {
         imageInfo = await cropImageDataWithNativeLibrary(
-            state: editorKey.currentState!);
+            state: _editorController.state!);
       } else {
         ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
         ///it will block showBusyingDialog
@@ -424,7 +519,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
         ///if you don't want to block ui, use compute/isolate,but it costs more time.
         imageInfo =
-            await cropImageDataWithDartLibrary(state: editorKey.currentState!);
+            await cropImageDataWithDartLibrary(state: _editorController.state!);
       }
       final String? filePath = await ImageSaver.save(
           'extended_image_cropped_image.${imageInfo.imageType == ImageType.jpg ? 'jpg' : 'gif'}',
@@ -432,7 +527,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
       // var filePath = await ImagePickerSaver.saveFile(fileData: fileData);
 
       msg = 'save image : $filePath';
-      showToastWidget(Padding(
+
+      showToastWidget(Container(
+        color: Colors.black54,
         padding: const EdgeInsets.all(10.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -441,6 +538,10 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
             Text(
               msg,
               textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white),
+            ),
+            const SizedBox(
+              height: 10,
             ),
             Image.memory(
               imageInfo.data!,
@@ -466,7 +567,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     //when back to current page, may be editorKey.currentState is not ready.
     Future<void>.delayed(const Duration(milliseconds: 200), () {
       setState(() {
-        editorKey.currentState!.reset();
+        _editorController.reset();
       });
     });
   }
@@ -525,5 +626,24 @@ class CircleEditorCropLayerPainter extends EditorCropLayerPainter {
       super.paintLines(canvas, size, painter);
       canvas.restore();
     }
+  }
+}
+
+class MyRulerPickerController extends RulerPickerController {
+  MyRulerPickerController({num value = 0}) : _value = value;
+  @override
+  num get value => _value;
+  num _value;
+  @override
+  set value(num newValue) {
+    if (_value == newValue) {
+      return;
+    }
+    _value = newValue;
+    notifyListeners();
+  }
+
+  void setValueWithOutNotify(num newValue) {
+    _value = newValue;
   }
 }

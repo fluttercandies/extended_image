@@ -10,7 +10,10 @@ import 'package:flutter/widgets.dart';
 import '../extended_image.dart';
 import 'crop_layer.dart';
 import 'edit_action_details.dart';
+import 'editor_config.dart';
 import 'editor_utils.dart';
+
+part 'image_editor_controller.dart';
 
 ///
 ///  create by zmtzawqlp on 2019/8/22
@@ -29,7 +32,7 @@ class ExtendedImageEditor extends StatefulWidget {
 }
 
 class ExtendedImageEditorState extends State<ExtendedImageEditor>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, ImageEditorControllerMixin {
   EditActionDetails? _editActionDetails;
   EditorConfig? _editorConfig;
   late double _startingScale;
@@ -41,8 +44,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
   late AnimationController _animationController;
 
-  Animation<double>? _rotationYAnimation;
-  Animation<double>? _rotateRadianAnimation;
+  Animation<double>? _rotationYRadiansAnimation;
+  Animation<double>? _rotateRadiansAnimation;
   @override
   void initState() {
     super.initState();
@@ -54,15 +57,21 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     _animationController.addListener(_onAnimation);
   }
 
+  @override
+  void didChangeDependencies() {
+    _editorConfig?.controller?._state = this;
+    super.didChangeDependencies();
+  }
+
   void _onAnimation() {
     _updateRotate(
-      _rotationYAnimation?.value ?? _editActionDetails!.rotationY,
-      _rotateRadianAnimation?.value ?? _editActionDetails!.rotateRadian,
+      _rotationYRadiansAnimation?.value ?? _editActionDetails!.rotationYRadians,
+      _rotateRadiansAnimation?.value ?? _editActionDetails!.rotateRadians,
     );
     if (_animationController.isCompleted) {
       _layerKey.currentState?.pointerDown(false);
-      _rotationYAnimation = null;
-      _rotateRadianAnimation = null;
+      _rotationYRadiansAnimation = null;
+      _rotateRadiansAnimation = null;
     }
   }
 
@@ -78,7 +87,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
             .extendedImageState.imageWidget.initEditorConfigHandler
             ?.call(widget.extendedImageState) ??
         EditorConfig();
-
+    _editorConfig?.controller?._state = this;
     if (cropAspectRatio != _editorConfig!.cropAspectRatio) {
       _editActionDetails = null;
     }
@@ -273,7 +282,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     final Offset delta =
         details.focalPoint * _editorConfig!.speed - _startingOffset;
     final double scaleDelta = details.scale / _detailsScale;
-    final bool zoomOut = scaleDelta < 1;
+    // final bool zoomOut = scaleDelta < 1;
     final bool zoomIn = scaleDelta > 1;
 
     _detailsScale = details.scale;
@@ -281,9 +290,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     _startingOffset = details.focalPoint;
     _editActionDetails!.screenFocalPoint = details.focalPoint;
     // no more zoom
-    if ((_editActionDetails!.reachCropRectEdge && zoomOut) ||
-        _editActionDetails!.totalScale.equalTo(_editorConfig!.maxScale) &&
-            zoomIn) {
+    if (_editActionDetails!.totalScale.equalTo(_editorConfig!.maxScale) &&
+        zoomIn) {
       // correct _startingScale
       // details.scale was not calcuated at the moment
       _startingScale =
@@ -399,10 +407,12 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
   EditActionDetails? get editAction => _editActionDetails;
 
+  @override
   void rotate({
     double angle = 90,
     bool animation = false,
     Duration? duration,
+    bool rotateCropRect = false,
   }) {
     if (_animationController.isAnimating) {
       return;
@@ -411,25 +421,26 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       return;
     }
 
-    duration ??= Duration(milliseconds: (angle * 50).abs().toInt());
+    duration ??= Duration(milliseconds: (angle * 5).abs().toInt());
 
-    final double begin = _editActionDetails!.rotateRadian;
+    final double begin = _editActionDetails!.rotateRadians;
     final double end =
         begin + _editActionDetails!.reverseRotateRadian(angle / 180 * pi);
 
     if (animation) {
       _animationController.duration = duration;
-      _rotateRadianAnimation = Tween<double>(
+      _rotateRadiansAnimation = Tween<double>(
         begin: begin,
         end: end,
       ).animate(_animationController);
       _layerKey.currentState?.pointerDown(true);
       _animationController.forward(from: 0);
     } else {
-      _updateRotate(_editActionDetails!.rotationY, end);
+      _updateRotate(_editActionDetails!.rotationYRadians, end);
     }
   }
 
+  @override
   void flip({
     bool animation = false,
     Duration duration = const Duration(milliseconds: 500),
@@ -440,7 +451,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
     assert(_editActionDetails != null && _editorConfig != null);
 
-    final double begin = _editActionDetails!.rotationY;
+    final double begin = _editActionDetails!.rotationYRadians;
 
     double end = 0.0;
 
@@ -452,22 +463,23 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
     if (animation) {
       _animationController.duration = duration;
-      _rotationYAnimation = Tween<double>(
+      _rotationYRadiansAnimation = Tween<double>(
         begin: begin,
         end: end,
       ).animate(_animationController);
       _layerKey.currentState?.pointerDown(true);
       _animationController.forward(from: 0);
     } else {
-      _updateRotate(end, _editActionDetails!.rotateRadian);
+      _updateRotate(end, _editActionDetails!.rotateRadians);
     }
   }
 
-  void _updateRotate(double rotationY, double rotateRadian) {
+  void _updateRotate(double rotationYRadians, double rotateRadians) {
     setState(() {
-      _editActionDetails!.rotationY = rotationY;
-      _editActionDetails!.updateRotateRadian(
-        rotateRadian,
+      _editActionDetails =
+          _editActionDetails!.copyWith(rotationYRadians: rotationYRadians);
+      _editActionDetails!.updateRotateRadians(
+        rotateRadians,
         _editorConfig!.maxScale,
       );
 
@@ -475,6 +487,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     });
   }
 
+  @override
   void reset() {
     if (_animationController.isAnimating) {
       _animationController.stop();
@@ -486,4 +499,10 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
     });
   }
+
+  @override
+  void redo() {}
+
+  @override
+  void undo() {}
 }
