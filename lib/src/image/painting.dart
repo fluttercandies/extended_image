@@ -290,7 +290,7 @@ void paintExtendedImage(
 
   if (needClip || hasEditAction) {
     canvas.restore();
-    // TODO
+
     // final Path path = editActionDetails!.getImagePath();
     // canvas.drawPath(
     //   path,

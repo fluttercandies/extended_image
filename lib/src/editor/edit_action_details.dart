@@ -59,13 +59,11 @@ class EditActionDetails {
 
   bool get needCrop => screenCropRect != screenDestinationRect;
 
-  double get rotateAngle => (rotateRadian ~/ (pi / 2)) * 90.0;
+  double get rotateAngle => (rotateRadian / pi) * 180.0;
 
   bool get needFlip => rotationY != 0;
 
-  // TODO
   bool get flipY => rotationY != 0;
-  bool get flipX => false;
 
   bool get isHalfPi => (rotateRadian % (2 * pi)) == pi / 2;
 
@@ -130,41 +128,7 @@ class EditActionDetails {
     if (screenCropRect == null) {
       return;
     }
-    // final Offset flipOrigin = screenCropRect!.center;
-    // if (isHalfPi) {
-    //   _flipX = !_flipX;
-    //   // _screenDestinationRect = Rect.fromLTRB(
-    //   //     screenDestinationRect.left,
-    //   //     2 * flipOrigin.dy - screenDestinationRect.bottom,
-    //   //     screenDestinationRect.right,
-    //   //     2 * flipOrigin.dy - screenDestinationRect.top);
-    // } else {
-    //   _flipY = !_flipY;
-    // }
-    // _screenDestinationRect = Rect.fromLTRB(
-    //     2 * flipOrigin.dx - screenDestinationRect!.right,
-    //     screenDestinationRect!.top,
-    //     2 * flipOrigin.dx - screenDestinationRect!.left,
-    //     screenDestinationRect!.bottom);
 
-    // if (rotateRadian >= 0 && rotateRadian <= pi / 2) {
-    //   // 0° 到 90° 之间
-    //   _flipY = !_flipY;
-    // } else if (rotateRadian > pi / 2 && rotateRadian <= pi) {
-    //   // 90° 到 180° 之间
-    //   _flipX = !_flipX; // 垂直翻转
-    // } else if (rotateRadian > pi && rotateRadian <= 3 * pi / 2) {
-    //   // 180° 到 270° 之间
-    //   _flipY = !_flipY; // 水平翻转
-    // } else if (rotateRadian > 3 * pi / 2 && rotateRadian < 2 * pi) {
-    //   // 270° 到 360° 之间
-    //   _flipX = !_flipX; // 垂直翻转
-    // }
-    // _flipY = !_flipY;
-    // if (_flipX && _flipY && isPi) {
-    //   _flipX = _flipY = false;
-    //   rotateRadian = 0.0;
-    // }
     if (rotationY == 0.0) {
       rotationY = pi;
     } else {
@@ -174,72 +138,6 @@ class EditActionDetails {
     rotateRadian = -rotateRadian;
 
     rotateRadian = (rotateRadian + 2 * pi) % (2 * pi);
-  }
-
-  /// screen image rect to paint rect
-  Rect paintRect(Rect rect) {
-    if (!hasEditAction || screenCropRect == null) {
-      return rect;
-    }
-
-    final Offset flipOrigin = screenCropRect!.center;
-    if (hasRotateAngle) {
-      rect = rotateRect(rect, flipOrigin, -rotateRadian);
-    }
-
-    // if (flipY) {
-    //   rect = Rect.fromLTRB(
-    //     2 * flipOrigin.dx - rect.right,
-    //     rect.top,
-    //     2 * flipOrigin.dx - rect.left,
-    //     rect.bottom,
-    //   );
-    // }
-
-    // if (flipX) {
-    //   rect = Rect.fromLTRB(
-    //     rect.left,
-    //     2 * flipOrigin.dy - rect.bottom,
-    //     rect.right,
-    //     2 * flipOrigin.dy - rect.top,
-    //   );
-    // }
-
-    return rect;
-  }
-
-  Rect transformRect(Rect rect, Matrix4 matrix) {
-    // 获取矩形的四个角点
-    final List<Offset> corners = <Offset>[
-      rect.topLeft,
-      rect.topRight,
-      rect.bottomRight,
-      rect.bottomLeft,
-    ];
-
-    // 变换角点
-    final List<Offset> transformedCorners = corners.map((Offset corner) {
-      // 将 Offset 转换为 Vector4，并应用矩阵变换
-      final Vector4 v =
-          matrix.transform(Vector4(corner.dx, corner.dy, 0.0, 1.0));
-      return Offset(v.x, v.y);
-    }).toList();
-
-    // 获取变换后的最小和最大点，生成新的 Rect
-    final double minX = transformedCorners
-        .map((Offset p) => p.dx)
-        .reduce((double a, double b) => a < b ? a : b);
-    final double minY = transformedCorners
-        .map((Offset p) => p.dy)
-        .reduce((double a, double b) => a < b ? a : b);
-    final double maxX = transformedCorners
-        .map((Offset p) => p.dx)
-        .reduce((double a, double b) => a > b ? a : b);
-    final double maxY = transformedCorners
-        .map((Offset p) => p.dy)
-        .reduce((double a, double b) => a > b ? a : b);
-
-    return Rect.fromLTRB(minX, minY, maxX, maxY);
   }
 
   // @override
@@ -283,32 +181,24 @@ class EditActionDetails {
       if (scaleDelta != 1.0) {
         Offset focalPoint = screenFocalPoint ?? _screenDestinationRect!.center;
 
-        if (focalPoint == _screenDestinationRect!.center) {
-          _screenDestinationRect = Rect.fromCenter(
-            center: focalPoint,
-            width: _screenDestinationRect!.width * scaleDelta,
-            height: _screenDestinationRect!.height * scaleDelta,
-          );
-        } else {
-          focalPoint = Offset(
-            focalPoint.dx
-                .clamp(
-                    _screenDestinationRect!.left, _screenDestinationRect!.right)
-                .toDouble(),
-            focalPoint.dy
-                .clamp(
-                    _screenDestinationRect!.top, _screenDestinationRect!.bottom)
-                .toDouble(),
-          );
+        focalPoint = Offset(
+          focalPoint.dx
+              .clamp(
+                  _screenDestinationRect!.left, _screenDestinationRect!.right)
+              .toDouble(),
+          focalPoint.dy
+              .clamp(
+                  _screenDestinationRect!.top, _screenDestinationRect!.bottom)
+              .toDouble(),
+        );
 
-          _screenDestinationRect = Rect.fromLTWH(
-              focalPoint.dx -
-                  (focalPoint.dx - _screenDestinationRect!.left) * scaleDelta,
-              focalPoint.dy -
-                  (focalPoint.dy - _screenDestinationRect!.top) * scaleDelta,
-              _screenDestinationRect!.width * scaleDelta,
-              _screenDestinationRect!.height * scaleDelta);
-        }
+        _screenDestinationRect = Rect.fromLTWH(
+            focalPoint.dx -
+                (focalPoint.dx - _screenDestinationRect!.left) * scaleDelta,
+            focalPoint.dy -
+                (focalPoint.dy - _screenDestinationRect!.top) * scaleDelta,
+            _screenDestinationRect!.width * scaleDelta,
+            _screenDestinationRect!.height * scaleDelta);
 
         preTotalScale = totalScale;
 
@@ -318,68 +208,11 @@ class EditActionDetails {
       /// move
       else {
         if (_screenDestinationRect != screenCropRect) {
-          // final bool topSame =
-          //     _screenDestinationRect!.topIsSame(screenCropRect!);
-          // final bool leftSame =
-          //     _screenDestinationRect!.leftIsSame(screenCropRect!);
-          // final bool bottomSame =
-          //     _screenDestinationRect!.bottomIsSame(screenCropRect!);
-          // final bool rightSame =
-          //     _screenDestinationRect!.rightIsSame(screenCropRect!);
-
-          // if (topSame && bottomSame) {
-          //   delta = Offset(delta.dx, 0.0);
-          // } else if (leftSame && rightSame) {
-          //   delta = Offset(0.0, delta.dy);
-          // }
-
           _screenDestinationRect = _screenDestinationRect!.shift(delta);
         }
-        //we have shift offset, we should clear delta.
+        // we have shift offset, we should clear delta.
         delta = Offset.zero;
       }
-
-      // _screenDestinationRect =
-      //     computeBoundary(_screenDestinationRect!, screenCropRect!);
-
-      // // make sure that crop rect is all in image rect.
-      // if (screenCropRect != null) {
-      //   Rect rect = screenCropRect!.expandToInclude(_screenDestinationRect!);
-      //   if (rect != _screenDestinationRect) {
-      //     final bool topSame = rect.topIsSame(screenCropRect!);
-      //     final bool leftSame = rect.leftIsSame(screenCropRect!);
-      //     final bool bottomSame = rect.bottomIsSame(screenCropRect!);
-      //     final bool rightSame = rect.rightIsSame(screenCropRect!);
-
-      //     // make sure that image rect keep same aspect ratio
-      //     if (topSame && bottomSame) {
-      //       rect = Rect.fromCenter(
-      //           center: rect.center,
-      //           width: rect.height /
-      //               _screenDestinationRect!.height *
-      //               _screenDestinationRect!.width,
-      //           height: rect.height);
-      //       _reachCropRectEdge = true;
-      //     } else if (leftSame && rightSame) {
-      //       rect = Rect.fromCenter(
-      //         center: rect.center,
-      //         width: rect.width,
-      //         height: rect.width /
-      //             _screenDestinationRect!.width *
-      //             _screenDestinationRect!.height,
-      //       );
-      //       _reachCropRectEdge = true;
-      //     }
-      //     totalScale =
-      //         totalScale / (rect.width / _screenDestinationRect!.width);
-      //     // init totalScale
-      //     if (_rawDestinationRect!.isSame(_rawDestinationRect!)) {
-      //       totalScale = 1.0;
-      //     }
-      //     preTotalScale = totalScale;
-      //     _screenDestinationRect = rect;
-      //   }
-      // }
     } else {
       _screenDestinationRect = getRectWithScale(_rawDestinationRect!);
       _screenDestinationRect =
@@ -436,8 +269,8 @@ class EditActionDetails {
 
   /// The path of the processed image, displayed on the screen
   ///
-  Path getImagePath() {
-    final Rect rect = _screenDestinationRect!;
+  Path getImagePath({Rect? rect}) {
+    rect ??= _screenDestinationRect!;
 
     final Matrix4 result = getTransform();
     final List<Offset> corners = <Offset>[
@@ -458,13 +291,6 @@ class EditActionDetails {
       ..lineTo(rotatedCorners[2].dx, rotatedCorners[2].dy)
       ..lineTo(rotatedCorners[3].dx, rotatedCorners[3].dy)
       ..close();
-  }
-
-  Offset _rotateOffset(Offset point, double radians) {
-    return Offset(
-      point.dx * cos(radians) - point.dy * sin(radians),
-      point.dx * sin(radians) + point.dy * cos(radians),
-    );
   }
 
   Rect rotateRect(Rect rect, Offset center, double angle) {
@@ -548,7 +374,8 @@ class EditActionDetails {
     return rotationY == 0 ? rotateRadian : -rotateRadian;
   }
 
-  void updateRotateRadian(double rotateRadian, double totalScale) {
+  void updateRotateRadian(double rotateRadian, double maxScale) {
+    final double oldRotateRadian = this.rotateRadian;
     this.rotateRadian = rotateRadian;
     final Rect rect = _screenDestinationRect!;
 
@@ -568,11 +395,15 @@ class EditActionDetails {
     final double scaleDelta = _scaleToFit(rectVertices, rect, rect.center);
 
     if (scaleDelta > 0) {
-      screenFocalPoint = _screenDestinationRect!.center;
-      preTotalScale = this.totalScale;
-      this.totalScale = max(this.totalScale * scaleDelta, totalScale);
-    } else {
-      this.totalScale = totalScale;
+      // can't scale
+      if (totalScale * scaleDelta > maxScale) {
+        // roll back to old value
+        this.rotateRadian = oldRotateRadian;
+      } else {
+        screenFocalPoint = _screenDestinationRect!.center;
+        preTotalScale = totalScale;
+        totalScale = max(totalScale * scaleDelta, totalScale);
+      }
     }
   }
 
@@ -742,11 +573,11 @@ class EditActionDetails {
 
       final Offset center = (element + other) / 2;
 
-      final List<Offset> xxx =
+      final List<Offset> lineRectIntersections =
           getLineRectIntersections(_screenDestinationRect!, element, center);
-      if (xxx.isNotEmpty) {
+      if (lineRectIntersections.isNotEmpty) {
         hasOffsetOutSide = true;
-        list[i] = xxx.first;
+        list[i] = lineRectIntersections.first;
         break;
       }
     }

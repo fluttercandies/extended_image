@@ -67,7 +67,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
       );
     } else {
       imageProvider = const ExtendedAssetImageProvider(
-        Assets.assets_image_jpg,
+        Assets.assets_live_photo_1_jpg,
         cacheRawData: true,
       );
     }
@@ -123,53 +123,6 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 // mainAxisAlignment: MainAxisAlignment.spaceAround,
                 // mainAxisSize: MainAxisSize.max,
                 children: <Widget>[
-                  FlatButtonWithIcon(
-                    icon: const Icon(Icons.crop),
-                    label: const Text(
-                      'Crop',
-                      style: TextStyle(fontSize: 10.0),
-                    ),
-                    textColor: Colors.white,
-                    onPressed: () {
-                      showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Column(
-                              children: <Widget>[
-                                const Expanded(
-                                  child: SizedBox(),
-                                ),
-                                SizedBox(
-                                  height: 100,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.horizontal,
-                                    padding: const EdgeInsets.all(20.0),
-                                    itemBuilder: (_, int index) {
-                                      final AspectRatioItem item =
-                                          _aspectRatios[index];
-                                      return GestureDetector(
-                                        child: AspectRatioWidget(
-                                          aspectRatio: item.value,
-                                          aspectRatioS: item.text,
-                                          isSelected: item == _aspectRatio,
-                                        ),
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          setState(() {
-                                            _aspectRatio = item;
-                                          });
-                                        },
-                                      );
-                                    },
-                                    itemCount: _aspectRatios.length,
-                                  ),
-                                ),
-                              ],
-                            );
-                          });
-                    },
-                  ),
                   FlatButtonWithIcon(
                     icon: const Icon(Icons.flip),
                     label: const Text(
@@ -301,6 +254,32 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     },
                   ),
                 ],
+              ),
+            ),
+            Container(
+              color: Colors.black.withOpacity(0.2),
+              height: 120,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (_, int index) {
+                  final AspectRatioItem item = _aspectRatios[index];
+                  return GestureDetector(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: AspectRatioWidget(
+                        aspectRatio: item.value,
+                        aspectRatioS: item.text,
+                        isSelected: item == _aspectRatio,
+                      ),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        _aspectRatio = item;
+                      });
+                    },
+                  );
+                },
+                itemCount: _aspectRatios.length,
               ),
             ),
           ],
@@ -453,13 +432,31 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
       // var filePath = await ImagePickerSaver.saveFile(fileData: fileData);
 
       msg = 'save image : $filePath';
+      showToastWidget(Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              msg,
+              textAlign: TextAlign.center,
+            ),
+            Image.memory(
+              imageInfo.data!,
+              fit: BoxFit.contain,
+            )
+          ],
+        ),
+      ));
     } catch (e, stack) {
       msg = 'save failed: $e\n $stack';
+      showToast(msg);
       print(msg);
     }
 
     //Navigator.of(context).pop();
-    showToast(msg);
+
     _cropping = false;
   }
 

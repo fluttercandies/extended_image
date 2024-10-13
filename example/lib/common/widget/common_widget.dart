@@ -49,9 +49,10 @@ class AspectRatioWidget extends StatelessWidget {
     return CustomPaint(
       size: const Size(100, 100),
       painter: AspectRatioPainter(
-          aspectRatio: aspectRatio,
-          aspectRatioS: aspectRatioS,
-          isSelected: isSelected),
+        aspectRatio: aspectRatio,
+        aspectRatioS: aspectRatioS,
+        isSelected: isSelected,
+      ),
     );
   }
 }
@@ -64,20 +65,31 @@ class AspectRatioPainter extends CustomPainter {
   final bool isSelected;
   @override
   void paint(Canvas canvas, Size size) {
-    final Color color = isSelected ? Colors.blue : Colors.grey;
+    final Color color = isSelected ? Colors.orange : Colors.grey;
     final Rect rect = Offset.zero & size;
     //https://github.com/flutter/flutter/issues/49328
     final Paint paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
+
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, const Radius.circular(10)), paint);
+
+    paint.color = Colors.white;
+    paint.style = PaintingStyle.stroke;
+    paint.strokeWidth = 2.0;
     final double aspectRatioResult =
         (aspectRatio != null && aspectRatio! > 0.0) ? aspectRatio! : 1.0;
     canvas.drawRect(
-        getDestinationRect(
-            rect: const EdgeInsets.all(10.0).deflateRect(rect),
-            inputSize: Size(aspectRatioResult * 100, 100.0),
-            fit: BoxFit.contain),
-        paint);
+      getDestinationRect(
+          rect: const EdgeInsets.all(25.0).deflateRect(rect),
+          inputSize: Size(
+            aspectRatioResult * size.width / 2,
+            size.width / 2,
+          ),
+          fit: BoxFit.contain),
+      paint,
+    );
 
     final TextPainter textPainter = TextPainter(
         text: TextSpan(
@@ -92,9 +104,13 @@ class AspectRatioPainter extends CustomPainter {
     textPainter.layout(maxWidth: rect.width);
 
     textPainter.paint(
-        canvas,
-        rect.center -
-            Offset(textPainter.width / 2.0, textPainter.height / 2.0));
+      canvas,
+      rect.bottomCenter -
+          Offset(
+            textPainter.width / 2.0,
+            textPainter.height * 1.1,
+          ),
+    );
   }
 
   @override

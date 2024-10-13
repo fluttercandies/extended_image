@@ -33,7 +33,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
   EditActionDetails? _editActionDetails;
   EditorConfig? _editorConfig;
   late double _startingScale;
-  late double _startingRotation;
+  // late double _startingRotation;
   late Offset _startingOffset;
   double _detailsScale = 1.0;
   final GlobalKey<ExtendedImageCropLayerState> _layerKey =
@@ -259,7 +259,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     _startingOffset = details.focalPoint;
     _editActionDetails!.screenFocalPoint = details.focalPoint;
     _startingScale = _editActionDetails!.totalScale;
-    _startingRotation = _editActionDetails!.rotateRadian;
+    // _startingRotation = _editActionDetails!.rotateRadian;
     _detailsScale = 1.0;
   }
 
@@ -304,9 +304,6 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
           //   totalScale,
           // );
           _editActionDetails!.updateScale(totalScale);
-          // _startingScale = _editActionDetails!.totalScale /
-          //     details.scale /
-          //     _editorConfig!.speed;
         } else if (delta != Offset.zero) {
           ///if we have shift offset, we should clear delta.
           ///we should += delta in case miss delta
@@ -316,24 +313,6 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       });
       _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
     }
-
-    // if (mounted &&
-    //     (scaleDelta != 1.0 ||
-    //         delta != Offset.zero ||
-    //         (_editorConfig!.gestureRotate && details.rotation != 0))) {
-    //   setState(() {
-    //     _editActionDetails!.totalScale = totalScale;
-    //     _editActionDetails!.rotateRadian = _startingRotation +
-    //         _editActionDetails!.reverseRotateRadian(details.rotation);
-
-    //     ///if we have shift offset, we should clear delta.
-    //     ///we should += delta in case miss delta
-    //     // _editActionDetails!.delta += delta;
-    //     _editActionDetails!.setDelta(delta);
-
-    //     _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
-    //   });
-    // }
   }
 
   void _handlePointerSignal(PointerSignalEvent event) {
@@ -371,29 +350,37 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       return null;
     }
 
-    imageScreenRect = _editActionDetails!.paintRect(imageScreenRect);
-    cropScreen = _editActionDetails!.paintRect(cropScreen);
+    final Path path = _editActionDetails!.getImagePath();
 
-    //move to zero
+    imageScreenRect = path.getBounds();
+
+    // move to zero
     cropScreen = cropScreen.shift(-imageScreenRect.topLeft);
 
     imageScreenRect = imageScreenRect.shift(-imageScreenRect.topLeft);
 
     final ui.Image image = widget.extendedImageState.extendedImageInfo!.image;
-    // var size = _editActionDetails.isHalfPi
-    //     ? Size(image.height.toDouble(), image.width.toDouble())
-    //     : Size(image.width.toDouble(), image.height.toDouble());
-    final Rect imageRect =
-        Offset.zero & Size(image.width.toDouble(), image.height.toDouble());
 
-    final double ratioX = imageRect.width / imageScreenRect.width;
-    final double ratioY = imageRect.height / imageScreenRect.height;
+    // rotate Physical rect
+    Rect physicalimageRect = Offset.zero &
+        Size(
+          image.width.toDouble(),
+          image.height.toDouble(),
+        );
+
+    final Path physicalimagePath =
+        _editActionDetails!.getImagePath(rect: physicalimageRect);
+    physicalimageRect = physicalimagePath.getBounds();
+
+    final double ratioX = physicalimageRect.width / imageScreenRect.width;
+    final double ratioY = physicalimageRect.height / imageScreenRect.height;
 
     final Rect cropImageRect = Rect.fromLTWH(
-        cropScreen.left * ratioX,
-        cropScreen.top * ratioY,
-        cropScreen.width * ratioX,
-        cropScreen.height * ratioY);
+      cropScreen.left * ratioX,
+      cropScreen.top * ratioY,
+      cropScreen.width * ratioX,
+      cropScreen.height * ratioY,
+    );
     return cropImageRect;
   }
 
@@ -478,12 +465,10 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
   void _updateRotate(double rotationY, double rotateRadian) {
     setState(() {
-      _editActionDetails = _editActionDetails!.copyWith(
-        rotationY: rotationY,
-      );
+      _editActionDetails!.rotationY = rotationY;
       _editActionDetails!.updateRotateRadian(
         rotateRadian,
-        _editActionDetails!.totalScale,
+        _editorConfig!.maxScale,
       );
 
       _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
