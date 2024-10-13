@@ -6,6 +6,7 @@ import 'package:extended_image/src/utils.dart';
 import 'package:extended_image_library/extended_image_library.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import '../extended_image.dart';
 import 'crop_layer.dart';
@@ -69,6 +70,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _rotateRadiansAnimation?.value ?? _editActionDetails!.rotateRadians,
     );
     if (_animationController.isCompleted) {
+      _addNewEditActionDetails();
       _layerKey.currentState?.pointerDown(false);
       _rotationYRadiansAnimation = null;
       _rotateRadiansAnimation = null;
@@ -110,6 +112,10 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _editActionDetails!.cropAspectRatio =
           _editActionDetails!.originalAspectRatio;
     }
+
+    _history.clear();
+    _currentIndex = -1;
+    _addNewEditActionDetails();
   }
 
   @override
@@ -222,9 +228,11 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       child: result,
       onPointerDown: (_) {
         _layerKey.currentState?.pointerDown(true);
+        _editActionDetails = _editActionDetails!.copyWith();
       },
       onPointerUp: (_) {
         _layerKey.currentState?.pointerDown(false);
+        _addNewEditActionDetails();
       },
       onPointerSignal: _handlePointerSignal,
       // onPointerCancel: (_) {
@@ -334,6 +342,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
               _reverseIf((dy.abs() > dx.abs() ? dy : dx) *
                   _editorConfig!.speed /
                   1000.0)));
+
+      _addNewEditActionDetails();
     }
   }
 
@@ -407,6 +417,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
   EditActionDetails? get editAction => _editActionDetails;
 
+  final List<EditActionDetails> _history = <EditActionDetails>[];
+
   @override
   void rotate({
     double angle = 90,
@@ -437,6 +449,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _animationController.forward(from: 0);
     } else {
       _updateRotate(_editActionDetails!.rotationYRadians, end);
+      _addNewEditActionDetails();
     }
   }
 
@@ -471,6 +484,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _animationController.forward(from: 0);
     } else {
       _updateRotate(end, _editActionDetails!.rotateRadians);
+      _addNewEditActionDetails();
     }
   }
 
@@ -496,13 +510,86 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _editorConfig = null;
       _editActionDetails = null;
       _initGestureConfig();
+
+      _addNewEditActionDetails();
       _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
     });
   }
 
   @override
-  void redo() {}
+  void redo() {
+    if (canRedo) {
+      setState(() {
+        _currentIndex = _history.indexOf(_editActionDetails!) + 1;
+        _editActionDetails = _history[_currentIndex];
+        _editorConfig!.controller?._notifyListeners();
+        _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
+      });
+    }
+  }
 
   @override
-  void undo() {}
+  void undo() {
+    if (canUndo) {
+      setState(() {
+        _currentIndex = _history.indexOf(_editActionDetails!) - 1;
+        _editActionDetails = _history[_currentIndex];
+        _editorConfig!.controller?._notifyListeners();
+        _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
+      });
+    }
+  }
+
+  @override
+  bool get canRedo {
+    if (_editActionDetails == null) {
+      return false;
+    }
+
+    return _history.isNotEmpty && _editActionDetails != _history.last;
+  }
+
+  @override
+  bool get canUndo {
+    if (_editActionDetails == null) {
+      return false;
+    }
+
+    return _history.isNotEmpty && _editActionDetails != _history.first;
+  }
+
+  int _currentIndex = -1;
+  void _addNewEditActionDetails() {
+    if (_history.contains(_editActionDetails)) {
+      return;
+    }
+
+    if (_currentIndex > 0 && _currentIndex < _history.length - 1) {
+      _history.removeRange(_currentIndex, _history.length);
+    }
+
+    _history.add(_editActionDetails!);
+
+    _currentIndex = _history.length - 1;
+
+    _safeUpdate(() {
+      _editorConfig!.controller?._notifyListeners();
+    });
+  }
+
+  void _safeUpdate(VoidCallback fn) {
+    final SchedulerPhase schedulerPhase =
+        SchedulerBinding.instance.schedulerPhase;
+    if (schedulerPhase == SchedulerPhase.persistentCallbacks) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          fn();
+        }
+      });
+    } else {
+      if (mounted) {
+        fn();
+      }
+    }
+  }
 }

@@ -52,20 +52,26 @@ class AspectRatioWidget extends StatelessWidget {
         aspectRatio: aspectRatio,
         aspectRatioS: aspectRatioS,
         isSelected: isSelected,
+        selectedColor: Theme.of(context).primaryColor,
       ),
     );
   }
 }
 
 class AspectRatioPainter extends CustomPainter {
-  AspectRatioPainter(
-      {this.aspectRatioS, this.aspectRatio, this.isSelected = false});
+  AspectRatioPainter({
+    this.aspectRatioS,
+    this.aspectRatio,
+    this.isSelected = false,
+    required this.selectedColor,
+  });
   final String? aspectRatioS;
   final double? aspectRatio;
   final bool isSelected;
+  final Color selectedColor;
   @override
   void paint(Canvas canvas, Size size) {
-    final Color color = isSelected ? Colors.orange : Colors.grey;
+    final Color color = isSelected ? selectedColor : Colors.grey;
     final Rect rect = Offset.zero & size;
     //https://github.com/flutter/flutter/issues/49328
     final Paint paint = Paint()
@@ -119,7 +125,8 @@ class AspectRatioPainter extends CustomPainter {
     return oldDelegate is AspectRatioPainter &&
         (oldDelegate.isSelected != isSelected ||
             oldDelegate.aspectRatioS != aspectRatioS ||
-            oldDelegate.aspectRatio != aspectRatio);
+            oldDelegate.aspectRatio != aspectRatio ||
+            oldDelegate.selectedColor != selectedColor);
   }
 }
 

@@ -126,6 +126,18 @@ extension DoubleExtension on double {
   }
 }
 
+extension DoubleExtensionNullable on double? {
+  bool equalTo(double? other, {double precision = precisionErrorTolerance}) {
+    if (this == null && other == null) {
+      return true;
+    }
+    if (this == null || other == null) {
+      return false;
+    }
+    return this!.compare(other, precision: precision) == 0;
+  }
+}
+
 extension RectExtension on Rect {
   bool beyond(Rect other) {
     return left.lessThan(other.left) ||
@@ -151,4 +163,20 @@ extension RectExtension on Rect {
         offset.dy >= top &&
         offset.dy <= bottom;
   }
+}
+
+extension RectExtensionNullable on Rect? {
+  bool isSame(Rect? other) {
+    if (this == null && other == null) {
+      return true;
+    }
+    if (this == null || other == null) {
+      return false;
+    }
+    return this!.isSame(other);
+  }
+}
+
+extension OffsetExtension on Offset {
+  bool isSame(Offset other) => dx.equalTo(other.dx) && dy.equalTo(other.dy);
 }

@@ -605,24 +605,24 @@ class EditActionDetails {
 
   @override
   bool operator ==(Object other) {
-    if (!identical(this, other)) {
-      return false;
+    if (identical(this, other)) {
+      return true;
     }
 
     return other is EditActionDetails &&
-        _layoutRect == other._layoutRect &&
-        _screenDestinationRect == other._screenDestinationRect &&
-        _rawDestinationRect == other._rawDestinationRect &&
-        totalScale == other.totalScale &&
-        preTotalScale == other.preTotalScale &&
-        delta == other.delta &&
-        screenFocalPoint == other.screenFocalPoint &&
+        _layoutRect.isSame(other._layoutRect) &&
+        _screenDestinationRect.isSame(other._screenDestinationRect) &&
+        _rawDestinationRect.isSame(other._rawDestinationRect) &&
+        totalScale.equalTo(other.totalScale) &&
+        preTotalScale.equalTo(other.preTotalScale) &&
+        delta.isSame(other.delta) &&
+        // screenFocalPoint == other.screenFocalPoint &&
         cropRectPadding == other.cropRectPadding &&
-        cropRect == other.cropRect &&
-        originalAspectRatio == other.originalAspectRatio &&
-        _cropAspectRatio == other._cropAspectRatio &&
-        rotateRadians == other.rotateRadians &&
-        rotationYRadians == other.rotationYRadians;
+        cropRect.isSame(other.cropRect) &&
+        originalAspectRatio.equalTo(other.originalAspectRatio) &&
+        _cropAspectRatio.equalTo(other._cropAspectRatio) &&
+        rotateRadians.equalTo(other.rotateRadians) &&
+        rotationYRadians.equalTo(other.rotationYRadians);
   }
 
   @override
@@ -633,7 +633,7 @@ class EditActionDetails {
         totalScale.hashCode ^
         preTotalScale.hashCode ^
         delta.hashCode ^
-        screenFocalPoint.hashCode ^
+        // screenFocalPoint.hashCode ^
         cropRectPadding.hashCode ^
         cropRect.hashCode ^
         originalAspectRatio.hashCode ^

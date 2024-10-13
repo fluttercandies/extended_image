@@ -44,6 +44,17 @@ class ImageEditorController extends ChangeNotifier
   void undo() {
     _state?.undo();
   }
+
+  @override
+  bool get canRedo => _state?.canRedo ?? false;
+
+  @override
+  bool get canUndo => _state?.canUndo ?? false;
+
+  /// notifyListeners
+  void _notifyListeners() {
+    notifyListeners();
+  }
 }
 
 mixin ImageEditorControllerMixin {
@@ -64,4 +75,8 @@ mixin ImageEditorControllerMixin {
   void undo();
 
   void redo();
+
+  bool get canUndo;
+
+  bool get canRedo;
 }

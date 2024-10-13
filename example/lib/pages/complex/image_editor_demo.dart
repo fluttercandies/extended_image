@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:example/assets.dart';
 import 'package:example/common/image_picker/image_picker.dart';
 import 'package:example/common/utils/crop_editor_helper.dart';
+import 'package:example/common/widget/change_notifier_builder.dart';
 import 'package:example/common/widget/common_widget.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
@@ -65,6 +66,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
   @override
   Widget build(BuildContext context) {
+    final Color primaryColor = Theme.of(context).primaryColor;
     late ImageProvider imageProvider;
 
     if (_memoryImage != null) {
@@ -217,6 +219,80 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       popupMenuKey.currentState!.showButtonMenu();
                     },
                   ),
+                  ChangeNotifierBuilder(
+                    changeNotifier: _editorController,
+                    builder: (BuildContext b) {
+                      return ButtonTheme(
+                        minWidth: 0.0,
+                        padding: EdgeInsets.zero,
+                        child: Row(children: <Widget>[
+                          FlatButtonWithIcon(
+                            icon: Icon(
+                              Icons.undo,
+                              color: _editorController.canUndo
+                                  ? primaryColor
+                                  : Colors.grey,
+                            ),
+                            label: Text(
+                              'Undo',
+                              style: TextStyle(
+                                fontSize: 10.0,
+                                color: _editorController.canUndo
+                                    ? primaryColor
+                                    : Colors.grey,
+                              ),
+                            ),
+                            textColor: Colors.white,
+                            onPressed: () {
+                              final double oldRotateAngle =
+                                  _editorController.rotateAngle;
+                              _editorController.undo();
+                              final double newRotateAngle =
+                                  _editorController.rotateAngle;
+                              if (oldRotateAngle != newRotateAngle &&
+                                  (newRotateAngle - oldRotateAngle) % 90 != 0) {
+                                _rulerPickerController.value =
+                                    _rulerPickerController.value +
+                                        (newRotateAngle - oldRotateAngle);
+                              }
+                            },
+                          ),
+                          FlatButtonWithIcon(
+                            icon: Icon(
+                              Icons.redo,
+                              color: _editorController.canRedo
+                                  ? primaryColor
+                                  : Colors.grey,
+                            ),
+                            label: Text(
+                              'Redo',
+                              style: TextStyle(
+                                fontSize: 10.0,
+                                color: _editorController.canRedo
+                                    ? primaryColor
+                                    : Colors.grey,
+                              ),
+                            ),
+                            textColor: Colors.white,
+                            onPressed: () {
+                              final double oldRotateAngle =
+                                  _editorController.rotateAngle;
+                              _editorController.redo();
+
+                              final double newRotateAngle =
+                                  _editorController.rotateAngle;
+                              if (oldRotateAngle != newRotateAngle &&
+                                  (newRotateAngle - oldRotateAngle) % 90 != 0) {
+                                _rulerPickerController.value =
+                                    _rulerPickerController.value +
+                                        (newRotateAngle - oldRotateAngle);
+                              }
+                            },
+                          ),
+                        ]),
+                      );
+                    },
+                  ),
                   const Spacer(),
                   FlatButtonWithIcon(
                     icon: const Icon(Icons.restore),
@@ -227,6 +303,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     textColor: Colors.white,
                     onPressed: () {
                       _editorController.reset();
+                      _rulerPickerController.value = 0;
                     },
                   ),
                 ],
@@ -255,6 +332,18 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       builder: (BuildContext c, BoxConstraints b) {
                         return RulerPicker(
                           controller: _rulerPickerController,
+                          rulerScaleTextStyle: const TextStyle(
+                            color: Color.fromARGB(255, 188, 194, 203),
+                            fontSize: 10,
+                          ),
+                          marker: Transform.translate(
+                            offset: const Offset(0, -5),
+                            child: Container(
+                              width: 2,
+                              height: 44,
+                              color: primaryColor,
+                            ),
+                          ),
                           onValueChanged: (num value) {
                             if (_rulerPickerController.value == value) {
                               return;
@@ -370,6 +459,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     onTap: () {
                       setState(() {
                         _aspectRatio = item;
+                        _rulerPickerController.value = 0;
                       });
                     },
                   );
