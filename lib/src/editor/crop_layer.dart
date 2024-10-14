@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 import '../utils.dart';
 import 'edit_action_details.dart';
@@ -347,7 +349,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       delta,
     );
 
-    ///move and scale image rect when crop rect is bigger than layout rect
+    /// move and scale image rect when crop rect is bigger than layout rect
     ///
 
     result = widget.editActionDetails.updateCropRect(result);
@@ -502,7 +504,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     _timer = Timer.periodic(widget.editorConfig.tickerDuration, (Timer timer) {
       _timer?.cancel();
 
-      //move to center
+      // move to center
       final Rect? oldScreenCropRect = widget.editActionDetails.screenCropRect;
 
       final Rect centerCropRect = getDestinationRect(
@@ -528,29 +530,44 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
         final double scale = newScreenCropRect!.width / oldScreenCropRect.width;
 
-        final Offset offset =
-            newScreenCropRect!.center - oldScreenCropRect.center;
+        final Matrix4 result = widget.editActionDetails.getTransform();
+        final List<Offset> corners = <Offset>[
+          oldScreenDestinationRect.topLeft,
+          oldScreenDestinationRect.topRight,
+          oldScreenDestinationRect.bottomRight,
+          oldScreenDestinationRect.bottomLeft,
+        ];
 
-        /// scale then move
-        /// so we do scale first, get the new center
-        /// then move to new offset
-        final Offset newImageCenter = oldScreenCropRect.center +
-            (oldScreenDestinationRect.center - oldScreenCropRect.center) *
-                scale;
-        final Rect newScreenDestinationRect = Rect.fromCenter(
-          center: newImageCenter + offset,
-          width: oldScreenDestinationRect.width * scale,
-          height: oldScreenDestinationRect.height * scale,
-        );
+        // get image corners on screen
+        final List<Offset> rotatedCorners = corners.map((Offset corner) {
+          final Vector4 cornerVector = Vector4(corner.dx, corner.dy, 0.0, 1.0);
+          final Vector4 newCornerVector = result.transform(cornerVector);
+          return Offset(newCornerVector.x, newCornerVector.y);
+        }).toList();
+        // rock back to image rect
+        result.invert();
+        final List<Offset> list = rotatedCorners
+            .map((Offset corner) =>
+                // The distance from the four corners of the image to the center of the cropping box
+                //  old distance is scale to new distance
+                // So we can find the new four corners
 
-        // var totalScale = newScreenDestinationRect.width /
-        //     (widget.editActionDetails.rawDestinationRect.width *
-        //     widget.editorConfig.initialScale);
-        final double totalScale = widget.editActionDetails.totalScale * scale;
+                (corner - oldScreenCropRect.center) * scale +
+                newScreenCropRect!.center)
+            .map((Offset corner) {
+          // rock back to image rect
+          final Vector4 cornerVector = Vector4(corner.dx, corner.dy, 0.0, 1.0);
+          final Vector4 newCornerVector = result.transform(cornerVector);
+          return Offset(newCornerVector.x, newCornerVector.y);
+        }).toList();
+
+        // new image rect
+        final Rect newScreenDestinationRect = Rect.fromPoints(list[0], list[2]);
 
         cropRect =
             newScreenCropRect!.shift(-widget.editActionDetails.layoutTopLeft!);
 
+        final double totalScale = widget.editActionDetails.totalScale * scale;
         widget.editActionDetails
             .setScreenDestinationRect(newScreenDestinationRect);
         widget.editActionDetails.totalScale = totalScale;
