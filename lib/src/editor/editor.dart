@@ -48,6 +48,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
   Animation<double>? _rotationYRadiansAnimation;
   Animation<double>? _rotateRadiansAnimation;
   late VoidFunction _debounceSaveCurrentEditActionDetails;
+  bool _rotateCropRect = false;
   @override
   void initState() {
     super.initState();
@@ -69,11 +70,25 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
   }
 
   void _onAnimation() {
-    _updateRotate(
-      _rotationYRadiansAnimation?.value ?? _editActionDetails!.rotationYRadians,
-      _rotateRadiansAnimation?.value ?? _editActionDetails!.rotateRadians,
-    );
+    if (_rotateCropRect && _rotateRadiansAnimation != null) {
+      _layerKey.currentState?.rotateCropRect(
+          _rotateRadiansAnimation!.value - _editActionDetails!.rotateRadians);
+
+      _editActionDetails!.rotateRadians = _rotateRadiansAnimation!.value;
+    } else {
+      _updateRotate(
+        _rotationYRadiansAnimation?.value ??
+            _editActionDetails!.rotationYRadians,
+        _rotateRadiansAnimation?.value ?? _editActionDetails!.rotateRadians,
+      );
+    }
+
     if (_animationController.isCompleted) {
+      if (_rotateCropRect) {
+        _rotateCropRect = false;
+        _layerKey.currentState?.rotateCropRectEnd();
+      }
+
       _saveCurrentEditActionDetails();
       _layerKey.currentState?.pointerDown(false);
       _rotationYRadiansAnimation = null;
@@ -239,6 +254,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
         _layerKey.currentState?.pointerDown(true);
       },
       onPointerUp: (_) {
+        _editActionDetails?.screenFocalPoint = null;
         _layerKey.currentState?.pointerDown(false);
         _saveCurrentEditActionDetails();
       },
@@ -426,12 +442,13 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
   final List<EditActionDetails> _history = <EditActionDetails>[];
 
+  /// rotateCropRect works only when (angle % 360).abs() == 90
   @override
   void rotate({
     double angle = 90,
     bool animation = false,
-    Duration? duration,
-    bool rotateCropRect = false,
+    Duration duration = const Duration(milliseconds: 200),
+    bool rotateCropRect = true,
   }) {
     if (_animationController.isAnimating) {
       return;
@@ -440,11 +457,20 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       return;
     }
 
-    duration ??= Duration(milliseconds: (angle * 5).abs().toInt());
-
     final double begin = _editActionDetails!.rotateRadians;
     final double end =
         begin + _editActionDetails!.reverseRotateRadian(angle / 180 * pi);
+
+    if (rotateCropRect && (angle % 360).abs() == 90) {
+      _rotateCropRect = true;
+
+      final double? cropAspectRatio = _editActionDetails?.cropAspectRatio;
+      if (cropAspectRatio != null) {
+        _editActionDetails?.cropAspectRatio = 1 / cropAspectRatio;
+      }
+
+      _layerKey.currentState?.rotateCropRectStart();
+    }
 
     if (animation) {
       _animationController.duration = duration;
@@ -455,7 +481,15 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _layerKey.currentState?.pointerDown(true);
       _animationController.forward(from: 0);
     } else {
-      _updateRotate(_editActionDetails!.rotationYRadians, end);
+      if (_rotateCropRect) {
+        _layerKey.currentState?.rotateCropRect(angle / 180 * pi);
+        _editActionDetails!.rotateRadians = end;
+        _layerKey.currentState?.rotateCropRectEnd();
+        _rotateCropRect = false;
+      } else {
+        _updateRotate(_editActionDetails!.rotationYRadians, end);
+      }
+
       _debounceSaveCurrentEditActionDetails();
     }
   }
@@ -463,7 +497,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
   @override
   void flip({
     bool animation = false,
-    Duration duration = const Duration(milliseconds: 500),
+    Duration duration = const Duration(milliseconds: 200),
   }) {
     if (_animationController.isAnimating) {
       return;
@@ -515,6 +549,14 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     setState(() {
       _editorConfig = null;
       _editActionDetails = null;
+      if (_rotateCropRect) {
+        _rotateCropRect = false;
+        _layerKey.currentState?.rotateCropRectEnd();
+      }
+
+      _layerKey.currentState?.pointerDown(false);
+      _rotationYRadiansAnimation = null;
+      _rotateRadiansAnimation = null;
       _initGestureConfig();
 
       _saveCurrentEditActionDetails();

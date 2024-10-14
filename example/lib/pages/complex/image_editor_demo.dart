@@ -76,7 +76,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
       );
     } else {
       imageProvider = const ExtendedAssetImageProvider(
-        Assets.assets_live_photo_1_jpg,
+        Assets.assets_harley_quinn_webp,
         cacheRawData: true,
       );
     }
@@ -434,6 +434,10 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       _editorController.rotate(
                         angle: 90,
                         animation: true,
+                        rotateCropRect: true,
+                        // duration: const Duration(
+                        //   seconds: 10,
+                        // ),
                       );
                     },
                   ),
@@ -691,8 +695,7 @@ class CircleEditorCropLayerPainter extends EditorCropLayerPainter {
 
   @override
   void paintMask(
-      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
-    final Rect rect = Offset.zero & size;
+      Canvas canvas, Rect rect, ExtendedImageCropLayerPainter painter) {
     final Rect cropRect = painter.cropRect;
     final Color maskColor = painter.maskColor;
     canvas.saveLayer(rect, Paint());

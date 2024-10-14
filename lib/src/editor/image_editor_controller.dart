@@ -10,7 +10,7 @@ class ImageEditorController extends ChangeNotifier
   @override
   void flip({
     bool animation = false,
-    Duration duration = const Duration(milliseconds: 500),
+    Duration duration = const Duration(milliseconds: 200),
   }) {
     _state?.flip(animation: animation, duration: duration);
   }
@@ -25,12 +25,13 @@ class ImageEditorController extends ChangeNotifier
     _state?.reset();
   }
 
+  /// rotateCropRect works only when (angle % 360).abs() == 90
   @override
   void rotate({
     double angle = 90,
     bool animation = false,
-    Duration? duration,
-    bool rotateCropRect = false,
+    Duration duration = const Duration(milliseconds: 200),
+    bool rotateCropRect = true,
   }) {
     _state?.rotate(
       angle: angle,
@@ -58,16 +59,17 @@ class ImageEditorController extends ChangeNotifier
 }
 
 mixin ImageEditorControllerMixin {
+  /// rotateCropRect works only when (angle % 360).abs() == 90
   void rotate({
     double angle = 90,
     bool animation = false,
-    Duration? duration,
-    bool rotateCropRect = false,
+    Duration duration = const Duration(milliseconds: 200),
+    bool rotateCropRect = true,
   });
 
   void flip({
     bool animation = false,
-    Duration duration = const Duration(milliseconds: 500),
+    Duration duration = const Duration(milliseconds: 200),
   });
 
   void reset();

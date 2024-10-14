@@ -77,83 +77,6 @@ class EditActionDetails {
 
   Rect? get screenCropRect => cropRect?.shift(layoutTopLeft!);
 
-  void rotate(double rotation, Rect layoutRect, BoxFit? fit) {
-    if (cropRect == null) {
-      return;
-    }
-    rotateRadians += rotation;
-    rotateRadians %= 2 * pi;
-    // if (_flipX && _flipY && isPi) {
-    //   _flipX = _flipY = false;
-    //   rotateRadian = 0.0;
-    // }
-
-    // _cropRect = rotateRect(_cropRect, _cropRect.center, -angle);
-    // screenDestinationRect =
-    //     rotateRect(screenDestinationRect, screenCropRect.center, -angle);
-
-    /// take care of boundary
-    // final Rect newCropRect = getDestinationRect(
-    //   rect: layoutRect,
-    //   inputSize: Size(cropRect!.height, cropRect!.width),
-    //   fit: fit,
-    // );
-
-    // final double scale = newCropRect.width / cropRect!.height;
-
-    // Rect newScreenDestinationRect =
-    //     rotateRect(screenDestinationRect!, screenCropRect!.center, rotation);
-
-    // final Offset topLeft = screenCropRect!.center -
-    //     (screenCropRect!.center - newScreenDestinationRect.topLeft) * scale;
-    // final Offset bottomRight = screenCropRect!.center +
-    //     -(screenCropRect!.center - newScreenDestinationRect.bottomRight) *
-    //         scale;
-
-    // newScreenDestinationRect = Rect.fromPoints(topLeft, bottomRight);
-
-    // cropRect = newCropRect;
-    // _screenDestinationRect = newScreenDestinationRect;
-    // totalScale *= scale;
-    // preTotalScale = totalScale;
-  }
-
-  void flip() {
-    if (screenCropRect == null) {
-      return;
-    }
-
-    if (rotationYRadians == 0.0) {
-      rotationYRadians = pi;
-    } else {
-      rotationYRadians = 0.0;
-    }
-
-    rotateRadians = -rotateRadians;
-
-    rotateRadians = (rotateRadians + 2 * pi) % (2 * pi);
-  }
-
-  // @override
-  // int get hashCode => hashValues(_rotateRadian, _flipX, _flipY, cropRect,
-  //     _layoutRect, _rawDestinationRect, _cropAspectRatio, cropRectPadding);
-
-  // @override
-  // bool operator ==(dynamic other) {
-  //   if (other.runtimeType != runtimeType) {
-  //     return false;
-  //   }
-  //   return other is EditActionDetails &&
-  //       _rotateRadian == other.rotateRadian &&
-  //       _flipX == other.flipX &&
-  //       _flipY == other.flipY &&
-  //       cropRect == other.cropRect &&
-  //       _layoutRect == other._layoutRect &&
-  //       _rawDestinationRect == other._rawDestinationRect &&
-  //       _cropAspectRatio == other._cropAspectRatio &&
-  //       cropRectPadding != other.cropRectPadding;
-  // }
-
   void initRect(Rect layoutRect, Rect destinationRect) {
     if (_layoutRect != layoutRect) {
       _layoutRect = layoutRect;
@@ -304,7 +227,11 @@ class EditActionDetails {
       return Offset(newCornerVector.x, newCornerVector.y);
     }).toList();
 
-    final double scaleDelta = _scaleToFit(rectVertices, rect, rect.center);
+    final double scaleDelta = scaleToFit(
+      rectVertices,
+      rect,
+      rect.center,
+    );
 
     if (scaleDelta > 0) {
       // can't scale
@@ -319,12 +246,16 @@ class EditActionDetails {
     }
   }
 
-  double _scaleToFit(List<Offset> rectVertices, Rect rect, Offset center) {
+  double scaleToFit(
+    List<Offset> rectVertices,
+    Rect rect,
+    Offset center,
+  ) {
     double scaleDelta = 0.0;
 
     int contains = 0;
     for (final Offset element in rectVertices) {
-      if (_screenDestinationRect!.containsOffset(element)) {
+      if (rect.containsOffset(element)) {
         contains++;
         continue;
       }
