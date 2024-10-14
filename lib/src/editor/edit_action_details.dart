@@ -6,6 +6,7 @@ import 'package:vector_math/vector_math_64.dart';
 
 class EditActionDetails {
   Rect? _layoutRect;
+  Rect? get layoutRect => _layoutRect;
   Rect? _screenDestinationRect;
   Rect? _rawDestinationRect;
 

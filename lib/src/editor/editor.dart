@@ -47,6 +47,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
   Animation<double>? _rotationYRadiansAnimation;
   Animation<double>? _rotateRadiansAnimation;
+  late VoidFunction _debounceSaveCurrentEditActionDetails;
   @override
   void initState() {
     super.initState();
@@ -56,6 +57,9 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       duration: Duration.zero,
     );
     _animationController.addListener(_onAnimation);
+    _debounceSaveCurrentEditActionDetails = () {
+      _saveCurrentEditActionDetails();
+    }.debounce(const Duration(milliseconds: 100));
   }
 
   @override
@@ -70,7 +74,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _rotateRadiansAnimation?.value ?? _editActionDetails!.rotateRadians,
     );
     if (_animationController.isCompleted) {
-      _addNewEditActionDetails();
+      _saveCurrentEditActionDetails();
       _layerKey.currentState?.pointerDown(false);
       _rotationYRadiansAnimation = null;
       _rotateRadiansAnimation = null;
@@ -115,7 +119,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
     _history.clear();
     _currentIndex = -1;
-    _addNewEditActionDetails();
+    _saveCurrentEditActionDetails();
   }
 
   @override
@@ -166,7 +170,9 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
                     layoutRect = padding.deflateRect(layoutRect);
 
-                    if (_editActionDetails!.cropRect == null) {
+                    if (_editActionDetails!.cropRect == null
+                        // || _editActionDetails!.cropRect?.center !=layoutRect.center
+                        ) {
                       final AlignmentGeometry alignment =
                           widget.extendedImageState.imageWidget.alignment;
                       //matchTextDirection: extendedImage.matchTextDirection,
@@ -212,9 +218,12 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
                     }
 
                     return ExtendedImageCropLayer(
-                      _editActionDetails!,
-                      _editorConfig!,
-                      layoutRect,
+                      editActionDetails: _editActionDetails!,
+                      editorConfig: _editorConfig!,
+                      layoutRect: layoutRect,
+                      cropAutoCenterAnimationIsCompleted: () {
+                        _saveCurrentEditActionDetails();
+                      },
                       key: _layerKey,
                       fit: BoxFit.contain,
                     );
@@ -228,11 +237,10 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       child: result,
       onPointerDown: (_) {
         _layerKey.currentState?.pointerDown(true);
-        _editActionDetails = _editActionDetails!.copyWith();
       },
       onPointerUp: (_) {
         _layerKey.currentState?.pointerDown(false);
-        _addNewEditActionDetails();
+        _saveCurrentEditActionDetails();
       },
       onPointerSignal: _handlePointerSignal,
       // onPointerCancel: (_) {
@@ -342,8 +350,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
               _reverseIf((dy.abs() > dx.abs() ? dy : dx) *
                   _editorConfig!.speed /
                   1000.0)));
-
-      _addNewEditActionDetails();
+      _debounceSaveCurrentEditActionDetails();
     }
   }
 
@@ -449,7 +456,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _animationController.forward(from: 0);
     } else {
       _updateRotate(_editActionDetails!.rotationYRadians, end);
-      _addNewEditActionDetails();
+      _debounceSaveCurrentEditActionDetails();
     }
   }
 
@@ -484,14 +491,13 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _animationController.forward(from: 0);
     } else {
       _updateRotate(end, _editActionDetails!.rotateRadians);
-      _addNewEditActionDetails();
+      _saveCurrentEditActionDetails();
     }
   }
 
   void _updateRotate(double rotationYRadians, double rotateRadians) {
     setState(() {
-      _editActionDetails =
-          _editActionDetails!.copyWith(rotationYRadians: rotationYRadians);
+      _editActionDetails!.rotationYRadians = rotationYRadians;
       _editActionDetails!.updateRotateRadians(
         rotateRadians,
         _editorConfig!.maxScale,
@@ -511,17 +517,20 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _editActionDetails = null;
       _initGestureConfig();
 
-      _addNewEditActionDetails();
+      _saveCurrentEditActionDetails();
       _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
     });
   }
 
   @override
   void redo() {
+    if (_animationController.isAnimating) {
+      return;
+    }
     if (canRedo) {
       setState(() {
-        _currentIndex = _history.indexOf(_editActionDetails!) + 1;
-        _editActionDetails = _history[_currentIndex];
+        _currentIndex = _currentIndex + 1;
+        _editActionDetails = _history[_currentIndex].copyWith();
         _editorConfig!.controller?._notifyListeners();
         _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
       });
@@ -530,10 +539,13 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
   @override
   void undo() {
+    if (_animationController.isAnimating) {
+      return;
+    }
     if (canUndo) {
       setState(() {
-        _currentIndex = _history.indexOf(_editActionDetails!) - 1;
-        _editActionDetails = _history[_currentIndex];
+        _currentIndex = _currentIndex - 1;
+        _editActionDetails = _history[_currentIndex].copyWith();
         _editorConfig!.controller?._notifyListeners();
         _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
       });
@@ -546,7 +558,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       return false;
     }
 
-    return _history.isNotEmpty && _editActionDetails != _history.last;
+    return _currentIndex < _history.length - 1;
   }
 
   @override
@@ -555,20 +567,28 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       return false;
     }
 
-    return _history.isNotEmpty && _editActionDetails != _history.first;
+    return _currentIndex > 0;
   }
 
   int _currentIndex = -1;
-  void _addNewEditActionDetails() {
-    if (_history.contains(_editActionDetails)) {
+  void _saveCurrentEditActionDetails() {
+    final Offset? screenCropRectCenter =
+        _editActionDetails?.screenCropRect?.center;
+    final Offset? rawDestinationRectCenter =
+        _editActionDetails?.rawDestinationRect?.center;
+    // crop rect auto center isAnimating
+    if (!screenCropRectCenter.isSame(rawDestinationRectCenter)) {
       return;
     }
 
-    if (_currentIndex > 0 && _currentIndex < _history.length - 1) {
-      _history.removeRange(_currentIndex, _history.length);
+    // new edit action details
+    // clear redo history
+    //
+    if (_currentIndex + 1 < _history.length) {
+      _history.removeRange(_currentIndex + 1, _history.length);
     }
 
-    _history.add(_editActionDetails!);
+    _history.add(_editActionDetails!.copyWith());
 
     _currentIndex = _history.length - 1;
 

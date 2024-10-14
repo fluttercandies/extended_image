@@ -24,11 +24,12 @@ enum _MoveType {
 }
 
 class ExtendedImageCropLayer extends StatefulWidget {
-  const ExtendedImageCropLayer(
-    this.editActionDetails,
-    this.editorConfig,
-    this.layoutRect, {
+  const ExtendedImageCropLayer({
     Key? key,
+    required this.editActionDetails,
+    required this.editorConfig,
+    required this.layoutRect,
+    required this.cropAutoCenterAnimationIsCompleted,
     this.fit = BoxFit.contain,
   }) : super(key: key);
 
@@ -36,6 +37,8 @@ class ExtendedImageCropLayer extends StatefulWidget {
   final EditorConfig editorConfig;
   final Rect layoutRect;
   final BoxFit fit;
+
+  final Function cropAutoCenterAnimationIsCompleted;
   @override
   ExtendedImageCropLayerState createState() => ExtendedImageCropLayerState();
 }
@@ -552,6 +555,10 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             .setScreenDestinationRect(newScreenDestinationRect);
         widget.editActionDetails.totalScale = totalScale;
         widget.editActionDetails.preTotalScale = totalScale;
+
+        if (_rectTweenController.isCompleted) {
+          widget.cropAutoCenterAnimationIsCompleted();
+        }
       });
     }
   }
