@@ -7,11 +7,13 @@ import 'extended_image.dart';
 import 'gesture/slide_page.dart';
 
 enum LoadState {
-  //loading
+  /// loading
   loading,
-  //completed
+
+  /// completed
   completed,
-  //failed
+
+  /// failed
   failed
 }
 

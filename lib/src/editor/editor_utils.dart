@@ -1,29 +1,43 @@
 import 'package:flutter/material.dart';
 
+/// [CropAspectRatios] defines a set of commonly used aspect ratios
+/// for cropping an image. These static constants represent different
+/// ratios between width and height.
 class CropAspectRatios {
-  /// no aspect ratio for crop
+  /// No aspect ratio for crop; free-form cropping is allowed.
   static const double? custom = null;
 
-  /// the same as aspect ratio of image
-  /// [cropAspectRatio] is not more than 0.0, it's original
+  /// The same as the original aspect ratio of the image.
+  /// if it's equal or less than 0, it will be treated as original.
   static const double original = 0.0;
 
-  /// ratio of width and height is 1 : 1
+  /// Aspect ratio of 1:1 (square).
   static const double ratio1_1 = 1.0;
 
-  /// ratio of width and height is 3 : 4
+  /// Aspect ratio of 3:4 (portrait).
   static const double ratio3_4 = 3.0 / 4.0;
 
-  /// ratio of width and height is 4 : 3
+  /// Aspect ratio of 4:3 (landscape).
   static const double ratio4_3 = 4.0 / 3.0;
 
-  /// ratio of width and height is 9 : 16
+  /// Aspect ratio of 9:16 (portrait).
   static const double ratio9_16 = 9.0 / 16.0;
 
-  /// ratio of width and height is 16 : 9
+  /// Aspect ratio of 16:9 (landscape).
   static const double ratio16_9 = 16.0 / 9.0;
 }
 
+/// `getDestinationRect` calculates the destination rectangle where an image
+/// or widget should be drawn based on the given input size, scale, alignment,
+/// and fit behavior. This is useful when transforming or resizing images.
+///
+/// - `rect`: The outer boundary where the image is drawn.
+/// - `inputSize`: The size of the input image or widget.
+/// - `scale`: The scale factor applied to the image.
+/// - `fit`: Defines how the image should be fit within the destination area.
+/// - `alignment`: Controls how the image aligns within the destination.
+/// - `centerSlice`: Specifies a region for nine-patch scaling.
+/// - `flipHorizontally`: If true, flips the image horizontally.
 Rect getDestinationRect({
   required Rect rect,
   required Size inputSize,
@@ -33,30 +47,42 @@ Rect getDestinationRect({
   Rect? centerSlice,
   bool flipHorizontally = false,
 }) {
+  // Size of the output area (the destination).
   Size outputSize = rect.size;
 
   late Offset sliceBorder;
+
+  // Adjust the input and output sizes if centerSlice is provided (for nine-patch scaling).
   if (centerSlice != null) {
     sliceBorder = Offset(centerSlice.left + inputSize.width - centerSlice.right,
         centerSlice.top + inputSize.height - centerSlice.bottom);
     outputSize = outputSize - sliceBorder as Size;
     inputSize = inputSize - sliceBorder as Size;
   }
+
+  // Set the BoxFit if not already provided, defaulting to `scaleDown`.
   fit ??= centerSlice == null ? BoxFit.scaleDown : BoxFit.fill;
+
+  // Ensure centerSlice is used with a valid BoxFit.
   assert(centerSlice == null || (fit != BoxFit.none && fit != BoxFit.cover));
+
+  // Calculate the fitted sizes based on the BoxFit.
   final FittedSizes fittedSizes =
       applyBoxFit(fit, inputSize / scale, outputSize);
+
+  // Get the source and destination sizes for drawing the image.
   final Size sourceSize = fittedSizes.source * scale;
   Size destinationSize = fittedSizes.destination;
+
   if (centerSlice != null) {
     outputSize += sliceBorder;
     destinationSize += sliceBorder;
-    // We don't have the ability to draw a subset of the image at the same time
-    // as we apply a nine-patch stretch.
+    // Ensure sourceSize matches inputSize when using a centerSlice.
     assert(sourceSize == inputSize,
         'centerSlice was used with a BoxFit that does not guarantee that the image is fully visible.');
   }
 
+  // Calculate the positioning offsets based on alignment and potential flipping.
   final double halfWidthDelta =
       (outputSize.width - destinationSize.width) / 2.0;
   final double halfHeightDelta =
@@ -64,25 +90,32 @@ Rect getDestinationRect({
   final double dx = halfWidthDelta +
       (flipHorizontally ? -alignment.x : alignment.x) * halfWidthDelta;
   final double dy = halfHeightDelta + alignment.y * halfHeightDelta;
+
+  // Compute the final position and size of the destination rectangle.
   final Offset destinationPosition = rect.topLeft.translate(dx, dy);
   final Rect destinationRect = destinationPosition & destinationSize;
-
-  // final Rect sourceRect =
-  //     centerSlice ?? alignment.inscribe(sourceSize, Offset.zero & inputSize);
 
   return destinationRect;
 }
 
+/// `defaultEditorMaskColorHandler` is a helper function that determines the color
+/// of the editor mask overlay based on whether the pointer is down or not.
+/// - When the pointer is down, the opacity is lower to highlight the focus.
+/// - Otherwise, the opacity is higher, indicating an idle state.
 Color defaultEditorMaskColorHandler(BuildContext context, bool pointerDown) {
   return Theme.of(context)
       .scaffoldBackgroundColor
       .withOpacity(pointerDown ? 0.4 : 0.8);
 }
 
+/// `InitCropRectType` specifies how the initial crop rectangle should be defined.
+/// - `imageRect`: Crop rectangle is based on the image's original boundaries.
+/// - `layoutRect`: Crop rectangle is based on the image's layout dimensions
+///   within the user interface.
 enum InitCropRectType {
-  /// init crop rect base on initial image rect
+  /// Crop rectangle is based on the image's original boundaries.
   imageRect,
 
-  /// init crop rect base on image layout rect
+  ///  Crop rectangle is based on the image's layout dimensions
   layoutRect,
 }

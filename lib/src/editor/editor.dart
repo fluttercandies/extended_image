@@ -126,7 +126,16 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     }
     _editActionDetails!.cropAspectRatio = _editorConfig!.cropAspectRatio;
 
+    final int length = _history.length;
     _history.clear();
+    if (length != _history.length) {
+      _safeUpdate(
+        () {
+          _editorConfig!.controller?._notifyListeners();
+        },
+      );
+    }
+
     // save after afterPaintImage
     // _currentIndex = -1;
     // _saveCurrentEditActionDetails();
@@ -395,6 +404,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     }
   }
 
+  @override
   Rect? getCropRect() {
     if (widget.extendedImageState.extendedImageInfo?.image == null ||
         _editActionDetails == null) {

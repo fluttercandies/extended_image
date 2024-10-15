@@ -516,9 +516,9 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                             state,
                             canScaleImage: (_) => _imageDetailY == 0,
                             imageBuilder: (
-                              Widget image, {
-                              ExtendedImageGestureState? imageGestureState,
-                            }) {
+                              Widget image,
+                              ExtendedImageGestureState imageGestureState,
+                            ) {
                               return Stack(
                                 children: <Widget>[
                                   Positioned.fill(
@@ -625,13 +625,11 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
       slideAxis: SlideAxis.vertical,
       slideType: SlideType.onlyImage,
       slideScaleHandler: (
-        Offset offset, {
-        ExtendedImageSlidePageState? state,
-      }) {
+        Offset offset,
+        ExtendedImageSlidePageState state,
+      ) {
         //image is ready and it's not sliding.
-        if (state != null &&
-            detailKeys[_currentIndex!] != null &&
-            state.scale == 1.0) {
+        if (detailKeys[_currentIndex!] != null && state.scale == 1.0) {
           //don't slide page if scale of image is more than 1.0
           if (state.imageGestureState!.gestureDetails!.totalScale! > 1.0) {
             return 1.0;
@@ -645,13 +643,11 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
         return null;
       },
       slideOffsetHandler: (
-        Offset offset, {
-        ExtendedImageSlidePageState? state,
-      }) {
+        Offset offset,
+        ExtendedImageSlidePageState state,
+      ) {
         //image is ready and it's not sliding.
-        if (state != null &&
-            detailKeys[_currentIndex!] != null &&
-            state.scale == 1.0) {
+        if (detailKeys[_currentIndex!] != null && state.scale == 1.0) {
           //don't slide page if scale of image is more than 1.0
 
           if (state.imageGestureState!.gestureDetails!.totalScale! > 1.0) {
@@ -679,14 +675,14 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
         return null;
       },
       slideEndHandler: (
-        Offset offset, {
-        ExtendedImageSlidePageState? state,
-        ScaleEndDetails? details,
-      }) {
-        if (_imageDetailY != 0 && state!.scale == 1) {
+        Offset offset,
+        ExtendedImageSlidePageState state,
+        ScaleEndDetails details,
+      ) {
+        if (_imageDetailY != 0 && state.scale == 1) {
           if (!_slideEndAnimationController.isAnimating) {
 // get magnitude from gesture velocity
-            final double magnitude = details!.velocity.pixelsPerSecond.distance;
+            final double magnitude = details.velocity.pixelsPerSecond.distance;
 
             // do a significant magnitude
 

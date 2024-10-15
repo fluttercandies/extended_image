@@ -114,7 +114,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 mode: ExtendedImageMode.editor,
                 enableLoadState: true,
                 // extendedImageEditorKey: editorKey,
-                initEditorConfigHandler: (ExtendedImageState? state) {
+                initEditorConfigHandler: (ExtendedImageState state) {
                   return EditorConfig(
                     maxScale: 8.0,
                     cropRectPadding: const EdgeInsets.all(20.0),
@@ -619,8 +619,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
       /// native library
       if (useNative) {
-        imageInfo = await cropImageDataWithNativeLibrary(
-            state: _editorController.state!);
+        imageInfo = await cropImageDataWithNativeLibrary(_editorController);
       } else {
         ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
         ///it will block showBusyingDialog
@@ -628,8 +627,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         //await Future.delayed(Duration(milliseconds: 200));
 
         ///if you don't want to block ui, use compute/isolate,but it costs more time.
-        imageInfo =
-            await cropImageDataWithDartLibrary(state: _editorController.state!);
+        imageInfo = await cropImageDataWithDartLibrary(_editorController);
       }
       final String? filePath = await ImageSaver.save(
           'extended_image_cropped_image.${imageInfo.imageType == ImageType.jpg ? 'jpg' : 'gif'}',

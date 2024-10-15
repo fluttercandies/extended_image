@@ -26,11 +26,12 @@ class EditImageInfo {
 }
 
 Future<EditImageInfo> cropImageDataWithDartLibrary(
-    {required ExtendedImageEditorState state}) async {
+    ImageEditorController imageEditorController) async {
   print('dart library start cropping');
 
   ///crop rect base on raw image
-  Rect cropRect = state.getCropRect()!;
+  Rect cropRect = imageEditorController.getCropRect()!;
+  final ExtendedImageEditorState state = imageEditorController.state!;
 
   print('getCropRect : $cropRect');
 
@@ -43,10 +44,10 @@ Future<EditImageInfo> cropImageDataWithDartLibrary(
   //     resolved); //
 
   final Uint8List data = kIsWeb &&
-          state.widget.extendedImageState.imageWidget.image
-              is ExtendedNetworkImageProvider
-      ? await _loadNetwork(state.widget.extendedImageState.imageWidget.image
-          as ExtendedNetworkImageProvider)
+          imageEditorController.state!.widget.extendedImageState.imageWidget
+              .image is ExtendedNetworkImageProvider
+      ? await _loadNetwork(imageEditorController.state!.widget
+          .extendedImageState.imageWidget.image as ExtendedNetworkImageProvider)
 
       ///toByteData is not work on web
       ///https://github.com/flutter/flutter/issues/44908
@@ -148,12 +149,12 @@ Future<EditImageInfo> cropImageDataWithDartLibrary(
 }
 
 Future<EditImageInfo> cropImageDataWithNativeLibrary(
-    {required ExtendedImageEditorState state}) async {
+    ImageEditorController imageEditorController) async {
   print('native library start cropping');
 
-  final EditActionDetails action = state.editAction!;
+  final EditActionDetails action = imageEditorController.editActionDetails!;
 
-  final Uint8List img = state.rawImageData;
+  final Uint8List img = imageEditorController.state!.rawImageData;
 
   final ImageEditorOption option = ImageEditorOption();
 
@@ -166,14 +167,16 @@ Future<EditImageInfo> cropImageDataWithNativeLibrary(
   }
 
   if (action.needCrop) {
-    Rect cropRect = state.getCropRect()!;
-    if (state.widget.extendedImageState.imageProvider is ExtendedResizeImage) {
-      final ImmutableBuffer buffer =
-          await ImmutableBuffer.fromUint8List(state.rawImageData);
+    Rect cropRect = imageEditorController.getCropRect()!;
+    if (imageEditorController.state!.widget.extendedImageState.imageProvider
+        is ExtendedResizeImage) {
+      final ImmutableBuffer buffer = await ImmutableBuffer.fromUint8List(img);
       final ImageDescriptor descriptor = await ImageDescriptor.encoded(buffer);
 
-      final double widthRatio = descriptor.width / state.image!.width;
-      final double heightRatio = descriptor.height / state.image!.height;
+      final double widthRatio =
+          descriptor.width / imageEditorController.state!.image!.width;
+      final double heightRatio =
+          descriptor.height / imageEditorController.state!.image!.height;
       cropRect = Rect.fromLTRB(
         cropRect.left * widthRatio,
         cropRect.top * heightRatio,
