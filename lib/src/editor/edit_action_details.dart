@@ -22,21 +22,7 @@ class EditActionDetails {
   double? originalAspectRatio;
 
   ///  aspect ratio of crop rect
-  double? _cropAspectRatio;
-  double? get cropAspectRatio {
-    // TODO，when rotate 90° or 270°, aspect ratio should be 1/aspectRatio
-    // pi/2 , should be 1/aspectRatio ?
-    // return _cropAspectRatio;
-    // if (_cropAspectRatio != null) {
-    //   return isHalfPi ? 1.0 / _cropAspectRatio! : _cropAspectRatio;
-    // }
-    // return null;
-    return _cropAspectRatio;
-  }
-
-  set cropAspectRatio(double? value) {
-    _cropAspectRatio = value;
-  }
+  double? cropAspectRatio;
 
   /// image
   Rect? get screenDestinationRect => _screenDestinationRect;
@@ -530,7 +516,7 @@ class EditActionDetails {
       ..cropRectPadding = cropRectPadding ?? this.cropRectPadding
       ..cropRect = cropRect ?? this.cropRect
       ..originalAspectRatio = originalAspectRatio ?? this.originalAspectRatio
-      .._cropAspectRatio = cropAspectRatio ?? _cropAspectRatio
+      ..cropAspectRatio = cropAspectRatio ?? cropAspectRatio
       ..rotateRadians = rotateRadians ?? this.rotateRadians
       ..rotationYRadians = rotationYRadians ?? this.rotationYRadians;
   }
@@ -552,7 +538,7 @@ class EditActionDetails {
         cropRectPadding == other.cropRectPadding &&
         cropRect.isSame(other.cropRect) &&
         originalAspectRatio.equalTo(other.originalAspectRatio) &&
-        _cropAspectRatio.equalTo(other._cropAspectRatio) &&
+        cropAspectRatio.equalTo(other.cropAspectRatio) &&
         rotateRadians.equalTo(other.rotateRadians) &&
         rotationYRadians.equalTo(other.rotationYRadians);
   }
@@ -569,7 +555,7 @@ class EditActionDetails {
         cropRectPadding.hashCode ^
         cropRect.hashCode ^
         originalAspectRatio.hashCode ^
-        _cropAspectRatio.hashCode ^
+        cropAspectRatio.hashCode ^
         rotateRadians.hashCode ^
         rotationYRadians.hashCode;
   }

@@ -59,8 +59,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     );
     _animationController.addListener(_onAnimation);
     _debounceSaveCurrentEditActionDetails = () {
-      _saveCurrentEditActionDetails();
-    }.debounce(const Duration(milliseconds: 100));
+      _saveCurrentState();
+    }.debounce(const Duration(milliseconds: 400));
   }
 
   @override
@@ -89,7 +89,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
         _layerKey.currentState?.rotateCropRectEnd();
       }
 
-      _saveCurrentEditActionDetails();
+      _saveCurrentState();
       _layerKey.currentState?.pointerDown(false);
       _rotationYRadiansAnimation = null;
       _rotateRadiansAnimation = null;
@@ -133,8 +133,9 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     }
 
     _history.clear();
-    _currentIndex = -1;
-    _saveCurrentEditActionDetails();
+    // save after afterPaintImage
+    // _currentIndex = -1;
+    // _saveCurrentEditActionDetails();
   }
 
   @override
@@ -164,6 +165,12 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       invertColors: widget.extendedImageState.invertColors,
       filterQuality: extendedImage.filterQuality,
       editActionDetails: _editActionDetails,
+      afterPaintImage: (Canvas canvas, Rect rect, ui.Image image, Paint paint) {
+        if (_history.isEmpty) {
+          _currentIndex = -1;
+          _saveCurrentState();
+        }
+      },
     );
 
     Widget result = ClipRect(
@@ -237,7 +244,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
                       editorConfig: _editorConfig!,
                       layoutRect: layoutRect,
                       cropAutoCenterAnimationIsCompleted: () {
-                        _saveCurrentEditActionDetails();
+                        _saveCurrentState();
                       },
                       key: _layerKey,
                       fit: BoxFit.contain,
@@ -256,7 +263,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       onPointerUp: (_) {
         _editActionDetails?.screenFocalPoint = null;
         _layerKey.currentState?.pointerDown(false);
-        _saveCurrentEditActionDetails();
+        _saveCurrentState();
       },
       onPointerSignal: _handlePointerSignal,
       // onPointerCancel: (_) {
@@ -525,7 +532,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _animationController.forward(from: 0);
     } else {
       _updateRotate(end, _editActionDetails!.rotateRadians);
-      _saveCurrentEditActionDetails();
+      _saveCurrentState();
     }
   }
 
@@ -558,8 +565,6 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _rotationYRadiansAnimation = null;
       _rotateRadiansAnimation = null;
       _initGestureConfig();
-
-      _saveCurrentEditActionDetails();
       _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
     });
   }
@@ -613,7 +618,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
   }
 
   int _currentIndex = -1;
-  void _saveCurrentEditActionDetails() {
+  void _saveCurrentState() {
     final Offset? screenCropRectCenter =
         _editActionDetails?.screenCropRect?.center;
     final Offset? rawDestinationRectCenter =
