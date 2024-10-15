@@ -49,7 +49,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     AspectRatioItem(text: '16*9', value: CropAspectRatios.ratio16_9),
     AspectRatioItem(text: '9*16', value: CropAspectRatios.ratio9_16)
   ];
-  AspectRatioItem? _aspectRatio;
+
+  late ValueNotifier<AspectRatioItem> _aspectRatio;
+
   bool _cropping = false;
 
   EditorCropLayerPainter? _cropLayerPainter;
@@ -59,7 +61,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
   @override
   void initState() {
-    _aspectRatio = _aspectRatios.first;
+    _aspectRatio = ValueNotifier<AspectRatioItem>(_aspectRatios.first);
     _cropLayerPainter = const EditorCropLayerPainter();
     super.initState();
   }
@@ -119,7 +121,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     hitTestSize: 20.0,
                     cropLayerPainter: _cropLayerPainter!,
                     initCropRectType: InitCropRectType.imageRect,
-                    cropAspectRatio: _aspectRatio!.value,
+                    cropAspectRatio: _aspectRatio.value.value,
                     controller: _editorController,
                   );
                 },
@@ -207,7 +209,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                         if (_cropLayerPainter != value) {
                           setState(() {
                             if (value is CircleEditorCropLayerPainter) {
-                              _aspectRatio = _aspectRatios[2];
+                              _aspectRatio.value = _aspectRatios[2];
                             }
                             _cropLayerPainter = value;
                           });
@@ -244,17 +246,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             ),
                             textColor: Colors.white,
                             onPressed: () {
-                              final double oldRotateAngle =
-                                  _editorController.rotateAngle;
-                              _editorController.undo();
-                              final double newRotateAngle =
-                                  _editorController.rotateAngle;
-                              if (oldRotateAngle != newRotateAngle &&
-                                  (newRotateAngle - oldRotateAngle) % 90 != 0) {
-                                _rulerPickerController.value =
-                                    _rulerPickerController.value +
-                                        (newRotateAngle - oldRotateAngle);
-                              }
+                              _onUndoOrRedo(() {
+                                _editorController.undo();
+                              });
                             },
                           ),
                           FlatButtonWithIcon(
@@ -275,18 +269,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             ),
                             textColor: Colors.white,
                             onPressed: () {
-                              final double oldRotateAngle =
-                                  _editorController.rotateAngle;
-                              _editorController.redo();
-
-                              final double newRotateAngle =
-                                  _editorController.rotateAngle;
-                              if (oldRotateAngle != newRotateAngle &&
-                                  (newRotateAngle - oldRotateAngle) % 90 != 0) {
-                                _rulerPickerController.value =
-                                    _rulerPickerController.value +
-                                        (newRotateAngle - oldRotateAngle);
-                              }
+                              _onUndoOrRedo(() {
+                                _editorController.redo();
+                              });
                             },
                           ),
                         ]),
@@ -304,6 +289,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     onPressed: () {
                       _editorController.reset();
                       _rulerPickerController.value = 0;
+                      _aspectRatio.value = _aspectRatios.first;
                     },
                   ),
                 ],
@@ -447,28 +433,32 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
             Container(
               // color: Colors.black.withOpacity(0.2),
               height: 80,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (_, int index) {
-                  final AspectRatioItem item = _aspectRatios[index];
-                  return GestureDetector(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: AspectRatioWidget(
-                        aspectRatio: item.value,
-                        aspectRatioS: item.text,
-                        isSelected: item == _aspectRatio,
-                      ),
-                    ),
-                    onTap: () {
-                      setState(() {
-                        _aspectRatio = item;
-                        _rulerPickerController.value = 0;
-                      });
+              child: ValueListenableBuilder<AspectRatioItem>(
+                valueListenable: _aspectRatio,
+                builder: (BuildContext context, AspectRatioItem value,
+                    Widget? child) {
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (_, int index) {
+                      final AspectRatioItem item = _aspectRatios[index];
+                      return GestureDetector(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: AspectRatioWidget(
+                            aspectRatio: item.value,
+                            aspectRatioS: item.text,
+                            isSelected: item == _aspectRatio.value,
+                          ),
+                        ),
+                        onTap: () {
+                          _editorController.updateCropAspectRatio(item.value);
+                          _aspectRatio.value = item;
+                        },
+                      );
                     },
+                    itemCount: _aspectRatios.length,
                   );
                 },
-                itemCount: _aspectRatios.length,
               ),
             ),
           ],
@@ -587,6 +577,32 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
             ],
           );
         });
+  }
+
+  void _onUndoOrRedo(Function fn) {
+    final double oldRotateAngle = _editorController.rotateAngle;
+    final double? oldCropAspectRatio =
+        _editorController.originalCropAspectRatio;
+    fn();
+    final double newRotateAngle = _editorController.rotateAngle;
+    final double? newCropAspectRatio =
+        _editorController.originalCropAspectRatio;
+    if (oldRotateAngle != newRotateAngle &&
+        (newRotateAngle - oldRotateAngle) % 90 != 0) {
+      _rulerPickerController.value =
+          _rulerPickerController.value + (newRotateAngle - oldRotateAngle);
+    }
+
+    if (oldCropAspectRatio != newCropAspectRatio) {
+      if (newCropAspectRatio == null) {
+        _aspectRatio.value = _aspectRatios.first;
+      } else {
+        _aspectRatio.value = _aspectRatios.firstWhere(
+          (AspectRatioItem element) => element.value == newCropAspectRatio,
+          orElse: () => _aspectRatios.first,
+        );
+      }
+    }
   }
 
   Future<void> _cropImage(bool useNative) async {

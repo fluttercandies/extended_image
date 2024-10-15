@@ -22,7 +22,25 @@ class EditActionDetails {
   double? originalAspectRatio;
 
   ///  aspect ratio of crop rect
-  double? cropAspectRatio;
+
+  double? _cropAspectRatio;
+
+  /// the original aspect ratio
+  double? get originalCropAspectRatio => _cropAspectRatio;
+
+  /// current aspect ratio of crop rect
+  double? get cropAspectRatio {
+    if (_cropAspectRatio != null && _cropAspectRatio! <= 0) {
+      return originalAspectRatio;
+    }
+    return _cropAspectRatio;
+  }
+
+  set cropAspectRatio(double? value) {
+    if (_cropAspectRatio != value) {
+      _cropAspectRatio = value;
+    }
+  }
 
   /// image
   Rect? get screenDestinationRect => _screenDestinationRect;
@@ -115,12 +133,15 @@ class EditActionDetails {
         delta = Offset.zero;
       }
     } else {
-      _screenDestinationRect = getRectWithScale(_rawDestinationRect!);
+      _screenDestinationRect = getRectWithScale(
+        _rawDestinationRect!,
+        totalScale,
+      );
     }
     return _screenDestinationRect!;
   }
 
-  Rect getRectWithScale(Rect rect) {
+  Rect getRectWithScale(Rect rect, double totalScale) {
     final double width = rect.width * totalScale;
     final double height = rect.height * totalScale;
     final Offset center = rect.center;
@@ -198,10 +219,24 @@ class EditActionDetails {
   void updateRotateRadians(double rotateRadians, double maxScale) {
     final double oldRotateRadian = this.rotateRadians;
     this.rotateRadians = rotateRadians;
-    final Rect rect = _screenDestinationRect!;
+    final double scaleDelta = scaleToFitCropRect();
 
+    if (scaleDelta > 0) {
+      // can't scale
+      if (totalScale * scaleDelta > maxScale) {
+        // roll back to old value
+        this.rotateRadians = oldRotateRadian;
+      } else {
+        screenFocalPoint = _screenDestinationRect!.center;
+        preTotalScale = totalScale;
+        totalScale = max(totalScale * scaleDelta, totalScale);
+      }
+    }
+  }
+
+  double scaleToFitCropRect() {
     final Matrix4 result = getTransform();
-
+    final Rect rect = _screenDestinationRect!;
     final List<Offset> rectVertices = <Offset>[
       screenCropRect!.topLeft,
       screenCropRect!.topRight,
@@ -218,18 +253,7 @@ class EditActionDetails {
       rect,
       rect.center,
     );
-
-    if (scaleDelta > 0) {
-      // can't scale
-      if (totalScale * scaleDelta > maxScale) {
-        // roll back to old value
-        this.rotateRadians = oldRotateRadian;
-      } else {
-        screenFocalPoint = _screenDestinationRect!.center;
-        preTotalScale = totalScale;
-        totalScale = max(totalScale * scaleDelta, totalScale);
-      }
-    }
+    return scaleDelta;
   }
 
   double scaleToFit(
@@ -430,9 +454,7 @@ class EditActionDetails {
       }
     }
 
-    screenCropRect = screenCropRect.shift(-layoutTopLeft!);
-
-    return screenCropRect;
+    return screenCropRect.shift(-layoutTopLeft!);
   }
 
   Offset? getIntersection(Offset p1, Offset p2, Offset p3, Offset p4) {
@@ -516,7 +538,7 @@ class EditActionDetails {
       ..cropRectPadding = cropRectPadding ?? this.cropRectPadding
       ..cropRect = cropRect ?? this.cropRect
       ..originalAspectRatio = originalAspectRatio ?? this.originalAspectRatio
-      ..cropAspectRatio = cropAspectRatio ?? cropAspectRatio
+      ..cropAspectRatio = cropAspectRatio ?? _cropAspectRatio
       ..rotateRadians = rotateRadians ?? this.rotateRadians
       ..rotationYRadians = rotationYRadians ?? this.rotationYRadians;
   }

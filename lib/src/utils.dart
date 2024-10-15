@@ -165,6 +165,13 @@ extension RectExtension on Rect {
         offset.dy >= top &&
         offset.dy <= bottom;
   }
+
+  bool containsRect(Rect rect) {
+    return left.lessThanOrEqualTo(rect.left) &&
+        right.greaterThanOrEqualTo(rect.right) &&
+        top.lessThanOrEqualTo(rect.top) &&
+        bottom.greaterThanOrEqualTo(rect.bottom);
+  }
 }
 
 extension RectExtensionNullable on Rect? {

@@ -656,4 +656,10 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       );
     });
   }
+
+  void updateCropRect(Rect newRect) {
+    setState(() {
+      cropRect = newRect;
+    });
+  }
 }

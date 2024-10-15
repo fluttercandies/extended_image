@@ -7,6 +7,13 @@ class ImageEditorController extends ChangeNotifier
 
   double get rotateAngle => _state?._editActionDetails?.rotateAngle ?? 0;
 
+  /// it'null or bigger than 0
+  double? get cropAspectRatio => _state?._editActionDetails?.cropAspectRatio;
+
+  /// it'null, equal or bigger than 0
+  double? get originalCropAspectRatio =>
+      _state?._editActionDetails?.originalCropAspectRatio;
+  EditActionDetails? get editActionDetails => _state?._editActionDetails;
   @override
   void flip({
     bool animation = false,
@@ -56,6 +63,11 @@ class ImageEditorController extends ChangeNotifier
   void _notifyListeners() {
     notifyListeners();
   }
+
+  @override
+  void updateCropAspectRatio(double? aspectRatio) {
+    _state?.updateCropAspectRatio(aspectRatio);
+  }
 }
 
 mixin ImageEditorControllerMixin {
@@ -81,4 +93,6 @@ mixin ImageEditorControllerMixin {
   bool get canUndo;
 
   bool get canRedo;
+
+  void updateCropAspectRatio(double? aspectRatio);
 }
