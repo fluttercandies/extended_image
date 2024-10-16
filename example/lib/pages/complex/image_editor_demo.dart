@@ -331,7 +331,10 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             ),
                           ),
                           onValueChanged: (num value) {
-                            if (_rulerPickerController.value == value) {
+                            if (_rulerPickerController.value
+                                    .toDouble()
+                                    .equalTo(value.toDouble()) &&
+                                !_onUndoOrRedoing) {
                               return;
                             }
                             HapticFeedback.vibrate();
@@ -579,15 +582,19 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         });
   }
 
+  bool _onUndoOrRedoing = false;
   void _onUndoOrRedo(Function fn) {
     final double oldRotateAngle = _editorController.rotateAngle;
     final double? oldCropAspectRatio =
         _editorController.originalCropAspectRatio;
+    _onUndoOrRedoing = true;
     fn();
+    _onUndoOrRedoing = false;
     final double newRotateAngle = _editorController.rotateAngle;
     final double? newCropAspectRatio =
         _editorController.originalCropAspectRatio;
     if (oldRotateAngle != newRotateAngle &&
+        !(newRotateAngle - oldRotateAngle).isZero &&
         (newRotateAngle - oldRotateAngle) % 90 != 0) {
       _rulerPickerController.value =
           _rulerPickerController.value + (newRotateAngle - oldRotateAngle);

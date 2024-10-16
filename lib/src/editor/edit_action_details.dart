@@ -49,7 +49,15 @@ class EditActionDetails {
     _screenDestinationRect = value;
   }
 
-  double rotateRadians = 0.0;
+  double _rotateRadians = 0.0;
+  double get rotateRadians => _rotateRadians;
+  set rotateRadians(double value) {
+    // ingore precisionErrorTolerance
+    if (value != 0.0 && value.isZero) {
+      value = 0.0;
+    }
+    _rotateRadians = value;
+  }
 
   double rotationYRadians = 0.0;
 

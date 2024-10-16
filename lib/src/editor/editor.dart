@@ -176,45 +176,43 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       },
     );
 
-    Widget result = ClipRect(
-      child: GestureDetector(
-          onScaleStart: _handleScaleStart,
-          onScaleUpdate: _handleScaleUpdate,
-          behavior: _editorConfig!.hitTestBehavior,
-          child: IgnorePointer(
-            ignoring: _animationController.isAnimating,
-            child: Stack(
-              children: <Widget>[
-                Positioned.fill(child: image),
-                Positioned.fill(
-                  child: LayoutBuilder(builder:
-                      (BuildContext context, BoxConstraints constraints) {
-                    Rect layoutRect = Offset.zero &
-                        Size(
-                          constraints.maxWidth,
-                          constraints.maxHeight,
-                        );
-                    layoutRect = _getNewCropRect(
-                      layoutRect,
-                      context,
-                    );
+    Widget result = GestureDetector(
+        onScaleStart: _handleScaleStart,
+        onScaleUpdate: _handleScaleUpdate,
+        behavior: _editorConfig!.hitTestBehavior,
+        child: IgnorePointer(
+          ignoring: _animationController.isAnimating,
+          child: Stack(
+            children: <Widget>[
+              Positioned.fill(child: image),
+              Positioned.fill(
+                child: LayoutBuilder(builder:
+                    (BuildContext context, BoxConstraints constraints) {
+                  Rect layoutRect = Offset.zero &
+                      Size(
+                        constraints.maxWidth,
+                        constraints.maxHeight,
+                      );
+                  layoutRect = _getNewCropRect(
+                    layoutRect,
+                    context,
+                  );
 
-                    return ExtendedImageCropLayer(
-                      editActionDetails: _editActionDetails!,
-                      editorConfig: _editorConfig!,
-                      layoutRect: layoutRect,
-                      cropAutoCenterAnimationIsCompleted: () {
-                        _saveCurrentState();
-                      },
-                      key: _layerKey,
-                      fit: BoxFit.contain,
-                    );
-                  }),
-                ),
-              ],
-            ),
-          )),
-    );
+                  return ExtendedImageCropLayer(
+                    editActionDetails: _editActionDetails!,
+                    editorConfig: _editorConfig!,
+                    layoutRect: layoutRect,
+                    cropAutoCenterAnimationIsCompleted: () {
+                      _saveCurrentState();
+                    },
+                    key: _layerKey,
+                    fit: BoxFit.contain,
+                  );
+                }),
+              ),
+            ],
+          ),
+        ));
     result = Listener(
       child: result,
       onPointerDown: (_) {
@@ -483,10 +481,14 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     if (_layerKey.currentState == null) {
       return;
     }
+    final double rotateRadian = angle / 180 * pi;
+    if (rotateRadian.isZero) {
+      return;
+    }
 
     final double begin = _editActionDetails!.rotateRadians;
     final double end =
-        begin + _editActionDetails!.reverseRotateRadian(angle / 180 * pi);
+        begin + _editActionDetails!.reverseRotateRadian(rotateRadian);
 
     if (rotateCropRect && (angle % 360).abs() == 90) {
       _rotateCropRect = true;
@@ -509,7 +511,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _animationController.forward(from: 0);
     } else {
       if (_rotateCropRect) {
-        _layerKey.currentState?.rotateCropRect(angle / 180 * pi);
+        _layerKey.currentState?.rotateCropRect(rotateRadian);
         _editActionDetails!.rotateRadians = end;
         _layerKey.currentState?.rotateCropRectEnd();
         _rotateCropRect = false;

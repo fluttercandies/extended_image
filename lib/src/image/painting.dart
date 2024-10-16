@@ -191,7 +191,7 @@ void paintExtendedImage(
     destinationRect =
         gestureDetails.calculateFinalDestinationRect(rect, destinationRect);
 
-    ///outside and need clip
+    // outside and need clip
     needClip = !rect.containsRect(destinationRect);
 
     if (gestureDetails.slidePageOffset != null) {
@@ -221,8 +221,8 @@ void paintExtendedImage(
 
     destinationRect = editActionDetails.getFinalDestinationRect();
 
-    ///outside and need clip
-    needClip = !rect.containsRect(destinationRect);
+    // outside and need clip
+    needClip = !rect.containsRect(editActionDetails.getImagePath().getBounds());
 
     hasEditAction = editActionDetails.hasEditAction;
 
