@@ -682,6 +682,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     //when back to current page, may be editorKey.currentState is not ready.
     Future<void>.delayed(const Duration(milliseconds: 200), () {
       setState(() {
+        _rulerPickerController.value = 0;
         _editorController.reset();
       });
     });

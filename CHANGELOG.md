@@ -1,3 +1,7 @@
+## 9.0.2
+
+* Update eidtor crop rect when srceen size is changed.
+
 ## 9.0.1
 
 * Take care about web platform, update eidtor layer size when srceen size is changed.

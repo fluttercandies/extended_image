@@ -49,7 +49,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
   Animation<double>? _rotateRadiansAnimation;
   late VoidFunction _debounceSaveCurrentEditActionDetails;
   bool _rotateCropRect = false;
-  Size? _layoutSize;
+  Rect? _layoutRect;
   @override
   void initState() {
     super.initState();
@@ -104,15 +104,11 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
   }
 
   void _initGestureConfig() {
-    final double? cropAspectRatio = _editorConfig?.cropAspectRatio;
     _editorConfig = widget
             .extendedImageState.imageWidget.initEditorConfigHandler
             ?.call(widget.extendedImageState) ??
         EditorConfig();
     _editorConfig?.controller?._state = this;
-    if (cropAspectRatio != _editorConfig!.cropAspectRatio) {
-      _editActionDetails = null;
-    }
 
     _editActionDetails ??= EditActionDetails()
       ..delta = Offset.zero
@@ -125,7 +121,10 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
           widget.extendedImageState.extendedImageInfo!.image.width /
               widget.extendedImageState.extendedImageInfo!.image.height;
     }
-    _editActionDetails!.cropAspectRatio = _editorConfig!.cropAspectRatio;
+
+    if (_editActionDetails!.cropRect == null) {
+      _editActionDetails!.cropAspectRatio = _editorConfig!.cropAspectRatio;
+    }
 
     final int length = _history.length;
     _history.clear();
@@ -198,7 +197,13 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
                     layoutRect,
                     context,
                   );
-                  _layoutSize = layoutRect.size;
+                  // web screen size may be changed
+                  if (_layoutRect != null && _layoutRect != layoutRect) {
+                    _safeUpdate(() {
+                      _recalculateCropRect();
+                    });
+                  }
+                  _layoutRect = layoutRect;
                   return ExtendedImageCropLayer(
                     editActionDetails: _editActionDetails!,
                     editorConfig: _editorConfig!,
@@ -243,9 +248,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
     layoutRect = padding.deflateRect(layoutRect);
 
-    if (_editActionDetails!.cropRect == null ||
-        // web screen size may be changed
-        _layoutSize != layoutRect.size) {
+    if (_editActionDetails!.cropRect == null) {
       final AlignmentGeometry alignment =
           widget.extendedImageState.imageWidget.alignment;
       //matchTextDirection: extendedImage.matchTextDirection,
@@ -696,6 +699,16 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       return;
     }
 
+    final ui.Rect newCropRect = _recalculateCropRect();
+    _layerKey.currentState?.updateCropRect(newCropRect);
+
+    _saveCurrentState();
+  }
+
+  ui.Rect _recalculateCropRect() {
+    if (_editActionDetails == null) {
+      return Rect.zero;
+    }
     _editActionDetails?.cropRect = null;
     // re-init crop rect
     Rect layoutRect = Offset.zero & _editActionDetails!.layoutRect!.size;
@@ -721,8 +734,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
         // scale crop rect
         newCropRect = Rect.fromCenter(
           center: newCropRect.center,
-          width: newCropRect.width * (1 / totalScale),
-          height: newCropRect.height * (1 / totalScale),
+          width: newCropRect.width * (1 / scaleDelta),
+          height: newCropRect.height * (1 / scaleDelta),
         );
       } else {
         _editActionDetails!.screenFocalPoint = null;
@@ -731,8 +744,6 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       }
     }
     _editActionDetails!.cropRect = newCropRect;
-    _layerKey.currentState?.updateCropRect(newCropRect);
-
-    _saveCurrentState();
+    return newCropRect;
   }
 }
