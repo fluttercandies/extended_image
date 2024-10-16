@@ -1,6 +1,4 @@
-import 'dart:math' as math;
 import 'dart:ui' as ui show Image;
-
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
@@ -193,8 +191,8 @@ void paintExtendedImage(
     destinationRect =
         gestureDetails.calculateFinalDestinationRect(rect, destinationRect);
 
-    ///outside and need clip
-    needClip = rect.beyond(destinationRect);
+    // outside and need clip
+    needClip = !rect.containsRect(destinationRect);
 
     if (gestureDetails.slidePageOffset != null) {
       destinationRect = destinationRect.shift(gestureDetails.slidePageOffset!);
@@ -223,8 +221,8 @@ void paintExtendedImage(
 
     destinationRect = editActionDetails.getFinalDestinationRect();
 
-    ///outside and need clip
-    needClip = rect.beyond(destinationRect);
+    // outside and need clip
+    needClip = !rect.containsRect(editActionDetails.getImagePath().getBounds());
 
     hasEditAction = editActionDetails.hasEditAction;
 
@@ -236,33 +234,7 @@ void paintExtendedImage(
     }
 
     if (hasEditAction) {
-      final Offset origin =
-          editActionDetails.screenCropRect?.center ?? destinationRect.center;
-
-      final Matrix4 result = Matrix4.identity();
-
-      final EditActionDetails editAction = editActionDetails;
-
-      result.translate(
-        origin.dx,
-        origin.dy,
-      );
-
-      if (editAction.hasRotateAngle) {
-        result.multiply(Matrix4.rotationZ(editAction.rotateRadian));
-      }
-
-      if (editAction.flipY) {
-        result.multiply(Matrix4.rotationY(math.pi));
-      }
-
-      if (editAction.flipX) {
-        result.multiply(Matrix4.rotationX(math.pi));
-      }
-
-      result.translate(-origin.dx, -origin.dy);
-      canvas.transform(result.storage);
-      destinationRect = editAction.paintRect(destinationRect);
+      canvas.transform(editActionDetails.getTransform().storage);
     }
   }
 
@@ -272,110 +244,7 @@ void paintExtendedImage(
       return;
     }
   }
-  // // Output size and destination rect are fully calculated.
-  // if (!kReleaseMode) {
-  //   // We can use the devicePixelRatio of the views directly here (instead of
-  //   // going through a MediaQuery) because if it changes, whatever is aware of
-  //   // the MediaQuery will be repainting the image anyways.
-  //   // Furthermore, for the memory check below we just assume that all images
-  //   // are decoded for the view with the highest device pixel ratio and use that
-  //   // as an upper bound for the display size of the image.
-  //   final double maxDevicePixelRatio =
-  //       PaintingBinding.instance.platformDispatcher.views.fold(
-  //     0.0,
-  //     (double previousValue, ui.FlutterView view) =>
-  //         math.max(previousValue, view.devicePixelRatio),
-  //   );
 
-  //   final ImageSizeInfo sizeInfo = ImageSizeInfo(
-  //     // Some ImageProvider implementations may not have given this.
-  //     source:
-  //         debugImageLabel ?? '<Unknown Image(${image.width}×${image.height})>',
-  //     imageSize: Size(image.width.toDouble(), image.height.toDouble()),
-  //     displaySize: outputSize * maxDevicePixelRatio,
-  //   );
-  //   assert(() {
-  //     if (debugInvertOversizedImages &&
-  //         sizeInfo.decodedSizeInBytes >
-  //             sizeInfo.displaySizeInBytes + debugImageOverheadAllowance) {
-  //       final int overheadInKilobytes =
-  //           (sizeInfo.decodedSizeInBytes - sizeInfo.displaySizeInBytes) ~/ 1024;
-  //       final int outputWidth = sizeInfo.displaySize.width.toInt();
-  //       final int outputHeight = sizeInfo.displaySize.height.toInt();
-  //       FlutterError.reportError(FlutterErrorDetails(
-  //         exception: 'Image $debugImageLabel has a display size of '
-  //             '$outputWidth×$outputHeight but a decode size of '
-  //             '${image.width}×${image.height}, which uses an additional '
-  //             '${overheadInKilobytes}KB (assuming a device pixel ratio of '
-  //             '$maxDevicePixelRatio).\n\n'
-  //             'Consider resizing the asset ahead of time, supplying a cacheWidth '
-  //             'parameter of $outputWidth, a cacheHeight parameter of '
-  //             '$outputHeight, or using a ResizeImage.',
-  //         library: 'painting library',
-  //         context: ErrorDescription('while painting an image'),
-  //       ));
-  //       // Invert the colors of the canvas.
-  //       canvas.saveLayer(
-  //         destinationRect,
-  //         Paint()
-  //           ..colorFilter = const ColorFilter.matrix(<double>[
-  //             -1,
-  //             0,
-  //             0,
-  //             0,
-  //             255,
-  //             0,
-  //             -1,
-  //             0,
-  //             0,
-  //             255,
-  //             0,
-  //             0,
-  //             -1,
-  //             0,
-  //             255,
-  //             0,
-  //             0,
-  //             0,
-  //             1,
-  //             0,
-  //           ]),
-  //       );
-  //       // Flip the canvas vertically.
-  //       final double dy = -(rect.top + rect.height / 2.0);
-  //       canvas.translate(0.0, -dy);
-  //       canvas.scale(1.0, -1.0);
-  //       canvas.translate(0.0, dy);
-  //       needClip = true;
-  //     }
-  //     return true;
-  //   }());
-  //   // Avoid emitting events that are the same as those emitted in the last frame.
-  //   if (!kReleaseMode && !_lastFrameImageSizeInfo.contains(sizeInfo)) {
-  //     final ImageSizeInfo? existingSizeInfo =
-  //         _pendingImageSizeInfo[sizeInfo.source];
-  //     if (existingSizeInfo == null ||
-  //         existingSizeInfo.displaySizeInBytes < sizeInfo.displaySizeInBytes) {
-  //       _pendingImageSizeInfo[sizeInfo.source!] = sizeInfo;
-  //     }
-  //     debugOnPaintImage?.call(sizeInfo);
-  //     SchedulerBinding.instance.addPostFrameCallback((Duration timeStamp) {
-  //       _lastFrameImageSizeInfo = _pendingImageSizeInfo.values.toSet();
-  //       if (_pendingImageSizeInfo.isEmpty) {
-  //         return;
-  //       }
-  //       developer.postEvent(
-  //         'Flutter.ImageSizesForFrame',
-  //         <String, Object>{
-  //           for (final ImageSizeInfo imageSizeInfo
-  //               in _pendingImageSizeInfo.values)
-  //             imageSizeInfo.source!: imageSizeInfo.toJson(),
-  //         },
-  //       );
-  //       _pendingImageSizeInfo = <String, ImageSizeInfo>{};
-  //     });
-  //   }
-  // }
   final bool needSave = repeat != ImageRepeat.noRepeat || flipHorizontally;
   if (needSave) {
     canvas.save();
@@ -420,6 +289,15 @@ void paintExtendedImage(
 
   if (needClip || hasEditAction) {
     canvas.restore();
+
+    // final Path path = editActionDetails!.getImagePath();
+    // canvas.drawPath(
+    //   path,
+    //   Paint()
+    //     ..color = Colors.red
+    //     ..style = PaintingStyle.stroke
+    //     ..strokeWidth = 5,
+    // );
   }
 
   if (afterPaintImage != null) {

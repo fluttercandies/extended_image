@@ -628,10 +628,11 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
         Offset offset, {
         ExtendedImageSlidePageState? state,
       }) {
+        if (state == null) {
+          return null;
+        }
         //image is ready and it's not sliding.
-        if (state != null &&
-            detailKeys[_currentIndex!] != null &&
-            state.scale == 1.0) {
+        if (detailKeys[_currentIndex!] != null && state.scale == 1.0) {
           //don't slide page if scale of image is more than 1.0
           if (state.imageGestureState!.gestureDetails!.totalScale! > 1.0) {
             return 1.0;
@@ -648,10 +649,11 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
         Offset offset, {
         ExtendedImageSlidePageState? state,
       }) {
+        if (state == null) {
+          return null;
+        }
         //image is ready and it's not sliding.
-        if (state != null &&
-            detailKeys[_currentIndex!] != null &&
-            state.scale == 1.0) {
+        if (detailKeys[_currentIndex!] != null && state.scale == 1.0) {
           //don't slide page if scale of image is more than 1.0
 
           if (state.imageGestureState!.gestureDetails!.totalScale! > 1.0) {
@@ -683,10 +685,13 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
         ExtendedImageSlidePageState? state,
         ScaleEndDetails? details,
       }) {
-        if (_imageDetailY != 0 && state!.scale == 1) {
+        if (state == null || details == null) {
+          return null;
+        }
+        if (_imageDetailY != 0 && state.scale == 1) {
           if (!_slideEndAnimationController.isAnimating) {
 // get magnitude from gesture velocity
-            final double magnitude = details!.velocity.pixelsPerSecond.distance;
+            final double magnitude = details.velocity.pixelsPerSecond.distance;
 
             // do a significant magnitude
 

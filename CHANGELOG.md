@@ -1,3 +1,26 @@
+## 9.0.0
+
+* Feature:
+  1. support to change free angle rotation on editor mode.
+  2. support to control whether the cropping box follows rotation on editor mode.
+  3. support flip and rotate animation on editor mode.
+  4. support undo and redo on editor mode.
+  5. support update cropAspectRatio without reset state on editor mode.
+  6. add [ImageEditorController] for [EditorConfig] to control the editor state.
+  
+* Issues:
+  1. Fix issue about free angle rotation. (#702, #627, #78, #441)
+  2. Fix issue about control whether the cropping box also rotate follows the rotation. (#691, #277)
+  3. Fix issue about flip animation. (#397)
+  4. Fix issue about crop rect gets invalid randomly on zooming in and out. (#548) 
+  5. Fix issue about undo and redo. (#553)
+
+* Breaking change:
+  1. EditorCropLayerPainter.paintMask method the [Size] argument to [Rect].
+  2. Remove flipX support.
+  3. Change the cropping process, now they are rotate, flipY and getCropRect.
+
+
 ## 8.3.1
 
 * Fix issue that unsmooth zooming when using ExtendedImageGesturePageView (#631)

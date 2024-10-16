@@ -1,8 +1,13 @@
 import 'dart:async';
 import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math_64.dart';
 
 import '../utils.dart';
+import 'edit_action_details.dart';
+import 'editor_config.dart';
+import 'editor_crop_layer_painter.dart';
 import 'editor_utils.dart';
 
 ///
@@ -21,11 +26,12 @@ enum _MoveType {
 }
 
 class ExtendedImageCropLayer extends StatefulWidget {
-  const ExtendedImageCropLayer(
-    this.editActionDetails,
-    this.editorConfig,
-    this.layoutRect, {
+  const ExtendedImageCropLayer({
     Key? key,
+    required this.editActionDetails,
+    required this.editorConfig,
+    required this.layoutRect,
+    required this.cropAutoCenterAnimationIsCompleted,
     this.fit = BoxFit.contain,
   }) : super(key: key);
 
@@ -33,6 +39,8 @@ class ExtendedImageCropLayer extends StatefulWidget {
   final EditorConfig editorConfig;
   final Rect layoutRect;
   final BoxFit fit;
+
+  final Function cropAutoCenterAnimationIsCompleted;
   @override
   ExtendedImageCropLayerState createState() => ExtendedImageCropLayerState();
 }
@@ -56,6 +64,8 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   Animation<Rect?>? _rectAnimation;
   late AnimationController _rectTweenController;
   _MoveType? _currentMoveType;
+
+  double _rotateRadians = 0;
   @override
   void initState() {
     super.initState();
@@ -111,154 +121,158 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
         lineHeight: editConfig.lineHeight,
         maskColor: maskColor,
         pointerDown: _pointerDown,
+        rotateRadians: _rotateRadians,
       ),
-      child: Stack(
-        children: <Widget>[
-          //top left
-          Positioned(
-            top: cropRect!.top - gWidth,
-            left: cropRect!.left - gWidth,
-            child: Container(
-              height: gWidth * 2,
-              width: gWidth * 2,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanUpdate: (DragUpdateDetails details) {
-                  moveUpdate(_MoveType.topLeft, details.delta);
-                },
-                onPanEnd: (_) {
-                  _moveEnd(_MoveType.topLeft);
-                },
+      child: IgnorePointer(
+        ignoring: _rectTweenController.isAnimating,
+        child: Stack(
+          children: <Widget>[
+            // top left
+            Positioned(
+              top: cropRect!.top - gWidth,
+              left: cropRect!.left - gWidth,
+              child: Container(
+                height: gWidth * 2,
+                width: gWidth * 2,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onPanUpdate: (DragUpdateDetails details) {
+                    moveUpdate(_MoveType.topLeft, details.delta);
+                  },
+                  onPanEnd: (_) {
+                    _moveEnd(_MoveType.topLeft);
+                  },
+                ),
               ),
             ),
-          ),
-          //top right
-          Positioned(
-            top: cropRect!.top - gWidth,
-            left: cropRect!.right - gWidth,
-            child: Container(
-              height: gWidth * 2,
-              width: gWidth * 2,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanUpdate: (DragUpdateDetails details) {
-                  moveUpdate(_MoveType.topRight, details.delta);
-                },
-                onPanEnd: (_) {
-                  _moveEnd(_MoveType.topRight);
-                },
+            //top right
+            Positioned(
+              top: cropRect!.top - gWidth,
+              left: cropRect!.right - gWidth,
+              child: Container(
+                height: gWidth * 2,
+                width: gWidth * 2,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onPanUpdate: (DragUpdateDetails details) {
+                    moveUpdate(_MoveType.topRight, details.delta);
+                  },
+                  onPanEnd: (_) {
+                    _moveEnd(_MoveType.topRight);
+                  },
+                ),
               ),
             ),
-          ),
-          //bottom left
-          Positioned(
-            top: cropRect!.bottom - gWidth,
-            left: cropRect!.left - gWidth,
-            child: Container(
-              height: gWidth * 2,
-              width: gWidth * 2,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanUpdate: (DragUpdateDetails details) {
-                  moveUpdate(_MoveType.bottomLeft, details.delta);
-                },
-                onPanEnd: (_) {
-                  _moveEnd(_MoveType.bottomLeft);
-                },
+            //bottom left
+            Positioned(
+              top: cropRect!.bottom - gWidth,
+              left: cropRect!.left - gWidth,
+              child: Container(
+                height: gWidth * 2,
+                width: gWidth * 2,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onPanUpdate: (DragUpdateDetails details) {
+                    moveUpdate(_MoveType.bottomLeft, details.delta);
+                  },
+                  onPanEnd: (_) {
+                    _moveEnd(_MoveType.bottomLeft);
+                  },
+                ),
               ),
             ),
-          ),
-          // bottom right
-          Positioned(
-            top: cropRect!.bottom - gWidth,
-            left: cropRect!.right - gWidth,
-            child: Container(
-              height: gWidth * 2,
-              width: gWidth * 2,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanUpdate: (DragUpdateDetails details) {
-                  moveUpdate(_MoveType.bottomRight, details.delta);
-                },
-                onPanEnd: (_) {
-                  _moveEnd(_MoveType.bottomRight);
-                },
+            // bottom right
+            Positioned(
+              top: cropRect!.bottom - gWidth,
+              left: cropRect!.right - gWidth,
+              child: Container(
+                height: gWidth * 2,
+                width: gWidth * 2,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onPanUpdate: (DragUpdateDetails details) {
+                    moveUpdate(_MoveType.bottomRight, details.delta);
+                  },
+                  onPanEnd: (_) {
+                    _moveEnd(_MoveType.bottomRight);
+                  },
+                ),
               ),
             ),
-          ),
-          // top
-          Positioned(
-            top: cropRect!.top - gWidth,
-            left: cropRect!.left + gWidth,
-            child: Container(
-              height: gWidth * 2,
-              width: max(cropRect!.width - gWidth * 2, gWidth * 2),
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onVerticalDragUpdate: (DragUpdateDetails details) {
-                  moveUpdate(_MoveType.top, details.delta);
-                },
-                onVerticalDragEnd: (_) {
-                  _moveEnd(_MoveType.top);
-                },
+            // top
+            Positioned(
+              top: cropRect!.top - gWidth,
+              left: cropRect!.left + gWidth,
+              child: Container(
+                height: gWidth * 2,
+                width: max(cropRect!.width - gWidth * 2, gWidth * 2),
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onVerticalDragUpdate: (DragUpdateDetails details) {
+                    moveUpdate(_MoveType.top, details.delta);
+                  },
+                  onVerticalDragEnd: (_) {
+                    _moveEnd(_MoveType.top);
+                  },
+                ),
               ),
             ),
-          ),
-          //left
-          Positioned(
-            top: cropRect!.top + gWidth,
-            left: cropRect!.left - gWidth,
-            child: Container(
-              height: max(cropRect!.height - gWidth * 2, gWidth * 2),
-              width: gWidth * 2,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onHorizontalDragUpdate: (DragUpdateDetails details) {
-                  moveUpdate(_MoveType.left, details.delta);
-                },
-                onHorizontalDragEnd: (_) {
-                  _moveEnd(_MoveType.left);
-                },
+            //left
+            Positioned(
+              top: cropRect!.top + gWidth,
+              left: cropRect!.left - gWidth,
+              child: Container(
+                height: max(cropRect!.height - gWidth * 2, gWidth * 2),
+                width: gWidth * 2,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onHorizontalDragUpdate: (DragUpdateDetails details) {
+                    moveUpdate(_MoveType.left, details.delta);
+                  },
+                  onHorizontalDragEnd: (_) {
+                    _moveEnd(_MoveType.left);
+                  },
+                ),
               ),
             ),
-          ),
-          //bottom
-          Positioned(
-            top: cropRect!.bottom - gWidth,
-            left: cropRect!.left + gWidth,
-            child: Container(
-              height: gWidth * 2,
-              width: max(cropRect!.width - gWidth * 2, gWidth * 2),
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onVerticalDragUpdate: (DragUpdateDetails details) {
-                  moveUpdate(_MoveType.bottom, details.delta);
-                },
-                onVerticalDragEnd: (_) {
-                  _moveEnd(_MoveType.bottom);
-                },
+            //bottom
+            Positioned(
+              top: cropRect!.bottom - gWidth,
+              left: cropRect!.left + gWidth,
+              child: Container(
+                height: gWidth * 2,
+                width: max(cropRect!.width - gWidth * 2, gWidth * 2),
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onVerticalDragUpdate: (DragUpdateDetails details) {
+                    moveUpdate(_MoveType.bottom, details.delta);
+                  },
+                  onVerticalDragEnd: (_) {
+                    _moveEnd(_MoveType.bottom);
+                  },
+                ),
               ),
             ),
-          ),
-          //right
-          Positioned(
-            top: cropRect!.top + gWidth,
-            left: cropRect!.right - gWidth,
-            child: Container(
-              height: max(cropRect!.height - gWidth * 2, gWidth * 2),
-              width: gWidth * 2,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onHorizontalDragUpdate: (DragUpdateDetails details) {
-                  moveUpdate(_MoveType.right, details.delta);
-                },
-                onHorizontalDragEnd: (_) {
-                  _moveEnd(_MoveType.right);
-                },
+            //right
+            Positioned(
+              top: cropRect!.top + gWidth,
+              left: cropRect!.right - gWidth,
+              child: Container(
+                height: max(cropRect!.height - gWidth * 2, gWidth * 2),
+                width: gWidth * 2,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+                  onHorizontalDragUpdate: (DragUpdateDetails details) {
+                    moveUpdate(_MoveType.right, details.delta);
+                  },
+                  onHorizontalDragEnd: (_) {
+                    _moveEnd(_MoveType.right);
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
 
@@ -320,12 +334,6 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       default:
     }
 
-    // result = Rect.fromPoints(
-    //     Offset(
-    //         max(result.left, layoutRect.left), max(result.top, layoutRect.top)),
-    //     Offset(min(result.right, layoutRect.right),
-    //         min(result.bottom, layoutRect.bottom)));
-
     ///make sure crop rect doesn't out of image rect
     result = Rect.fromPoints(
         Offset(max(result!.left, layerDestinationRect!.left),
@@ -334,9 +342,17 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             min(result.bottom, layerDestinationRect.bottom)));
 
     result = _handleAspectRatio(
-        gWidth, moveType, result, layerDestinationRect, delta);
+      gWidth,
+      moveType,
+      result,
+      layerDestinationRect,
+      delta,
+    );
 
-    ///move and scale image rect when crop rect is bigger than layout rect
+    /// move and scale image rect when crop rect is bigger than layout rect
+    ///
+
+    result = widget.editActionDetails.updateCropRect(result);
 
     if (result.beyond(layoutRect)) {
       cropRect = result;
@@ -488,7 +504,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     _timer = Timer.periodic(widget.editorConfig.tickerDuration, (Timer timer) {
       _timer?.cancel();
 
-      //move to center
+      // move to center
       final Rect? oldScreenCropRect = widget.editActionDetails.screenCropRect;
 
       final Rect centerCropRect = getDestinationRect(
@@ -514,34 +530,136 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
         final double scale = newScreenCropRect!.width / oldScreenCropRect.width;
 
-        final Offset offset =
-            newScreenCropRect!.center - oldScreenCropRect.center;
+        final Matrix4 result = widget.editActionDetails.getTransform();
+        final List<Offset> corners = <Offset>[
+          oldScreenDestinationRect.topLeft,
+          oldScreenDestinationRect.topRight,
+          oldScreenDestinationRect.bottomRight,
+          oldScreenDestinationRect.bottomLeft,
+        ];
 
-        /// scale then move
-        /// so we do scale first, get the new center
-        /// then move to new offset
-        final Offset newImageCenter = oldScreenCropRect.center +
-            (oldScreenDestinationRect.center - oldScreenCropRect.center) *
-                scale;
-        final Rect newScreenDestinationRect = Rect.fromCenter(
-          center: newImageCenter + offset,
-          width: oldScreenDestinationRect.width * scale,
-          height: oldScreenDestinationRect.height * scale,
-        );
+        // get image corners on screen
+        final List<Offset> rotatedCorners = corners.map((Offset corner) {
+          final Vector4 cornerVector = Vector4(corner.dx, corner.dy, 0.0, 1.0);
+          final Vector4 newCornerVector = result.transform(cornerVector);
+          return Offset(newCornerVector.x, newCornerVector.y);
+        }).toList();
+        // rock back to image rect
+        result.invert();
+        final List<Offset> list = rotatedCorners
+            .map((Offset corner) =>
+                // The distance from the four corners of the image to the center of the cropping box
+                //  old distance is scale to new distance
+                // So we can find the new four corners
 
-        // var totalScale = newScreenDestinationRect.width /
-        //     (widget.editActionDetails.rawDestinationRect.width *
-        //     widget.editorConfig.initialScale);
-        final double totalScale = widget.editActionDetails.totalScale * scale;
+                (corner - oldScreenCropRect.center) * scale +
+                newScreenCropRect!.center)
+            .map((Offset corner) {
+          // rock back to image rect
+          final Vector4 cornerVector = Vector4(corner.dx, corner.dy, 0.0, 1.0);
+          final Vector4 newCornerVector = result.transform(cornerVector);
+          return Offset(newCornerVector.x, newCornerVector.y);
+        }).toList();
+
+        // new image rect
+        final Rect newScreenDestinationRect = Rect.fromPoints(list[0], list[2]);
 
         cropRect =
             newScreenCropRect!.shift(-widget.editActionDetails.layoutTopLeft!);
 
+        final double totalScale = widget.editActionDetails.totalScale * scale;
         widget.editActionDetails
             .setScreenDestinationRect(newScreenDestinationRect);
         widget.editActionDetails.totalScale = totalScale;
         widget.editActionDetails.preTotalScale = totalScale;
+
+        if (_rectTweenController.isCompleted) {
+          widget.cropAutoCenterAnimationIsCompleted();
+        }
       });
     }
+  }
+
+  Rect? _cropRectStart;
+
+  double _totalScale = 1.0;
+  void rotateCropRectStart() {
+    _cropRectStart = cropRect;
+    _totalScale = widget.editActionDetails.totalScale;
+  }
+
+  void rotateCropRect(double rotateRadiansDelta) {
+    setState(() {
+      if (widget.editActionDetails.flipY) {
+        rotateRadiansDelta = -rotateRadiansDelta;
+      }
+      final Offset origin = _cropRectStart!.center;
+      final Matrix4 result = Matrix4.identity();
+      _rotateRadians += rotateRadiansDelta;
+      result.translate(
+        origin.dx,
+        origin.dy,
+      );
+      if (widget.editActionDetails.flipY) {
+        result.multiply(
+            Matrix4.rotationY(widget.editActionDetails.rotationYRadians));
+      }
+      result.multiply(Matrix4.rotationZ(_rotateRadians));
+      result.translate(-origin.dx, -origin.dy);
+
+      final List<Offset> rectVertices = <Offset>[
+        _cropRectStart!.topLeft,
+        _cropRectStart!.topRight,
+        _cropRectStart!.bottomRight,
+        _cropRectStart!.bottomLeft,
+      ].map((Offset element) {
+        final Vector4 cornerVector = Vector4(element.dx, element.dy, 0.0, 1.0);
+        final Vector4 newCornerVector = result.transform(cornerVector);
+        return Offset(newCornerVector.x, newCornerVector.y);
+      }).toList();
+
+      double scaleDelta = widget.editActionDetails.scaleToFit(
+        rectVertices,
+        layoutRect,
+        layoutRect.center,
+      );
+
+      if (scaleDelta <= 0) {
+        return;
+      }
+
+      // not out of layout rect
+      scaleDelta = 1 / scaleDelta;
+
+      cropRect = Rect.fromCenter(
+        center: _cropRectStart!.center,
+        width: _cropRectStart!.width * scaleDelta,
+        height: _cropRectStart!.height * scaleDelta,
+      );
+
+      widget.editActionDetails.screenFocalPoint =
+          widget.editActionDetails.screenCropRect?.center;
+      widget.editActionDetails.totalScale = _totalScale * scaleDelta;
+    });
+  }
+
+  void rotateCropRectEnd() {
+    setState(() {
+      _cropRectStart = null;
+      _rotateRadians = 0;
+      _totalScale = widget.editActionDetails.totalScale;
+      widget.editActionDetails.screenFocalPoint = null;
+      cropRect = Rect.fromCenter(
+        center: cropRect!.center,
+        width: cropRect!.height,
+        height: cropRect!.width,
+      );
+    });
+  }
+
+  void updateCropRect(Rect newRect) {
+    setState(() {
+      cropRect = newRect;
+    });
   }
 }

@@ -1,6 +1,5 @@
 import 'package:example/assets.dart';
 
-import 'package:example/common/utils/extension.dart';
 import 'package:example/common/widget/hero.dart';
 import 'package:example/example_routes.dart';
 import 'package:extended_image/extended_image.dart';

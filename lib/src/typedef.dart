@@ -1,9 +1,10 @@
 import 'dart:ui' as ui show Image;
+import 'package:extended_image/src/editor/edit_action_details.dart';
 import 'package:extended_image/src/gesture/utils.dart';
 import 'package:extended_image/src/utils.dart';
 import 'package:flutter/material.dart';
 
-import 'editor/editor_utils.dart';
+import 'editor/editor_config.dart';
 import 'gesture/gesture.dart';
 import 'gesture/slide_page.dart';
 

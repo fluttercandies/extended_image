@@ -47,37 +47,56 @@ class AspectRatioWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      size: const Size(100, 100),
+      size: const Size(60, 60),
       painter: AspectRatioPainter(
-          aspectRatio: aspectRatio,
-          aspectRatioS: aspectRatioS,
-          isSelected: isSelected),
+        aspectRatio: aspectRatio,
+        aspectRatioS: aspectRatioS,
+        isSelected: isSelected,
+        selectedColor: Theme.of(context).primaryColor,
+      ),
     );
   }
 }
 
 class AspectRatioPainter extends CustomPainter {
-  AspectRatioPainter(
-      {this.aspectRatioS, this.aspectRatio, this.isSelected = false});
+  AspectRatioPainter({
+    this.aspectRatioS,
+    this.aspectRatio,
+    this.isSelected = false,
+    required this.selectedColor,
+  });
   final String? aspectRatioS;
   final double? aspectRatio;
   final bool isSelected;
+  final Color selectedColor;
   @override
   void paint(Canvas canvas, Size size) {
-    final Color color = isSelected ? Colors.blue : Colors.grey;
+    final Color color = isSelected ? selectedColor : Colors.grey;
     final Rect rect = Offset.zero & size;
     //https://github.com/flutter/flutter/issues/49328
     final Paint paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
+
+    canvas.drawRRect(
+        RRect.fromRectAndRadius(rect, const Radius.circular(10)), paint);
+
+    paint.color = Colors.white;
+    paint.style = PaintingStyle.stroke;
+    paint.strokeWidth = 2.0;
     final double aspectRatioResult =
         (aspectRatio != null && aspectRatio! > 0.0) ? aspectRatio! : 1.0;
     canvas.drawRect(
-        getDestinationRect(
-            rect: const EdgeInsets.all(10.0).deflateRect(rect),
-            inputSize: Size(aspectRatioResult * 100, 100.0),
-            fit: BoxFit.contain),
-        paint);
+      getDestinationRect(
+          rect: const EdgeInsets.only(left: 10, right: 10, bottom: 20, top: 5)
+              .deflateRect(rect),
+          inputSize: Size(
+            aspectRatioResult * size.width / 2,
+            size.width / 2,
+          ),
+          fit: BoxFit.contain),
+      paint,
+    );
 
     final TextPainter textPainter = TextPainter(
         text: TextSpan(
@@ -85,16 +104,20 @@ class AspectRatioPainter extends CustomPainter {
             style: TextStyle(
               color:
                   color.computeLuminance() < 0.5 ? Colors.white : Colors.black,
-              fontSize: 16.0,
+              fontSize: 12.0,
             )),
         textDirection: TextDirection.ltr,
         maxLines: 1);
     textPainter.layout(maxWidth: rect.width);
 
     textPainter.paint(
-        canvas,
-        rect.center -
-            Offset(textPainter.width / 2.0, textPainter.height / 2.0));
+      canvas,
+      rect.bottomCenter -
+          Offset(
+            textPainter.width / 2.0,
+            textPainter.height * 1.1,
+          ),
+    );
   }
 
   @override
@@ -102,7 +125,8 @@ class AspectRatioPainter extends CustomPainter {
     return oldDelegate is AspectRatioPainter &&
         (oldDelegate.isSelected != isSelected ||
             oldDelegate.aspectRatioS != aspectRatioS ||
-            oldDelegate.aspectRatio != aspectRatio);
+            oldDelegate.aspectRatio != aspectRatio ||
+            oldDelegate.selectedColor != selectedColor);
   }
 }
 

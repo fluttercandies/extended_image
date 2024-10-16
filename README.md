@@ -35,7 +35,14 @@ ExtendedImage is an third-party library that extends the functionality of Flutte
   - [Editor](#editor)
     - [crop aspect ratio](#crop-aspect-ratio)
     - [crop layer painter](#crop-layer-painter)
-    - [crop,flip,reset](#cropflipreset)
+    - [flip, rotate, cropAspectRatio, undo ,redo , reset](#flip-rotate-cropaspectratio-undo-redo--reset)
+      - [`ImageEditorController`](#imageeditorcontroller)
+      - [flip](#flip)
+      - [rotate](#rotate)
+      - [cropAspectRatio](#cropaspectratio)
+      - [undo](#undo)
+      - [redo](#redo)
+      - [reset](#reset)
     - [crop data](#crop-data)
       - [dart library(stable)](#dart-librarystable)
       - [native library(faster)](#native-libraryfaster)
@@ -369,13 +376,13 @@ onDoubleTap: (ExtendedImageGestureState state) {
       imageTestUrl,
       fit: BoxFit.contain,
       mode: ExtendedImageMode.editor,
-      extendedImageEditorKey: editorKey,
       initEditorConfigHandler: (state) {
         return EditorConfig(
             maxScale: 8.0,
             cropRectPadding: EdgeInsets.all(20.0),
             hitTestSize: 20.0,
-            cropAspectRatio: _aspectRatio.aspectRatio);
+            cropAspectRatio: _aspectRatio.aspectRatio,
+        );
       },
     );
 ```
@@ -407,6 +414,8 @@ EditorConfig
 | initCropRectType       | init crop rect base on initial image rect or image layout rect     | imageRect                                                    |
 | cornerPainter          | corner shape                                                       | ExtendedImageCropLayerPainterNinetyDegreesCorner()           |
 | hitTestBehavior        | How to behave during hit tests                                     | HitTestBehavior.deferToChild                                 |
+| controller        | providing functions like rotating, flipping, undoing, redoing and reset actions.                                    | null                                 |
+
 
 ### crop aspect ratio
 
@@ -446,9 +455,19 @@ you can define your crop layer by override [EditorConfig.editorCropLayerPainter]
 ```dart
 class EditorCropLayerPainter {
   const EditorCropLayerPainter();
-  void paint(Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
-    paintMask(canvas, size, painter);
+  void paint(
+    Canvas canvas,
+    Size size,
+    ExtendedImageCropLayerPainter painter,
+    Rect rect,
+  ) {
+    // Draw the mask layer
+    paintMask(canvas, rect, painter);
+
+    // Draw the grid lines
     paintLines(canvas, size, painter);
+
+    // Draw the corners of the crop area
     paintCorners(canvas, size, painter);
   }
 
@@ -459,7 +478,7 @@ class EditorCropLayerPainter {
 
   /// draw crop layer lines
   void paintMask(
-      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+      Canvas canvas, Rect rect, ExtendedImageCropLayerPainter painter) {
   }
   
 
@@ -470,27 +489,81 @@ class EditorCropLayerPainter {
 }
 ```
 
-### crop,flip,reset
+### flip, rotate, cropAspectRatio, undo ,redo , reset
 
-- add key for ExtendedImageEditorState
+#### `ImageEditorController` 
 
-  `final GlobalKey<ExtendedImageEditorState> editorKey =GlobalKey<ExtendedImageEditorState>();`
+```dart
+final ImageEditorController _editorController = ImageEditorController();
 
-- rotate right
+    initEditorConfigHandler: (ExtendedImageState? state) {
+      return EditorConfig(
+        maxScale: 4.0,
+        cropRectPadding: const EdgeInsets.all(20.0),
+        hitTestSize: 20.0,
+        initCropRectType: InitCropRectType.imageRect,
+        cropAspectRatio: CropAspectRatios.ratio4_3,
+        controller: _editorController,
+      );
+    },
+```
+#### flip
 
-  `editorKey.currentState.rotate(right: true);`
+```dart
+   _editorController.flip();
 
-- rotate left
+  void flip({
+    bool animation = false,
+    Duration duration = const Duration(milliseconds: 200),
+  })
+```
 
-  `editorKey.currentState.rotate(right: false);`
 
-- flip
 
-  `editorKey.currentState.flip();`
+ #### rotate
 
-- reset
+```dart
+   _editorController.rotate();
 
-  `editorKey.currentState.reset();`
+  void rotate({
+    double angle = 90,
+    bool animation = false,
+    Duration duration = const Duration(milliseconds: 200),
+    bool rotateCropRect = true,
+  })
+```
+
+
+
+ #### cropAspectRatio
+
+```dart
+   _editorController.updateCropAspectRatio(CropAspectRatios.ratio4_3);
+```
+
+
+
+ #### undo
+
+```dart
+  bool canUndo = _editorController.canUndo;
+   _editorController.undo();
+
+```
+
+ #### redo
+
+```dart
+  bool canRedo = _editorController.canRedo;
+   _editorController.redo();
+```
+
+#### reset
+
+```dart
+   _editorController.reset();
+```
+
 
 ### crop data
 
@@ -529,25 +602,24 @@ dependencies:
 
 ```dart
   //clear orientation
-  src = bakeOrientation(src);
-
-  if (editAction.needCrop)
-    src = copyCrop(src, cropRect.left.toInt(), cropRect.top.toInt(),
-        cropRect.width.toInt(), cropRect.height.toInt());
-
-  if (editAction.needFlip) {
-    Flip mode;
-    if (editAction.flipY && editAction.flipX) {
-      mode = Flip.both;
-    } else if (editAction.flipY) {
-      mode = Flip.horizontal;
-    } else if (editAction.flipX) {
-      mode = Flip.vertical;
-    }
-    src = flip(src, mode);
+  image = bakeOrientation(image);
+  if (editAction.hasRotateAngle) {
+    image = copyRotate(image, angle: editAction.rotateAngle);
   }
 
-  if (editAction.hasRotateAngle) src = copyRotate(src, editAction.rotateAngle);
+  if (editAction.flipY) {
+    image = flip(image, direction: FlipDirection.horizontal);
+  }
+
+  if (editAction.needCrop) {
+    image = copyCrop(
+      image,
+      x: cropRect.left.toInt(),
+      y: cropRect.top.toInt(),
+      width: cropRect.width.toInt(),
+      height: cropRect.height.toInt(),
+    );
+  }
 ```
 
 - convert to original image data
@@ -587,20 +659,18 @@ dependencies:
 - prepare crop option
 
 ```dart
-  final rotateAngle = action.rotateAngle.toInt();
-  final flipHorizontal = action.flipY;
-  final flipVertical = action.flipX;
-  final img = state.rawImageData;
+  if (action.hasRotateAngle) {
+    final int rotateAngle = action.rotateAngle.toInt();
+    option.addOption(RotateOption(rotateAngle));
+  }
+  if (action.flipY) {
+    option.addOption(const FlipOption(horizontal: true, vertical: false));
+  }
 
-  ImageEditorOption option = ImageEditorOption();
-
-  if (action.needCrop) option.addOption(ClipOption.fromRect(rect));
-
-  if (action.needFlip)
-    option.addOption(
-        FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
-
-  if (action.hasRotateAngle) option.addOption(RotateOption(rotateAngle));
+  if (action.needCrop) {
+    Rect cropRect = imageEditorController.getCropRect()!;
+    option.addOption(ClipOption.fromRect(cropRect));
+  }
 ```
 
 - crop with editImage

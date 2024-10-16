@@ -12,7 +12,7 @@ dependencies:
   fl_chart: any
   flutter:
     sdk: flutter
-
+  flutter_ruler_picker: any
   http_client_helper: any
   image: any
   image_editor: any
@@ -26,6 +26,7 @@ dependencies:
   url_launcher: any
   vm_service: any
   wechat_assets_picker: any
+
 
 dependency_overrides:
   extended_image:
