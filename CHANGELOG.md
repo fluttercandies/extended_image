@@ -1,3 +1,8 @@
+## 9.0.1
+
+* Take care about web platform, update eidtor layer size when srceen size is changed.
+* Make the list can be scrolled on web platform.
+
 ## 9.0.0
 
 * Feature:

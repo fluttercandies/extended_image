@@ -2,6 +2,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'common/widget/memory_usage_view.dart';
@@ -27,6 +28,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      scrollBehavior: kIsWeb
+          ? const ScrollBehavior().copyWith(
+              dragDevices: <PointerDeviceKind>{
+                PointerDeviceKind.mouse,
+                PointerDeviceKind.touch,
+                PointerDeviceKind.stylus,
+                PointerDeviceKind.unknown
+              },
+            )
+          : null,
       builder: (BuildContext c, Widget? w) {
         w = Stack(
           children: <Widget>[

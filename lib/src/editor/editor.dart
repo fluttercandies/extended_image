@@ -49,6 +49,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
   Animation<double>? _rotateRadiansAnimation;
   late VoidFunction _debounceSaveCurrentEditActionDetails;
   bool _rotateCropRect = false;
+  Size? _layoutSize;
   @override
   void initState() {
     super.initState();
@@ -197,7 +198,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
                     layoutRect,
                     context,
                   );
-
+                  _layoutSize = layoutRect.size;
                   return ExtendedImageCropLayer(
                     editActionDetails: _editActionDetails!,
                     editorConfig: _editorConfig!,
@@ -242,9 +243,9 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
     layoutRect = padding.deflateRect(layoutRect);
 
-    if (_editActionDetails!.cropRect == null
-        // || _editActionDetails!.cropRect?.center !=layoutRect.center
-        ) {
+    if (_editActionDetails!.cropRect == null ||
+        // web screen size may be changed
+        _layoutSize != layoutRect.size) {
       final AlignmentGeometry alignment =
           widget.extendedImageState.imageWidget.alignment;
       //matchTextDirection: extendedImage.matchTextDirection,
