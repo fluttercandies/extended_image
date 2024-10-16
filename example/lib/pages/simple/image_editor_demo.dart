@@ -38,7 +38,7 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
 
         cacheRawData: true,
         //maxBytes: 1024 * 50,
-        initEditorConfigHandler: (ExtendedImageState state) {
+        initEditorConfigHandler: (ExtendedImageState? state) {
           return EditorConfig(
             maxScale: 4.0,
             cropRectPadding: const EdgeInsets.all(20.0),

@@ -461,9 +461,9 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
         child: ExtendedImageGesture(
           widget.state,
           imageBuilder: (
-            Widget image,
-            ExtendedImageGestureState imageGestureState,
-          ) {
+            Widget image, {
+            ExtendedImageGestureState? imageGestureState,
+          }) {
             return ValueListenableBuilder<bool>(
               valueListenable: _showVideo,
               builder: (BuildContext b, bool showVideo, Widget? child) {

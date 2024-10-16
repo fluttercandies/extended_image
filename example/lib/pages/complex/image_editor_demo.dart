@@ -114,7 +114,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 mode: ExtendedImageMode.editor,
                 enableLoadState: true,
                 // extendedImageEditorKey: editorKey,
-                initEditorConfigHandler: (ExtendedImageState state) {
+                initEditorConfigHandler: (ExtendedImageState? state) {
                   return EditorConfig(
                     maxScale: 8.0,
                     cropRectPadding: const EdgeInsets.all(20.0),

@@ -112,7 +112,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
 
     image = widget.imageBuilder?.call(
           image,
-          this,
+          imageGestureState: this,
         ) ??
         image;
 

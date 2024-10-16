@@ -153,13 +153,13 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     }
     _offset = widget.slideOffsetHandler?.call(
           _offset,
-          this,
+          state: this,
         ) ??
         _offset;
 
     _scale = widget.slideScaleHandler?.call(
           _offset,
-          this,
+          state: this,
         ) ??
         defaultSlideScaleHandler(
             offset: _offset,
@@ -185,8 +185,8 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     if (mounted && _isSliding) {
       final bool popPage = widget.slideEndHandler?.call(
             _offset,
-            this,
-            details,
+            state: this,
+            details: details,
           ) ??
           defaultSlideEndHandler(
             offset: _offset,

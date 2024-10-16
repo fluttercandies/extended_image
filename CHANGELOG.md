@@ -14,13 +14,11 @@
   3. Fix issue about flip animation. (#397)
   4. Fix issue about crop rect gets invalid randomly on zooming in and out. (#548) 
   5. Fix issue about undo and redo. (#553)
-  6. Fix issue about the bad syntax of dart (#556)
 
 * Breaking change:
   1. EditorCropLayerPainter.paintMask method the [Size] argument to [Rect].
   2. Remove flipX support.
   3. Change the cropping process, now they are rotate, flipY and getCropRect.
-  4. Fix function parameter from the bad syntax of dart (#556)
 
 
 ## 8.3.1
