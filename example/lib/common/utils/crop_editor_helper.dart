@@ -89,8 +89,8 @@ Future<EditImageInfo> cropImageDataWithDartLibrary(
       final DateTime time2 = DateTime.now();
       //clear orientation
       image = bakeOrientation(image);
-      if (editAction.hasRotateAngle) {
-        image = copyRotate(image, angle: editAction.rotateAngle);
+      if (editAction.hasRotateDegrees) {
+        image = copyRotate(image, angle: editAction.rotateDegrees);
       }
 
       if (editAction.flipY) {
@@ -158,9 +158,9 @@ Future<EditImageInfo> cropImageDataWithNativeLibrary(
 
   final ImageEditorOption option = ImageEditorOption();
 
-  if (action.hasRotateAngle) {
-    final int rotateAngle = action.rotateAngle.toInt();
-    option.addOption(RotateOption(rotateAngle));
+  if (action.hasRotateDegrees) {
+    final int rotateDegrees = action.rotateDegrees.toInt();
+    option.addOption(RotateOption(rotateDegrees));
   }
   if (action.flipY) {
     option.addOption(const FlipOption(horizontal: true, vertical: false));

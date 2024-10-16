@@ -61,13 +61,13 @@ class EditActionDetails {
 
   double rotationYRadians = 0.0;
 
-  bool get hasRotateAngle => !isTwoPi;
+  bool get hasRotateDegrees => !isTwoPi;
 
-  bool get hasEditAction => hasRotateAngle || rotationYRadians != 0;
+  bool get hasEditAction => hasRotateDegrees || rotationYRadians != 0;
 
   bool get needCrop => screenCropRect != screenDestinationRect;
 
-  double get rotateAngle => (rotateRadians / pi) * 180.0;
+  double get rotateDegrees => degrees(rotateRadians);
 
   bool get needFlip => rotationYRadians != 0;
 
@@ -211,7 +211,7 @@ class EditActionDetails {
     if (rotationYRadians != 0) {
       result.multiply(Matrix4.rotationY(rotationYRadians));
     }
-    if (hasRotateAngle) {
+    if (hasRotateDegrees) {
       result.multiply(Matrix4.rotationZ(rotateRadians));
     }
 
@@ -220,8 +220,8 @@ class EditActionDetails {
     return result;
   }
 
-  double reverseRotateRadian(double rotateRadian) {
-    return rotationYRadians == 0 ? rotateRadian : -rotateRadian;
+  double reverseRotateRadians(double rotateRadians) {
+    return rotationYRadians == 0 ? rotateRadians : -rotateRadians;
   }
 
   void updateRotateRadians(double rotateRadians, double maxScale) {

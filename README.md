@@ -526,7 +526,7 @@ final ImageEditorController _editorController = ImageEditorController();
    _editorController.rotate();
 
   void rotate({
-    double angle = 90,
+    double degrees = 90,
     bool animation = false,
     Duration duration = const Duration(milliseconds: 200),
     bool rotateCropRect = true,
@@ -603,8 +603,8 @@ dependencies:
 ```dart
   //clear orientation
   image = bakeOrientation(image);
-  if (editAction.hasRotateAngle) {
-    image = copyRotate(image, angle: editAction.rotateAngle);
+  if (editAction.hasRotateDegrees) {
+    image = copyRotate(image, angle: editAction.rotateDegrees);
   }
 
   if (editAction.flipY) {
@@ -659,9 +659,9 @@ dependencies:
 - prepare crop option
 
 ```dart
-  if (action.hasRotateAngle) {
-    final int rotateAngle = action.rotateAngle.toInt();
-    option.addOption(RotateOption(rotateAngle));
+  if (action.hasRotateDegrees) {
+    final int rotateDegrees = action.rotateDegrees.toInt();
+    option.addOption(RotateOption(rotateDegrees));
   }
   if (action.flipY) {
     option.addOption(const FlipOption(horizontal: true, vertical: false));

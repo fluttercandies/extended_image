@@ -8,6 +8,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
+import 'package:vector_math/vector_math_64.dart';
 import '../extended_image.dart';
 import 'crop_layer.dart';
 import 'edit_action_details.dart';
@@ -474,7 +475,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
   /// rotateCropRect works only when (angle % 360).abs() == 90
   @override
   void rotate({
-    double angle = 90,
+    double degree = 90,
     bool animation = false,
     Duration duration = const Duration(milliseconds: 200),
     bool rotateCropRect = true,
@@ -485,16 +486,16 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     if (_layerKey.currentState == null) {
       return;
     }
-    final double rotateRadian = angle / 180 * pi;
-    if (rotateRadian.isZero) {
+    final double rotateRadians = radians(degree);
+    if (rotateRadians.isZero) {
       return;
     }
 
     final double begin = _editActionDetails!.rotateRadians;
     final double end =
-        begin + _editActionDetails!.reverseRotateRadian(rotateRadian);
+        begin + _editActionDetails!.reverseRotateRadians(rotateRadians);
 
-    if (rotateCropRect && (angle % 360).abs() == 90) {
+    if (rotateCropRect && (degree % 360).abs() == 90) {
       _rotateCropRect = true;
 
       final double? cropAspectRatio = _editActionDetails?.cropAspectRatio;
@@ -515,7 +516,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _animationController.forward(from: 0);
     } else {
       if (_rotateCropRect) {
-        _layerKey.currentState?.rotateCropRect(rotateRadian);
+        _layerKey.currentState?.rotateCropRect(rotateRadians);
         _editActionDetails!.rotateRadians = end;
         _layerKey.currentState?.rotateCropRectEnd();
         _rotateCropRect = false;

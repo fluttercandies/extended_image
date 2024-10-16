@@ -363,7 +363,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                                       onTap: () {
                                         dismissAllToast();
                                         _editorController.rotate(
-                                          angle: -_rulerPickerController.value
+                                          degree: -_rulerPickerController.value
                                               as double,
                                         );
                                         _rulerPickerController.value = 0;
@@ -393,7 +393,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             );
 
                             _editorController.rotate(
-                              angle: value.toDouble() -
+                              degree: value.toDouble() -
                                   _rulerPickerController.value,
                             );
 
@@ -421,7 +421,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     textColor: Colors.white,
                     onPressed: () {
                       _editorController.rotate(
-                        angle: 90,
+                        degree: 90,
                         animation: true,
                         rotateCropRect: true,
                         // duration: const Duration(
@@ -584,20 +584,20 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
   bool _onUndoOrRedoing = false;
   void _onUndoOrRedo(Function fn) {
-    final double oldRotateAngle = _editorController.rotateAngle;
+    final double oldRotateDegrees = _editorController.rotateDegrees;
     final double? oldCropAspectRatio =
         _editorController.originalCropAspectRatio;
     _onUndoOrRedoing = true;
     fn();
     _onUndoOrRedoing = false;
-    final double newRotateAngle = _editorController.rotateAngle;
+    final double newRotateDegrees = _editorController.rotateDegrees;
     final double? newCropAspectRatio =
         _editorController.originalCropAspectRatio;
-    if (oldRotateAngle != newRotateAngle &&
-        !(newRotateAngle - oldRotateAngle).isZero &&
-        (newRotateAngle - oldRotateAngle) % 90 != 0) {
+    if (oldRotateDegrees != newRotateDegrees &&
+        !(newRotateDegrees - oldRotateDegrees).isZero &&
+        (newRotateDegrees - oldRotateDegrees) % 90 != 0) {
       _rulerPickerController.value =
-          _rulerPickerController.value + (newRotateAngle - oldRotateAngle);
+          _rulerPickerController.value + (newRotateDegrees - oldRotateDegrees);
     }
 
     if (oldCropAspectRatio != newCropAspectRatio) {

@@ -1,3 +1,7 @@
+## 9.0.3
+
+* Breaking change: update the term 'angle' to 'degree'.
+
 ## 9.0.2
 
 * Update eidtor crop rect when srceen size is changed.

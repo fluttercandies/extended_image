@@ -12,7 +12,7 @@ class ImageEditorController extends ChangeNotifier
 
   /// Retrieves the current rotation angle of the image.
   /// Defaults to 0 if no rotation has been applied.
-  double get rotateAngle => _state?._editActionDetails?.rotateAngle ?? 0;
+  double get rotateDegrees => _state?._editActionDetails?.rotateDegrees ?? 0;
 
   /// Retrieves the current crop aspect ratio.
   /// Returns null if not set, or a value greater than 0 if a ratio is applied.
@@ -53,13 +53,13 @@ class ImageEditorController extends ChangeNotifier
   /// and adjust the rotation of the crop rectangle if the angle is a multiple of 90.
   @override
   void rotate({
-    double angle = 90,
+    double degree = 90,
     bool animation = false,
     Duration duration = const Duration(milliseconds: 200),
     bool rotateCropRect = true,
   }) {
     _state?.rotate(
-      angle: angle,
+      degree: degree,
       animation: animation,
       duration: duration,
       rotateCropRect: rotateCropRect,
@@ -105,7 +105,7 @@ mixin ImageEditorControllerMixin {
   /// Rotates the image by a specified angle, with an option to animate the rotation.
   /// Rotation of the crop rect occurs only if the angle is a multiple of 90.
   void rotate({
-    double angle = 90,
+    double degree = 90,
     bool animation = false,
     Duration duration = const Duration(milliseconds: 200),
     bool rotateCropRect = true,
