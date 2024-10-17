@@ -1,3 +1,8 @@
+## 9.0.4
+
+* Public [ImageEditorController.currentIndex],[ImageEditorController.history],[ImageEditorController.saveCurrentState]
+* Scale the crop rect if the image can't be scaled(max scale) when rotate the image.
+
 ## 9.0.3
 
 * Breaking change: update the term 'angle' to 'degree'.

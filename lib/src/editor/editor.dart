@@ -747,4 +747,15 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     _editActionDetails!.cropRect = newCropRect;
     return newCropRect;
   }
+
+  @override
+  int get currentIndex => _currentIndex;
+
+  @override
+  List<EditActionDetails> get history => _history;
+
+  @override
+  void saveCurrentState() {
+    _saveCurrentState();
+  }
 }

@@ -96,6 +96,21 @@ class ImageEditorController extends ChangeNotifier
   ui.Rect? getCropRect() {
     return _state?.getCropRect();
   }
+
+  /// The current editor actions in history which is a copywith [editActionDetails].
+  @override
+  int get currentIndex => _state?.currentIndex ?? -1;
+
+  /// Do not update it by yourself
+  @override
+  List<EditActionDetails> get history =>
+      _state?.history ?? <EditActionDetails>[];
+
+  /// Save the current state of the editor.
+  @override
+  void saveCurrentState() {
+    _state?.saveCurrentState();
+  }
 }
 
 /// `ImageEditorControllerMixin` provides a mixin with common image editing functions.
@@ -137,4 +152,13 @@ mixin ImageEditorControllerMixin {
 
   /// Get the rect to crop.
   Rect? getCropRect();
+
+  /// The history of the editor actions.
+  List<EditActionDetails> get history;
+
+  /// The current index of the editor actions.
+  int get currentIndex;
+
+  /// Save the current state of the editor.
+  void saveCurrentState();
 }

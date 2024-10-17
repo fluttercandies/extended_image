@@ -225,15 +225,18 @@ class EditActionDetails {
   }
 
   void updateRotateRadians(double rotateRadians, double maxScale) {
-    final double oldRotateRadian = this.rotateRadians;
     this.rotateRadians = rotateRadians;
     final double scaleDelta = scaleToFitCropRect();
 
     if (scaleDelta > 0) {
-      // can't scale
+      // can't scale image
+      // so we should scale the crop rect
       if (totalScale * scaleDelta > maxScale) {
-        // roll back to old value
-        this.rotateRadians = oldRotateRadian;
+        cropRect = Rect.fromCenter(
+          center: cropRect!.center,
+          width: cropRect!.width * (1 / scaleDelta),
+          height: cropRect!.height * (1 / scaleDelta),
+        );
       } else {
         screenFocalPoint = _screenDestinationRect!.center;
         preTotalScale = totalScale;
