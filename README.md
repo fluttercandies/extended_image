@@ -957,7 +957,7 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 
 get your raw image by [Load State](#Load State), and crop image by sourceRect.
 
-[ExtendedRawImage](https://github.com/fluttercandies/extended_image/blob/master/lib/src/image/extended_raw_image.dart)
+[ExtendedRawImage](https://github.com/fluttercandies/extended_image/blob/master/lib/src/image/raw_image.dart)
 sourceRect is which you want to show image rect.
 
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/crop.gif)
