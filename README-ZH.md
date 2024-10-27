@@ -954,7 +954,7 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache: true}) async {
 ![img](https://raw.githubusercontent.com/fluttercandies/Flutter_Candies/master/gif/extended_image/crop.gif)
 
 你可以通过
-[ExtendedRawImage](https://github.com/fluttercandies/extended_image/blob/master/lib/src/image/extended_raw_image.dart)(可以在状态回调的时候使用),sourceRect 是你想要显示图片的哪一部分，这个在各个 app 里面应该是比较常见的操作
+[ExtendedRawImage](https://github.com/fluttercandies/extended_image/blob/master/lib/src/image/raw_image.dart)(可以在状态回调的时候使用),sourceRect 是你想要显示图片的哪一部分，这个在各个 app 里面应该是比较常见的操作
 
 ```dart
 ExtendedRawImage(
