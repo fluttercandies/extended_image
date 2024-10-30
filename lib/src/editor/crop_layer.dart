@@ -298,8 +298,8 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     }
     _currentMoveType = moveType;
 
-    final Rect? layerDestinationRect =
-        widget.editActionDetails.layerDestinationRect;
+    final Rect? cropRectLayoutRect =
+        widget.editActionDetails.cropRectLayoutRect;
     Rect? result = cropRect;
     final double gWidth = widget.editorConfig.cornerSize.width;
     switch (moveType) {
@@ -336,16 +336,20 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
     ///make sure crop rect doesn't out of image rect
     result = Rect.fromPoints(
-        Offset(max(result!.left, layerDestinationRect!.left),
-            max(result.top, layerDestinationRect.top)),
-        Offset(min(result.right, layerDestinationRect.right),
-            min(result.bottom, layerDestinationRect.bottom)));
+        Offset(max(result!.left, cropRectLayoutRect!.left),
+            max(result.top, cropRectLayoutRect.top)),
+        Offset(min(result.right, cropRectLayoutRect.right),
+            min(result.bottom, cropRectLayoutRect.bottom)));
+
+    if (result.top != cropRect!.top) {
+      int i = 1;
+    }
 
     result = _handleAspectRatio(
       gWidth,
       moveType,
       result,
-      layerDestinationRect,
+      cropRectLayoutRect,
       delta,
     );
 

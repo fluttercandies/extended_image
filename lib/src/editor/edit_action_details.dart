@@ -89,6 +89,13 @@ class EditActionDetails {
 
   Rect? get screenCropRect => cropRect?.shift(layoutTopLeft!);
 
+  Rect? get cropRectLayoutRect {
+    if (cropRectPadding != null) {
+      return cropRectPadding!.deflateRect(_layoutRect!).shift(-layoutTopLeft!);
+    }
+    return _layoutRect?.shift(-layoutTopLeft!);
+  }
+
   void initRect(Rect layoutRect, Rect destinationRect) {
     if (_layoutRect != layoutRect) {
       _layoutRect = layoutRect;
