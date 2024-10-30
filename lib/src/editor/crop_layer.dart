@@ -306,6 +306,11 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       case _MoveType.topLeft:
       case _MoveType.top:
       case _MoveType.left:
+        if (moveType == _MoveType.top) {
+          delta = Offset(0, delta.dy);
+        } else if (moveType == _MoveType.left) {
+          delta = Offset(delta.dx, 0);
+        }
         Offset topLeft = result!.topLeft + delta;
         topLeft = Offset(min(topLeft.dx, result.right - gWidth * 2),
             min(topLeft.dy, result.bottom - gWidth * 2));
@@ -320,6 +325,11 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       case _MoveType.bottomRight:
       case _MoveType.right:
       case _MoveType.bottom:
+        if (moveType == _MoveType.bottom) {
+          delta = Offset(0, delta.dy);
+        } else if (moveType == _MoveType.right) {
+          delta = Offset(delta.dx, 0);
+        }
         Offset bottomRight = result!.bottomRight + delta;
         bottomRight = Offset(max(bottomRight.dx, result.left + gWidth * 2),
             max(bottomRight.dy, result.top + gWidth * 2));

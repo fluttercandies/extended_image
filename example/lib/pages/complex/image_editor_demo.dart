@@ -63,6 +63,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   void initState() {
     _aspectRatio = ValueNotifier<AspectRatioItem>(_aspectRatios.first);
     _cropLayerPainter = const EditorCropLayerPainter();
+
     super.initState();
   }
 
@@ -230,29 +231,6 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                         child: Row(children: <Widget>[
                           FlatButtonWithIcon(
                             icon: Icon(
-                              Icons.undo,
-                              color: _editorController.canUndo
-                                  ? primaryColor
-                                  : Colors.grey,
-                            ),
-                            label: Text(
-                              'Undo',
-                              style: TextStyle(
-                                fontSize: 10.0,
-                                color: _editorController.canUndo
-                                    ? primaryColor
-                                    : Colors.grey,
-                              ),
-                            ),
-                            textColor: Colors.white,
-                            onPressed: () {
-                              _onUndoOrRedo(() {
-                                _editorController.undo();
-                              });
-                            },
-                          ),
-                          FlatButtonWithIcon(
-                            icon: Icon(
                               Icons.redo,
                               color: _editorController.canRedo
                                   ? primaryColor
@@ -271,6 +249,29 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             onPressed: () {
                               _onUndoOrRedo(() {
                                 _editorController.redo();
+                              });
+                            },
+                          ),
+                          FlatButtonWithIcon(
+                            icon: Icon(
+                              Icons.undo,
+                              color: _editorController.canUndo
+                                  ? primaryColor
+                                  : Colors.grey,
+                            ),
+                            label: Text(
+                              'Undo',
+                              style: TextStyle(
+                                fontSize: 10.0,
+                                color: _editorController.canUndo
+                                    ? primaryColor
+                                    : Colors.grey,
+                              ),
+                            ),
+                            textColor: Colors.white,
+                            onPressed: () {
+                              _onUndoOrRedo(() {
+                                _editorController.undo();
                               });
                             },
                           ),

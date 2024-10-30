@@ -655,6 +655,12 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       return;
     }
 
+    if (_currentIndex >= 0 &&
+        _history.isNotEmpty &&
+        _editActionDetails == _history.last) {
+      return;
+    }
+
     // new edit action details
     // clear redo history
     //
