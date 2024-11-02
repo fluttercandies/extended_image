@@ -351,10 +351,6 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
         Offset(min(result.right, cropRectLayoutRect.right),
             min(result.bottom, cropRectLayoutRect.bottom)));
 
-    if (result.top != cropRect!.top) {
-      int i = 1;
-    }
-
     result = _handleAspectRatio(
       gWidth,
       moveType,
@@ -635,7 +631,6 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       double scaleDelta = widget.editActionDetails.scaleToFit(
         rectVertices,
         layoutRect,
-        layoutRect.center,
       );
 
       if (scaleDelta <= 0) {

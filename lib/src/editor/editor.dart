@@ -732,26 +732,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
               : InitCropRectType.layoutRect,
     );
 
-    final double scaleDelta = _editActionDetails!.scaleToFitCropRect();
-    ui.Rect newCropRect = _editActionDetails!.cropRect!;
-    final double totalScale = _editActionDetails!.totalScale;
-    if (scaleDelta > 0) {
-      // can't scale image, so we scale the crop rect
-      if (totalScale * scaleDelta > _editorConfig!.maxScale) {
-        // scale crop rect
-        newCropRect = Rect.fromCenter(
-          center: newCropRect.center,
-          width: newCropRect.width * (1 / scaleDelta),
-          height: newCropRect.height * (1 / scaleDelta),
-        );
-      } else {
-        _editActionDetails!.screenFocalPoint = null;
-        _editActionDetails!.preTotalScale = totalScale;
-        _editActionDetails!.totalScale = totalScale * scaleDelta;
-      }
-    }
-    _editActionDetails!.cropRect = newCropRect;
-    return newCropRect;
+    _editActionDetails!.scaleToFitRect(_editorConfig!.maxScale);
+    return _editActionDetails!.cropRect!;
   }
 
   @override

@@ -233,21 +233,34 @@ class EditActionDetails {
 
   void updateRotateRadians(double rotateRadians, double maxScale) {
     this.rotateRadians = rotateRadians;
-    final double scaleDelta = scaleToFitCropRect();
+    scaleToFitRect(maxScale);
+  }
+
+  void scaleToFitRect(double maxScale) {
+    double scaleDelta = scaleToFitCropRect();
 
     if (scaleDelta > 0) {
       // can't scale image
       // so we should scale the crop rect
       if (totalScale * scaleDelta > maxScale) {
-        cropRect = Rect.fromCenter(
-          center: cropRect!.center,
-          width: cropRect!.width * (1 / scaleDelta),
-          height: cropRect!.height * (1 / scaleDelta),
-        );
-      } else {
-        screenFocalPoint = _screenDestinationRect!.center;
+        screenFocalPoint = null;
         preTotalScale = totalScale;
-        totalScale = max(totalScale * scaleDelta, totalScale);
+        totalScale = maxScale;
+        getFinalDestinationRect();
+        scaleDelta = scaleToFitImageRect();
+        if (scaleDelta > 0) {
+          cropRect = Rect.fromCenter(
+            center: cropRect!.center,
+            width: cropRect!.width * scaleDelta,
+            height: cropRect!.height * scaleDelta,
+          );
+        } else {
+          updateDelta(Offset.zero);
+        }
+      } else {
+        screenFocalPoint = null;
+        preTotalScale = totalScale;
+        totalScale = totalScale * scaleDelta;
       }
     }
   }
@@ -269,7 +282,6 @@ class EditActionDetails {
     final double scaleDelta = scaleToFit(
       rectVertices,
       rect,
-      rect.center,
     );
     return scaleDelta;
   }
@@ -277,11 +289,11 @@ class EditActionDetails {
   double scaleToFit(
     List<Offset> rectVertices,
     Rect rect,
-    Offset center,
   ) {
     double scaleDelta = 0.0;
 
     int contains = 0;
+    final Offset center = rect.center;
     for (final Offset element in rectVertices) {
       if (rect.containsOffset(element)) {
         contains++;
@@ -293,6 +305,58 @@ class EditActionDetails {
       final double halfHeight = rect.height / 2;
       if (x > halfWidth || y > halfHeight) {
         scaleDelta = max(scaleDelta, max(x / halfWidth, y / halfHeight));
+      }
+    }
+    if (contains == 4) {
+      return -1;
+    }
+    return scaleDelta;
+  }
+
+  double scaleToFitImageRect() {
+    final Matrix4 result = getTransform();
+    final Rect rect = _screenDestinationRect!;
+    final List<Offset> rectVertices = <Offset>[
+      screenCropRect!.topLeft,
+      screenCropRect!.topRight,
+      screenCropRect!.bottomRight,
+      screenCropRect!.bottomLeft,
+    ].map((Offset element) {
+      final Vector4 cornerVector = Vector4(element.dx, element.dy, 0.0, 1.0);
+      final Vector4 newCornerVector = result.transform(cornerVector);
+      return Offset(newCornerVector.x, newCornerVector.y);
+    }).toList();
+
+    final double scaleDelta = _scaleToFitImageRect(
+      rectVertices,
+      rect,
+      rect.center,
+    );
+    return scaleDelta;
+  }
+
+  double _scaleToFitImageRect(
+    List<Offset> rectVertices,
+    Rect rect,
+    Offset center,
+  ) {
+    double scaleDelta = 0.0;
+    final Offset cropRectCenter = (rectVertices[0] + (rectVertices[2])) / 2;
+    int contains = 0;
+    for (final Offset element in rectVertices) {
+      if (rect.containsOffset(element)) {
+        contains++;
+        continue;
+      }
+      final List<Offset> list =
+          getLineRectIntersections(rect, element, cropRectCenter);
+      if (list.isNotEmpty) {
+        scaleDelta = min(
+            scaleDelta,
+            sqrt(pow(list[0].dx - cropRectCenter.dx, 2) +
+                    pow(list[0].dy - cropRectCenter.dy, 2)) /
+                sqrt(pow(element.dx - cropRectCenter.dx, 2) +
+                    pow(element.dy - cropRectCenter.dy, 2)));
       }
     }
     if (contains == 4) {

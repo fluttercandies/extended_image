@@ -1,3 +1,7 @@
+## 9.0.5
+
+* Fix issue about worng scale for crop rect when scale is more than max scale
+
 ## 9.0.4
 
 * Public [ImageEditorController.currentIndex],[ImageEditorController.history],[ImageEditorController.saveCurrentState]
