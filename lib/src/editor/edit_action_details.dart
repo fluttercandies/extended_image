@@ -340,7 +340,7 @@ class EditActionDetails {
     Rect rect,
     Offset center,
   ) {
-    double scaleDelta = 0.0;
+    double scaleDelta = double.maxFinite;
     final Offset cropRectCenter = (rectVertices[0] + (rectVertices[2])) / 2;
     int contains = 0;
     for (final Offset element in rectVertices) {
