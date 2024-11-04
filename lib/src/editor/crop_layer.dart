@@ -514,9 +514,13 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     _timer = Timer.periodic(widget.editorConfig.tickerDuration, (Timer timer) {
       _timer?.cancel();
 
-      // move to center
+      // not move
+      if (widget.editActionDetails.cropRect!.center
+          .isSame(widget.editActionDetails.cropRectLayoutRectCenter!)) {
+        return;
+      }
       final Rect? oldScreenCropRect = widget.editActionDetails.screenCropRect;
-
+      // move to center
       final Rect centerCropRect = getDestinationRect(
           rect: layoutRect, inputSize: cropRect!.size, fit: widget.fit);
       final Rect newScreenCropRect =

@@ -144,6 +144,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
   @override
   void didUpdateWidget(ExtendedImageEditor oldWidget) {
+    _editActionDetails = null;
     _initGestureConfig();
     super.didUpdateWidget(oldWidget);
   }

@@ -96,6 +96,8 @@ class EditActionDetails {
     return _layoutRect?.shift(-layoutTopLeft!);
   }
 
+  Offset? get cropRectLayoutRectCenter => cropRectLayoutRect?.center;
+
   void initRect(Rect layoutRect, Rect destinationRect) {
     if (_layoutRect != layoutRect) {
       _layoutRect = layoutRect;
@@ -267,6 +269,7 @@ class EditActionDetails {
 
   double scaleToFitCropRect() {
     final Matrix4 result = getTransform();
+    result.invert();
     final Rect rect = _screenDestinationRect!;
     final List<Offset> rectVertices = <Offset>[
       screenCropRect!.topLeft,
@@ -315,6 +318,7 @@ class EditActionDetails {
 
   double scaleToFitImageRect() {
     final Matrix4 result = getTransform();
+    result.invert();
     final Rect rect = _screenDestinationRect!;
     final List<Offset> rectVertices = <Offset>[
       screenCropRect!.topLeft,
@@ -380,7 +384,7 @@ class EditActionDetails {
     Rect rect = _screenDestinationRect!.shift(offset);
 
     final Matrix4 result = getTransform();
-
+    result.invert();
     final List<Offset> rectVertices = <Offset>[
       screenCropRect!.topLeft,
       screenCropRect!.topRight,
@@ -420,7 +424,7 @@ class EditActionDetails {
       return;
     }
     final Matrix4 result = getTransform();
-
+    result.invert();
     final List<Offset> rectVertices = <Offset>[
       screenCropRect!.topLeft,
       screenCropRect!.topRight,
@@ -485,7 +489,7 @@ class EditActionDetails {
     Rect screenCropRect = cropRect.shift(layoutTopLeft!);
     final Matrix4 result = getTransform();
     final Rect rect = _screenDestinationRect!;
-
+    result.invert();
     final List<Offset> rectVertices = <Offset>[
       screenCropRect.topLeft,
       screenCropRect.topRight,
@@ -513,7 +517,6 @@ class EditActionDetails {
       if (lineRectIntersections.isNotEmpty) {
         hasOffsetOutSide = true;
         list[i] = lineRectIntersections.first;
-        break;
       }
     }
 
