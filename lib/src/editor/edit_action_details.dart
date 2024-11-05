@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 class EditActionDetails {
+  EditorConfig? config;
   Rect? _layoutRect;
   Rect? get layoutRect => _layoutRect;
   Rect? _screenDestinationRect;
@@ -363,7 +364,7 @@ class EditActionDetails {
                     pow(element.dy - cropRectCenter.dy, 2)));
       }
     }
-    if (contains == 4) {
+    if (contains == 4 || scaleDelta == double.maxFinite) {
       return -1;
     }
     return scaleDelta;
@@ -625,7 +626,8 @@ class EditActionDetails {
       ..originalAspectRatio = originalAspectRatio ?? this.originalAspectRatio
       ..cropAspectRatio = cropAspectRatio ?? _cropAspectRatio
       ..rotateRadians = rotateRadians ?? this.rotateRadians
-      ..rotationYRadians = rotationYRadians ?? this.rotationYRadians;
+      ..rotationYRadians = rotationYRadians ?? this.rotationYRadians
+      ..config = config;
   }
 
   @override

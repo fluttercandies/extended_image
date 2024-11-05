@@ -606,6 +606,9 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       setState(() {
         _currentIndex = _currentIndex + 1;
         _editActionDetails = _history[_currentIndex].copyWith();
+        if (_editActionDetails!.config != null) {
+          _editorConfig = _editActionDetails!.config;
+        }
         _editorConfig!.controller?._notifyListeners();
         _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
       });
@@ -621,6 +624,9 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       setState(() {
         _currentIndex = _currentIndex - 1;
         _editActionDetails = _history[_currentIndex].copyWith();
+        if (_editActionDetails!.config != null) {
+          _editorConfig = _editActionDetails!.config;
+        }
         _editorConfig!.controller?._notifyListeners();
         _editorConfig!.editActionDetailsIsChanged?.call(_editActionDetails);
       });
@@ -668,8 +674,9 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     if (_currentIndex + 1 < _history.length) {
       _history.removeRange(_currentIndex + 1, _history.length);
     }
-
-    _history.add(_editActionDetails!.copyWith());
+    final EditActionDetails ad = _editActionDetails!.copyWith();
+    ad.config = _editorConfig;
+    _history.add(ad);
 
     _currentIndex = _history.length - 1;
 
@@ -747,4 +754,34 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
   void saveCurrentState() {
     _saveCurrentState();
   }
+
+  @override
+  void updateConfig(EditorConfig config) {
+    final EditorConfig oldConfig = _editorConfig!.copyWith();
+    if (oldConfig == config) {
+      return;
+    }
+    _editorConfig = config;
+
+    setState(() {
+      if (oldConfig.cropAspectRatio != config.cropAspectRatio) {
+        updateCropAspectRatio(config.cropAspectRatio);
+      }
+
+      if (_editActionDetails!.totalScale > config.maxScale) {
+        _editActionDetails!.totalScale = config.maxScale;
+        _editActionDetails!.getFinalDestinationRect();
+        _recalculateCropRect();
+      }
+      if (oldConfig.cropRectPadding != config.cropRectPadding) {
+        _editActionDetails!.cropRectPadding = config.cropRectPadding;
+        _recalculateCropRect();
+      }
+    });
+
+    _saveCurrentState();
+  }
+
+  @override
+  EditorConfig get config => _editorConfig!;
 }

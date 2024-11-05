@@ -53,8 +53,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   late ValueNotifier<AspectRatioItem> _aspectRatio;
 
   bool _cropping = false;
-
-  EditorCropLayerPainter? _cropLayerPainter;
+  late ValueNotifier<EditorCropLayerPainter> _cropLayerPainter;
   final ImageEditorController _editorController = ImageEditorController();
   final MyRulerPickerController _rulerPickerController =
       MyRulerPickerController(value: 0.0);
@@ -62,7 +61,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   @override
   void initState() {
     _aspectRatio = ValueNotifier<AspectRatioItem>(_aspectRatios.first);
-    _cropLayerPainter = const EditorCropLayerPainter();
+    _cropLayerPainter =
+        ValueNotifier<EditorCropLayerPainter>(const EditorCropLayerPainter());
 
     super.initState();
   }
@@ -120,7 +120,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     maxScale: 8.0,
                     cropRectPadding: const EdgeInsets.all(20.0),
                     hitTestSize: 20.0,
-                    cropLayerPainter: _cropLayerPainter!,
+                    cropLayerPainter: _cropLayerPainter.value,
                     initCropRectType: InitCropRectType.imageRect,
                     cropAspectRatio: _aspectRatio.value.value,
                     controller: _editorController,
@@ -138,85 +138,97 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 children: <Widget>[
                   FlatButtonWithIcon(
                     icon: const Icon(Icons.rounded_corner_sharp),
-                    label: PopupMenuButton<EditorCropLayerPainter>(
-                      key: popupMenuKey,
-                      enabled: false,
-                      offset: const Offset(100, -300),
-                      child: const Text(
-                        'Painter',
-                        style: TextStyle(fontSize: 8.0),
-                      ),
-                      initialValue: _cropLayerPainter,
-                      itemBuilder: (BuildContext context) {
-                        return <PopupMenuEntry<EditorCropLayerPainter>>[
-                          const PopupMenuItem<EditorCropLayerPainter>(
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.rounded_corner_sharp,
-                                  color: Colors.blue,
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text('Default'),
-                              ],
+                    label: ValueListenableBuilder<EditorCropLayerPainter>(
+                        valueListenable: _cropLayerPainter,
+                        builder: (BuildContext context,
+                            EditorCropLayerPainter value, Widget? child) {
+                          return PopupMenuButton<EditorCropLayerPainter>(
+                            key: popupMenuKey,
+                            enabled: false,
+                            offset: const Offset(100, -300),
+                            child: const Text(
+                              'Painter',
+                              style: TextStyle(fontSize: 8.0),
                             ),
-                            value: EditorCropLayerPainter(),
-                          ),
-                          const PopupMenuDivider(),
-                          const PopupMenuItem<EditorCropLayerPainter>(
-                            child: Row(
-                              children: <Widget>[
-                                Icon(
-                                  Icons.circle,
-                                  color: Colors.blue,
-                                ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                Text('Custom'),
-                              ],
-                            ),
-                            value: CustomEditorCropLayerPainter(),
-                          ),
-                          const PopupMenuDivider(),
-                          PopupMenuItem<EditorCropLayerPainter>(
-                            child: Row(
-                              children: <Widget>[
-                                Container(
-                                  margin:
-                                      const EdgeInsets.symmetric(horizontal: 3),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Colors.blue,
-                                    ),
-                                    borderRadius: BorderRadius.circular(25),
+                            initialValue: _cropLayerPainter.value,
+                            itemBuilder: (BuildContext context) {
+                              return <PopupMenuEntry<EditorCropLayerPainter>>[
+                                const PopupMenuItem<EditorCropLayerPainter>(
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.rounded_corner_sharp,
+                                        color: Colors.blue,
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text('Default'),
+                                    ],
                                   ),
-                                  width: 20,
-                                  height: 20,
+                                  value: EditorCropLayerPainter(),
                                 ),
-                                const SizedBox(
-                                  width: 5,
+                                const PopupMenuDivider(),
+                                const PopupMenuItem<EditorCropLayerPainter>(
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.circle,
+                                        color: Colors.blue,
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text('Custom'),
+                                    ],
+                                  ),
+                                  value: CustomEditorCropLayerPainter(),
                                 ),
-                                const Text('Circle'),
-                              ],
-                            ),
-                            value: const CircleEditorCropLayerPainter(),
-                          ),
-                        ];
-                      },
-                      onSelected: (EditorCropLayerPainter value) {
-                        if (_cropLayerPainter != value) {
-                          setState(() {
-                            if (value is CircleEditorCropLayerPainter) {
-                              _aspectRatio.value = _aspectRatios[2];
-                            }
-                            _cropLayerPainter = value;
-                          });
-                        }
-                      },
-                    ),
+                                const PopupMenuDivider(),
+                                PopupMenuItem<EditorCropLayerPainter>(
+                                  child: Row(
+                                    children: <Widget>[
+                                      Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 3),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.blue,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(25),
+                                        ),
+                                        width: 20,
+                                        height: 20,
+                                      ),
+                                      const SizedBox(
+                                        width: 5,
+                                      ),
+                                      const Text('Circle'),
+                                    ],
+                                  ),
+                                  value: const CircleEditorCropLayerPainter(),
+                                ),
+                              ];
+                            },
+                            onSelected: (EditorCropLayerPainter value) {
+                              if (_cropLayerPainter.value != value) {
+                                if (value is CircleEditorCropLayerPainter) {
+                                  _aspectRatio.value = _aspectRatios[2];
+                                }
+                                _cropLayerPainter.value = value;
+                                _editorController.updateConfig(
+                                  _editorController.config.copyWith(
+                                    cropLayerPainter: value,
+                                    cropAspectRatio: _aspectRatio.value.value,
+                                    // maxScale: 4,
+                                    // cropRectPadding: const EdgeInsets.all(40),
+                                  ),
+                                );
+                              }
+                            },
+                          );
+                        }),
                     textColor: Colors.white,
                     onPressed: () {
                       popupMenuKey.currentState!.showButtonMenu();
@@ -229,29 +241,6 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                         minWidth: 0.0,
                         padding: EdgeInsets.zero,
                         child: Row(children: <Widget>[
-                          FlatButtonWithIcon(
-                            icon: Icon(
-                              Icons.redo,
-                              color: _editorController.canRedo
-                                  ? primaryColor
-                                  : Colors.grey,
-                            ),
-                            label: Text(
-                              'Redo',
-                              style: TextStyle(
-                                fontSize: 10.0,
-                                color: _editorController.canRedo
-                                    ? primaryColor
-                                    : Colors.grey,
-                              ),
-                            ),
-                            textColor: Colors.white,
-                            onPressed: () {
-                              _onUndoOrRedo(() {
-                                _editorController.redo();
-                              });
-                            },
-                          ),
                           FlatButtonWithIcon(
                             icon: Icon(
                               Icons.undo,
@@ -275,6 +264,29 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                               });
                             },
                           ),
+                          FlatButtonWithIcon(
+                            icon: Icon(
+                              Icons.redo,
+                              color: _editorController.canRedo
+                                  ? primaryColor
+                                  : Colors.grey,
+                            ),
+                            label: Text(
+                              'Redo',
+                              style: TextStyle(
+                                fontSize: 10.0,
+                                color: _editorController.canRedo
+                                    ? primaryColor
+                                    : Colors.grey,
+                              ),
+                            ),
+                            textColor: Colors.white,
+                            onPressed: () {
+                              _onUndoOrRedo(() {
+                                _editorController.redo();
+                              });
+                            },
+                          ),
                         ]),
                       );
                     },
@@ -288,9 +300,10 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                     ),
                     textColor: Colors.white,
                     onPressed: () {
-                      _editorController.reset();
                       _rulerPickerController.value = 0;
                       _aspectRatio.value = _aspectRatios.first;
+                      _cropLayerPainter.value = const EditorCropLayerPainter();
+                      _editorController.reset();
                     },
                   ),
                 ],
@@ -455,6 +468,15 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                           ),
                         ),
                         onTap: () {
+                          if (_cropLayerPainter
+                              is CircleEditorCropLayerPainter) {
+                            if (item.value != CropAspectRatios.ratio1_1) {
+                              showToast(
+                                  'Circle crop only support 1:1 aspect ratio');
+                              return;
+                            }
+                          }
+
                           _editorController.updateCropAspectRatio(item.value);
                           _aspectRatio.value = item;
                         },
@@ -611,6 +633,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         );
       }
     }
+
+    _cropLayerPainter.value = _editorController.config.cropLayerPainter;
   }
 
   Future<void> _cropImage(bool useNative) async {

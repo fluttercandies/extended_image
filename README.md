@@ -44,6 +44,7 @@ ExtendedImage is an third-party library that extends the functionality of Flutte
       - [redo](#redo)
       - [reset](#reset)
       - [history](#history)
+      - [update config](#update-config)
     - [crop data](#crop-data)
       - [dart library(stable)](#dart-librarystable)
       - [native library(faster)](#native-libraryfaster)
@@ -574,6 +575,12 @@ final ImageEditorController _editorController = ImageEditorController();
    _editorController.saveCurrentState();
 ```
 
+#### update config
+
+```dart
+   _editorController.updateConfig(EditorConfig config);
+   _editorController.config;
+```
 
 ### crop data
 

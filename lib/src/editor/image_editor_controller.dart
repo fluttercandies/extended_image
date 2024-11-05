@@ -111,6 +111,14 @@ class ImageEditorController extends ChangeNotifier
   void saveCurrentState() {
     _state?.saveCurrentState();
   }
+
+  @override
+  void updateConfig(EditorConfig config) {
+    _state?.updateConfig(config);
+  }
+
+  @override
+  EditorConfig get config => _state?.config ?? EditorConfig();
 }
 
 /// `ImageEditorControllerMixin` provides a mixin with common image editing functions.
@@ -161,4 +169,10 @@ mixin ImageEditorControllerMixin {
 
   /// Save the current state of the editor.
   void saveCurrentState();
+
+  /// update the current config of the editor
+  void updateConfig(EditorConfig config);
+
+  /// get the current config of the editor.
+  EditorConfig get config;
 }

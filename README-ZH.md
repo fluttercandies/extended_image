@@ -51,6 +51,7 @@ ExtendedImage 是官方 Image 的扩展三方库，主要扩展功能如下:
       - [重做](#重做)
       - [重置](#重置)
       - [历史](#历史)
+      - [配置更新](#配置更新)
     - [裁剪数据](#裁剪数据)
       - [使用 dart 库(稳定)](#使用-dart-库稳定)
       - [使用原生库(快速)](#使用原生库快速)
@@ -564,6 +565,13 @@ class EditorCropLayerPainter {
    _editorController.currentIndex;
    _editorController.history;
    _editorController.saveCurrentState();   
+```
+
+#### 配置更新
+
+```dart
+   _editorController.updateConfig(EditorConfig config);
+   _editorController.config;
 ```
 
 ### 裁剪数据

@@ -119,4 +119,105 @@ class EditorConfig {
   /// A controller to manage image editing actions, providing functions like rotating, flipping, undoing, and redoing actions..
   /// This allows for external control of the editing process.
   final ImageEditorController? controller;
+
+  EditorConfig copyWith({
+    double? maxScale,
+    EdgeInsets? cropRectPadding,
+    Size? cornerSize,
+    Color? cornerColor,
+    Color? lineColor,
+    double? lineHeight,
+    EditorMaskColorHandler? editorMaskColorHandler,
+    double? hitTestSize,
+    Duration? animationDuration,
+    Duration? tickerDuration,
+    double? cropAspectRatio,
+    double? initialCropAspectRatio,
+    InitCropRectType? initCropRectType,
+    EditorCropLayerPainter? cropLayerPainter,
+    double? speed,
+    HitTestBehavior? hitTestBehavior,
+    EditActionDetailsIsChanged? editActionDetailsIsChanged,
+    bool? reverseMousePointerScrollDirection,
+    ImageEditorController? controller,
+  }) {
+    return EditorConfig(
+      maxScale: maxScale ?? this.maxScale,
+      cropRectPadding: cropRectPadding ?? this.cropRectPadding,
+      cornerSize: cornerSize ?? this.cornerSize,
+      cornerColor: cornerColor ?? this.cornerColor,
+      lineColor: lineColor ?? this.lineColor,
+      lineHeight: lineHeight ?? this.lineHeight,
+      editorMaskColorHandler:
+          editorMaskColorHandler ?? this.editorMaskColorHandler,
+      hitTestSize: hitTestSize ?? this.hitTestSize,
+      animationDuration: animationDuration ?? this.animationDuration,
+      tickerDuration: tickerDuration ?? this.tickerDuration,
+      cropAspectRatio: cropAspectRatio ?? this.cropAspectRatio,
+      initialCropAspectRatio:
+          initialCropAspectRatio ?? this.initialCropAspectRatio,
+      initCropRectType: initCropRectType ?? this.initCropRectType,
+      cropLayerPainter: cropLayerPainter ?? this.cropLayerPainter,
+      speed: speed ?? this.speed,
+      hitTestBehavior: hitTestBehavior ?? this.hitTestBehavior,
+      editActionDetailsIsChanged:
+          editActionDetailsIsChanged ?? this.editActionDetailsIsChanged,
+      reverseMousePointerScrollDirection: reverseMousePointerScrollDirection ??
+          this.reverseMousePointerScrollDirection,
+      controller: controller ?? this.controller,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+    return other is EditorConfig &&
+        other.maxScale == maxScale &&
+        other.cropRectPadding == cropRectPadding &&
+        other.cornerSize == cornerSize &&
+        other.cornerColor == cornerColor &&
+        other.lineColor == lineColor &&
+        other.lineHeight == lineHeight &&
+        other.editorMaskColorHandler == editorMaskColorHandler &&
+        other.hitTestSize == hitTestSize &&
+        other.animationDuration == animationDuration &&
+        other.tickerDuration == tickerDuration &&
+        other.cropAspectRatio == cropAspectRatio &&
+        other.initialCropAspectRatio == initialCropAspectRatio &&
+        other.initCropRectType == initCropRectType &&
+        other.cropLayerPainter == cropLayerPainter &&
+        other.speed == speed &&
+        other.hitTestBehavior == hitTestBehavior &&
+        other.editActionDetailsIsChanged == editActionDetailsIsChanged &&
+        other.reverseMousePointerScrollDirection ==
+            reverseMousePointerScrollDirection &&
+        other.controller == controller;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      maxScale,
+      cropRectPadding,
+      cornerSize,
+      cornerColor,
+      lineColor,
+      lineHeight,
+      editorMaskColorHandler,
+      hitTestSize,
+      animationDuration,
+      tickerDuration,
+      cropAspectRatio,
+      initialCropAspectRatio,
+      initCropRectType,
+      cropLayerPainter,
+      speed,
+      hitTestBehavior,
+      editActionDetailsIsChanged,
+      reverseMousePointerScrollDirection,
+      controller,
+    );
+  }
 }

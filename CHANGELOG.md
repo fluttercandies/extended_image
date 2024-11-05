@@ -1,3 +1,9 @@
+## 9.0.7
+
+* Fix crop rect transform not invert
+* Support editor config history
+* Add updateConfig and get config from editor controller
+
 ## 9.0.6
 
 * Fix issue about worng scale for crop rect when scale is more than max scale
