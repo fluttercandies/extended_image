@@ -142,12 +142,12 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     // _saveCurrentEditActionDetails();
   }
 
-  @override
-  void didUpdateWidget(ExtendedImageEditor oldWidget) {
-    _editActionDetails = null;
-    _initGestureConfig();
-    super.didUpdateWidget(oldWidget);
-  }
+  // @override
+  // void didUpdateWidget(ExtendedImageEditor oldWidget) {
+  //   // _editActionDetails = null;
+  //   // _initGestureConfig();
+  //   super.didUpdateWidget(oldWidget);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -496,7 +496,10 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     final double end =
         begin + _editActionDetails!.reverseRotateRadians(rotateRadians);
 
-    if (rotateCropRect && (degree % 360).abs() == 90) {
+    // check if rotate with a right angle
+    final bool isRightAngle = (degree % 360).abs() == 90 || (degree % 360).abs() == 270;
+
+    if (rotateCropRect && isRightAngle) {
       _rotateCropRect = true;
 
       final double? cropAspectRatio = _editActionDetails?.cropAspectRatio;
@@ -703,6 +706,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
   @override
   void updateCropAspectRatio(double? aspectRatio) {
+    final Rect? oldScreenCropRect = _editActionDetails?.screenCropRect;
     if (_editActionDetails?.cropAspectRatio == aspectRatio) {
       return;
     }
@@ -715,8 +719,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     }
 
     final ui.Rect newCropRect = _recalculateCropRect();
-    _layerKey.currentState?.updateCropRect(newCropRect);
-
+    _layerKey.currentState?.autoCenter(oldScreenCropRect: oldScreenCropRect!, newCropRect: newCropRect);
     _saveCurrentState();
   }
 
