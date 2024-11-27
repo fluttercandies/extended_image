@@ -1,6 +1,7 @@
 ## 9.0.8
 
 * Fix the issue with 90-degree judgment when rotate image.
+* Fix SetState will Reset ExtendedImage and clear the Crop State. (#712)
 
 ## 9.0.7
 

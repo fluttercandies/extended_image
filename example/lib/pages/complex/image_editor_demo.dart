@@ -50,6 +50,9 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     AspectRatioItem(text: '9*16', value: CropAspectRatios.ratio9_16)
   ];
 
+  EdgeInsets cropRectPadding = const EdgeInsets.all(20.0);
+  double maxScale = 8.0;
+
   late ValueNotifier<AspectRatioItem> _aspectRatio;
 
   bool _cropping = false;
@@ -117,8 +120,8 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 // extendedImageEditorKey: editorKey,
                 initEditorConfigHandler: (ExtendedImageState? state) {
                   return EditorConfig(
-                    maxScale: 8.0,
-                    cropRectPadding: const EdgeInsets.all(20.0),
+                    maxScale: maxScale,
+                    cropRectPadding: cropRectPadding,
                     hitTestSize: 20.0,
                     cropLayerPainter: _cropLayerPainter.value,
                     initCropRectType: InitCropRectType.imageRect,

@@ -104,7 +104,29 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
     super.dispose();
   }
 
-  void _initGestureConfig() {
+  void _initGestureConfig([ExtendedImageEditor? oldWidget]) {
+    if (oldWidget != null &&
+        widget.extendedImageState.extendedImageInfo !=
+            oldWidget.extendedImageState.extendedImageInfo) {
+      // reset
+      _editActionDetails = null;
+    }
+
+    if (_editActionDetails == null) {
+      final int length = _history.length;
+      _history.clear();
+      if (length != _history.length) {
+        _safeUpdate(
+          () {
+            _editorConfig?.controller?._notifyListeners();
+          },
+        );
+      }
+    }
+
+    // check config
+    final EditorConfig? oldConfig = _editorConfig?.copyWith();
+
     _editorConfig = widget
             .extendedImageState.imageWidget.initEditorConfigHandler
             ?.call(widget.extendedImageState) ??
@@ -127,14 +149,21 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _editActionDetails!.cropAspectRatio = _editorConfig!.cropAspectRatio;
     }
 
-    final int length = _history.length;
-    _history.clear();
-    if (length != _history.length) {
-      _safeUpdate(
-        () {
-          _editorConfig!.controller?._notifyListeners();
-        },
-      );
+    if (oldConfig != null &&
+        oldConfig.cropAspectRatio != config.cropAspectRatio) {
+      updateCropAspectRatio(config.cropAspectRatio);
+    }
+
+    if (_editActionDetails!.totalScale > config.maxScale) {
+      _editActionDetails!.totalScale = config.maxScale;
+      _editActionDetails!.getFinalDestinationRect();
+      _recalculateCropRect();
+    }
+
+    if (oldConfig != null &&
+        oldConfig.cropRectPadding != config.cropRectPadding) {
+      _editActionDetails!.cropRectPadding = config.cropRectPadding;
+      _recalculateCropRect();
     }
 
     // save after afterPaintImage
@@ -144,8 +173,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
 
   @override
   void didUpdateWidget(ExtendedImageEditor oldWidget) {
-    _editActionDetails = null;
-    _initGestureConfig();
+    // _editActionDetails = null;
+    _initGestureConfig(oldWidget);
     super.didUpdateWidget(oldWidget);
   }
 
