@@ -64,6 +64,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   Animation<Rect?>? _rectAnimation;
   late AnimationController _rectTweenController;
   _MoveType? _currentMoveType;
+  bool _lazyScale = false;
 
   double _rotateRadians = 0;
   @override
@@ -533,6 +534,16 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     });
   }
 
+  void autoCenter({required Rect oldScreenCropRect, required Rect newCropRect}) {
+    final Rect centerCropRect = getDestinationRect(rect: layoutRect, inputSize: newCropRect.size, fit: widget.fit);
+    final Rect newScreenCropRect = centerCropRect.shift(widget.editActionDetails.layoutTopLeft!);
+
+    _rectAnimation = _rectTweenController.drive<Rect?>(RectTween(begin: oldScreenCropRect, end: newScreenCropRect));
+    _lazyScale = true;
+    _rectTweenController.reset();
+    _rectTweenController.forward().then((_) => _lazyScale = false);
+  }
+
   void _doCropAutoCenterAnimation({Rect? newScreenCropRect}) {
     if (mounted) {
       setState(() {
@@ -542,7 +553,17 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
         newScreenCropRect ??= _rectAnimation!.value;
 
-        final double scale = newScreenCropRect!.width / oldScreenCropRect.width;
+        late final double scale;
+        if (_lazyScale) {
+          final Rect imageRect = widget.editActionDetails.getImagePath().getBounds();
+          if(imageRect.containsRect(newScreenCropRect!)){
+            scale = 1;
+          }else{
+            scale = max( newScreenCropRect!.width / oldScreenCropRect.width, newScreenCropRect!.height / oldScreenCropRect.height);
+          }
+        } else {
+          scale = newScreenCropRect!.width / oldScreenCropRect.width;
+        }
 
         final Matrix4 result = widget.editActionDetails.getTransform();
         final List<Offset> corners = <Offset>[
