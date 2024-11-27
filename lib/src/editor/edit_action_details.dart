@@ -295,25 +295,17 @@ class EditActionDetails {
     Rect rect,
   ) {
     double scaleDelta = 0.0;
-
-    int contains = 0;
     final Offset center = rect.center;
+
     for (final Offset element in rectVertices) {
-      if (rect.containsOffset(element)) {
-        contains++;
-        continue;
-      }
       final double x = (element.dx - center.dx).abs();
       final double y = (element.dy - center.dy).abs();
       final double halfWidth = rect.width / 2;
       final double halfHeight = rect.height / 2;
-      if (x > halfWidth || y > halfHeight) {
-        scaleDelta = max(scaleDelta, max(x / halfWidth, y / halfHeight));
-      }
+
+      scaleDelta = max(scaleDelta, max(x / halfWidth, y / halfHeight));
     }
-    if (contains == 4) {
-      return -1;
-    }
+
     return scaleDelta;
   }
 
@@ -487,60 +479,46 @@ class EditActionDetails {
   }
 
   Rect updateCropRect(Rect cropRect) {
-    Rect screenCropRect = cropRect.shift(layoutTopLeft!);
-    final Matrix4 result = getTransform();
-    final Rect rect = _screenDestinationRect!;
-    result.invert();
+    // 将 cropRect 转换到屏幕坐标
+    final Rect screenCropRect = cropRect.shift(layoutTopLeft!);
+
+    // 获取目标矩形
+    final Rect imageRect = _screenDestinationRect!;
+
+    // 获取裁剪矩形的四个顶点
     final List<Offset> rectVertices = <Offset>[
       screenCropRect.topLeft,
       screenCropRect.topRight,
       screenCropRect.bottomRight,
       screenCropRect.bottomLeft,
-    ].map((Offset element) {
-      final Vector4 cornerVector = Vector4(element.dx, element.dy, 0.0, 1.0);
-      final Vector4 newCornerVector = result.transform(cornerVector);
-      return Offset(newCornerVector.x, newCornerVector.y);
+    ];
+
+    // 遍历每个顶点并限制到目标矩形边界内
+    final List<Offset> constrainedVertices = rectVertices.map((Offset vertex) {
+      return Offset(
+        vertex.dx.clamp(imageRect.left, imageRect.right), // 限制 X 坐标
+        vertex.dy.clamp(imageRect.top, imageRect.bottom), // 限制 Y 坐标
+      );
     }).toList();
 
-    final List<Offset> list = rectVertices.toList();
-    bool hasOffsetOutSide = false;
-    for (int i = 0; i < rectVertices.length; i++) {
-      final Offset element = rectVertices[i];
-      if (rect.containsOffset(element)) {
-        continue;
-      }
-      late final Offset other = rectVertices[(i + 2) % 4];
+    // 使用限制后的顶点计算新的裁剪矩形
+    final Rect constrainedRect = Rect.fromPoints(
+      constrainedVertices.reduce(
+        (Offset a, Offset b) => Offset(
+          min(a.dx, b.dx),
+          min(a.dy, b.dy),
+        ),
+      ),
+      constrainedVertices.reduce(
+        (Offset a, Offset b) => Offset(
+          max(a.dx, b.dx),
+          max(a.dy, b.dy),
+        ),
+      ),
+    );
 
-      final Offset center = (element + other) / 2;
-
-      final List<Offset> lineRectIntersections =
-          getLineRectIntersections(_screenDestinationRect!, element, center);
-      if (lineRectIntersections.isNotEmpty) {
-        hasOffsetOutSide = true;
-        list[i] = lineRectIntersections.first;
-      }
-    }
-
-    if (hasOffsetOutSide) {
-      result.invert();
-      final List<Offset> newOffsets = list.map((Offset element) {
-        final Vector4 cornerVector = Vector4(element.dx, element.dy, 0.0, 1.0);
-        final Vector4 newCornerVector = result.transform(cornerVector);
-        return Offset(newCornerVector.x, newCornerVector.y);
-      }).toList();
-
-      final Rect rect1 = Rect.fromPoints(newOffsets[0], newOffsets[2]);
-
-      final Rect rect2 = Rect.fromPoints(newOffsets[1], newOffsets[3]);
-
-      if (rect1.size < rect2.size) {
-        screenCropRect = rect1;
-      } else {
-        screenCropRect = rect2;
-      }
-    }
-
-    return screenCropRect.shift(-layoutTopLeft!);
+    // 将裁剪矩形从屏幕坐标转换回局部坐标
+    return constrainedRect.shift(-layoutTopLeft!);
   }
 
   Offset? getIntersection(Offset p1, Offset p2, Offset p3, Offset p4) {
