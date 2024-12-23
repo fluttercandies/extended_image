@@ -344,17 +344,19 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       default:
     }
 
-    ///make sure crop rect doesn't out of image rect
-    result = Rect.fromPoints(
-        Offset(max(result!.left, cropRectLayoutRect!.left),
-            max(result.top, cropRectLayoutRect.top)),
-        Offset(min(result.right, cropRectLayoutRect.right),
-            min(result.bottom, cropRectLayoutRect.bottom)));
+    // drag crop rect to zoom in image, to fix #723
+
+    // make sure crop rect doesn't out of image rect
+    // result = Rect.fromPoints(
+    //     Offset(max(result!.left, cropRectLayoutRect!.left),
+    //         max(result.top, cropRectLayoutRect.top)),
+    //     Offset(min(result.right, cropRectLayoutRect.right),
+    //         min(result.bottom, cropRectLayoutRect.bottom)));
 
     result = _handleAspectRatio(
       gWidth,
       moveType,
-      result,
+      result!,
       cropRectLayoutRect,
       delta,
     );
