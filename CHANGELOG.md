@@ -1,3 +1,7 @@
+## Unreleased
+
+* Removed the `enableMemoryCache` variable in `ExtendedImage`,please Use `clearMemoryCacheWhenDispose` instead for managing memory cache behavior. 
+
 ## 9.0.9
 
 * Fix drag crop rect can't zoom in the image(#723)

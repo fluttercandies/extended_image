@@ -45,7 +45,6 @@ class ExtendedImage extends StatefulWidget {
     this.beforePaintImage,
     this.afterPaintImage,
     this.mode = ExtendedImageMode.none,
-    this.enableMemoryCache = true,
     this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
@@ -220,7 +219,6 @@ class ExtendedImage extends StatefulWidget {
     this.beforePaintImage,
     this.afterPaintImage,
     this.mode = ExtendedImageMode.none,
-    this.enableMemoryCache = true,
     this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
@@ -317,7 +315,6 @@ class ExtendedImage extends StatefulWidget {
     this.beforePaintImage,
     this.afterPaintImage,
     this.mode = ExtendedImageMode.none,
-    this.enableMemoryCache = true,
     this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
@@ -408,7 +405,6 @@ class ExtendedImage extends StatefulWidget {
     this.beforePaintImage,
     this.afterPaintImage,
     this.mode = ExtendedImageMode.none,
-    this.enableMemoryCache = true,
     this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
@@ -476,7 +472,6 @@ class ExtendedImage extends StatefulWidget {
     this.beforePaintImage,
     this.afterPaintImage,
     this.mode = ExtendedImageMode.none,
-    this.enableMemoryCache = true,
     this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
@@ -567,9 +562,6 @@ class ExtendedImage extends StatefulWidget {
 
   ///call back of double tap  under ExtendedImageMode.gesture
   final DoubleTap? onDoubleTap;
-
-  ///whether cache in PaintingBinding.instance.imageCache
-  final bool enableMemoryCache;
 
   ///when failed to load image, whether clear memory cache
   ///if true, image will reload in next time.
@@ -1213,11 +1205,6 @@ class _ExtendedImageState extends State<ExtendedImage>
       _frameNumber = _frameNumber == null ? 0 : _frameNumber! + 1;
       _wasSynchronouslyLoaded = _wasSynchronouslyLoaded | synchronousCall;
     });
-
-    // clearMemoryCacheWhenDispose is better
-    // if (!widget.enableMemoryCache) {
-    //   widget.image.evict();
-    // }
   }
 
   void _listenToStream() {
