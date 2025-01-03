@@ -640,7 +640,15 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       );
 
       if (scaleDelta <= 0) {
-        return;
+        // make crop rect as bigger as possible
+        final double scaleDelta1 =
+            widget.editActionDetails.scaleToMatchRect(rectVertices, layoutRect);
+        if (scaleDelta1 != double.negativeInfinity &&
+            !scaleDelta1.equalTo(1.0)) {
+          scaleDelta = scaleDelta1;
+        } else {
+          return;
+        }
       }
 
       // not out of layout rect

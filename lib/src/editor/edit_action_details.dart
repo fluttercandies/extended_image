@@ -265,6 +265,31 @@ class EditActionDetails {
         preTotalScale = totalScale;
         totalScale = totalScale * scaleDelta;
       }
+    } else {
+      // scale the image to align with the crop rect
+      final Matrix4 result = getTransform();
+      result.invert();
+      final Rect rect = _screenDestinationRect!;
+      final List<Offset> rectVertices = <Offset>[
+        screenCropRect!.topLeft,
+        screenCropRect!.topRight,
+        screenCropRect!.bottomRight,
+        screenCropRect!.bottomLeft,
+      ].map((Offset element) {
+        final Vector4 cornerVector = Vector4(element.dx, element.dy, 0.0, 1.0);
+        final Vector4 newCornerVector = result.transform(cornerVector);
+        return Offset(newCornerVector.x, newCornerVector.y);
+      }).toList();
+
+      final double scaleDelta = scaleToMatchRect(
+        rectVertices,
+        rect,
+      );
+      if (scaleDelta != double.negativeInfinity) {
+        screenFocalPoint = null;
+        preTotalScale = totalScale;
+        totalScale = totalScale * scaleDelta;
+      }
     }
   }
 
@@ -287,6 +312,28 @@ class EditActionDetails {
       rectVertices,
       rect,
     );
+    return scaleDelta;
+  }
+
+  double scaleToMatchRect(
+    List<Offset> rectVertices,
+    Rect rect,
+  ) {
+    double scaleDelta = double.negativeInfinity;
+    final Offset center = rect.center;
+    for (final Offset element in rectVertices) {
+      if (!rect.containsOffset(element)) {
+        continue;
+      }
+      final double x = (element.dx - center.dx).abs();
+      final double y = (element.dy - center.dy).abs();
+      final double halfWidth = rect.width / 2;
+      final double halfHeight = rect.height / 2;
+      if (x < halfWidth || y < halfHeight) {
+        scaleDelta = max(scaleDelta, max(x / halfWidth, y / halfHeight));
+      }
+    }
+
     return scaleDelta;
   }
 

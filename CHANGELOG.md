@@ -1,6 +1,7 @@
-## Unreleased
+## 9.1.0
 
 * Removed the `enableMemoryCache` variable in `ExtendedImage`,please Use `clearMemoryCacheWhenDispose` instead for managing memory cache behavior. 
+* Scale the image to align with the crop rect and make crop rect as bigger as possible when rotate Image on Editor mode.(#713)
 
 ## 9.0.9
 
