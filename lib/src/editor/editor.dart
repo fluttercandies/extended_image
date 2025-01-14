@@ -149,6 +149,11 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       _editActionDetails!.cropAspectRatio = _editorConfig!.cropAspectRatio;
     }
 
+    if (_editActionDetails!.cropAspectRatioRange == null) {
+      _editActionDetails!.cropAspectRatioRange =
+          _editorConfig!.cropAspectRatioRange;
+    }
+
     if (oldConfig != null &&
         oldConfig.cropAspectRatio != config.cropAspectRatio) {
       updateCropAspectRatio(config.cropAspectRatio);

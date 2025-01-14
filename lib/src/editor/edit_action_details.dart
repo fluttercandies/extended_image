@@ -26,6 +26,8 @@ class EditActionDetails {
 
   double? _cropAspectRatio;
 
+  List<double>? _cropAspectRatioRange;
+
   /// the original aspect ratio
   double? get originalCropAspectRatio => _cropAspectRatio;
 
@@ -40,6 +42,14 @@ class EditActionDetails {
   set cropAspectRatio(double? value) {
     if (_cropAspectRatio != value) {
       _cropAspectRatio = value;
+    }
+  }
+
+  List<double>? get cropAspectRatioRange => _cropAspectRatioRange;
+
+  set cropAspectRatioRange(List<double>? value) {
+    if (value != null && value.length == 2) {
+      _cropAspectRatioRange = value;
     }
   }
 

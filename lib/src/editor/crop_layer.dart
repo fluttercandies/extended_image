@@ -388,7 +388,26 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   Rect _handleAspectRatio(double gWidth, _MoveType moveType, Rect result,
       Rect? layerDestinationRect, Offset delta) {
     final double? aspectRatio = widget.editActionDetails.cropAspectRatio;
-    // do with aspect ratio
+    final List<double>? aspectRatioRange =
+        widget.editActionDetails.cropAspectRatioRange;
+
+    /// If the aspect ratio range is set, calculate whether the current aspect ratio is within the range.
+    if (aspectRatioRange != null && aspectRatioRange.length == 2) {
+      final double minRatio = aspectRatioRange[0];
+      final double maxRatio = aspectRatioRange[1];
+      final double currentRatio = result.width / result.height;
+
+      /// If the current ratio is beyond the range, adjust to the nearest valid ratio.
+      if (currentRatio < minRatio) {
+        final double newWidth = result.height * minRatio;
+        return _adjustRectSize(result, newWidth, result.height, moveType);
+      } else if (currentRatio > maxRatio) {
+        final double newWidth = result.height * maxRatio;
+        return _adjustRectSize(result, newWidth, result.height, moveType);
+      }
+      return result;
+    }
+
     if (aspectRatio != null) {
       final double minD = gWidth * 2;
       switch (moveType) {
@@ -450,6 +469,40 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       }
     }
     return result;
+  }
+
+  /// Adjust the size of the rectangle based on the move type
+  Rect _adjustRectSize(
+      Rect rect, double width, double height, _MoveType moveType) {
+    double left = rect.left;
+    double top = rect.top;
+
+    switch (moveType) {
+      case _MoveType.topLeft:
+        left = rect.right - width;
+        top = rect.bottom - height;
+        break;
+      case _MoveType.topRight:
+        top = rect.bottom - height;
+        break;
+      case _MoveType.bottomLeft:
+        left = rect.right - width;
+        break;
+      case _MoveType.bottomRight:
+        break;
+      case _MoveType.left:
+        left = rect.right - width;
+        break;
+      case _MoveType.right:
+        break;
+      case _MoveType.top:
+        top = rect.bottom - height;
+        break;
+      case _MoveType.bottom:
+        break;
+    }
+
+    return Rect.fromLTWH(left, top, width, height);
   }
 
   ///horizontal

@@ -28,6 +28,7 @@ class EditorConfig {
     this.hitTestSize = 20.0,
     this.animationDuration = const Duration(milliseconds: 200),
     this.tickerDuration = const Duration(milliseconds: 400),
+    this.cropAspectRatioRange,
     this.cropAspectRatio = CropAspectRatios.custom,
     this.initialCropAspectRatio = CropAspectRatios.custom,
     this.initCropRectType = InitCropRectType.imageRect,
@@ -95,6 +96,11 @@ class EditorConfig {
   /// By default, it's set to custom, allowing freeform cropping unless specified otherwise.
   final double? cropAspectRatio;
 
+  /// Range of aspect ratios for the crop rect.
+  /// This is a list of possible aspect ratios the crop rect can have.
+  /// By default, it's an empty list, meaning no specific range is set.
+  final List<double>? cropAspectRatioRange;
+
   /// Initial aspect ratio of the crop rect. This only affects the initial state of the crop rect,
   /// giving users the option to start with a pre-defined aspect ratio.
   final double? initialCropAspectRatio;
@@ -132,6 +138,7 @@ class EditorConfig {
     Duration? animationDuration,
     Duration? tickerDuration,
     double? cropAspectRatio,
+    List<double>? cropAspectRatioRange,
     double? initialCropAspectRatio,
     InitCropRectType? initCropRectType,
     EditorCropLayerPainter? cropLayerPainter,
@@ -154,6 +161,7 @@ class EditorConfig {
       animationDuration: animationDuration ?? this.animationDuration,
       tickerDuration: tickerDuration ?? this.tickerDuration,
       cropAspectRatio: cropAspectRatio ?? this.cropAspectRatio,
+      cropAspectRatioRange: cropAspectRatioRange ?? this.cropAspectRatioRange,
       initialCropAspectRatio:
           initialCropAspectRatio ?? this.initialCropAspectRatio,
       initCropRectType: initCropRectType ?? this.initCropRectType,
@@ -185,6 +193,7 @@ class EditorConfig {
         other.animationDuration == animationDuration &&
         other.tickerDuration == tickerDuration &&
         other.cropAspectRatio == cropAspectRatio &&
+        other.cropAspectRatioRange == cropAspectRatioRange &&
         other.initialCropAspectRatio == initialCropAspectRatio &&
         other.initCropRectType == initCropRectType &&
         other.cropLayerPainter == cropLayerPainter &&
@@ -210,6 +219,7 @@ class EditorConfig {
       animationDuration,
       tickerDuration,
       cropAspectRatio,
+      cropAspectRatioRange,
       initialCropAspectRatio,
       initCropRectType,
       cropLayerPainter,
