@@ -25,8 +25,8 @@ dependencies:
   pull_to_refresh_notification: any
   url_launcher: any
   vm_service: any
+  web: any
   wechat_assets_picker: any
-
 
 dependency_overrides:
   extended_image:
