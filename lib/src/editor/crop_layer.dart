@@ -22,7 +22,7 @@ enum _MoveType {
   top,
   right,
   bottom,
-  left
+  left,
 }
 
 class ExtendedImageCropLayer extends StatefulWidget {
@@ -52,8 +52,9 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   Rect? get cropRect => widget.editActionDetails.cropRect;
   set cropRect(Rect? value) {
     widget.editActionDetails.cropRect = value;
-    widget.editorConfig.editActionDetailsIsChanged
-        ?.call(widget.editActionDetails);
+    widget.editorConfig.editActionDetailsIsChanged?.call(
+      widget.editActionDetails,
+    );
   }
 
   bool get isAnimating => _rectTweenController.isAnimating;
@@ -71,8 +72,9 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     super.initState();
     _pointerDown = false;
     _rectTweenController = AnimationController(
-        vsync: this, duration: widget.editorConfig.animationDuration)
-      ..addListener(_doCropAutoCenterAnimation);
+      vsync: this,
+      duration: widget.editorConfig.animationDuration,
+    )..addListener(_doCropAutoCenterAnimation);
   }
 
   @override
@@ -90,8 +92,9 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       _rectTweenController.stop();
       _rectTweenController.dispose();
       _rectTweenController = AnimationController(
-          vsync: this, duration: widget.editorConfig.animationDuration)
-        ..addListener(_doCropAutoCenterAnimation);
+        vsync: this,
+        duration: widget.editorConfig.animationDuration,
+      )..addListener(_doCropAutoCenterAnimation);
     }
   }
 
@@ -105,8 +108,11 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
     final Color cornerColor = editConfig.cornerColor ?? primaryColor;
 
-    final Color maskColor = widget.editorConfig.editorMaskColorHandler
-            ?.call(context, _pointerDown) ??
+    final Color maskColor =
+        widget.editorConfig.editorMaskColorHandler?.call(
+          context,
+          _pointerDown,
+        ) ??
         defaultEditorMaskColorHandler(context, _pointerDown);
     final double gWidth = widget.editorConfig.hitTestSize;
 
@@ -116,8 +122,9 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
         cropLayerPainter: editConfig.cropLayerPainter,
         cornerColor: cornerColor,
         cornerSize: editConfig.cornerSize,
-        lineColor: editConfig.lineColor ??
-            Theme.of(context).scaffoldBackgroundColor.withOpacity(0.7),
+        lineColor:
+            editConfig.lineColor ??
+            Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.7),
         lineHeight: editConfig.lineHeight,
         maskColor: maskColor,
         pointerDown: _pointerDown,
@@ -312,14 +319,18 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
           delta = Offset(delta.dx, 0);
         }
         Offset topLeft = result!.topLeft + delta;
-        topLeft = Offset(min(topLeft.dx, result.right - gWidth * 2),
-            min(topLeft.dy, result.bottom - gWidth * 2));
+        topLeft = Offset(
+          min(topLeft.dx, result.right - gWidth * 2),
+          min(topLeft.dy, result.bottom - gWidth * 2),
+        );
         result = Rect.fromPoints(topLeft, result.bottomRight);
         break;
       case _MoveType.topRight:
         Offset topRight = result!.topRight + delta;
-        topRight = Offset(max(topRight.dx, result.left + gWidth * 2),
-            min(topRight.dy, result.bottom - gWidth * 2));
+        topRight = Offset(
+          max(topRight.dx, result.left + gWidth * 2),
+          min(topRight.dy, result.bottom - gWidth * 2),
+        );
         result = Rect.fromPoints(topRight, result.bottomLeft);
         break;
       case _MoveType.bottomRight:
@@ -331,17 +342,20 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
           delta = Offset(delta.dx, 0);
         }
         Offset bottomRight = result!.bottomRight + delta;
-        bottomRight = Offset(max(bottomRight.dx, result.left + gWidth * 2),
-            max(bottomRight.dy, result.top + gWidth * 2));
+        bottomRight = Offset(
+          max(bottomRight.dx, result.left + gWidth * 2),
+          max(bottomRight.dy, result.top + gWidth * 2),
+        );
         result = Rect.fromPoints(result.topLeft, bottomRight);
         break;
       case _MoveType.bottomLeft:
         Offset bottomLeft = result!.bottomLeft + delta;
-        bottomLeft = Offset(min(bottomLeft.dx, result.right - gWidth * 2),
-            max(bottomLeft.dy, result.top + gWidth * 2));
+        bottomLeft = Offset(
+          min(bottomLeft.dx, result.right - gWidth * 2),
+          max(bottomLeft.dy, result.top + gWidth * 2),
+        );
         result = Rect.fromPoints(bottomLeft, result.topRight);
         break;
-      default:
     }
 
     // drag crop rect to zoom in image, to fix #723
@@ -356,7 +370,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     result = _handleAspectRatio(
       gWidth,
       moveType,
-      result!,
+      result,
       cropRectLayoutRect,
       delta,
     );
@@ -369,9 +383,13 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     if (result.beyond(layoutRect)) {
       cropRect = result;
       final Rect centerCropRect = getDestinationRect(
-          rect: layoutRect, inputSize: result.size, fit: widget.fit);
-      final Rect newScreenCropRect =
-          centerCropRect.shift(widget.editActionDetails.layoutTopLeft!);
+        rect: layoutRect,
+        inputSize: result.size,
+        fit: widget.fit,
+      );
+      final Rect newScreenCropRect = centerCropRect.shift(
+        widget.editActionDetails.layoutTopLeft!,
+      );
       _doCropAutoCenterAnimation(newScreenCropRect: newScreenCropRect);
     } else {
       result = _doWithMaxScale(result);
@@ -385,8 +403,13 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   }
 
   /// handle crop rect with aspectRatio
-  Rect _handleAspectRatio(double gWidth, _MoveType moveType, Rect result,
-      Rect? layerDestinationRect, Offset delta) {
+  Rect _handleAspectRatio(
+    double gWidth,
+    _MoveType moveType,
+    Rect result,
+    Rect? layerDestinationRect,
+    Offset delta,
+  ) {
     final double? aspectRatio = widget.editActionDetails.cropAspectRatio;
     // do with aspect ratio
     if (aspectRatio != null) {
@@ -396,15 +419,23 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
         case _MoveType.bottom:
           final bool isTop = moveType == _MoveType.top;
           result = _doAspectRatioV(
-              minD, result, aspectRatio, layerDestinationRect!,
-              isTop: isTop);
+            minD,
+            result,
+            aspectRatio,
+            layerDestinationRect!,
+            isTop: isTop,
+          );
           break;
         case _MoveType.left:
         case _MoveType.right:
           final bool isLeft = moveType == _MoveType.left;
           result = _doAspectRatioH(
-              minD, result, aspectRatio, layerDestinationRect!,
-              isLeft: isLeft);
+            minD,
+            result,
+            aspectRatio,
+            layerDestinationRect!,
+            isLeft: isLeft,
+          );
           break;
         case _MoveType.topLeft:
         case _MoveType.topRight:
@@ -415,12 +446,16 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
           double width = result.width;
           double height = result.height;
           if (dx.greaterThanOrEqualTo(dy)) {
-            height = max(minD,
-                min(result.width / aspectRatio, layerDestinationRect!.height));
+            height = max(
+              minD,
+              min(result.width / aspectRatio, layerDestinationRect!.height),
+            );
             width = height * aspectRatio;
           } else {
-            width = max(minD,
-                min(result.height * aspectRatio, layerDestinationRect!.width));
+            width = max(
+              minD,
+              min(result.height * aspectRatio, layerDestinationRect!.width),
+            );
             height = width / aspectRatio;
           }
           double top = result.top;
@@ -446,7 +481,6 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
           }
           result = Rect.fromLTWH(left, top, width, height);
           break;
-        default:
       }
     }
     return result;
@@ -454,10 +488,16 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
   ///horizontal
   Rect _doAspectRatioH(
-      double minD, Rect result, double aspectRatio, Rect layerDestinationRect,
-      {required bool isLeft}) {
-    final double height =
-        max(minD, min(result.width / aspectRatio, layerDestinationRect.height));
+    double minD,
+    Rect result,
+    double aspectRatio,
+    Rect layerDestinationRect, {
+    required bool isLeft,
+  }) {
+    final double height = max(
+      minD,
+      min(result.width / aspectRatio, layerDestinationRect.height),
+    );
     final double width = height * aspectRatio;
     final double left = isLeft ? result.right - width : result.left;
     final double top = result.centerRight.dy - height / 2.0;
@@ -467,10 +507,16 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
   ///vertical
   Rect _doAspectRatioV(
-      double minD, Rect result, double aspectRatio, Rect layerDestinationRect,
-      {required bool isTop}) {
-    final double width =
-        max(minD, min(result.height * aspectRatio, layerDestinationRect.width));
+    double minD,
+    Rect result,
+    double aspectRatio,
+    Rect layerDestinationRect, {
+    required bool isTop,
+  }) {
+    final double width = max(
+      minD,
+      min(result.height * aspectRatio, layerDestinationRect.width),
+    );
     final double height = width / aspectRatio;
     final double top = isTop ? result.bottom - height : result.top;
     final double left = result.topCenter.dx - width / 2.0;
@@ -480,9 +526,13 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
   Rect? _doWithMaxScale(Rect rect) {
     final Rect centerCropRect = getDestinationRect(
-        rect: layoutRect, inputSize: rect.size, fit: widget.fit);
-    final Rect newScreenCropRect =
-        centerCropRect.shift(widget.editActionDetails.layoutTopLeft!);
+      rect: layoutRect,
+      inputSize: rect.size,
+      fit: widget.fit,
+    );
+    final Rect newScreenCropRect = centerCropRect.shift(
+      widget.editActionDetails.layoutTopLeft!,
+    );
 
     final Rect oldScreenCropRect = widget.editActionDetails.screenCropRect!;
 
@@ -517,19 +567,25 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       _timer?.cancel();
 
       // not move
-      if (widget.editActionDetails.cropRect!.center
-          .isSame(widget.editActionDetails.cropRectLayoutRectCenter!)) {
+      if (widget.editActionDetails.cropRect!.center.isSame(
+        widget.editActionDetails.cropRectLayoutRectCenter!,
+      )) {
         return;
       }
       final Rect? oldScreenCropRect = widget.editActionDetails.screenCropRect;
       // move to center
       final Rect centerCropRect = getDestinationRect(
-          rect: layoutRect, inputSize: cropRect!.size, fit: widget.fit);
-      final Rect newScreenCropRect =
-          centerCropRect.shift(widget.editActionDetails.layoutTopLeft!);
+        rect: layoutRect,
+        inputSize: cropRect!.size,
+        fit: widget.fit,
+      );
+      final Rect newScreenCropRect = centerCropRect.shift(
+        widget.editActionDetails.layoutTopLeft!,
+      );
 
       _rectAnimation = _rectTweenController.drive<Rect?>(
-          RectTween(begin: oldScreenCropRect, end: newScreenCropRect));
+        RectTween(begin: oldScreenCropRect, end: newScreenCropRect),
+      );
       _rectTweenController.reset();
       _rectTweenController.forward();
     });
@@ -555,37 +611,55 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
         ];
 
         // get image corners on screen
-        final List<Offset> rotatedCorners = corners.map((Offset corner) {
-          final Vector4 cornerVector = Vector4(corner.dx, corner.dy, 0.0, 1.0);
-          final Vector4 newCornerVector = result.transform(cornerVector);
-          return Offset(newCornerVector.x, newCornerVector.y);
-        }).toList();
+        final List<Offset> rotatedCorners =
+            corners.map((Offset corner) {
+              final Vector4 cornerVector = Vector4(
+                corner.dx,
+                corner.dy,
+                0.0,
+                1.0,
+              );
+              final Vector4 newCornerVector = result.transform(cornerVector);
+              return Offset(newCornerVector.x, newCornerVector.y);
+            }).toList();
         // rock back to image rect
         result.invert();
-        final List<Offset> list = rotatedCorners
-            .map((Offset corner) =>
-                // The distance from the four corners of the image to the center of the cropping box
-                //  old distance is scale to new distance
-                // So we can find the new four corners
-
-                (corner - oldScreenCropRect.center) * scale +
-                newScreenCropRect!.center)
-            .map((Offset corner) {
-          // rock back to image rect
-          final Vector4 cornerVector = Vector4(corner.dx, corner.dy, 0.0, 1.0);
-          final Vector4 newCornerVector = result.transform(cornerVector);
-          return Offset(newCornerVector.x, newCornerVector.y);
-        }).toList();
+        final List<Offset> list =
+            rotatedCorners
+                .map(
+                  (Offset corner) =>
+                      // The distance from the four corners of the image to the center of the cropping box
+                      //  old distance is scale to new distance
+                      // So we can find the new four corners
+                      (corner - oldScreenCropRect.center) * scale +
+                      newScreenCropRect!.center,
+                )
+                .map((Offset corner) {
+                  // rock back to image rect
+                  final Vector4 cornerVector = Vector4(
+                    corner.dx,
+                    corner.dy,
+                    0.0,
+                    1.0,
+                  );
+                  final Vector4 newCornerVector = result.transform(
+                    cornerVector,
+                  );
+                  return Offset(newCornerVector.x, newCornerVector.y);
+                })
+                .toList();
 
         // new image rect
         final Rect newScreenDestinationRect = Rect.fromPoints(list[0], list[2]);
 
-        cropRect =
-            newScreenCropRect!.shift(-widget.editActionDetails.layoutTopLeft!);
+        cropRect = newScreenCropRect!.shift(
+          -widget.editActionDetails.layoutTopLeft!,
+        );
 
         final double totalScale = widget.editActionDetails.totalScale * scale;
-        widget.editActionDetails
-            .setScreenDestinationRect(newScreenDestinationRect);
+        widget.editActionDetails.setScreenDestinationRect(
+          newScreenDestinationRect,
+        );
         widget.editActionDetails.totalScale = totalScale;
         widget.editActionDetails.preTotalScale = totalScale;
 
@@ -612,27 +686,31 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       final Offset origin = _cropRectStart!.center;
       final Matrix4 result = Matrix4.identity();
       _rotateRadians += rotateRadiansDelta;
-      result.translate(
-        origin.dx,
-        origin.dy,
-      );
+      result.translate(origin.dx, origin.dy);
       if (widget.editActionDetails.flipY) {
         result.multiply(
-            Matrix4.rotationY(widget.editActionDetails.rotationYRadians));
+          Matrix4.rotationY(widget.editActionDetails.rotationYRadians),
+        );
       }
       result.multiply(Matrix4.rotationZ(_rotateRadians));
       result.translate(-origin.dx, -origin.dy);
 
-      final List<Offset> rectVertices = <Offset>[
-        _cropRectStart!.topLeft,
-        _cropRectStart!.topRight,
-        _cropRectStart!.bottomRight,
-        _cropRectStart!.bottomLeft,
-      ].map((Offset element) {
-        final Vector4 cornerVector = Vector4(element.dx, element.dy, 0.0, 1.0);
-        final Vector4 newCornerVector = result.transform(cornerVector);
-        return Offset(newCornerVector.x, newCornerVector.y);
-      }).toList();
+      final List<Offset> rectVertices =
+          <Offset>[
+            _cropRectStart!.topLeft,
+            _cropRectStart!.topRight,
+            _cropRectStart!.bottomRight,
+            _cropRectStart!.bottomLeft,
+          ].map((Offset element) {
+            final Vector4 cornerVector = Vector4(
+              element.dx,
+              element.dy,
+              0.0,
+              1.0,
+            );
+            final Vector4 newCornerVector = result.transform(cornerVector);
+            return Offset(newCornerVector.x, newCornerVector.y);
+          }).toList();
 
       double scaleDelta = widget.editActionDetails.scaleToFit(
         rectVertices,
@@ -641,8 +719,10 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
 
       if (scaleDelta <= 0) {
         // make crop rect as bigger as possible
-        final double scaleDelta1 =
-            widget.editActionDetails.scaleToMatchRect(rectVertices, layoutRect);
+        final double scaleDelta1 = widget.editActionDetails.scaleToMatchRect(
+          rectVertices,
+          layoutRect,
+        );
         if (scaleDelta1 != double.negativeInfinity &&
             !scaleDelta1.equalTo(1.0)) {
           scaleDelta = scaleDelta1;

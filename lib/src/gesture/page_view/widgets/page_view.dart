@@ -37,11 +37,11 @@ class GesturePageView extends StatefulWidget {
     this.scrollBehavior,
     this.padEnds = true,
     this.preloadPagesCount = 0,
-  })  : assert(allowImplicitScrolling != null),
-        assert(clipBehavior != null),
-        controller = controller ?? _defaultPageController,
-        childrenDelegate = SliverChildListDelegate(children),
-        super(key: key);
+  }) : assert(allowImplicitScrolling != null),
+       assert(clipBehavior != null),
+       controller = controller ?? _defaultPageController,
+       childrenDelegate = SliverChildListDelegate(children),
+       super(key: key);
 
   /// Creates a scrollable list that works page by page using widgets that are
   /// created on demand.
@@ -78,12 +78,14 @@ class GesturePageView extends StatefulWidget {
     this.scrollBehavior,
     this.padEnds = true,
     this.preloadPagesCount = 0,
-  })  : assert(allowImplicitScrolling != null),
-        assert(clipBehavior != null),
-        controller = controller ?? _defaultPageController,
-        childrenDelegate =
-            SliverChildBuilderDelegate(itemBuilder, childCount: itemCount),
-        super(key: key);
+  }) : assert(allowImplicitScrolling != null),
+       assert(clipBehavior != null),
+       controller = controller ?? _defaultPageController,
+       childrenDelegate = SliverChildBuilderDelegate(
+         itemBuilder,
+         childCount: itemCount,
+       ),
+       super(key: key);
 
   /// Creates a scrollable list that works page by page with a custom child
   /// model.
@@ -185,11 +187,11 @@ class GesturePageView extends StatefulWidget {
     this.scrollBehavior,
     this.padEnds = true,
     this.preloadPagesCount = 0,
-  })  : assert(childrenDelegate != null),
-        assert(allowImplicitScrolling != null),
-        assert(clipBehavior != null),
-        controller = controller ?? _defaultPageController,
-        super(key: key);
+  }) : assert(childrenDelegate != null),
+       assert(allowImplicitScrolling != null),
+       assert(clipBehavior != null),
+       controller = controller ?? _defaultPageController,
+       super(key: key);
 
   /// Controls whether the widget's pages will respond to
   /// [RenderObject.showOnScreen], which will allow for implicit accessibility
@@ -314,8 +316,9 @@ class _GesturePageViewState extends State<GesturePageView> {
       case Axis.horizontal:
         assert(debugCheckHasDirectionality(context));
         final TextDirection textDirection = Directionality.of(context);
-        final AxisDirection axisDirection =
-            textDirectionToAxisDirection(textDirection);
+        final AxisDirection axisDirection = textDirectionToAxisDirection(
+          textDirection,
+        );
         return widget.reverse
             ? flipAxisDirection(axisDirection)
             : axisDirection;
@@ -331,8 +334,9 @@ class _GesturePageViewState extends State<GesturePageView> {
       allowImplicitScrolling: widget.allowImplicitScrolling,
     ).applyTo(
       widget.pageSnapping
-          ? _kPagePhysics.applyTo(widget.physics ??
-              widget.scrollBehavior?.getScrollPhysics(context))
+          ? _kPagePhysics.applyTo(
+            widget.physics ?? widget.scrollBehavior?.getScrollPhysics(context),
+          )
           : widget.physics ?? widget.scrollBehavior?.getScrollPhysics(context),
     );
 
@@ -358,7 +362,8 @@ class _GesturePageViewState extends State<GesturePageView> {
         shouldIgnorePointerWhenScrolling:
             widget.controller.shouldIgnorePointerWhenScrolling,
         restorationId: widget.restorationId,
-        scrollBehavior: widget.scrollBehavior ??
+        scrollBehavior:
+            widget.scrollBehavior ??
             ScrollConfiguration.of(context).copyWith(scrollbars: false),
         viewportBuilder: (BuildContext context, ViewportOffset position) {
           final double cacheExtent;
@@ -395,21 +400,40 @@ class _GesturePageViewState extends State<GesturePageView> {
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description
-        .add(EnumProperty<Axis>('scrollDirection', widget.scrollDirection));
     description.add(
-        FlagProperty('reverse', value: widget.reverse, ifTrue: 'reversed'));
-    description.add(DiagnosticsProperty<ExtendedPageController>(
-        'controller', widget.controller,
-        showName: false));
-    description.add(DiagnosticsProperty<ScrollPhysics>(
-        'physics', widget.physics,
-        showName: false));
-    description.add(FlagProperty('pageSnapping',
-        value: widget.pageSnapping, ifFalse: 'snapping disabled'));
-    description.add(FlagProperty('allowImplicitScrolling',
+      EnumProperty<Axis>('scrollDirection', widget.scrollDirection),
+    );
+    description.add(
+      FlagProperty('reverse', value: widget.reverse, ifTrue: 'reversed'),
+    );
+    description.add(
+      DiagnosticsProperty<ExtendedPageController>(
+        'controller',
+        widget.controller,
+        showName: false,
+      ),
+    );
+    description.add(
+      DiagnosticsProperty<ScrollPhysics>(
+        'physics',
+        widget.physics,
+        showName: false,
+      ),
+    );
+    description.add(
+      FlagProperty(
+        'pageSnapping',
+        value: widget.pageSnapping,
+        ifFalse: 'snapping disabled',
+      ),
+    );
+    description.add(
+      FlagProperty(
+        'allowImplicitScrolling',
         value: widget.allowImplicitScrolling,
-        ifTrue: 'allow implicit scrolling'));
+        ifTrue: 'allow implicit scrolling',
+      ),
+    );
   }
 }
 
@@ -417,8 +441,8 @@ class _ForceImplicitScrollPhysics extends ScrollPhysics {
   const _ForceImplicitScrollPhysics({
     required this.allowImplicitScrolling,
     ScrollPhysics? parent,
-  })  : assert(allowImplicitScrolling != null),
-        super(parent: parent);
+  }) : assert(allowImplicitScrolling != null),
+       super(parent: parent);
 
   @override
   _ForceImplicitScrollPhysics applyTo(ScrollPhysics? ancestor) {
@@ -447,18 +471,18 @@ class _Scrollable extends Scrollable {
     ScrollBehavior? scrollBehavior,
     this.shouldIgnorePointerWhenScrolling = true,
   }) : super(
-          key: key,
-          axisDirection: axisDirection,
-          controller: controller,
-          physics: physics,
-          viewportBuilder: viewportBuilder,
-          incrementCalculator: incrementCalculator,
-          excludeFromSemantics: excludeFromSemantics,
-          semanticChildCount: semanticChildCount,
-          dragStartBehavior: dragStartBehavior,
-          restorationId: restorationId,
-          scrollBehavior: scrollBehavior,
-        );
+         key: key,
+         axisDirection: axisDirection,
+         controller: controller,
+         physics: physics,
+         viewportBuilder: viewportBuilder,
+         incrementCalculator: incrementCalculator,
+         excludeFromSemantics: excludeFromSemantics,
+         semanticChildCount: semanticChildCount,
+         dragStartBehavior: dragStartBehavior,
+         restorationId: restorationId,
+         scrollBehavior: scrollBehavior,
+       );
   final bool shouldIgnorePointerWhenScrolling;
   @override
   _ExtendedScrollableState createState() => _ExtendedScrollableState();

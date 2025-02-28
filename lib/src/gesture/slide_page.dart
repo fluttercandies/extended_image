@@ -5,16 +5,9 @@ import 'gesture.dart';
 import 'slide_page_handler.dart';
 import 'utils.dart';
 
-enum SlideAxis {
-  both,
-  horizontal,
-  vertical,
-}
+enum SlideAxis { both, horizontal, vertical }
 
-enum SlideType {
-  wholePage,
-  onlyImage,
-}
+enum SlideType { wholePage, onlyImage }
 
 class ExtendedImageSlidePage extends StatefulWidget {
   const ExtendedImageSlidePage({
@@ -79,9 +72,10 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   Animation<double>? _backScaleAnimation;
   Animation<double>? get backScaleAnimation => _backScaleAnimation;
   Offset _offset = Offset.zero;
-  Offset get offset => _backAnimationController.isAnimating
-      ? _backOffsetAnimation!.value
-      : _offset;
+  Offset get offset =>
+      _backAnimationController.isAnimating
+          ? _backOffsetAnimation!.value
+          : _offset;
   double _scale = 1.0;
   double get scale =>
       _backAnimationController.isAnimating ? backScaleAnimation!.value : _scale;
@@ -90,8 +84,10 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
   @override
   void initState() {
     super.initState();
-    _backAnimationController =
-        AnimationController(vsync: this, duration: widget.resetPageDuration);
+    _backAnimationController = AnimationController(
+      vsync: this,
+      duration: widget.resetPageDuration,
+    );
     _backAnimationController.addListener(_backAnimation);
   }
 
@@ -100,8 +96,10 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     if (oldWidget.resetPageDuration != widget.resetPageDuration) {
       _backAnimationController.stop();
       _backAnimationController.dispose();
-      _backAnimationController =
-          AnimationController(vsync: this, duration: widget.resetPageDuration);
+      _backAnimationController = AnimationController(
+        vsync: this,
+        duration: widget.resetPageDuration,
+      );
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -132,9 +130,11 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     super.dispose();
   }
 
-  void slide(Offset value,
-      {ExtendedImageGestureState? extendedImageGestureState,
-      ExtendedImageSlidePageHandlerState? extendedImageSlidePageHandlerState}) {
+  void slide(
+    Offset value, {
+    ExtendedImageGestureState? extendedImageGestureState,
+    ExtendedImageSlidePageHandlerState? extendedImageSlidePageHandlerState,
+  }) {
     if (_backAnimationController.isAnimating) {
       return;
     }
@@ -151,20 +151,15 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     } else {
       _offset += value;
     }
-    _offset = widget.slideOffsetHandler?.call(
-          _offset,
-          state: this,
-        ) ??
-        _offset;
+    _offset = widget.slideOffsetHandler?.call(_offset, state: this) ?? _offset;
 
-    _scale = widget.slideScaleHandler?.call(
-          _offset,
-          state: this,
-        ) ??
+    _scale =
+        widget.slideScaleHandler?.call(_offset, state: this) ??
         defaultSlideScaleHandler(
-            offset: _offset,
-            pageSize: pageSize,
-            pageGestureAxis: widget.slideAxis);
+          offset: _offset,
+          pageSize: pageSize,
+          pageGestureAxis: widget.slideAxis,
+        );
 
     //if (_scale != 1.0 || _offset != Offset.zero)
     {
@@ -183,7 +178,8 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
 
   void endSlide(ScaleEndDetails details) {
     if (mounted && _isSliding) {
-      final bool popPage = widget.slideEndHandler?.call(
+      final bool popPage =
+          widget.slideEndHandler?.call(
             _offset,
             state: this,
             details: details,
@@ -203,10 +199,12 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
       } else {
         //_isSliding=false;
         if (_offset != Offset.zero || _scale != 1.0) {
-          _backOffsetAnimation = _backAnimationController
-              .drive(Tween<Offset>(begin: _offset, end: Offset.zero));
-          _backScaleAnimation = _backAnimationController
-              .drive(Tween<double>(begin: _scale, end: 1.0));
+          _backOffsetAnimation = _backAnimationController.drive(
+            Tween<Offset>(begin: _offset, end: Offset.zero),
+          );
+          _backScaleAnimation = _backAnimationController.drive(
+            Tween<double>(begin: _scale, end: 1.0),
+          );
           _offset = Offset.zero;
           _scale = 1.0;
           _backAnimationController.reset();
@@ -225,20 +223,18 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
     _pageSize = MediaQuery.of(context).size;
     final Color pageColor =
         widget.slidePageBackgroundHandler?.call(offset, pageSize) ??
-            defaultSlidePageBackgroundHandler(
-                offset: offset,
-                pageSize: pageSize,
-                color: Theme.of(context).dialogBackgroundColor,
-                pageGestureAxis: widget.slideAxis);
+        defaultSlidePageBackgroundHandler(
+          offset: offset,
+          pageSize: pageSize,
+          color: Theme.of(context).dialogBackgroundColor,
+          pageGestureAxis: widget.slideAxis,
+        );
 
     Widget? result = widget.child;
     if (widget.slideType == SlideType.wholePage) {
       result = Transform.translate(
         offset: offset,
-        child: Transform.scale(
-          scale: scale,
-          child: result,
-        ),
+        child: Transform.scale(scale: scale, child: result),
       );
     }
 
@@ -247,10 +243,10 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
       child: result,
     );
 
-//    result = IgnorePointer(
-//      ignoring: _isSliding,
-//      child: result,
-//    );
+    //    result = IgnorePointer(
+    //      ignoring: _isSliding,
+    //      child: result,
+    //    );
 
     return result;
   }

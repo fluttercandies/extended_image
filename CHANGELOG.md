@@ -1,7 +1,8 @@
 ## 10.0.0
 
 * Add WebHtmlElementStrategy for ExtendedNetworkImageProvider on Web
-
+* Migrate to 3.29.0 
+  
 ## 9.1.0
 
 * Removed the `enableMemoryCache` variable in `ExtendedImage`,please Use `clearMemoryCacheWhenDispose` instead for managing memory cache behavior. 

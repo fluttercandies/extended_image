@@ -92,7 +92,8 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                     canvas.drawPath(
                         clipheart(rect, canvas),
                         Paint()
-                          ..color = const Color(0x55ea5504).withOpacity(0.2)
+                          ..color =
+                              const Color(0x55ea5504).withValues(alpha: 0.2)
                           ..isAntiAlias = false
                           ..filterQuality = FilterQuality.low);
                   }

@@ -194,8 +194,10 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
 
   @override
   ExtendedRenderImage createRenderObject(BuildContext context) {
-    assert((!matchTextDirection && alignment is Alignment) ||
-        debugCheckHasDirectionality(context));
+    assert(
+      (!matchTextDirection && alignment is Alignment) ||
+          debugCheckHasDirectionality(context),
+    );
     assert(
       image?.debugGetOpenHandleStackTraces()?.isNotEmpty ?? true,
       'Creator of a RawImage disposed of the image when the RawImage still '
@@ -215,9 +217,10 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
       repeat: repeat,
       centerSlice: centerSlice,
       matchTextDirection: matchTextDirection,
-      textDirection: matchTextDirection || alignment is! Alignment
-          ? Directionality.of(context)
-          : null,
+      textDirection:
+          matchTextDirection || alignment is! Alignment
+              ? Directionality.of(context)
+              : null,
       invertColors: invertColors,
       isAntiAlias: isAntiAlias,
       filterQuality: filterQuality,
@@ -232,11 +235,14 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
 
   @override
   void updateRenderObject(
-      BuildContext context, ExtendedRenderImage renderObject) {
+    BuildContext context,
+    ExtendedRenderImage renderObject,
+  ) {
     assert(
-        image?.debugGetOpenHandleStackTraces()?.isNotEmpty ?? true,
-        'Creator of a RawImage disposed of the image when the RawImage still '
-        'needed it.');
+      image?.debugGetOpenHandleStackTraces()?.isNotEmpty ?? true,
+      'Creator of a RawImage disposed of the image when the RawImage still '
+      'needed it.',
+    );
     renderObject
       ..image = image?.clone()
       ..debugImageLabel = debugImageLabel
@@ -251,9 +257,10 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
       ..repeat = repeat
       ..centerSlice = centerSlice
       ..matchTextDirection = matchTextDirection
-      ..textDirection = matchTextDirection || alignment is! Alignment
-          ? Directionality.of(context)
-          : null
+      ..textDirection =
+          matchTextDirection || alignment is! Alignment
+              ? Directionality.of(context)
+              : null
       ..invertColors = invertColors
       ..isAntiAlias = isAntiAlias
       ..filterQuality = filterQuality
@@ -279,23 +286,49 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
     properties.add(DoubleProperty('height', height, defaultValue: null));
     properties.add(DoubleProperty('scale', scale, defaultValue: 1.0));
     properties.add(ColorProperty('color', color, defaultValue: null));
-    properties.add(DiagnosticsProperty<Animation<double>?>('opacity', opacity,
-        defaultValue: null));
-    properties.add(EnumProperty<BlendMode>('colorBlendMode', colorBlendMode,
-        defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<Animation<double>?>(
+        'opacity',
+        opacity,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      EnumProperty<BlendMode>(
+        'colorBlendMode',
+        colorBlendMode,
+        defaultValue: null,
+      ),
+    );
     properties.add(EnumProperty<BoxFit>('fit', fit, defaultValue: null));
-    properties.add(DiagnosticsProperty<AlignmentGeometry>(
-        'alignment', alignment,
-        defaultValue: null));
-    properties.add(EnumProperty<ImageRepeat>('repeat', repeat,
-        defaultValue: ImageRepeat.noRepeat));
-    properties.add(DiagnosticsProperty<Rect>('centerSlice', centerSlice,
-        defaultValue: null));
-    properties.add(FlagProperty('matchTextDirection',
-        value: matchTextDirection, ifTrue: 'match text direction'));
+    properties.add(
+      DiagnosticsProperty<AlignmentGeometry>(
+        'alignment',
+        alignment,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      EnumProperty<ImageRepeat>(
+        'repeat',
+        repeat,
+        defaultValue: ImageRepeat.noRepeat,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<Rect>('centerSlice', centerSlice, defaultValue: null),
+    );
+    properties.add(
+      FlagProperty(
+        'matchTextDirection',
+        value: matchTextDirection,
+        ifTrue: 'match text direction',
+      ),
+    );
     properties.add(DiagnosticsProperty<bool>('invertColors', invertColors));
     properties.add(EnumProperty<FilterQuality>('filterQuality', filterQuality));
-    properties
-        .add(DiagnosticsProperty<EdgeInsets>('layoutInsets', layoutInsets));
+    properties.add(
+      DiagnosticsProperty<EdgeInsets>('layoutInsets', layoutInsets),
+    );
   }
 }

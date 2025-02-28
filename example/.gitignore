@@ -73,3 +73,4 @@ Podfile.lock
 /lib/assets.preview.dart
 \lib\assets.preview.dart
 .metadata
+**/ephemeral/**

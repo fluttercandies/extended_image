@@ -107,7 +107,7 @@ class CropImage extends StatelessWidget {
         widget = Stack(children: <Widget>[
           widget,
           Container(
-            color: Colors.grey.withValues(alpha: 255 * 0.2),
+            color: Colors.grey.withValues(alpha: 0.2),
             alignment: Alignment.center,
             child: Text(
               '+${tuChongItem.images!.length - 9}',

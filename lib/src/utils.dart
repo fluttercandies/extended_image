@@ -14,7 +14,7 @@ enum LoadState {
   completed,
 
   /// failed
-  failed
+  failed,
 }
 
 mixin ExtendedImageState {
@@ -55,7 +55,7 @@ enum ExtendedImageMode {
   gesture,
 
   /// support be to crop,rotate,flip
-  editor
+  editor,
 }
 
 ///get type from T
@@ -119,13 +119,17 @@ extension DoubleExtension on double {
     return compare(other, precision: precision) == 0;
   }
 
-  bool greaterThanOrEqualTo(double other,
-      {double precision = precisionErrorTolerance}) {
+  bool greaterThanOrEqualTo(
+    double other, {
+    double precision = precisionErrorTolerance,
+  }) {
     return compare(other, precision: precision) >= 0;
   }
 
-  bool lessThanOrEqualTo(double other,
-      {double precision = precisionErrorTolerance}) {
+  bool lessThanOrEqualTo(
+    double other, {
+    double precision = precisionErrorTolerance,
+  }) {
     return compare(other, precision: precision) <= 0;
   }
 }

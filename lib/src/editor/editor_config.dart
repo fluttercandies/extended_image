@@ -37,10 +37,10 @@ class EditorConfig {
     this.editActionDetailsIsChanged,
     this.reverseMousePointerScrollDirection = false,
     this.controller,
-  })  : assert(lineHeight > 0.0),
-        assert(hitTestSize >= 0.0),
-        assert(maxScale > 0.0),
-        assert(speed > 0.0);
+  }) : assert(lineHeight > 0.0),
+       assert(hitTestSize >= 0.0),
+       assert(maxScale > 0.0),
+       assert(speed > 0.0);
 
   /// Callback triggered when `EditActionDetails` is changed.
   final EditActionDetailsIsChanged? editActionDetailsIsChanged;
@@ -162,7 +162,8 @@ class EditorConfig {
       hitTestBehavior: hitTestBehavior ?? this.hitTestBehavior,
       editActionDetailsIsChanged:
           editActionDetailsIsChanged ?? this.editActionDetailsIsChanged,
-      reverseMousePointerScrollDirection: reverseMousePointerScrollDirection ??
+      reverseMousePointerScrollDirection:
+          reverseMousePointerScrollDirection ??
           this.reverseMousePointerScrollDirection,
       controller: controller ?? this.controller,
     );

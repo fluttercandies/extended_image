@@ -54,8 +54,10 @@ Rect getDestinationRect({
 
   // Adjust the input and output sizes if centerSlice is provided (for nine-patch scaling).
   if (centerSlice != null) {
-    sliceBorder = Offset(centerSlice.left + inputSize.width - centerSlice.right,
-        centerSlice.top + inputSize.height - centerSlice.bottom);
+    sliceBorder = Offset(
+      centerSlice.left + inputSize.width - centerSlice.right,
+      centerSlice.top + inputSize.height - centerSlice.bottom,
+    );
     outputSize = outputSize - sliceBorder as Size;
     inputSize = inputSize - sliceBorder as Size;
   }
@@ -67,8 +69,11 @@ Rect getDestinationRect({
   assert(centerSlice == null || (fit != BoxFit.none && fit != BoxFit.cover));
 
   // Calculate the fitted sizes based on the BoxFit.
-  final FittedSizes fittedSizes =
-      applyBoxFit(fit, inputSize / scale, outputSize);
+  final FittedSizes fittedSizes = applyBoxFit(
+    fit,
+    inputSize / scale,
+    outputSize,
+  );
 
   // Get the source and destination sizes for drawing the image.
   final Size sourceSize = fittedSizes.source * scale;
@@ -78,8 +83,10 @@ Rect getDestinationRect({
     outputSize += sliceBorder;
     destinationSize += sliceBorder;
     // Ensure sourceSize matches inputSize when using a centerSlice.
-    assert(sourceSize == inputSize,
-        'centerSlice was used with a BoxFit that does not guarantee that the image is fully visible.');
+    assert(
+      sourceSize == inputSize,
+      'centerSlice was used with a BoxFit that does not guarantee that the image is fully visible.',
+    );
   }
 
   // Calculate the positioning offsets based on alignment and potential flipping.
@@ -87,7 +94,8 @@ Rect getDestinationRect({
       (outputSize.width - destinationSize.width) / 2.0;
   final double halfHeightDelta =
       (outputSize.height - destinationSize.height) / 2.0;
-  final double dx = halfWidthDelta +
+  final double dx =
+      halfWidthDelta +
       (flipHorizontally ? -alignment.x : alignment.x) * halfWidthDelta;
   final double dy = halfHeightDelta + alignment.y * halfHeightDelta;
 
@@ -103,9 +111,9 @@ Rect getDestinationRect({
 /// - When the pointer is down, the opacity is lower to highlight the focus.
 /// - Otherwise, the opacity is higher, indicating an idle state.
 Color defaultEditorMaskColorHandler(BuildContext context, bool pointerDown) {
-  return Theme.of(context)
-      .scaffoldBackgroundColor
-      .withOpacity(pointerDown ? 0.4 : 0.8);
+  return Theme.of(
+    context,
+  ).scaffoldBackgroundColor.withValues(alpha: (pointerDown ? 0.4 : 0.8));
 }
 
 /// `InitCropRectType` specifies how the initial crop rectangle should be defined.

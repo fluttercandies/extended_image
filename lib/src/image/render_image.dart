@@ -38,28 +38,28 @@ class ExtendedRenderImage extends RenderBox {
     GestureDetails? gestureDetails,
     EditActionDetails? editActionDetails,
     EdgeInsets layoutInsets = EdgeInsets.zero,
-  })  : _image = image,
-        _width = width,
-        _height = height,
-        _scale = scale,
-        _color = color,
-        _opacity = opacity,
-        _colorBlendMode = colorBlendMode,
-        _fit = fit,
-        _alignment = alignment,
-        _repeat = repeat,
-        _centerSlice = centerSlice,
-        _matchTextDirection = matchTextDirection,
-        _invertColors = invertColors,
-        _textDirection = textDirection,
-        _isAntiAlias = isAntiAlias,
-        _filterQuality = filterQuality,
-        _sourceRect = sourceRect,
-        _beforePaintImage = beforePaintImage,
-        _afterPaintImage = afterPaintImage,
-        _gestureDetails = gestureDetails,
-        _editActionDetails = editActionDetails,
-        _layoutInsets = layoutInsets {
+  }) : _image = image,
+       _width = width,
+       _height = height,
+       _scale = scale,
+       _color = color,
+       _opacity = opacity,
+       _colorBlendMode = colorBlendMode,
+       _fit = fit,
+       _alignment = alignment,
+       _repeat = repeat,
+       _centerSlice = centerSlice,
+       _matchTextDirection = matchTextDirection,
+       _invertColors = invertColors,
+       _textDirection = textDirection,
+       _isAntiAlias = isAntiAlias,
+       _filterQuality = filterQuality,
+       _sourceRect = sourceRect,
+       _beforePaintImage = beforePaintImage,
+       _afterPaintImage = afterPaintImage,
+       _gestureDetails = gestureDetails,
+       _editActionDetails = editActionDetails,
+       _layoutInsets = layoutInsets {
     _updateColorFilter();
   }
 
@@ -215,8 +215,10 @@ class ExtendedRenderImage extends RenderBox {
     if (_color == null) {
       _colorFilter = null;
     } else {
-      _colorFilter =
-          ColorFilter.mode(_color!, _colorBlendMode ?? BlendMode.srcIn);
+      _colorFilter = ColorFilter.mode(
+        _color!,
+        _colorBlendMode ?? BlendMode.srcIn,
+      );
     }
   }
 
@@ -426,10 +428,12 @@ class ExtendedRenderImage extends RenderBox {
       return constraints.smallest;
     }
 
-    return constraints.constrainSizeAndAttemptToPreserveAspectRatio(Size(
-      _image!.width.toDouble() / _scale,
-      _image!.height.toDouble() / _scale,
-    ));
+    return constraints.constrainSizeAndAttemptToPreserveAspectRatio(
+      Size(
+        _image!.width.toDouble() / _scale,
+        _image!.height.toDouble() / _scale,
+      ),
+    );
   }
 
   @override
@@ -438,15 +442,17 @@ class ExtendedRenderImage extends RenderBox {
     if (_width == null && _height == null) {
       return 0.0;
     }
-    return _sizeForConstraints(BoxConstraints.tightForFinite(height: height))
-        .width;
+    return _sizeForConstraints(
+      BoxConstraints.tightForFinite(height: height),
+    ).width;
   }
 
   @override
   double computeMaxIntrinsicWidth(double height) {
     assert(height >= 0.0);
-    return _sizeForConstraints(BoxConstraints.tightForFinite(height: height))
-        .width;
+    return _sizeForConstraints(
+      BoxConstraints.tightForFinite(height: height),
+    ).width;
   }
 
   @override
@@ -455,15 +461,17 @@ class ExtendedRenderImage extends RenderBox {
     if (_width == null && _height == null) {
       return 0.0;
     }
-    return _sizeForConstraints(BoxConstraints.tightForFinite(width: width))
-        .height;
+    return _sizeForConstraints(
+      BoxConstraints.tightForFinite(width: width),
+    ).height;
   }
 
   @override
   double computeMaxIntrinsicHeight(double width) {
     assert(width >= 0.0);
-    return _sizeForConstraints(BoxConstraints.tightForFinite(width: width))
-        .height;
+    return _sizeForConstraints(
+      BoxConstraints.tightForFinite(width: width),
+    ).height;
   }
 
   @override
@@ -543,22 +551,52 @@ class ExtendedRenderImage extends RenderBox {
     properties.add(DoubleProperty('height', height, defaultValue: null));
     properties.add(DoubleProperty('scale', scale, defaultValue: 1.0));
     properties.add(ColorProperty('color', color, defaultValue: null));
-    properties.add(DiagnosticsProperty<Animation<double>?>('opacity', opacity,
-        defaultValue: null));
-    properties.add(EnumProperty<BlendMode>('colorBlendMode', colorBlendMode,
-        defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<Animation<double>?>(
+        'opacity',
+        opacity,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      EnumProperty<BlendMode>(
+        'colorBlendMode',
+        colorBlendMode,
+        defaultValue: null,
+      ),
+    );
     properties.add(EnumProperty<BoxFit>('fit', fit, defaultValue: null));
-    properties.add(DiagnosticsProperty<AlignmentGeometry>(
-        'alignment', alignment,
-        defaultValue: null));
-    properties.add(EnumProperty<ImageRepeat>('repeat', repeat,
-        defaultValue: ImageRepeat.noRepeat));
-    properties.add(DiagnosticsProperty<Rect>('centerSlice', centerSlice,
-        defaultValue: null));
-    properties.add(FlagProperty('matchTextDirection',
-        value: matchTextDirection, ifTrue: 'match text direction'));
-    properties.add(EnumProperty<TextDirection>('textDirection', textDirection,
-        defaultValue: null));
+    properties.add(
+      DiagnosticsProperty<AlignmentGeometry>(
+        'alignment',
+        alignment,
+        defaultValue: null,
+      ),
+    );
+    properties.add(
+      EnumProperty<ImageRepeat>(
+        'repeat',
+        repeat,
+        defaultValue: ImageRepeat.noRepeat,
+      ),
+    );
+    properties.add(
+      DiagnosticsProperty<Rect>('centerSlice', centerSlice, defaultValue: null),
+    );
+    properties.add(
+      FlagProperty(
+        'matchTextDirection',
+        value: matchTextDirection,
+        ifTrue: 'match text direction',
+      ),
+    );
+    properties.add(
+      EnumProperty<TextDirection>(
+        'textDirection',
+        textDirection,
+        defaultValue: null,
+      ),
+    );
     properties.add(DiagnosticsProperty<bool>('invertColors', invertColors));
     properties.add(EnumProperty<FilterQuality>('filterQuality', filterQuality));
   }

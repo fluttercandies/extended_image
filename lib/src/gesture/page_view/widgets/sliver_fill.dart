@@ -28,12 +28,12 @@ class ExtendedSliverFillViewport extends StatelessWidget {
     this.viewportFraction = 1.0,
     this.padEnds = true,
     this.pageSpacing = 0.0,
-  })  : assert(viewportFraction != null),
-        assert(viewportFraction > 0.0),
-        assert(pageSpacing != null),
-        assert(pageSpacing >= 0.0),
-        assert(padEnds != null),
-        super(key: key);
+  }) : assert(viewportFraction != null),
+       assert(viewportFraction > 0.0),
+       assert(pageSpacing != null),
+       assert(pageSpacing >= 0.0),
+       assert(padEnds != null),
+       super(key: key);
 
   /// The fraction of the viewport that each child should fill in the main axis.
   ///
@@ -80,11 +80,11 @@ class _SliverFillViewportRenderObjectWidget
     required SliverChildDelegate delegate,
     this.viewportFraction = 1.0,
     this.pageSpacing = 0.0,
-  })  : assert(viewportFraction != null),
-        assert(viewportFraction > 0.0),
-        assert(pageSpacing != null),
-        assert(pageSpacing >= 0.0),
-        super(key: key, delegate: delegate);
+  }) : assert(viewportFraction != null),
+       assert(viewportFraction > 0.0),
+       assert(pageSpacing != null),
+       assert(pageSpacing >= 0.0),
+       super(key: key, delegate: delegate);
 
   final double viewportFraction;
   final double pageSpacing;
@@ -101,20 +101,20 @@ class _SliverFillViewportRenderObjectWidget
 
   @override
   void updateRenderObject(
-      BuildContext context, ExtendedRenderSliverFillViewport renderObject) {
+    BuildContext context,
+    ExtendedRenderSliverFillViewport renderObject,
+  ) {
     renderObject.viewportFraction = viewportFraction;
     renderObject.pageSpacing = pageSpacing;
   }
 }
 
 class _SliverFractionalPadding extends SingleChildRenderObjectWidget {
-  const _SliverFractionalPadding({
-    this.viewportFraction = 0,
-    Widget? sliver,
-  })  : assert(viewportFraction != null),
-        assert(viewportFraction >= 0),
-        assert(viewportFraction <= 0.5),
-        super(child: sliver);
+  const _SliverFractionalPadding({this.viewportFraction = 0, Widget? sliver})
+    : assert(viewportFraction != null),
+      assert(viewportFraction >= 0),
+      assert(viewportFraction <= 0.5),
+      super(child: sliver);
 
   final double viewportFraction;
 
@@ -124,18 +124,19 @@ class _SliverFractionalPadding extends SingleChildRenderObjectWidget {
 
   @override
   void updateRenderObject(
-      BuildContext context, _RenderSliverFractionalPadding renderObject) {
+    BuildContext context,
+    _RenderSliverFractionalPadding renderObject,
+  ) {
     renderObject.viewportFraction = viewportFraction;
   }
 }
 
 class _RenderSliverFractionalPadding extends RenderSliverEdgeInsetsPadding {
-  _RenderSliverFractionalPadding({
-    double viewportFraction = 0,
-  })  : assert(viewportFraction != null),
-        assert(viewportFraction <= 0.5),
-        assert(viewportFraction >= 0),
-        _viewportFraction = viewportFraction;
+  _RenderSliverFractionalPadding({double viewportFraction = 0})
+    : assert(viewportFraction != null),
+      assert(viewportFraction <= 0.5),
+      assert(viewportFraction >= 0),
+      _viewportFraction = viewportFraction;
 
   SliverConstraints? _lastResolvedConstraints;
 

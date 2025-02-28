@@ -119,17 +119,18 @@ class GestureDetails {
 
   @override
   int get hashCode => Object.hash(
-      offset,
-      totalScale,
-      computeVerticalBoundary,
-      computeHorizontalBoundary,
-      boundary,
-      actionType,
-      userOffset,
-      layoutRect,
-      destinationRect,
-      _center,
-      slidePageOffset);
+    offset,
+    totalScale,
+    computeVerticalBoundary,
+    computeHorizontalBoundary,
+    boundary,
+    actionType,
+    userOffset,
+    layoutRect,
+    destinationRect,
+    _center,
+    slidePageOffset,
+  );
 
   @override
   bool operator ==(Object other) {
@@ -161,13 +162,17 @@ class GestureDetails {
         return destinationRect.center * totalScale! + offset!;
       } else if (_computeHorizontalBoundary) {
         //only scale Horizontal
-        return Offset(destinationRect.center.dx * totalScale!,
-                destinationRect.center.dy) +
+        return Offset(
+              destinationRect.center.dx * totalScale!,
+              destinationRect.center.dy,
+            ) +
             Offset(offset!.dx, 0.0);
       } else if (_computeVerticalBoundary) {
         //only scale Vertical
-        return Offset(destinationRect.center.dx,
-                destinationRect.center.dy * totalScale!) +
+        return Offset(
+              destinationRect.center.dx,
+              destinationRect.center.dy * totalScale!,
+            ) +
             Offset(0.0, offset!.dy);
       } else {
         return destinationRect.center;
@@ -184,13 +189,17 @@ class GestureDetails {
       } else if (_computeHorizontalBoundary) {
         //only scale Horizontal
         return center -
-            Offset(destinationRect.center.dx * totalScale!,
-                destinationRect.center.dy);
+            Offset(
+              destinationRect.center.dx * totalScale!,
+              destinationRect.center.dy,
+            );
       } else if (_computeVerticalBoundary) {
         //only scale Vertical
         return center -
-            Offset(destinationRect.center.dx,
-                destinationRect.center.dy * totalScale!);
+            Offset(
+              destinationRect.center.dx,
+              destinationRect.center.dy * totalScale!,
+            );
       } else {
         return center - destinationRect.center;
       }
@@ -203,7 +212,11 @@ class GestureDetails {
     final double width = destinationRect.width * totalScale!;
     final double height = destinationRect.height * totalScale!;
     return Rect.fromLTWH(
-        center.dx - width / 2.0, center.dy - height / 2.0, width, height);
+      center.dx - width / 2.0,
+      center.dy - height / 2.0,
+      width,
+      height,
+    );
   }
 
   Rect calculateFinalDestinationRect(Rect layoutRect, Rect destinationRect) {
@@ -214,15 +227,19 @@ class GestureDetails {
     final Offset? temp = offset;
     _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
     offset = temp;
-    Rect result =
-        _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
+    Rect result = _innerCalculateFinalDestinationRect(
+      layoutRect,
+      destinationRect,
+    );
 
     ///first call,initial image rect with alignment
     if (totalScale! > 1.0 &&
         destinationRectChanged &&
         initialAlignment != null) {
-      offset = _getFixedOffset(destinationRect,
-          result.center + _getCenterDif(result, layoutRect, initialAlignment));
+      offset = _getFixedOffset(
+        destinationRect,
+        result.center + _getCenterDif(result, layoutRect, initialAlignment),
+      );
       result = _innerCalculateFinalDestinationRect(layoutRect, destinationRect);
       //initialAlignment = null;
     }
@@ -257,7 +274,9 @@ class GestureDetails {
   }
 
   Rect _innerCalculateFinalDestinationRect(
-      Rect layoutRect, Rect destinationRect) {
+    Rect layoutRect,
+    Rect destinationRect,
+  ) {
     _boundary = Boundary();
     final Offset center = _getCenter(destinationRect)!;
     Rect result = _getDestinationRect(destinationRect, center);
@@ -266,14 +285,22 @@ class GestureDetails {
       //move right
       if (result.left.greaterThanOrEqualTo(layoutRect.left)) {
         result = Rect.fromLTWH(
-            layoutRect.left, result.top, result.width, result.height);
+          layoutRect.left,
+          result.top,
+          result.width,
+          result.height,
+        );
         _boundary.left = true;
       }
 
       ///move left
       if (result.right.lessThanOrEqualTo(layoutRect.right)) {
-        result = Rect.fromLTWH(layoutRect.right - result.width, result.top,
-            result.width, result.height);
+        result = Rect.fromLTWH(
+          layoutRect.right - result.width,
+          result.top,
+          result.width,
+          result.height,
+        );
         _boundary.right = true;
       }
     }
@@ -281,24 +308,33 @@ class GestureDetails {
     if (_computeVerticalBoundary) {
       //move down
       if (result.bottom.lessThanOrEqualTo(layoutRect.bottom)) {
-        result = Rect.fromLTWH(result.left, layoutRect.bottom - result.height,
-            result.width, result.height);
+        result = Rect.fromLTWH(
+          result.left,
+          layoutRect.bottom - result.height,
+          result.width,
+          result.height,
+        );
         _boundary.bottom = true;
       }
 
       //move up
       if (result.top.greaterThanOrEqualTo(layoutRect.top)) {
         result = Rect.fromLTWH(
-            result.left, layoutRect.top, result.width, result.height);
+          result.left,
+          layoutRect.top,
+          result.width,
+          result.height,
+        );
         _boundary.top = true;
       }
     }
 
     _computeHorizontalBoundary =
         result.left.lessThanOrEqualTo(layoutRect.left) &&
-            result.right.greaterThanOrEqualTo(layoutRect.right);
+        result.right.greaterThanOrEqualTo(layoutRect.right);
 
-    _computeVerticalBoundary = result.top.lessThanOrEqualTo(layoutRect.top) &&
+    _computeVerticalBoundary =
+        result.top.lessThanOrEqualTo(layoutRect.top) &&
         result.bottom.greaterThanOrEqualTo(layoutRect.bottom);
 
     ///fix offset
@@ -392,15 +428,15 @@ class GestureConfig {
     this.gestureDetailsIsChanged,
     this.hitTestBehavior = HitTestBehavior.deferToChild,
     this.reverseMousePointerScrollDirection = false,
-  })  : assert(minScale <= maxScale),
-        animationMinScale = animationMinScale ??= minScale * 0.8,
-        animationMaxScale = animationMaxScale ??= maxScale * 1.2,
-        assert(animationMinScale <= animationMaxScale),
-        assert(animationMinScale <= minScale),
-        assert(animationMaxScale >= maxScale),
-        assert(minScale <= initialScale && initialScale <= maxScale),
-        assert(speed > 0),
-        assert(inertialSpeed > 0);
+  }) : assert(minScale <= maxScale),
+       animationMinScale = animationMinScale ??= minScale * 0.8,
+       animationMaxScale = animationMaxScale ??= maxScale * 1.2,
+       assert(animationMinScale <= animationMaxScale),
+       assert(animationMinScale <= minScale),
+       assert(animationMaxScale >= maxScale),
+       assert(minScale <= initialScale && initialScale <= maxScale),
+       assert(speed > 0),
+       assert(inertialSpeed > 0);
 
   /// How to behave during hit tests.
   final HitTestBehavior hitTestBehavior;
@@ -469,9 +505,11 @@ const double velocity = minMagnitude / 1000.0;
 const double minGesturePageDelta = 5.0;
 
 class GestureAnimation {
-  GestureAnimation(TickerProvider vsync,
-      {GestureOffsetAnimationCallBack? offsetCallBack,
-      GestureScaleAnimationCallBack? scaleCallBack}) {
+  GestureAnimation(
+    TickerProvider vsync, {
+    GestureOffsetAnimationCallBack? offsetCallBack,
+    GestureScaleAnimationCallBack? scaleCallBack,
+  }) {
     if (offsetCallBack != null) {
       _offsetController = AnimationController(vsync: vsync);
       _offsetController!.addListener(() {
@@ -498,8 +536,9 @@ class GestureAnimation {
     if (_offsetController == null) {
       return;
     }
-    _offsetAnimation =
-        _offsetController!.drive(Tween<Offset>(begin: begin, end: end));
+    _offsetAnimation = _offsetController!.drive(
+      Tween<Offset>(begin: begin, end: end),
+    );
     _offsetController!
       ..value = 0.0
       ..fling(velocity: velocity);
@@ -509,8 +548,9 @@ class GestureAnimation {
     if (_scaleController == null) {
       return;
     }
-    _scaleAnimation =
-        _scaleController!.drive(Tween<double>(begin: begin, end: end));
+    _scaleAnimation = _scaleController!.drive(
+      Tween<double>(begin: begin, end: end),
+    );
     _scaleController!
       ..value = 0.0
       ..fling(velocity: velocity);
@@ -540,14 +580,15 @@ Color defaultSlidePageBackgroundHandler({
 }) {
   double opacity = 0.0;
   if (pageGestureAxis == SlideAxis.both) {
-    opacity = offset.distance /
+    opacity =
+        offset.distance /
         (Offset(pageSize.width, pageSize.height).distance / 2.0);
   } else if (pageGestureAxis == SlideAxis.horizontal) {
     opacity = offset.dx.abs() / (pageSize.width / 2.0);
   } else if (pageGestureAxis == SlideAxis.vertical) {
     opacity = offset.dy.abs() / (pageSize.height / 2.0);
   }
-  return color.withOpacity(min(1.0, max(1.0 - opacity, 0.0)));
+  return color.withValues(alpha: min(1.0, max(1.0 - opacity, 0.0)));
 }
 
 bool defaultSlideEndHandler({
@@ -558,7 +599,8 @@ bool defaultSlideEndHandler({
   const int parameter = 6;
   if (pageGestureAxis == SlideAxis.both) {
     return offset.distance.greaterThan(
-        Offset(pageSize.width, pageSize.height).distance / parameter);
+      Offset(pageSize.width, pageSize.height).distance / parameter,
+    );
   } else if (pageGestureAxis == SlideAxis.horizontal) {
     return offset.dx.abs().greaterThan(pageSize.width / parameter);
   } else if (pageGestureAxis == SlideAxis.vertical) {

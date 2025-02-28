@@ -41,32 +41,36 @@ class ExtendedImageBorderPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Rect outputRect = Rect.fromLTWH(0.0, 0.0, size.width, size.height);
 
-//    Path clipPath;
-//    switch (shape) {
-//      case BoxShape.circle:
-//        clipPath = Path()..addOval(outputRect);
-//        break;
-//      case BoxShape.rectangle:
-//        if (borderRadius != null)
-//          clipPath = Path()
-//            ..addRRect(
-//                borderRadius.resolve(TextDirection.ltr).toRRect(outputRect));
-//        break;
-//    }
-//    if (clipPath != null) {
-//      canvas.save();
-//      canvas.clipPath(clipPath);
-//    }
-//
-//    if (clipPath != null) canvas.restore();
+    //    Path clipPath;
+    //    switch (shape) {
+    //      case BoxShape.circle:
+    //        clipPath = Path()..addOval(outputRect);
+    //        break;
+    //      case BoxShape.rectangle:
+    //        if (borderRadius != null)
+    //          clipPath = Path()
+    //            ..addRRect(
+    //                borderRadius.resolve(TextDirection.ltr).toRRect(outputRect));
+    //        break;
+    //    }
+    //    if (clipPath != null) {
+    //      canvas.save();
+    //      canvas.clipPath(clipPath);
+    //    }
+    //
+    //    if (clipPath != null) canvas.restore();
     if (border != null) {
       switch (shape) {
         case BoxShape.circle:
           border!.paint(canvas, outputRect, shape: shape);
           break;
         case BoxShape.rectangle:
-          border!.paint(canvas, outputRect,
-              shape: shape, borderRadius: borderRadius);
+          border!.paint(
+            canvas,
+            outputRect,
+            shape: shape,
+            borderRadius: borderRadius,
+          );
           break;
       }
     }

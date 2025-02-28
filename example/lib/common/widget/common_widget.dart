@@ -135,7 +135,7 @@ class CommonCircularProgressIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      color: Colors.grey.withValues(alpha: 255 * 0.8),
+      color: Colors.grey.withValues(alpha: 0.8),
       child: CircularProgressIndicator(
         strokeWidth: 2.0,
         valueColor:

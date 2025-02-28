@@ -2,9 +2,8 @@ part of 'official.dart';
 
 typedef CanHorizontalOrVerticalDrag = bool Function();
 
-typedef ShouldAccpetHorizontalOrVerticalDrag = bool Function(
-  Map<int, VelocityTracker> velocityTrackers,
-);
+typedef ShouldAccpetHorizontalOrVerticalDrag =
+    bool Function(Map<int, VelocityTracker> velocityTrackers);
 
 mixin DragGestureRecognizerMixin on _DragGestureRecognizer {
   bool get canDrag =>
@@ -28,8 +27,10 @@ mixin DragGestureRecognizerMixin on _DragGestureRecognizer {
     for (final VelocityTracker tracker in _velocityTrackers.values) {
       if (tracker is ExtendedVelocityTracker) {
         final Offset delta = tracker.getSamplesDelta();
-        offset = Offset(offset.dx * (delta.dx == 0 ? 1 : delta.dx),
-            offset.dy * (delta.dy == 0 ? 1 : delta.dy));
+        offset = Offset(
+          offset.dx * (delta.dx == 0 ? 1 : delta.dx),
+          offset.dy * (delta.dy == 0 ? 1 : delta.dy),
+        );
       }
     }
 
@@ -38,83 +39,19 @@ mixin DragGestureRecognizerMixin on _DragGestureRecognizer {
 
   CanHorizontalOrVerticalDrag? get canHorizontalOrVerticalDrag;
   ShouldAccpetHorizontalOrVerticalDrag?
-      get shouldAccpetHorizontalOrVerticalDrag;
+  get shouldAccpetHorizontalOrVerticalDrag;
 
   @override
-  void handleEvent(PointerEvent event) {
-    assert(_state != _DragState.ready);
-    if (!event.synthesized &&
-        (event is PointerDownEvent ||
-            event is PointerMoveEvent ||
-            event is PointerPanZoomStartEvent ||
-            event is PointerPanZoomUpdateEvent)) {
-      final VelocityTracker tracker = _velocityTrackers[event.pointer]!;
-      if (event is PointerPanZoomStartEvent) {
-        tracker.addPosition(event.timeStamp, Offset.zero);
-      } else if (event is PointerPanZoomUpdateEvent) {
-        tracker.addPosition(event.timeStamp, event.pan);
-      } else {
-        tracker.addPosition(event.timeStamp, event.localPosition);
-      }
-    }
-    if (event is PointerMoveEvent && event.buttons != _initialButtons) {
-      _giveUpPointer(event.pointer);
-      return;
-    }
-    if (event is PointerMoveEvent || event is PointerPanZoomUpdateEvent) {
-      final Offset delta = (event is PointerMoveEvent)
-          ? event.delta
-          : (event as PointerPanZoomUpdateEvent).panDelta;
-      final Offset localDelta = (event is PointerMoveEvent)
-          ? event.localDelta
-          : (event as PointerPanZoomUpdateEvent).localPanDelta;
-      final Offset position = (event is PointerMoveEvent)
-          ? event.position
-          : (event.position + (event as PointerPanZoomUpdateEvent).pan);
-      final Offset localPosition = (event is PointerMoveEvent)
-          ? event.localPosition
-          : (event.localPosition +
-              (event as PointerPanZoomUpdateEvent).localPan);
-      if (_state == _DragState.accepted) {
-        _checkUpdate(
-          sourceTimeStamp: event.timeStamp,
-          delta: _getDeltaForDetails(localDelta),
-          primaryDelta: _getPrimaryValueFromOffset(localDelta),
-          globalPosition: position,
-          localPosition: localPosition,
-        );
-      } else {
-        _pendingDragOffset += OffsetPair(local: localDelta, global: delta);
-        _lastPendingEventTimestamp = event.timeStamp;
-        _lastTransform = event.transform;
-        final Offset movedLocally = _getDeltaForDetails(localDelta);
-        final Matrix4? localToGlobalTransform = event.transform == null
-            ? null
-            : Matrix4.tryInvert(event.transform!);
-        _globalDistanceMoved += PointerEvent.transformDeltaViaPositions(
-                    transform: localToGlobalTransform,
-                    untransformedDelta: movedLocally,
-                    untransformedEndPosition: localPosition)
-                .distance *
-            (_getPrimaryValueFromOffset(movedLocally) ?? 1).sign;
-        if (_hasSufficientGlobalDistanceToAccept(
-                event.kind, gestureSettings?.touchSlop) &&
-            // zmtzawqlp
-            _shouldAccpet()) {
-          _hasDragThresholdBeenMet = true;
-          if (_acceptedActivePointers.contains(event.pointer)) {
-            _checkDrag(event.pointer);
-          } else {
-            resolve(GestureDisposition.accepted);
-          }
-        }
-      }
-    }
-    if (event is PointerUpEvent ||
-        event is PointerCancelEvent ||
-        event is PointerPanZoomEndEvent) {
-      _giveUpPointer(event.pointer);
-    }
+  bool hasSufficientGlobalDistanceToAccept(
+    PointerDeviceKind pointerDeviceKind,
+    double? deviceTouchSlop,
+  ) {
+    return super.hasSufficientGlobalDistanceToAccept(
+          pointerDeviceKind,
+          deviceTouchSlop,
+        ) &&
+        // zmtzawqlp
+        _shouldAccpet();
   }
 
   @override
@@ -124,8 +61,10 @@ mixin DragGestureRecognizerMixin on _DragGestureRecognizer {
 ExtendedVelocityTracker _defaultBuilder(PointerEvent event) =>
     ExtendedVelocityTracker.withKind(event.kind);
 
+/// [HorizontalDragGestureRecognizer]
 class ExtendedHorizontalDragGestureRecognizer
-    extends _HorizontalDragGestureRecognizer with DragGestureRecognizerMixin {
+    extends _HorizontalDragGestureRecognizer
+    with DragGestureRecognizerMixin {
   ExtendedHorizontalDragGestureRecognizer({
     super.debugOwner,
     super.supportedDevices,
@@ -139,11 +78,12 @@ class ExtendedHorizontalDragGestureRecognizer
 
   @override
   final ShouldAccpetHorizontalOrVerticalDrag?
-      shouldAccpetHorizontalOrVerticalDrag;
+  shouldAccpetHorizontalOrVerticalDrag;
 }
 
 class ExtendedVerticalDragGestureRecognizer
-    extends _VerticalDragGestureRecognizer with DragGestureRecognizerMixin {
+    extends _VerticalDragGestureRecognizer
+    with DragGestureRecognizerMixin {
   ExtendedVerticalDragGestureRecognizer({
     super.debugOwner,
     super.supportedDevices,
@@ -156,5 +96,5 @@ class ExtendedVerticalDragGestureRecognizer
   final CanHorizontalOrVerticalDrag? canHorizontalOrVerticalDrag;
   @override
   final ShouldAccpetHorizontalOrVerticalDrag?
-      shouldAccpetHorizontalOrVerticalDrag;
+  shouldAccpetHorizontalOrVerticalDrag;
 }

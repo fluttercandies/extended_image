@@ -30,59 +30,66 @@ class EditorCropLayerPainter {
 
   /// Draw corners of the crop area
   void paintCorners(
-      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+    Canvas canvas,
+    Size size,
+    ExtendedImageCropLayerPainter painter,
+  ) {
     final Rect cropRect = painter.cropRect;
     final Size cornerSize = painter.cornerSize;
     final double cornerWidth = cornerSize.width;
     final double cornerHeight = cornerSize.height;
-    final Paint paint = Paint()
-      ..color = painter.cornerColor
-      ..style = PaintingStyle.fill;
+    final Paint paint =
+        Paint()
+          ..color = painter.cornerColor
+          ..style = PaintingStyle.fill;
 
     // Draw top-left corner
     canvas.drawPath(
-        Path()
-          ..moveTo(cropRect.left, cropRect.top)
-          ..lineTo(cropRect.left + cornerWidth, cropRect.top)
-          ..lineTo(cropRect.left + cornerWidth, cropRect.top + cornerHeight)
-          ..lineTo(cropRect.left + cornerHeight, cropRect.top + cornerHeight)
-          ..lineTo(cropRect.left + cornerHeight, cropRect.top + cornerWidth)
-          ..lineTo(cropRect.left, cropRect.top + cornerWidth),
-        paint);
+      Path()
+        ..moveTo(cropRect.left, cropRect.top)
+        ..lineTo(cropRect.left + cornerWidth, cropRect.top)
+        ..lineTo(cropRect.left + cornerWidth, cropRect.top + cornerHeight)
+        ..lineTo(cropRect.left + cornerHeight, cropRect.top + cornerHeight)
+        ..lineTo(cropRect.left + cornerHeight, cropRect.top + cornerWidth)
+        ..lineTo(cropRect.left, cropRect.top + cornerWidth),
+      paint,
+    );
 
     // Draw bottom-left corner
     canvas.drawPath(
-        Path()
-          ..moveTo(cropRect.left, cropRect.bottom)
-          ..lineTo(cropRect.left + cornerWidth, cropRect.bottom)
-          ..lineTo(cropRect.left + cornerWidth, cropRect.bottom - cornerHeight)
-          ..lineTo(cropRect.left + cornerHeight, cropRect.bottom - cornerHeight)
-          ..lineTo(cropRect.left + cornerHeight, cropRect.bottom - cornerWidth)
-          ..lineTo(cropRect.left, cropRect.bottom - cornerWidth),
-        paint);
+      Path()
+        ..moveTo(cropRect.left, cropRect.bottom)
+        ..lineTo(cropRect.left + cornerWidth, cropRect.bottom)
+        ..lineTo(cropRect.left + cornerWidth, cropRect.bottom - cornerHeight)
+        ..lineTo(cropRect.left + cornerHeight, cropRect.bottom - cornerHeight)
+        ..lineTo(cropRect.left + cornerHeight, cropRect.bottom - cornerWidth)
+        ..lineTo(cropRect.left, cropRect.bottom - cornerWidth),
+      paint,
+    );
 
     // Draw top-right corner
     canvas.drawPath(
-        Path()
-          ..moveTo(cropRect.right, cropRect.top)
-          ..lineTo(cropRect.right - cornerWidth, cropRect.top)
-          ..lineTo(cropRect.right - cornerWidth, cropRect.top + cornerHeight)
-          ..lineTo(cropRect.right - cornerHeight, cropRect.top + cornerHeight)
-          ..lineTo(cropRect.right - cornerHeight, cropRect.top + cornerWidth)
-          ..lineTo(cropRect.right, cropRect.top + cornerWidth),
-        paint);
+      Path()
+        ..moveTo(cropRect.right, cropRect.top)
+        ..lineTo(cropRect.right - cornerWidth, cropRect.top)
+        ..lineTo(cropRect.right - cornerWidth, cropRect.top + cornerHeight)
+        ..lineTo(cropRect.right - cornerHeight, cropRect.top + cornerHeight)
+        ..lineTo(cropRect.right - cornerHeight, cropRect.top + cornerWidth)
+        ..lineTo(cropRect.right, cropRect.top + cornerWidth),
+      paint,
+    );
 
     // Draw bottom-right corner
     canvas.drawPath(
-        Path()
-          ..moveTo(cropRect.right, cropRect.bottom)
-          ..lineTo(cropRect.right - cornerWidth, cropRect.bottom)
-          ..lineTo(cropRect.right - cornerWidth, cropRect.bottom - cornerHeight)
-          ..lineTo(
-              cropRect.right - cornerHeight, cropRect.bottom - cornerHeight)
-          ..lineTo(cropRect.right - cornerHeight, cropRect.bottom - cornerWidth)
-          ..lineTo(cropRect.right, cropRect.bottom - cornerWidth),
-        paint);
+      Path()
+        ..moveTo(cropRect.right, cropRect.bottom)
+        ..lineTo(cropRect.right - cornerWidth, cropRect.bottom)
+        ..lineTo(cropRect.right - cornerWidth, cropRect.bottom - cornerHeight)
+        ..lineTo(cropRect.right - cornerHeight, cropRect.bottom - cornerHeight)
+        ..lineTo(cropRect.right - cornerHeight, cropRect.bottom - cornerWidth)
+        ..lineTo(cropRect.right, cropRect.bottom - cornerWidth),
+      paint,
+    );
   }
 
   /// Draw the mask over the crop area
@@ -100,10 +107,11 @@ class EditorCropLayerPainter {
     // Clip the crop area and draw the mask outside the crop area
     canvas.clipRect(cropRect, clipOp: ClipOp.difference);
     canvas.drawRect(
-        rect,
-        Paint()
-          ..style = PaintingStyle.fill
-          ..color = maskColor);
+      rect,
+      Paint()
+        ..style = PaintingStyle.fill
+        ..color = maskColor,
+    );
 
     // Restore the canvas layer
     canvas.restore();
@@ -111,15 +119,19 @@ class EditorCropLayerPainter {
 
   /// Draw grid lines inside the crop area
   void paintLines(
-      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+    Canvas canvas,
+    Size size,
+    ExtendedImageCropLayerPainter painter,
+  ) {
     final Color lineColor = painter.lineColor;
     final double lineHeight = painter.lineHeight;
     final Rect cropRect = painter.cropRect;
     final bool pointerDown = painter.pointerDown;
-    final Paint linePainter = Paint()
-      ..color = lineColor
-      ..strokeWidth = lineHeight
-      ..style = PaintingStyle.stroke;
+    final Paint linePainter =
+        Paint()
+          ..color = lineColor
+          ..strokeWidth = lineHeight
+          ..style = PaintingStyle.stroke;
 
     // Draw the crop rectangle's border
     canvas.drawRect(cropRect, linePainter);
@@ -128,39 +140,53 @@ class EditorCropLayerPainter {
     if (pointerDown) {
       // Vertical lines
       canvas.drawLine(
-          Offset((cropRect.right - cropRect.left) / 3.0 + cropRect.left,
-              cropRect.top),
-          Offset((cropRect.right - cropRect.left) / 3.0 + cropRect.left,
-              cropRect.bottom),
-          linePainter);
+        Offset(
+          (cropRect.right - cropRect.left) / 3.0 + cropRect.left,
+          cropRect.top,
+        ),
+        Offset(
+          (cropRect.right - cropRect.left) / 3.0 + cropRect.left,
+          cropRect.bottom,
+        ),
+        linePainter,
+      );
 
       canvas.drawLine(
-          Offset((cropRect.right - cropRect.left) / 3.0 * 2.0 + cropRect.left,
-              cropRect.top),
-          Offset((cropRect.right - cropRect.left) / 3.0 * 2.0 + cropRect.left,
-              cropRect.bottom),
-          linePainter);
+        Offset(
+          (cropRect.right - cropRect.left) / 3.0 * 2.0 + cropRect.left,
+          cropRect.top,
+        ),
+        Offset(
+          (cropRect.right - cropRect.left) / 3.0 * 2.0 + cropRect.left,
+          cropRect.bottom,
+        ),
+        linePainter,
+      );
 
       // Horizontal lines
       canvas.drawLine(
-          Offset(
-            cropRect.left,
-            (cropRect.bottom - cropRect.top) / 3.0 + cropRect.top,
-          ),
-          Offset(
-            cropRect.right,
-            (cropRect.bottom - cropRect.top) / 3.0 + cropRect.top,
-          ),
-          linePainter);
+        Offset(
+          cropRect.left,
+          (cropRect.bottom - cropRect.top) / 3.0 + cropRect.top,
+        ),
+        Offset(
+          cropRect.right,
+          (cropRect.bottom - cropRect.top) / 3.0 + cropRect.top,
+        ),
+        linePainter,
+      );
 
       canvas.drawLine(
-          Offset(cropRect.left,
-              (cropRect.bottom - cropRect.top) / 3.0 * 2.0 + cropRect.top),
-          Offset(
-            cropRect.right,
-            (cropRect.bottom - cropRect.top) / 3.0 * 2.0 + cropRect.top,
-          ),
-          linePainter);
+        Offset(
+          cropRect.left,
+          (cropRect.bottom - cropRect.top) / 3.0 * 2.0 + cropRect.top,
+        ),
+        Offset(
+          cropRect.right,
+          (cropRect.bottom - cropRect.top) / 3.0 * 2.0 + cropRect.top,
+        ),
+        linePainter,
+      );
     }
   }
 }
@@ -220,10 +246,7 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
       final Offset origin = rect.center;
       final Matrix4 result = Matrix4.identity();
 
-      result.translate(
-        origin.dx,
-        origin.dy,
-      );
+      result.translate(origin.dx, origin.dy);
 
       result.multiply(Matrix4.rotationZ(rotateRadians));
 
@@ -233,8 +256,9 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
       canvas.transform(result.storage);
 
       // Adjust rect size to ensure the mask covers the whole area after rotation
-      final double diagonal =
-          sqrt(rect.width * rect.width + rect.height * rect.height);
+      final double diagonal = sqrt(
+        rect.width * rect.width + rect.height * rect.height,
+      );
       rect = Rect.fromCenter(
         center: rect.center,
         width: diagonal,
@@ -243,12 +267,7 @@ class ExtendedImageCropLayerPainter extends CustomPainter {
     }
 
     // Paint the crop layer
-    cropLayerPainter.paint(
-      canvas,
-      size,
-      this,
-      rect,
-    );
+    cropLayerPainter.paint(canvas, size, this, rect);
 
     // Restore the canvas after rotation
     if (rotateRadians != 0) {

@@ -32,9 +32,9 @@ class FloatText extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(3.0),
       decoration: BoxDecoration(
-        color: Colors.red.withValues(alpha: 255 * 0.6),
-        border: Border.all(
-            color: Colors.grey.withValues(alpha: 255 * 0.4), width: 1.0),
+        color: Colors.red.withValues(alpha: 0.6),
+        border:
+            Border.all(color: Colors.grey.withValues(alpha: 0.4), width: 1.0),
         borderRadius: const BorderRadius.all(
           Radius.circular(5.0),
         ),
@@ -275,7 +275,7 @@ class MySwiperPlugin extends StatelessWidget {
           child: Container(
             height: 50.0,
             width: double.infinity,
-            color: Colors.grey.withValues(alpha: 255 * 0.2),
+            color: Colors.grey.withValues(alpha: 0.2),
             child: Row(
               children: <Widget>[
                 Container(
