@@ -20,6 +20,8 @@ class Assets {
   static const String assets_fluttercandies_grey_png =
       'assets/flutterCandies_grey.png';
 
+  static const String assets_fonts_1_ttf = 'assets/fonts/1.ttf';
+
   /// {@macro assets_generator.assets_harley_quinn_webp.preview}
   static const String assets_harley_quinn_webp = 'assets/harley_quinn.webp';
 
@@ -58,6 +60,7 @@ final List<String> assetsArray = <String>[
 
   /// {@macro assets_generator.assets_fluttercandies_grey_png.preview}
   Assets.assets_fluttercandies_grey_png,
+  Assets.assets_fonts_1_ttf,
 
   /// {@macro assets_generator.assets_harley_quinn_webp.preview}
   Assets.assets_harley_quinn_webp,

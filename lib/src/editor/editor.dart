@@ -266,6 +266,11 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       // },
       behavior: _editorConfig!.hitTestBehavior,
     );
+
+    // result = Transform.scale(
+    //   scale: 0.5,
+    //   child: result,
+    // );
     return result;
   }
 
