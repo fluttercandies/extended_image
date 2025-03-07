@@ -291,7 +291,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
           alignment is! Alignment ? Directionality.of(context) : null;
       final Alignment resolvedAlignment = alignment.resolve(textDirection);
       final Rect destinationRect = getDestinationRect(
-        rect: layoutRect,
+        rect: _editActionDetails?.initialCropRect ?? layoutRect,
         inputSize: Size(
           widget.extendedImageState.extendedImageInfo!.image.width.toDouble(),
           widget.extendedImageState.extendedImageInfo!.image.height.toDouble(),
