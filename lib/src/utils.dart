@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -5,12 +7,14 @@ import 'extended_image.dart';
 import 'gesture/slide_page.dart';
 
 enum LoadState {
-  //loading
+  /// loading
   loading,
-  //completed
+
+  /// completed
   completed,
-  //failed
-  failed
+
+  /// failed
+  failed,
 }
 
 mixin ExtendedImageState {
@@ -44,12 +48,14 @@ mixin ExtendedImageState {
 }
 
 enum ExtendedImageMode {
-  //just show image
+  /// just show image
   none,
-  //support be to zoom,scroll
+
+  /// support be to zoom,scroll
   gesture,
-  //support be to crop,rotate,flip
-  editor
+
+  /// support be to crop,rotate,flip
+  editor,
 }
 
 ///get type from T
@@ -113,14 +119,30 @@ extension DoubleExtension on double {
     return compare(other, precision: precision) == 0;
   }
 
-  bool greaterThanOrEqualTo(double other,
-      {double precision = precisionErrorTolerance}) {
+  bool greaterThanOrEqualTo(
+    double other, {
+    double precision = precisionErrorTolerance,
+  }) {
     return compare(other, precision: precision) >= 0;
   }
 
-  bool lessThanOrEqualTo(double other,
-      {double precision = precisionErrorTolerance}) {
+  bool lessThanOrEqualTo(
+    double other, {
+    double precision = precisionErrorTolerance,
+  }) {
     return compare(other, precision: precision) <= 0;
+  }
+}
+
+extension DoubleExtensionNullable on double? {
+  bool equalTo(double? other, {double precision = precisionErrorTolerance}) {
+    if (this == null && other == null) {
+      return true;
+    }
+    if (this == null || other == null) {
+      return false;
+    }
+    return this!.compare(other, precision: precision) == 0;
   }
 }
 
@@ -142,4 +164,73 @@ extension RectExtension on Rect {
       leftIsSame(other) &&
       rightIsSame(other) &&
       bottomIsSame(other);
+
+  bool containsOffset(Offset offset) {
+    return offset.dx >= left &&
+        offset.dx <= right &&
+        offset.dy >= top &&
+        offset.dy <= bottom;
+  }
+
+  bool containsRect(Rect rect) {
+    return left.lessThanOrEqualTo(rect.left) &&
+        right.greaterThanOrEqualTo(rect.right) &&
+        top.lessThanOrEqualTo(rect.top) &&
+        bottom.greaterThanOrEqualTo(rect.bottom);
+  }
 }
+
+extension RectExtensionNullable on Rect? {
+  bool isSame(Rect? other) {
+    if (this == null && other == null) {
+      return true;
+    }
+    if (this == null || other == null) {
+      return false;
+    }
+    return this!.isSame(other);
+  }
+}
+
+extension OffsetExtension on Offset {
+  bool isSame(Offset other) => dx.equalTo(other.dx) && dy.equalTo(other.dy);
+}
+
+extension OffsetExtensionNullable on Offset? {
+  bool isSame(Offset? other) {
+    if (this == null && other == null) {
+      return true;
+    }
+    if (this == null || other == null) {
+      return false;
+    }
+    return this!.isSame(other);
+  }
+}
+
+extension DebounceThrottlingE on Function {
+  VoidFunction debounce([Duration duration = const Duration(seconds: 1)]) {
+    Timer? _debounce;
+    return () {
+      if (_debounce?.isActive ?? false) {
+        _debounce!.cancel();
+      }
+      _debounce = Timer(duration, () {
+        this.call();
+      });
+    };
+  }
+
+  VoidFunction throttle([Duration duration = const Duration(seconds: 1)]) {
+    Timer? _throttle;
+    return () {
+      if (_throttle?.isActive ?? false) {
+        return;
+      }
+      this.call();
+      _throttle = Timer(duration, () {});
+    };
+  }
+}
+
+typedef VoidFunction = void Function();

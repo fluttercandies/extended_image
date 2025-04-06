@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 
-@FFArgumentImport()
+@FFAutoImport()
 import 'package:example/common/data/tu_chong_source.dart' hide asT;
-@FFArgumentImport()
+@FFAutoImport()
 import 'package:example/common/model/pic_swiper_item.dart';
 // import 'package:example/common/text/my_extended_text_selection_controls.dart';
 // import 'package:example/common/text/my_special_text_span_builder.dart';
@@ -32,8 +32,9 @@ class FloatText extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(3.0),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.6),
-        border: Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
+        color: Colors.red.withValues(alpha: 0.6),
+        border:
+            Border.all(color: Colors.grey.withValues(alpha: 0.4), width: 1.0),
         borderRadius: const BorderRadius.all(
           Radius.circular(5.0),
         ),
@@ -274,7 +275,7 @@ class MySwiperPlugin extends StatelessWidget {
           child: Container(
             height: 50.0,
             width: double.infinity,
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(alpha: 0.2),
             child: Row(
               children: <Widget>[
                 Container(
@@ -515,7 +516,10 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                           return ExtendedImageGesture(
                             state,
                             canScaleImage: (_) => _imageDetailY == 0,
-                            imageBuilder: (Widget image) {
+                            imageBuilder: (
+                              Widget image, {
+                              ExtendedImageGestureState? imageGestureState,
+                            }) {
                               return Stack(
                                 children: <Widget>[
                                   Positioned.fill(
@@ -625,10 +629,11 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
         Offset offset, {
         ExtendedImageSlidePageState? state,
       }) {
+        if (state == null) {
+          return null;
+        }
         //image is ready and it's not sliding.
-        if (state != null &&
-            detailKeys[_currentIndex!] != null &&
-            state.scale == 1.0) {
+        if (detailKeys[_currentIndex!] != null && state.scale == 1.0) {
           //don't slide page if scale of image is more than 1.0
           if (state.imageGestureState!.gestureDetails!.totalScale! > 1.0) {
             return 1.0;
@@ -645,10 +650,11 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
         Offset offset, {
         ExtendedImageSlidePageState? state,
       }) {
+        if (state == null) {
+          return null;
+        }
         //image is ready and it's not sliding.
-        if (state != null &&
-            detailKeys[_currentIndex!] != null &&
-            state.scale == 1.0) {
+        if (detailKeys[_currentIndex!] != null && state.scale == 1.0) {
           //don't slide page if scale of image is more than 1.0
 
           if (state.imageGestureState!.gestureDetails!.totalScale! > 1.0) {
@@ -680,10 +686,13 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
         ExtendedImageSlidePageState? state,
         ScaleEndDetails? details,
       }) {
-        if (_imageDetailY != 0 && state!.scale == 1) {
+        if (state == null || details == null) {
+          return null;
+        }
+        if (_imageDetailY != 0 && state.scale == 1) {
           if (!_slideEndAnimationController.isAnimating) {
 // get magnitude from gesture velocity
-            final double magnitude = details!.velocity.pixelsPerSecond.distance;
+            final double magnitude = details.velocity.pixelsPerSecond.distance;
 
             // do a significant magnitude
 

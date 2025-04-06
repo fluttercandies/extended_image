@@ -42,8 +42,11 @@ class ExtendedPageController extends _PageController {
   final double pageSpacing;
 
   @override
-  ScrollPosition createScrollPosition(ScrollPhysics physics,
-      ScrollContext context, ScrollPosition? oldPosition) {
+  ScrollPosition createScrollPosition(
+    ScrollPhysics physics,
+    ScrollContext context,
+    ScrollPosition? oldPosition,
+  ) {
     return _ExtendedPagePosition(
       physics: physics,
       context: context,

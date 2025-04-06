@@ -43,7 +43,7 @@ Widget itemBuilder(BuildContext context, TuChongItem item, int index) {
           child: Container(
             padding: const EdgeInsets.only(left: 8.0, right: 8.0),
             height: 40.0,
-            color: Colors.grey.withOpacity(0.5),
+            color: Colors.grey.withValues(alpha: 0.5),
             alignment: Alignment.center,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -116,7 +116,8 @@ Widget buildWaterfallFlowItem(
           shape: BoxShape.rectangle,
           //clearMemoryCacheWhenDispose: true,
           imageCacheName: 'WaterfallFlow',
-          border: Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
+          border:
+              Border.all(color: Colors.grey.withValues(alpha: 0.4), width: 1.0),
           borderRadius: const BorderRadius.all(
             Radius.circular(10.0),
           ),
@@ -145,8 +146,9 @@ Widget buildWaterfallFlowItem(
         child: Container(
           padding: const EdgeInsets.all(3.0),
           decoration: BoxDecoration(
-            color: Colors.grey.withOpacity(0.6),
-            border: Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
+            color: Colors.grey.withValues(alpha: 0.6),
+            border: Border.all(
+                color: Colors.grey.withValues(alpha: 0.4), width: 1.0),
             borderRadius: const BorderRadius.all(
               Radius.circular(5.0),
             ),
@@ -202,7 +204,8 @@ Widget buildTagsWidget(
           padding: const EdgeInsets.all(3.0),
           decoration: BoxDecoration(
             color: color,
-            border: Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
+            border: Border.all(
+                color: Colors.grey.withValues(alpha: 0.4), width: 1.0),
             borderRadius: const BorderRadius.all(
               Radius.circular(5.0),
             ),
@@ -232,7 +235,8 @@ Widget buildBottomWidget(TuChongItem item, {bool showAvatar = true}) {
           shape: BoxShape.circle,
           imageCacheName: 'WaterfallFlow',
           //enableLoadState: false,
-          border: Border.all(color: Colors.grey.withOpacity(0.4), width: 1.0),
+          border:
+              Border.all(color: Colors.grey.withValues(alpha: 0.4), width: 1.0),
           loadStateChanged: (ExtendedImageState state) {
             if (state.extendedImageLoadState == LoadState.completed) {
               return null;

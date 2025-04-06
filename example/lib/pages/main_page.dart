@@ -13,6 +13,7 @@ import '../example_routes.dart' as example_routes;
 @FFRoute(
   name: 'fluttercandies://demogrouppage',
   routeName: 'DemoGroupPage',
+  argumentImports: <String>['import \'pages/main_page.dart\';'],
 )
 class DemoGroupPage extends StatelessWidget {
   DemoGroupPage({required MapEntry<String, List<DemoRouteResult>> keyValue})
@@ -165,10 +166,9 @@ class MainPage extends StatelessWidget {
                 ),
                 onTap: () {
                   Navigator.pushNamed(
-                      context, Routes.fluttercandiesDemogrouppage,
-                      arguments: <String, dynamic>{
-                        'keyValue': routesGroup.entries.toList()[index],
-                      });
+                      context, Routes.fluttercandiesDemogrouppage.name,
+                      arguments: Routes.fluttercandiesDemogrouppage
+                          .d(keyValue: routesGroup.entries.toList()[index]));
                 },
               ));
         },

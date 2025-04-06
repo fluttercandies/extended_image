@@ -30,6 +30,7 @@ class ImageSaver {
     final String title = '${DateTime.now().millisecondsSinceEpoch}_$name';
     final AssetEntity? imageEntity = await PhotoManager.editor.saveImage(
       fileData,
+      filename: name,
       title: title,
     );
     final File? file = await imageEntity?.file;

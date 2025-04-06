@@ -107,7 +107,8 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                                       imageCacheName: 'CropImage',
                                       clearMemoryCacheWhenDispose: true,
                                       border: Border.all(
-                                          color: Colors.grey.withOpacity(0.4),
+                                          color: Colors.grey
+                                              .withValues(alpha: 0.4),
                                           width: 1.0),
                                       loadStateChanged:
                                           (ExtendedImageState state) {
@@ -194,7 +195,7 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
                               Container(
                                 margin: const EdgeInsets.symmetric(
                                     vertical: margin),
-                                color: Colors.grey.withOpacity(0.2),
+                                color: Colors.grey.withValues(alpha: 0.2),
                                 height: margin,
                               )
                             ],

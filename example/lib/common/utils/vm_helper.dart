@@ -155,7 +155,7 @@ class ByteUtil {
     if (bytes <= 1024) {
       return '${bytes}B';
     } else if (bytes <= 1024 * 1024) {
-      return '${(bytes / (1024)).toStringAsFixed(2)}K';
+      return '${(bytes / 1024).toStringAsFixed(2)}K';
     } else {
       return '${(bytes / (1024 * 1024)).toStringAsFixed(2)}M';
     }

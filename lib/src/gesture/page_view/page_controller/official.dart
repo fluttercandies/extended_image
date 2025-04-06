@@ -123,14 +123,19 @@ class _PageController extends ScrollController {
   ///
   /// The animation lasts for the given duration and follows the given curve.
   /// The returned [Future] resolves when the animation completes.
-  Future<void> previousPage(
-      {required Duration duration, required Curve curve}) {
+  Future<void> previousPage({
+    required Duration duration,
+    required Curve curve,
+  }) {
     return animateToPage(page!.round() - 1, duration: duration, curve: curve);
   }
 
   @override
-  ScrollPosition createScrollPosition(ScrollPhysics physics,
-      ScrollContext context, ScrollPosition? oldPosition) {
+  ScrollPosition createScrollPosition(
+    ScrollPhysics physics,
+    ScrollContext context,
+    ScrollPosition? oldPosition,
+  ) {
     return _PagePosition(
       physics: physics,
       context: context,
@@ -158,13 +163,10 @@ class _PagePosition extends ScrollPositionWithSingleContext
     bool keepPage = true,
     double viewportFraction = 1.0,
     super.oldPosition,
-  })  : assert(viewportFraction > 0.0),
-        _viewportFraction = viewportFraction,
-        _pageToUseOnStartup = initialPage.toDouble(),
-        super(
-          initialPixels: null,
-          keepScrollOffset: keepPage,
-        );
+  }) : assert(viewportFraction > 0.0),
+       _viewportFraction = viewportFraction,
+       _pageToUseOnStartup = initialPage.toDouble(),
+       super(initialPixels: null, keepScrollOffset: keepPage);
 
   final int initialPage;
   double _pageToUseOnStartup;
@@ -221,7 +223,8 @@ class _PagePosition extends ScrollPositionWithSingleContext
 
   double getPageFromPixels(double pixels, double viewportDimension) {
     assert(viewportDimension > 0.0);
-    final double actual = math.max(0.0, pixels - _initialPageOffset) /
+    final double actual =
+        math.max(0.0, pixels - _initialPageOffset) /
         (viewportDimension * viewportFraction);
     final double round = actual.roundToDouble();
     if ((actual - round).abs() < precisionErrorTolerance) {
@@ -244,22 +247,27 @@ class _PagePosition extends ScrollPositionWithSingleContext
         ? null
         : _cachedPage ??
             getPageFromPixels(
-                clampDouble(pixels, minScrollExtent, maxScrollExtent),
-                viewportDimension);
+              clampDouble(pixels, minScrollExtent, maxScrollExtent),
+              viewportDimension,
+            );
   }
 
   @override
   void saveScrollOffset() {
     PageStorage.maybeOf(context.storageContext)?.writeState(
-        context.storageContext,
-        _cachedPage ?? getPageFromPixels(pixels, viewportDimension));
+      context.storageContext,
+      _cachedPage ?? getPageFromPixels(pixels, viewportDimension),
+    );
   }
 
   @override
   void restoreScrollOffset() {
     if (!hasPixels) {
-      final double? value = PageStorage.maybeOf(context.storageContext)
-          ?.readState(context.storageContext) as double?;
+      final double? value =
+          PageStorage.maybeOf(
+                context.storageContext,
+              )?.readState(context.storageContext)
+              as double?;
       if (value != null) {
         _pageToUseOnStartup = value;
       }
@@ -269,7 +277,8 @@ class _PagePosition extends ScrollPositionWithSingleContext
   @override
   void saveOffset() {
     context.saveOffset(
-        _cachedPage ?? getPageFromPixels(pixels, viewportDimension));
+      _cachedPage ?? getPageFromPixels(pixels, viewportDimension),
+    );
   }
 
   @override
@@ -349,12 +358,15 @@ class _PagePosition extends ScrollPositionWithSingleContext
     double? devicePixelRatio,
   }) {
     return PageMetrics(
-      minScrollExtent: minScrollExtent ??
+      minScrollExtent:
+          minScrollExtent ??
           (hasContentDimensions ? this.minScrollExtent : null),
-      maxScrollExtent: maxScrollExtent ??
+      maxScrollExtent:
+          maxScrollExtent ??
           (hasContentDimensions ? this.maxScrollExtent : null),
       pixels: pixels ?? (hasPixels ? this.pixels : null),
-      viewportDimension: viewportDimension ??
+      viewportDimension:
+          viewportDimension ??
           (hasViewportDimension ? this.viewportDimension : null),
       axisDirection: axisDirection ?? this.axisDirection,
       viewportFraction: viewportFraction ?? this.viewportFraction,

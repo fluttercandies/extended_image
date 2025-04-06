@@ -1,41 +1,46 @@
 @JS()
 library image_saver;
 
-// ignore:avoid_web_libraries_in_flutter
 import 'dart:async';
-import 'dart:html';
-
+import 'dart:js_interop';
 import 'dart:typed_data';
+
 import 'package:flutter/widgets.dart';
-import 'package:js/js.dart';
+import 'package:web/web.dart' as web;
 
 @JS()
-external void _exportRaw(String key, Uint8List value);
+external void _exportRaw(String key, JSAny? value);
 
 class ImageSaver {
   ImageSaver._();
   static Future<String> save(String name, Uint8List fileData) async {
-    _exportRaw(name, fileData);
+    _exportRaw(name, fileData as JSAny);
     return name;
   }
 }
 
 Future<Uint8List> pickImage(BuildContext context) async {
   final Completer<Uint8List> completer = Completer<Uint8List>();
-  final InputElement input = document.createElement('input') as InputElement;
-
+  final web.HTMLInputElement input =
+      web.document.createElement('input') as web.HTMLInputElement;
   input
     ..type = 'file'
     ..accept = 'image/*';
-  input.onChange.listen((Event e) async {
-    final List<File> files = input.files!;
-    final FileReader reader = FileReader();
-    reader.readAsArrayBuffer(files[0]);
-    reader.onError
-        .listen((ProgressEvent error) => completer.completeError(error));
-    await reader.onLoad.first;
-    completer.complete(reader.result as Uint8List?);
+  input.onChange.listen((web.Event e) async {
+    final web.FileList files = input.files!;
+    final web.FileReader reader = web.FileReader();
+    final web.File? file = files.item(0);
+    if (file == null) {
+      return completer.completeError('No file selected');
+    }
+    reader.readAsArrayBuffer(file);
+    reader.onLoadEnd.listen((web.Event e) {
+      final Uint8List data =
+          (reader.result as JSArrayBuffer).toDart.asUint8List();
+      completer.complete(data);
+    });
   });
+
   input.click();
   return completer.future;
 }

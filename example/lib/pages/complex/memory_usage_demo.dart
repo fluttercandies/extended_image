@@ -70,7 +70,7 @@ class _MemoryUsageDemoState extends State<MemoryUsageDemo> {
                             imageCacheName: imageCacheName,
                             // memory usage end
                             border: Border.all(
-                                color: Colors.grey.withOpacity(0.4),
+                                color: Colors.grey.withValues(alpha: 0.4),
                                 width: 1.0),
                             borderRadius: const BorderRadius.all(
                               Radius.circular(10.0),
@@ -90,9 +90,9 @@ class _MemoryUsageDemoState extends State<MemoryUsageDemo> {
                           child: Container(
                             padding: const EdgeInsets.all(3.0),
                             decoration: BoxDecoration(
-                              color: Colors.grey.withOpacity(0.6),
+                              color: Colors.grey.withValues(alpha: 0.6),
                               border: Border.all(
-                                  color: Colors.grey.withOpacity(0.4),
+                                  color: Colors.grey.withValues(alpha: 0.4),
                                   width: 1.0),
                               borderRadius: const BorderRadius.all(
                                 Radius.circular(5.0),

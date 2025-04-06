@@ -26,11 +26,12 @@ class EditImageInfo {
 }
 
 Future<EditImageInfo> cropImageDataWithDartLibrary(
-    {required ExtendedImageEditorState state}) async {
+    ImageEditorController imageEditorController) async {
   print('dart library start cropping');
 
   ///crop rect base on raw image
-  Rect cropRect = state.getCropRect()!;
+  Rect cropRect = imageEditorController.getCropRect()!;
+  final ExtendedImageEditorState state = imageEditorController.state!;
 
   print('getCropRect : $cropRect');
 
@@ -43,10 +44,10 @@ Future<EditImageInfo> cropImageDataWithDartLibrary(
   //     resolved); //
 
   final Uint8List data = kIsWeb &&
-          state.widget.extendedImageState.imageWidget.image
-              is ExtendedNetworkImageProvider
-      ? await _loadNetwork(state.widget.extendedImageState.imageWidget.image
-          as ExtendedNetworkImageProvider)
+          imageEditorController.state!.widget.extendedImageState.imageWidget
+              .image is ExtendedNetworkImageProvider
+      ? await _loadNetwork(imageEditorController.state!.widget
+          .extendedImageState.imageWidget.image as ExtendedNetworkImageProvider)
 
       ///toByteData is not work on web
       ///https://github.com/flutter/flutter/issues/44908
@@ -88,6 +89,13 @@ Future<EditImageInfo> cropImageDataWithDartLibrary(
       final DateTime time2 = DateTime.now();
       //clear orientation
       image = bakeOrientation(image);
+      if (editAction.hasRotateDegrees) {
+        image = copyRotate(image, angle: editAction.rotateDegrees);
+      }
+
+      if (editAction.flipY) {
+        image = flip(image, direction: FlipDirection.horizontal);
+      }
 
       if (editAction.needCrop) {
         image = copyCrop(
@@ -99,21 +107,6 @@ Future<EditImageInfo> cropImageDataWithDartLibrary(
         );
       }
 
-      if (editAction.needFlip) {
-        late FlipDirection mode;
-        if (editAction.flipY && editAction.flipX) {
-          mode = FlipDirection.both;
-        } else if (editAction.flipY) {
-          mode = FlipDirection.horizontal;
-        } else if (editAction.flipX) {
-          mode = FlipDirection.vertical;
-        }
-        image = flip(image, direction: mode);
-      }
-
-      if (editAction.hasRotateAngle) {
-        image = copyRotate(image, angle: editAction.rotateAngle);
-      }
       final DateTime time3 = DateTime.now();
       print('${time3.difference(time2)} : crop/flip/rotate');
       return image;
@@ -156,44 +149,42 @@ Future<EditImageInfo> cropImageDataWithDartLibrary(
 }
 
 Future<EditImageInfo> cropImageDataWithNativeLibrary(
-    {required ExtendedImageEditorState state}) async {
+    ImageEditorController imageEditorController) async {
   print('native library start cropping');
-  Rect cropRect = state.getCropRect()!;
-  if (state.widget.extendedImageState.imageProvider is ExtendedResizeImage) {
-    final ImmutableBuffer buffer =
-        await ImmutableBuffer.fromUint8List(state.rawImageData);
-    final ImageDescriptor descriptor = await ImageDescriptor.encoded(buffer);
 
-    final double widthRatio = descriptor.width / state.image!.width;
-    final double heightRatio = descriptor.height / state.image!.height;
-    cropRect = Rect.fromLTRB(
-      cropRect.left * widthRatio,
-      cropRect.top * heightRatio,
-      cropRect.right * widthRatio,
-      cropRect.bottom * heightRatio,
-    );
-  }
+  final EditActionDetails action = imageEditorController.editActionDetails!;
 
-  final EditActionDetails action = state.editAction!;
-
-  final int rotateAngle = action.rotateAngle.toInt();
-  final bool flipHorizontal = action.flipY;
-  final bool flipVertical = action.flipX;
-  final Uint8List img = state.rawImageData;
+  final Uint8List img = imageEditorController.state!.rawImageData;
 
   final ImageEditorOption option = ImageEditorOption();
 
+  if (action.hasRotateDegrees) {
+    final int rotateDegrees = action.rotateDegrees.toInt();
+    option.addOption(RotateOption(rotateDegrees));
+  }
+  if (action.flipY) {
+    option.addOption(const FlipOption(horizontal: true, vertical: false));
+  }
+
   if (action.needCrop) {
+    Rect cropRect = imageEditorController.getCropRect()!;
+    if (imageEditorController.state!.widget.extendedImageState.imageProvider
+        is ExtendedResizeImage) {
+      final ImmutableBuffer buffer = await ImmutableBuffer.fromUint8List(img);
+      final ImageDescriptor descriptor = await ImageDescriptor.encoded(buffer);
+
+      final double widthRatio =
+          descriptor.width / imageEditorController.state!.image!.width;
+      final double heightRatio =
+          descriptor.height / imageEditorController.state!.image!.height;
+      cropRect = Rect.fromLTRB(
+        cropRect.left * widthRatio,
+        cropRect.top * heightRatio,
+        cropRect.right * widthRatio,
+        cropRect.bottom * heightRatio,
+      );
+    }
     option.addOption(ClipOption.fromRect(cropRect));
-  }
-
-  if (action.needFlip) {
-    option.addOption(
-        FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
-  }
-
-  if (action.hasRotateAngle) {
-    option.addOption(RotateOption(rotateAngle));
   }
 
   final DateTime start = DateTime.now();

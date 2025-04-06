@@ -56,16 +56,17 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
           });
         },
         child: DefaultTextStyle(
-          style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.68)),
+          style: TextStyle(
+              fontSize: 10, color: Colors.white.withValues(alpha: 0.68)),
           child: Container(
             decoration: ShapeDecoration(
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha: 0.8),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6),
               ),
               shadows: <BoxShadow>[
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withValues(alpha: 0.5),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 )
@@ -91,7 +92,7 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
                     ),
                   ),
                   Divider(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     thickness: 1,
                   ),
                   const Text('Capacity: '),
@@ -107,7 +108,7 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
                     ),
                   ),
                   Divider(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     thickness: 1,
                   ),
                   const Text('External: '),

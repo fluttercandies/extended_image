@@ -1,6 +1,4 @@
-import 'dart:math' as math;
 import 'dart:ui' as ui show Image;
-
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
@@ -94,30 +92,31 @@ import 'package:flutter/material.dart';
 ///  * [DecorationImage], which holds a configuration for calling this function.
 ///  * [BoxDecoration], which uses this function to paint a [DecorationImage].
 
-void paintExtendedImage(
-    {required Canvas canvas,
-    required Rect rect,
-    required ui.Image image,
-    String? debugImageLabel,
-    double scale = 1.0,
-    double opacity = 1.0,
-    ColorFilter? colorFilter,
-    BoxFit? fit,
-    Alignment alignment = Alignment.center,
-    Rect? centerSlice,
-    ImageRepeat repeat = ImageRepeat.noRepeat,
-    bool flipHorizontally = false,
-    bool invertColors = false,
-    FilterQuality filterQuality = FilterQuality.low,
-    Rect? customSourceRect,
-    //you can paint anything if you want before paint image.
-    BeforePaintImage? beforePaintImage,
-    //you can paint anything if you want after paint image.
-    AfterPaintImage? afterPaintImage,
-    GestureDetails? gestureDetails,
-    EditActionDetails? editActionDetails,
-    bool isAntiAlias = false,
-    EdgeInsets layoutInsets = EdgeInsets.zero}) {
+void paintExtendedImage({
+  required Canvas canvas,
+  required Rect rect,
+  required ui.Image image,
+  String? debugImageLabel,
+  double scale = 1.0,
+  double opacity = 1.0,
+  ColorFilter? colorFilter,
+  BoxFit? fit,
+  Alignment alignment = Alignment.center,
+  Rect? centerSlice,
+  ImageRepeat repeat = ImageRepeat.noRepeat,
+  bool flipHorizontally = false,
+  bool invertColors = false,
+  FilterQuality filterQuality = FilterQuality.low,
+  Rect? customSourceRect,
+  //you can paint anything if you want before paint image.
+  BeforePaintImage? beforePaintImage,
+  //you can paint anything if you want after paint image.
+  AfterPaintImage? afterPaintImage,
+  GestureDetails? gestureDetails,
+  EditActionDetails? editActionDetails,
+  bool isAntiAlias = false,
+  EdgeInsets layoutInsets = EdgeInsets.zero,
+}) {
   assert(
     image.debugGetOpenHandleStackTraces()?.isNotEmpty ?? true,
     'Cannot paint an image that is disposed.\n'
@@ -146,15 +145,20 @@ void paintExtendedImage(
 
   Offset? sliceBorder;
   if (centerSlice != null) {
-    sliceBorder = Offset(centerSlice.left + inputSize.width - centerSlice.right,
-        centerSlice.top + inputSize.height - centerSlice.bottom);
+    sliceBorder = Offset(
+      centerSlice.left + inputSize.width - centerSlice.right,
+      centerSlice.top + inputSize.height - centerSlice.bottom,
+    );
     outputSize = outputSize - sliceBorder as Size;
     inputSize = inputSize - sliceBorder as Size;
   }
   fit ??= centerSlice == null ? BoxFit.scaleDown : BoxFit.fill;
   assert(centerSlice == null || (fit != BoxFit.none && fit != BoxFit.cover));
-  final FittedSizes fittedSizes =
-      applyBoxFit(fit, inputSize / scale, outputSize);
+  final FittedSizes fittedSizes = applyBoxFit(
+    fit,
+    inputSize / scale,
+    outputSize,
+  );
   final Size sourceSize = fittedSizes.source * scale;
   Size destinationSize = fittedSizes.destination;
   if (centerSlice != null) {
@@ -162,8 +166,10 @@ void paintExtendedImage(
     destinationSize += sliceBorder;
     // We don't have the ability to draw a subset of the image at the same time
     // as we apply a nine-patch stretch.
-    assert(sourceSize == inputSize,
-        'centerSlice was used with a BoxFit that does not guarantee that the image is fully visible.');
+    assert(
+      sourceSize == inputSize,
+      'centerSlice was used with a BoxFit that does not guarantee that the image is fully visible.',
+    );
   }
   if (repeat != ImageRepeat.noRepeat && destinationSize == outputSize) {
     // There's no need to repeat the image because we're exactly filling the
@@ -181,7 +187,8 @@ void paintExtendedImage(
       (outputSize.width - destinationSize.width) / 2.0;
   final double halfHeightDelta =
       (outputSize.height - destinationSize.height) / 2.0;
-  final double dx = halfWidthDelta +
+  final double dx =
+      halfWidthDelta +
       (flipHorizontally ? -alignment.x : alignment.x) * halfWidthDelta;
   final double dy = halfHeightDelta + alignment.y * halfHeightDelta;
   final Offset destinationPosition = topLeft.translate(dx, dy);
@@ -190,11 +197,13 @@ void paintExtendedImage(
   bool needClip = false;
 
   if (gestureDetails != null) {
-    destinationRect =
-        gestureDetails.calculateFinalDestinationRect(rect, destinationRect);
+    destinationRect = gestureDetails.calculateFinalDestinationRect(
+      rect,
+      destinationRect,
+    );
 
-    ///outside and need clip
-    needClip = rect.beyond(destinationRect);
+    // outside and need clip
+    needClip = !rect.containsRect(destinationRect);
 
     if (gestureDetails.slidePageOffset != null) {
       destinationRect = destinationRect.shift(gestureDetails.slidePageOffset!);
@@ -210,21 +219,22 @@ void paintExtendedImage(
   if (editActionDetails != null) {
     if (editActionDetails.cropRectPadding != null) {
       destinationRect = getDestinationRect(
-          inputSize: inputSize,
-          rect: editActionDetails.cropRectPadding!.deflateRect(rect),
-          fit: fit,
-          flipHorizontally: false,
-          scale: scale,
-          centerSlice: centerSlice,
-          alignment: alignment);
+        inputSize: inputSize,
+        rect: editActionDetails.cropRectPadding!.deflateRect(rect),
+        fit: fit,
+        flipHorizontally: false,
+        scale: scale,
+        centerSlice: centerSlice,
+        alignment: alignment,
+      );
     }
 
     editActionDetails.initRect(rect, destinationRect);
 
     destinationRect = editActionDetails.getFinalDestinationRect();
 
-    ///outside and need clip
-    needClip = rect.beyond(destinationRect);
+    // outside and need clip
+    needClip = !rect.containsRect(editActionDetails.getImagePath().getBounds());
 
     hasEditAction = editActionDetails.hasEditAction;
 
@@ -236,33 +246,7 @@ void paintExtendedImage(
     }
 
     if (hasEditAction) {
-      final Offset origin =
-          editActionDetails.screenCropRect?.center ?? destinationRect.center;
-
-      final Matrix4 result = Matrix4.identity();
-
-      final EditActionDetails editAction = editActionDetails;
-
-      result.translate(
-        origin.dx,
-        origin.dy,
-      );
-
-      if (editAction.hasRotateAngle) {
-        result.multiply(Matrix4.rotationZ(editAction.rotateRadian));
-      }
-
-      if (editAction.flipY) {
-        result.multiply(Matrix4.rotationY(math.pi));
-      }
-
-      if (editAction.flipX) {
-        result.multiply(Matrix4.rotationX(math.pi));
-      }
-
-      result.translate(-origin.dx, -origin.dy);
-      canvas.transform(result.storage);
-      destinationRect = editAction.paintRect(destinationRect);
+      canvas.transform(editActionDetails.getTransform().storage);
     }
   }
 
@@ -272,110 +256,7 @@ void paintExtendedImage(
       return;
     }
   }
-  // // Output size and destination rect are fully calculated.
-  // if (!kReleaseMode) {
-  //   // We can use the devicePixelRatio of the views directly here (instead of
-  //   // going through a MediaQuery) because if it changes, whatever is aware of
-  //   // the MediaQuery will be repainting the image anyways.
-  //   // Furthermore, for the memory check below we just assume that all images
-  //   // are decoded for the view with the highest device pixel ratio and use that
-  //   // as an upper bound for the display size of the image.
-  //   final double maxDevicePixelRatio =
-  //       PaintingBinding.instance.platformDispatcher.views.fold(
-  //     0.0,
-  //     (double previousValue, ui.FlutterView view) =>
-  //         math.max(previousValue, view.devicePixelRatio),
-  //   );
 
-  //   final ImageSizeInfo sizeInfo = ImageSizeInfo(
-  //     // Some ImageProvider implementations may not have given this.
-  //     source:
-  //         debugImageLabel ?? '<Unknown Image(${image.width}×${image.height})>',
-  //     imageSize: Size(image.width.toDouble(), image.height.toDouble()),
-  //     displaySize: outputSize * maxDevicePixelRatio,
-  //   );
-  //   assert(() {
-  //     if (debugInvertOversizedImages &&
-  //         sizeInfo.decodedSizeInBytes >
-  //             sizeInfo.displaySizeInBytes + debugImageOverheadAllowance) {
-  //       final int overheadInKilobytes =
-  //           (sizeInfo.decodedSizeInBytes - sizeInfo.displaySizeInBytes) ~/ 1024;
-  //       final int outputWidth = sizeInfo.displaySize.width.toInt();
-  //       final int outputHeight = sizeInfo.displaySize.height.toInt();
-  //       FlutterError.reportError(FlutterErrorDetails(
-  //         exception: 'Image $debugImageLabel has a display size of '
-  //             '$outputWidth×$outputHeight but a decode size of '
-  //             '${image.width}×${image.height}, which uses an additional '
-  //             '${overheadInKilobytes}KB (assuming a device pixel ratio of '
-  //             '$maxDevicePixelRatio).\n\n'
-  //             'Consider resizing the asset ahead of time, supplying a cacheWidth '
-  //             'parameter of $outputWidth, a cacheHeight parameter of '
-  //             '$outputHeight, or using a ResizeImage.',
-  //         library: 'painting library',
-  //         context: ErrorDescription('while painting an image'),
-  //       ));
-  //       // Invert the colors of the canvas.
-  //       canvas.saveLayer(
-  //         destinationRect,
-  //         Paint()
-  //           ..colorFilter = const ColorFilter.matrix(<double>[
-  //             -1,
-  //             0,
-  //             0,
-  //             0,
-  //             255,
-  //             0,
-  //             -1,
-  //             0,
-  //             0,
-  //             255,
-  //             0,
-  //             0,
-  //             -1,
-  //             0,
-  //             255,
-  //             0,
-  //             0,
-  //             0,
-  //             1,
-  //             0,
-  //           ]),
-  //       );
-  //       // Flip the canvas vertically.
-  //       final double dy = -(rect.top + rect.height / 2.0);
-  //       canvas.translate(0.0, -dy);
-  //       canvas.scale(1.0, -1.0);
-  //       canvas.translate(0.0, dy);
-  //       needClip = true;
-  //     }
-  //     return true;
-  //   }());
-  //   // Avoid emitting events that are the same as those emitted in the last frame.
-  //   if (!kReleaseMode && !_lastFrameImageSizeInfo.contains(sizeInfo)) {
-  //     final ImageSizeInfo? existingSizeInfo =
-  //         _pendingImageSizeInfo[sizeInfo.source];
-  //     if (existingSizeInfo == null ||
-  //         existingSizeInfo.displaySizeInBytes < sizeInfo.displaySizeInBytes) {
-  //       _pendingImageSizeInfo[sizeInfo.source!] = sizeInfo;
-  //     }
-  //     debugOnPaintImage?.call(sizeInfo);
-  //     SchedulerBinding.instance.addPostFrameCallback((Duration timeStamp) {
-  //       _lastFrameImageSizeInfo = _pendingImageSizeInfo.values.toSet();
-  //       if (_pendingImageSizeInfo.isEmpty) {
-  //         return;
-  //       }
-  //       developer.postEvent(
-  //         'Flutter.ImageSizesForFrame',
-  //         <String, Object>{
-  //           for (final ImageSizeInfo imageSizeInfo
-  //               in _pendingImageSizeInfo.values)
-  //             imageSizeInfo.source!: imageSizeInfo.toJson(),
-  //         },
-  //       );
-  //       _pendingImageSizeInfo = <String, ImageSizeInfo>{};
-  //     });
-  //   }
-  // }
   final bool needSave = repeat != ImageRepeat.noRepeat || flipHorizontally;
   if (needSave) {
     canvas.save();
@@ -392,25 +273,40 @@ void paintExtendedImage(
   }
 
   if (centerSlice == null) {
-    final Rect sourceRect = customSourceRect ??
+    final Rect sourceRect =
+        customSourceRect ??
         alignment.inscribe(sourceSize, Offset.zero & inputSize);
     if (repeat == ImageRepeat.noRepeat) {
       canvas.drawImageRect(image, sourceRect, destinationRect, paint);
     } else {
-      for (final Rect tileRect
-          in _generateImageTileRects(rect, destinationRect, repeat))
+      for (final Rect tileRect in _generateImageTileRects(
+        rect,
+        destinationRect,
+        repeat,
+      ))
         canvas.drawImageRect(image, sourceRect, tileRect, paint);
     }
   } else {
     canvas.scale(1 / scale);
     if (repeat == ImageRepeat.noRepeat) {
-      canvas.drawImageNine(image, _scaleRect(centerSlice, scale),
-          _scaleRect(destinationRect, scale), paint);
+      canvas.drawImageNine(
+        image,
+        _scaleRect(centerSlice, scale),
+        _scaleRect(destinationRect, scale),
+        paint,
+      );
     } else {
-      for (final Rect tileRect
-          in _generateImageTileRects(rect, destinationRect, repeat))
-        canvas.drawImageNine(image, _scaleRect(centerSlice, scale),
-            _scaleRect(tileRect, scale), paint);
+      for (final Rect tileRect in _generateImageTileRects(
+        rect,
+        destinationRect,
+        repeat,
+      ))
+        canvas.drawImageNine(
+          image,
+          _scaleRect(centerSlice, scale),
+          _scaleRect(tileRect, scale),
+          paint,
+        );
     }
   }
 
@@ -420,6 +316,15 @@ void paintExtendedImage(
 
   if (needClip || hasEditAction) {
     canvas.restore();
+
+    // final Path path = editActionDetails!.getImagePath();
+    // canvas.drawPath(
+    //   path,
+    //   Paint()
+    //     ..color = Colors.red
+    //     ..style = PaintingStyle.stroke
+    //     ..strokeWidth = 5,
+    // );
   }
 
   if (afterPaintImage != null) {
@@ -428,7 +333,10 @@ void paintExtendedImage(
 }
 
 List<Rect> _generateImageTileRects(
-    Rect outputRect, Rect fundamentalRect, ImageRepeat repeat) {
+  Rect outputRect,
+  Rect fundamentalRect,
+  ImageRepeat repeat,
+) {
   int startX = 0;
   int startY = 0;
   int stopX = 0;
@@ -453,5 +361,9 @@ List<Rect> _generateImageTileRects(
   ];
 }
 
-Rect _scaleRect(Rect rect, double scale) => Rect.fromLTRB(rect.left * scale,
-    rect.top * scale, rect.right * scale, rect.bottom * scale);
+Rect _scaleRect(Rect rect, double scale) => Rect.fromLTRB(
+  rect.left * scale,
+  rect.top * scale,
+  rect.right * scale,
+  rect.bottom * scale,
+);

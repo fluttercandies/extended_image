@@ -31,14 +31,16 @@ class ExtendedImageSlidePageHandlerState
   ExtendedImageSlidePageState? _extendedImageSlidePageState;
   @override
   void didChangeDependencies() {
-    _extendedImageSlidePageState = widget.extendedImageSlidePageState ??
+    _extendedImageSlidePageState =
+        widget.extendedImageSlidePageState ??
         context.findAncestorStateOfType<ExtendedImageSlidePageState>();
     super.didChangeDependencies();
   }
 
   @override
   void didUpdateWidget(covariant ExtendedImageSlidePageHandler oldWidget) {
-    _extendedImageSlidePageState = widget.extendedImageSlidePageState ??
+    _extendedImageSlidePageState =
+        widget.extendedImageSlidePageState ??
         context.findAncestorStateOfType<ExtendedImageSlidePageState>();
     super.didUpdateWidget(oldWidget);
   }
@@ -81,8 +83,9 @@ class ExtendedImageSlidePageHandlerState
       if (delta.greaterThan(minGesturePageDelta)) {
         _updateSlidePagePreOffset ??= details.focalPoint;
         _extendedImageSlidePageState!.slide(
-            details.focalPoint - _updateSlidePagePreOffset!,
-            extendedImageSlidePageHandlerState: this);
+          details.focalPoint - _updateSlidePagePreOffset!,
+          extendedImageSlidePageHandlerState: this,
+        );
         _updateSlidePagePreOffset = details.focalPoint;
       }
     }

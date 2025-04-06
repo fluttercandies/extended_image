@@ -62,11 +62,9 @@ class _SimplePhotoViewDemoState extends State<SimplePhotoViewDemo> {
               ),
               onTap: () {
                 Navigator.of(context).pushNamed(
-                    Routes.fluttercandiesSimplePicsWiper,
-                    arguments: <String, dynamic>{
-                      'url': url,
-                      'images': images,
-                    });
+                    Routes.fluttercandiesSimplePicsWiper.name,
+                    arguments: Routes.fluttercandiesSimplePicsWiper
+                        .d(url: url, images: images));
               },
             );
           },

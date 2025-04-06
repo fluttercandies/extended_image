@@ -1,3 +1,104 @@
+## 10.0.0
+
+* Add WebHtmlElementStrategy for ExtendedNetworkImageProvider on Web
+* Migrate to 3.29.0 
+  
+## 9.1.0
+
+* Removed the `enableMemoryCache` variable in `ExtendedImage`,please Use `clearMemoryCacheWhenDispose` instead for managing memory cache behavior. 
+* Scale the image to align with the crop rect and make crop rect as bigger as possible when rotate Image on Editor mode.(#713)
+
+## 9.0.9
+
+* Fix drag crop rect can't zoom in the image(#723)
+
+## 9.0.8
+
+* Fix the issue with 90-degree judgment when rotate image.
+* Fix SetState will Reset ExtendedImage and clear the Crop State. (#712)
+
+## 9.0.7
+
+* Fix crop rect transform not invert
+* Support editor config history
+* Add updateConfig and get config from editor controller
+
+## 9.0.6
+
+* Fix issue about worng scale for crop rect when scale is more than max scale
+
+## 9.0.5
+
+* Fix issue about worng scale for crop rect when scale is more than max scale
+
+## 9.0.4
+
+* Public [ImageEditorController.currentIndex],[ImageEditorController.history],[ImageEditorController.saveCurrentState]
+* Scale the crop rect if the image can't be scaled(max scale) when rotate the image.
+
+## 9.0.3
+
+* Breaking change: update the term 'angle' to 'degree'.
+
+## 9.0.2
+
+* Update eidtor crop rect when srceen size is changed.
+
+## 9.0.1
+
+* Take care about web platform, update eidtor layer size when srceen size is changed.
+* Make the list can be scrolled on web platform.
+
+## 9.0.0
+
+* Feature:
+  1. support to change free angle rotation on editor mode.
+  2. support to control whether the cropping box follows rotation on editor mode.
+  3. support flip and rotate animation on editor mode.
+  4. support undo and redo on editor mode.
+  5. support update cropAspectRatio without reset state on editor mode.
+  6. add [ImageEditorController] for [EditorConfig] to control the editor state.
+  
+* Issues:
+  1. Fix issue about free angle rotation. (#702, #627, #78, #441)
+  2. Fix issue about control whether the cropping box also rotate follows the rotation. (#691, #277)
+  3. Fix issue about flip animation. (#397)
+  4. Fix issue about crop rect gets invalid randomly on zooming in and out. (#548) 
+  5. Fix issue about undo and redo. (#553)
+
+* Breaking change:
+  1. EditorCropLayerPainter.paintMask method the [Size] argument to [Rect].
+  2. Remove flipX support.
+  3. Change the cropping process, now they are rotate, flipY and getCropRect.
+
+
+## 8.3.1
+
+* Fix issue that unsmooth zooming when using ExtendedImageGesturePageView (#631)
+* Add [ExtendedImageGesturePageView.shouldAccpetHorizontalOrVerticalDrag] to custum whether should accpet horizontal or vertical drag at that time.
+
+## 8.3.0
+
+* Add [imageGestureState] parameter for ImageBuilderForGesture call back, add [wrapGestureWidget] method for [ExtendedImageGestureState] and add [GestureWidgetDelegate]. All of them are using to build a custom gesture widget when the image is in ExtendedImageMode.gesture mode.
+
+* Add Live Photo Demo to show how to use the new feature.
+
+## 8.2.4
+
+* Fix issue that pageSpacing not work as expected after flutter 3.22.0 (#692)
+
+## 8.2.3
+
+* fix _DragGestureRecognizer build error after https://github.com/flutter/flutter/pull/151627
+
+## 8.2.2
+
+* Fix issue that pageSpacing not work as expected after flutter 3.22.0 (#692)
+
+## 8.2.1
+
+* dart fix
+
 ## 8.2.0
 
 * Migrate to 3.16.0 

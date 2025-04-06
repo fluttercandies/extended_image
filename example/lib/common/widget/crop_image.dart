@@ -107,7 +107,7 @@ class CropImage extends StatelessWidget {
         widget = Stack(children: <Widget>[
           widget,
           Container(
-            color: Colors.grey.withOpacity(0.2),
+            color: Colors.grey.withValues(alpha: 0.2),
             alignment: Alignment.center,
             child: Text(
               '+${tuChongItem.images!.length - 9}',
@@ -120,15 +120,18 @@ class CropImage extends StatelessWidget {
       widget = GestureDetector(
         child: widget,
         onTap: () {
-          Navigator.pushNamed(context, Routes.fluttercandiesPicswiper,
-              arguments: <String, dynamic>{
-                'index': index,
-                'pics': tuChongItem.images!
-                    .map<PicSwiperItem>((ImageItem f) =>
-                        PicSwiperItem(picUrl: f.imageUrl, des: f.title))
-                    .toList(),
-                'tuChongItem': tuChongItem,
-              });
+          Navigator.pushNamed(
+            context,
+            Routes.fluttercandiesPicswiper.name,
+            arguments: Routes.fluttercandiesPicswiper.d(
+              index: index,
+              pics: tuChongItem.images!
+                  .map<PicSwiperItem>((ImageItem f) =>
+                      PicSwiperItem(picUrl: f.imageUrl, des: f.title))
+                  .toList(),
+              tuChongItem: tuChongItem,
+            ),
+          );
         },
       );
 
