@@ -1,6 +1,6 @@
 # extended_image
 
-[![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image) [![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers) [![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network) [![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE) [![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues) <a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5bcc0gy"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="flutter-candies" title="flutter-candies"></a>
+[![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image) [![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers) [![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network) [![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE) [![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues) <a href="https://qm.qq.com/q/ZyJbSVjfSU"><img src="https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ffluttercandies%2F.github%2Frefs%2Fheads%2Fmain%2Fdata.yml&query=%24.qq_group_number&style=for-the-badge&label=QQ%E7%BE%A4&logo=qq&color=1DACE8" /></a>
 
 文档语言: [English](README.md) | 中文简体
 
@@ -17,14 +17,14 @@
 
 ExtendedImage 是官方 Image 的扩展三方库，主要扩展功能如下:
 
-| 功能                                           | ExtendedImage                                            | Flutter 官方 Image                 |
-| ---------------------------------------------- | -------------------------------------------------------- | ---------------------------------- |
-| 缓存网络图片资源本地以及从本地加载网络缓存资源 | 支持                                                     | 不支持                             |
-| 压缩显示                                       | 支持，在官方的基础上，更多的灵活选项 compressionRatio 和 maxBytes 进行压缩显示 | 支持 cacheHeight,cacheWidth                            |
-| 自动释放图片资源                               | 支持                                                     | 需手动管理图片资源                 |
-| 缩放模式                                       | 支持                                                     | 不支持                               |
-| 编辑模式                                       | 支持                                                     | 不支持                             |
-| 拖动图片退出页面效果                           | 支持                                                     | 不支持                             |
+| 功能                                           | ExtendedImage                                                                  | Flutter 官方 Image          |
+| ---------------------------------------------- | ------------------------------------------------------------------------------ | --------------------------- |
+| 缓存网络图片资源本地以及从本地加载网络缓存资源 | 支持                                                                           | 不支持                      |
+| 压缩显示                                       | 支持，在官方的基础上，更多的灵活选项 compressionRatio 和 maxBytes 进行压缩显示 | 支持 cacheHeight,cacheWidth |
+| 自动释放图片资源                               | 支持                                                                           | 需手动管理图片资源          |
+| 缩放模式                                       | 支持                                                                           | 不支持                      |
+| 编辑模式                                       | 支持                                                                           | 不支持                      |
+| 拖动图片退出页面效果                           | 支持                                                                           | 不支持                      |
 
 
 
@@ -423,7 +423,7 @@ EditorConfig
 | initialCropAspectRatio | 初始化的裁剪框的宽高比                                                             | null(custom: 填充满图片原始宽高比)                           |
 | initCropRectType       | 剪切框的初始化类型(根据图片初始化区域或者图片的 layout 区域)                       | imageRect                                                    |
 | hitTestBehavior        | 设置hittest的行为                                                                  | HitTestBehavior.deferToChild                                 |
-| controller        | 提供旋转,翻转,撤销,重做,重置, 重新设置裁剪比例等操作              | null                                 |
+| controller             | 提供旋转,翻转,撤销,重做,重置, 重新设置裁剪比例等操作                               | null                                                         |
 
 
 ### 裁剪框的宽高比

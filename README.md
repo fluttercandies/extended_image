@@ -1,6 +1,6 @@
 # extended_image
 
-[![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image) [![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers) [![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network) [![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE) [![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues) <a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5bcc0gy"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="flutter-candies" title="flutter-candies"></a>
+[![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image) [![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers) [![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network) [![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE) [![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues) <a href="https://qm.qq.com/q/ZyJbSVjfSU"><img src="https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ffluttercandies%2F.github%2Frefs%2Fheads%2Fmain%2Fdata.yml&query=%24.qq_group_number&style=for-the-badge&label=QQ%E7%BE%A4&logo=qq&color=1DACE8" /></a>
 
 Language: English| [中文简体](README-ZH.md)
 
@@ -10,14 +10,14 @@ A powerful official extension library of images, which supports placeholder(load
 
 ExtendedImage is an third-party library that extends the functionality of Flutter's Image component. The main extended features are as follows:
 
-| Feature                                                | ExtendedImage                                           |  Image            |
-| ------------------------------------------------------ | ------------------------------------------------------- | --------------------------------- |
-| Cache network images locally and load from cache        | Supported                                               | Not supported                     |
-| Compression display                                    | Supported, with additional options (compressionRatio and maxBytes)            | Supported, with cacheHeight, cacheWidth |
-| Automatic release of image resources                    | Supported                                               | Requires manual management        |
-| Scaling mode                                           | Supported                                               | Not supported                     |
-| Editing mode                                           | Supported                                               | Not supported                     |
-| Drag-to-dismiss effect for images in a page transition | Supported                                               | Not supported                     |
+| Feature                                                | ExtendedImage                                                      | Image                                   |
+| ------------------------------------------------------ | ------------------------------------------------------------------ | --------------------------------------- |
+| Cache network images locally and load from cache       | Supported                                                          | Not supported                           |
+| Compression display                                    | Supported, with additional options (compressionRatio and maxBytes) | Supported, with cacheHeight, cacheWidth |
+| Automatic release of image resources                   | Supported                                                          | Requires manual management              |
+| Scaling mode                                           | Supported                                                          | Not supported                           |
+| Editing mode                                           | Supported                                                          | Not supported                           |
+| Drag-to-dismiss effect for images in a page transition | Supported                                                          | Not supported                           |
 
 
 ## Table of contents
@@ -399,24 +399,24 @@ ExtendedImage
 
 EditorConfig
 
-| parameter              | description                                                        | default                                                      |
-| ---------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------ |
-| maxScale               | max scale of zoom                                                  | 5.0                                                          |
-| cropRectPadding        | the padding between crop rect and image layout rect.               | EdgeInsets.all(20.0)                                         |
-| cornerSize             | size of corner shape  (DEPRECATED! Use cornerPainter)              | Size(30.0, 5.0)                                              |
-| cornerColor            | color of corner shape (DEPRECATED! Use cornerPainter)              | primaryColor                                                 |
-| lineColor              | color of crop line                                                 | scaffoldBackgroundColor.withOpacity(0.7)                     |
-| lineHeight             | height of crop line                                                | 0.6                                                          |
-| editorMaskColorHandler | call back of editor mask color base on pointerDown                 | scaffoldBackgroundColor.withOpacity(pointerDown ? 0.4 : 0.8) |
-| hitTestSize            | hit test region of corner and line                                 | 20.0                                                         |
-| animationDuration      | auto center animation duration                                     | Duration(milliseconds: 200)                                  |
-| tickerDuration         | duration to begin auto center animation after crop rect is changed | Duration(milliseconds: 400)                                  |
-| cropAspectRatio        | aspect ratio of crop rect                                          | null(custom)                                                 |
-| initialCropAspectRatio | initial aspect ratio of crop rect                                  | null(custom: initial crop rect will fill the entire image)   |
-| initCropRectType       | init crop rect base on initial image rect or image layout rect     | imageRect                                                    |
-| cornerPainter          | corner shape                                                       | ExtendedImageCropLayerPainterNinetyDegreesCorner()           |
-| hitTestBehavior        | How to behave during hit tests                                     | HitTestBehavior.deferToChild                                 |
-| controller        | providing functions like rotating, flipping, undoing, redoing and reset actions.                                    | null                                 |
+| parameter              | description                                                                      | default                                                      |
+| ---------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| maxScale               | max scale of zoom                                                                | 5.0                                                          |
+| cropRectPadding        | the padding between crop rect and image layout rect.                             | EdgeInsets.all(20.0)                                         |
+| cornerSize             | size of corner shape  (DEPRECATED! Use cornerPainter)                            | Size(30.0, 5.0)                                              |
+| cornerColor            | color of corner shape (DEPRECATED! Use cornerPainter)                            | primaryColor                                                 |
+| lineColor              | color of crop line                                                               | scaffoldBackgroundColor.withOpacity(0.7)                     |
+| lineHeight             | height of crop line                                                              | 0.6                                                          |
+| editorMaskColorHandler | call back of editor mask color base on pointerDown                               | scaffoldBackgroundColor.withOpacity(pointerDown ? 0.4 : 0.8) |
+| hitTestSize            | hit test region of corner and line                                               | 20.0                                                         |
+| animationDuration      | auto center animation duration                                                   | Duration(milliseconds: 200)                                  |
+| tickerDuration         | duration to begin auto center animation after crop rect is changed               | Duration(milliseconds: 400)                                  |
+| cropAspectRatio        | aspect ratio of crop rect                                                        | null(custom)                                                 |
+| initialCropAspectRatio | initial aspect ratio of crop rect                                                | null(custom: initial crop rect will fill the entire image)   |
+| initCropRectType       | init crop rect base on initial image rect or image layout rect                   | imageRect                                                    |
+| cornerPainter          | corner shape                                                                     | ExtendedImageCropLayerPainterNinetyDegreesCorner()           |
+| hitTestBehavior        | How to behave during hit tests                                                   | HitTestBehavior.deferToChild                                 |
+| controller             | providing functions like rotating, flipping, undoing, redoing and reset actions. | null                                                         |
 
 
 ### crop aspect ratio
@@ -1036,9 +1036,9 @@ show underneath the notch if zoomed in.
 
 ExtendedImage
 
-| parameter        | description                                       | default         |
-| ---------------- | ------------------------------------------------- | --------------- |
-| layoutInsets     | Amount to inset from the edge during image layout | EdgeInsets.zero |
+| parameter    | description                                       | default         |
+| ------------ | ------------------------------------------------- | --------------- |
+| layoutInsets | Amount to inset from the edge during image layout | EdgeInsets.zero |
 
 ```dart
   ExtendedImage.network(
@@ -1054,11 +1054,11 @@ You can reduce memory usage with following settings now.
 
 * ExtendedResizeImage
 
-| parameter                                                | description                                                  | default   |
-| -------------------------------------------------------- | ------------------------------------------------------------ | --------- |
-| [ExtendedResizeImage.compressionRatio]                   | The image`s size will resize to original * [compressionRatio].It's ExtendedResizeImage`s first pick.The compressionRatio`s range is from 0.0 (exclusive), to 1.0 (exclusive). | null      |
-| [ExtendedResizeImage.maxBytes]                           | [ExtendedResizeImage] will compress the image to a size that is smaller than [maxBytes]. The default size is 50KB. It's actual bytes of Image, not decode bytes | 50 << 10 |
-| [ExtendedResizeImage.width]/[ExtendedResizeImage.height] | The width/height the image should decode to and cache. It's same as [ResizeImage], | null      |
+| parameter                                                | description                                                                                                                                                                   | default  |
+| -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| [ExtendedResizeImage.compressionRatio]                   | The image`s size will resize to original * [compressionRatio].It's ExtendedResizeImage`s first pick.The compressionRatio`s range is from 0.0 (exclusive), to 1.0 (exclusive). | null     |
+| [ExtendedResizeImage.maxBytes]                           | [ExtendedResizeImage] will compress the image to a size that is smaller than [maxBytes]. The default size is 50KB. It's actual bytes of Image, not decode bytes               | 50 << 10 |
+| [ExtendedResizeImage.width]/[ExtendedResizeImage.height] | The width/height the image should decode to and cache. It's same as [ResizeImage],                                                                                            | null     |
 
 ```dart
     ExtendedImage.network(
@@ -1084,9 +1084,9 @@ You can reduce memory usage with following settings now.
 
 * clearMemoryCacheWhenDispose
 
-| parameter                                                | description                                                  | default |
-| -------------------------------------------------------- | ------------------------------------------------------------ | ------- |
-| clearMemoryCacheWhenDispose                              | It's not good enough after Flutter 2.0, it seems that we can't release memory usage if this image is not completed(https://github.com/fluttercandies/extended_image/issues/317). It will release memory usage only for completed image now.  | false   |
+| parameter                   | description                                                                                                                                                                                                                                 | default |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| clearMemoryCacheWhenDispose | It's not good enough after Flutter 2.0, it seems that we can't release memory usage if this image is not completed(https://github.com/fluttercandies/extended_image/issues/317). It will release memory usage only for completed image now. | false   |
 
 ```dart
    ExtendedImage.network(
@@ -1097,9 +1097,9 @@ You can reduce memory usage with following settings now.
 
 * imageCacheName
 
-| parameter      | description                                                  | default |
-| -------------- | ------------------------------------------------------------ | ------- |
-| imageCacheName | The name of [ImageCache], you can define custom [ImageCache] to store this image. In this way you can work with them without affecting other [ImageCache]| null    |
+| parameter      | description                                                                                                                                               | default |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| imageCacheName | The name of [ImageCache], you can define custom [ImageCache] to store this image. In this way you can work with them without affecting other [ImageCache] | null    |
 
 ```dart
    ExtendedImage.network(
