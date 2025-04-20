@@ -1,3 +1,8 @@
+## 10.0.1
+
+* Fix issue that Scale the image to align with the crop rect only when scaleDelta is small.(#738)
+* Change the color from dialogBackgroundColor to scaffoldBackgroundColor for defaultSlidePageBackgroundHandler.
+
 ## 10.0.0
 
 * Add WebHtmlElementStrategy for ExtendedNetworkImageProvider on Web

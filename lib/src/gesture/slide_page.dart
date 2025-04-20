@@ -226,7 +226,7 @@ class ExtendedImageSlidePageState extends State<ExtendedImageSlidePage>
         defaultSlidePageBackgroundHandler(
           offset: offset,
           pageSize: pageSize,
-          color: Theme.of(context).dialogBackgroundColor,
+          color: Theme.of(context).scaffoldBackgroundColor,
           pageGestureAxis: widget.slideAxis,
         );
 

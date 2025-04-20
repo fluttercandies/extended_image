@@ -283,8 +283,9 @@ void paintExtendedImage({
         rect,
         destinationRect,
         repeat,
-      ))
+      )) {
         canvas.drawImageRect(image, sourceRect, tileRect, paint);
+      }
     }
   } else {
     canvas.scale(1 / scale);

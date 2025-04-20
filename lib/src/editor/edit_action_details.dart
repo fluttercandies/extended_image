@@ -294,7 +294,9 @@ class EditActionDetails {
           }).toList();
 
       final double scaleDelta = scaleToMatchRect(rectVertices, rect);
-      if (scaleDelta != double.negativeInfinity) {
+      // apply it only scaleDelta is small.
+      if (scaleDelta != double.negativeInfinity &&
+          totalScale * (1 - scaleDelta) <= 0.05) {
         screenFocalPoint = null;
         preTotalScale = totalScale;
         totalScale = totalScale * scaleDelta;
