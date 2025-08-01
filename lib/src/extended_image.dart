@@ -58,6 +58,7 @@ class ExtendedImage extends StatefulWidget {
     this.isAntiAlias = false,
     this.handleLoadingProgress = false,
     this.layoutInsets = EdgeInsets.zero,
+    this.animate = true,
   }) : assert(constraints == null || constraints.debugAssertIsValid()),
        constraints =
            (width != null || height != null)
@@ -238,6 +239,7 @@ class ExtendedImage extends StatefulWidget {
     bool cacheRawData = false,
     String? imageCacheName,
     this.layoutInsets = EdgeInsets.zero,
+    this.animate = true,
   }) : assert(cacheWidth == null || cacheWidth > 0),
        assert(cacheHeight == null || cacheHeight > 0),
        image = ExtendedResizeImage.resizeIfNeeded(
@@ -336,6 +338,7 @@ class ExtendedImage extends StatefulWidget {
     bool cacheRawData = false,
     String? imageCacheName,
     this.layoutInsets = EdgeInsets.zero,
+    this.animate = true,
   }) : // FileImage is not supported on Flutter Web therefore neither this method.
        assert(
          !kIsWeb,
@@ -426,6 +429,7 @@ class ExtendedImage extends StatefulWidget {
     bool cacheRawData = false,
     String? imageCacheName,
     this.layoutInsets = EdgeInsets.zero,
+    this.animate = true,
   }) : assert(cacheWidth == null || cacheWidth > 0),
        assert(cacheHeight == null || cacheHeight > 0),
        image = ExtendedResizeImage.resizeIfNeeded(
@@ -505,6 +509,7 @@ class ExtendedImage extends StatefulWidget {
     String? imageCacheName,
     Duration? cacheMaxAge,
     this.layoutInsets = EdgeInsets.zero,
+    this.animate = true,
     WebHtmlElementStrategy webHtmlElementStrategy =
         WebHtmlElementStrategy.never,
   }) : assert(cacheWidth == null || cacheWidth > 0),
@@ -817,6 +822,11 @@ class ExtendedImage extends StatefulWidget {
   ///
   /// Anti-aliasing alleviates the sawtooth artifact when the image is rotated.
   final bool isAntiAlias;
+
+  /// Whether to enable animation for animated images (like GIFs).
+  /// When set to false, only the first frame will be displayed.
+  /// Default is true.
+  final bool animate;
 
   /// Insets to apply before laying out the image.
   ///
@@ -1250,6 +1260,11 @@ class _ExtendedImageState extends State<ExtendedImage>
   }
 
   void _handleImageFrame(ImageInfo imageInfo, bool synchronousCall) {
+    // If animation is disabled and we already have the first frame, ignore subsequent frames
+    if (!widget.animate && _frameNumber != null && _frameNumber! >= 0) {
+      return;
+    }
+
     setState(() {
       _replaceImage(info: imageInfo);
       _loadState = LoadState.completed;
