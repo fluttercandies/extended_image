@@ -343,10 +343,28 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     _startingOffset = details.focalPoint;
   }
 
+  /// 检查放大状态下是否允许垂直边界滑动
+  bool _canSlideWhenZoomedAtVerticalBoundary(Offset delta) {
+    if ((_gestureDetails?.totalScale ?? 1) <= 1) return false;
+
+    final boundary = _gestureDetails!.boundary;
+
+    // 只允许垂直滑动且在对应边界时触发slide page
+    if (delta.dy.abs() > delta.dx.abs()) {
+      if (delta.dy > 0 && boundary.top) {
+        return true; // 向下滑动且在顶部边界
+      } else if (delta.dy < 0 && boundary.bottom) {
+        return true; // 向上滑动且在底部边界
+      }
+    }
+
+    return false;
+  }
+
   void handleScaleUpdate(ScaleUpdateDetails details) {
     if (extendedImageSlidePageState != null &&
         details.scale == 1.0 &&
-        (_gestureDetails!.totalScale ?? 1) <= 1 &&
+        ((_gestureDetails!.totalScale ?? 1) <= 1 || _canSlideWhenZoomedAtVerticalBoundary(details.focalPointDelta)) &&
         _gestureDetails!.userOffset &&
         _gestureDetails!.actionType == ActionType.pan) {
       final Offset totalDelta = details.focalPointDelta;
