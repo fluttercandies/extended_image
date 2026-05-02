@@ -20,6 +20,11 @@ dependencies:
     sdk: flutter
   meta: ^1.7.0
   vector_math: ^2.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
 dependency_overrides:
   # extended_image_library:
   #   path: ../extended_image_library

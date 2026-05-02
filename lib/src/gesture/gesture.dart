@@ -536,6 +536,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
     double? imageWidth,
     double? imageHeight,
     BoxFit? imageFit,
+    Alignment alignment = Alignment.center,
     Rect? rect,
     bool copy = false,
   }) {
@@ -545,6 +546,7 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
         imageWidth: imageWidth,
         imageHeight: imageHeight,
         imageFit: imageFit,
+        alignment: alignment,
         rect: rect,
         copy: copy,
       ),
@@ -579,6 +581,7 @@ class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
     this.imageFit,
     this.imageHeight,
     this.imageWidth,
+    this.alignment = Alignment.center,
     this.rect,
     this.copy = false,
   });
@@ -587,6 +590,7 @@ class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
   final double? imageWidth;
   final double? imageHeight;
   final BoxFit? imageFit;
+  final Alignment alignment;
   final Rect? rect;
   final bool copy;
 
@@ -599,6 +603,7 @@ class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
       width: imageWidth,
       height: imageHeight,
       fit: imageFit,
+      alignment: alignment,
       copy: copy,
     );
   }
@@ -614,6 +619,7 @@ class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
         imageWidth != oldDelegate.imageWidth ||
         imageHeight != oldDelegate.imageHeight ||
         imageFit != oldDelegate.imageFit ||
+        alignment != oldDelegate.alignment ||
         rect != oldDelegate.rect ||
         copy != oldDelegate.copy;
   }
@@ -639,6 +645,7 @@ class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
     double? width,
     double? height,
     BoxFit? fit,
+    Alignment alignment = Alignment.center,
     bool copy = false,
   }) {
     final GestureDetails? gestureDetails = state.gestureDetails;
@@ -658,6 +665,7 @@ class GestureWidgetDelegateFromState extends SingleChildLayoutDelegate {
                 .toDouble(),
       ),
       fit: fit ?? state.widget.extendedImageState.imageWidget.fit,
+      alignment: alignment,
     );
 
     if (gestureDetails != null) {

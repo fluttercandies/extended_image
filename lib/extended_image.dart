@@ -11,6 +11,7 @@ export 'src/editor/editor_crop_layer_painter.dart';
 export 'src/editor/editor_utils.dart';
 export 'src/extended_image.dart';
 export 'src/gesture/gesture.dart';
+export 'src/gesture/gesture_widget.dart';
 export 'src/gesture/page_view/gesture_page_view.dart';
 export 'src/gesture/slide_page.dart';
 export 'src/gesture/slide_page_handler.dart';
