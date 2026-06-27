@@ -42,6 +42,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     ExtendedPageController? controller,
     ScrollPhysics? physics,
     this.pageSnapping = true,
+    this.allowImplicitScrolling = false,
     this.onPageChanged,
     List<Widget> children = const <Widget>[],
     CanScrollPage? canScrollPage,
@@ -74,6 +75,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     ExtendedPageController? controller,
     ScrollPhysics? physics,
     this.pageSnapping = true,
+    this.allowImplicitScrolling = false,
     this.onPageChanged,
     required IndexedWidgetBuilder itemBuilder,
     int? itemCount,
@@ -100,6 +102,7 @@ class ExtendedImageGesturePageView extends StatefulWidget {
     ExtendedPageController? controller,
     //this.physics,
     this.pageSnapping = true,
+    this.allowImplicitScrolling = false,
     this.onPageChanged,
     CanScrollPage? canScrollPage,
     required this.childrenDelegate,
@@ -151,6 +154,11 @@ class ExtendedImageGesturePageView extends StatefulWidget {
 
   /// Called whenever the page in the center of the viewport changes.
   final ValueChanged<int>? onPageChanged;
+
+  /// Controls whether the widget's pages will respond to
+  /// [RenderObject.showOnScreen], which will allow for implicit accessibility
+  /// scrolling.
+  final bool allowImplicitScrolling;
 
   /// A delegate that provides the children for the [PageView].
   ///
@@ -341,6 +349,7 @@ class ExtendedImageGesturePageViewState
       controller: widget.controller,
       childrenDelegate: widget.childrenDelegate,
       pageSnapping: widget.pageSnapping,
+      allowImplicitScrolling: widget.allowImplicitScrolling,
       physics: widget.physics,
       onPageChanged: widget.onPageChanged,
     );
