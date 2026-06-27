@@ -711,7 +711,7 @@ ExtendedImageGesturePageView
 | parameter   | description                                                              | default |
 | ----------- | ------------------------------------------------------------------------ | ------- |
 | canMovePage | 是否滑动页面.有些场景如果 Scale 大于 1.0，并不想滑动页面，可以返回 false | true    |
-| allowImplicitScrolling | 是否启用隐式滚动（保留相邻页面以减少切换时空白） | false |
+| allowImplicitScrolling | 是否响应隐式辅助功能滚动请求（保留相邻页面） | false |
 
 GestureConfig
 

@@ -716,7 +716,7 @@ ExtendedImageGesturePageView
 | parameter    | description              | default |
 | ------------ | ------------------------ | ------- |
 | cacheGesture | whether should move page | true    |
-| allowImplicitScrolling | whether to keep neighboring pages alive for implicit scrolling/cache behavior | false |
+| allowImplicitScrolling | whether to respond to implicit accessibility scrolling requests (keeps neighboring pages alive) | false |
 
 GestureConfig
 
