@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - master
   pull_request:
     branches:
       - main
+      - master
     paths-ignore:
       - "**.md"
 
@@ -18,12 +20,12 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - uses: actions/checkout@900f2210b1d28bbbd0bd22d17926b9e224e8f231
+      - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
         with:
-          distribution: 'adopt'
-          java-version: '11.x'
-      - uses: subosito/flutter-action@v2
+          distribution: 'zulu'
+          java-version: '17'
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
         with:
           channel: 'stable'
       - name: Log Dart/Flutter versions
@@ -46,12 +48,12 @@ jobs:
     name: Test iOS
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - uses: actions/checkout@900f2210b1d28bbbd0bd22d17926b9e224e8f231
+      - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
         with:
-          distribution: 'adopt'
-          java-version: '11.x'
-      - uses: subosito/flutter-action@v2.8.0
+          distribution: 'zulu'
+          java-version: '17'
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
         with:
           channel: stable
       - run: dart --version
@@ -64,16 +66,15 @@ jobs:
     name: Test Android
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - uses: actions/checkout@900f2210b1d28bbbd0bd22d17926b9e224e8f231
+      - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9
         with:
-          distribution: 'adopt'
-          java-version: '11.x'
-      - uses: subosito/flutter-action@v2.8.0
+          distribution: 'zulu'
+          java-version: '17'
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2
         with:
           channel: stable
       - run: dart --version
       - run: flutter --version
       - run: flutter pub get
-      - run: sudo echo "y" | sudo $ANDROID_HOME/tools/bin/sdkmanager "ndk;21.4.7075529"
       - run: cd example; flutter build apk --debug

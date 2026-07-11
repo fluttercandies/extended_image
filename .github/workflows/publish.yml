@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@900f2210b1d28bbbd0bd22d17926b9e224e8f231
       - name: Publish
         uses: k-paxian/dart-package-publisher@master
         with:

@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - master
   pull_request:
     branches:
       - main
+      - master
     paths:
       - "**.md"
       - "**.yaml"
@@ -17,7 +19,7 @@ jobs:
     name: Publish dry-run with packages
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@900f2210b1d28bbbd0bd22d17926b9e224e8f231
       - uses: k-paxian/dart-package-publisher@master
         with:
           credentialJson: 'MockCredentialJson'
