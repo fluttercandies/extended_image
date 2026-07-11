@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui show FlutterView, Image;
 
 import 'package:extended_image/extended_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -198,6 +199,104 @@ void paintExtendedImage({
   final Offset destinationPosition = topLeft.translate(dx, dy);
   Rect destinationRect = destinationPosition & destinationSize;
 
+  // Set to true if we added a saveLayer to the canvas to invert/flip the image.
+  bool invertedCanvas = false;
+  // Output size and destination rect are fully calculated.
+
+  // Implement debug-mode and profile-mode features:
+  //  - cacheWidth/cacheHeight warning
+  //  - debugInvertOversizedImages
+  //  - debugOnPaintImage
+  //  - Flutter.ImageSizesForFrame events in timeline
+  if (!kReleaseMode) {
+    // We can use the devicePixelRatio of the views directly here (instead of
+    // going through a MediaQuery) because if it changes, whatever is aware of
+    // the MediaQuery will be repainting the image anyways.
+    // Furthermore, for the memory check below we just assume that all images
+    // are decoded for the view with the highest device pixel ratio and use that
+    // as an upper bound for the display size of the image.
+    final double maxDevicePixelRatio =
+        PaintingBinding.instance.platformDispatcher.views.fold(
+      0.0,
+      (double previousValue, ui.FlutterView view) =>
+          math.max(previousValue, view.devicePixelRatio),
+    );
+    final ImageSizeInfo sizeInfo = ImageSizeInfo(
+      // Some ImageProvider implementations may not have given this.
+      source: debugImageLabel ??
+          '<Unknown Image(${image.width}×${image.height})>',
+      imageSize: Size(image.width.toDouble(), image.height.toDouble()),
+      displaySize: outputSize * maxDevicePixelRatio,
+    );
+    assert(() {
+      if (debugInvertOversizedImages &&
+          sizeInfo.decodedSizeInBytes >
+              sizeInfo.displaySizeInBytes + debugImageOverheadAllowance) {
+        final int overheadInKilobytes =
+            (sizeInfo.decodedSizeInBytes - sizeInfo.displaySizeInBytes) ~/ 1024;
+        final int outputWidth = sizeInfo.displaySize.width.toInt();
+        final int outputHeight = sizeInfo.displaySize.height.toInt();
+        FlutterError.reportError(
+          FlutterErrorDetails(
+            exception: 'Image $debugImageLabel has a display size of '
+                '$outputWidth×$outputHeight but a decode size of '
+                '${image.width}×${image.height}, which uses an additional '
+                '${overheadInKilobytes}KB (assuming a device pixel ratio of '
+                '$maxDevicePixelRatio).\n\n'
+                'Consider resizing the asset ahead of time, supplying a cacheWidth '
+                'parameter of $outputWidth, a cacheHeight parameter of '
+                '$outputHeight, or using a ResizeImage.',
+            library: 'painting library',
+            context: ErrorDescription('while painting an image'),
+          ),
+        );
+        // Invert the colors of the canvas.
+        canvas.saveLayer(
+          destinationRect,
+          Paint()
+            ..colorFilter = const ColorFilter.matrix(<double>[
+              -1, 0, 0, 0, 255,
+              0, -1, 0, 0, 255,
+              0, 0, -1, 0, 255,
+              0, 0, 0, 1, 0,
+            ]),
+        );
+        // Flip the canvas vertically.
+        final double dy = -(rect.top + rect.height / 2.0);
+        canvas.translate(0.0, -dy);
+        canvas.scale(1.0, -1.0);
+        canvas.translate(0.0, dy);
+        invertedCanvas = true;
+      }
+      return true;
+    }());
+    // Avoid emitting events that are the same as those emitted in the last frame.
+    if (!_lastFrameImageSizeInfo.contains(sizeInfo)) {
+      final ImageSizeInfo? existingSizeInfo =
+          _pendingImageSizeInfo[sizeInfo.source];
+      if (existingSizeInfo == null ||
+          existingSizeInfo.displaySizeInBytes < sizeInfo.displaySizeInBytes) {
+        _pendingImageSizeInfo[sizeInfo.source!] = sizeInfo;
+      }
+      debugOnPaintImage?.call(sizeInfo);
+      SchedulerBinding.instance.addPostFrameCallback(
+        (Duration timeStamp) {
+          _lastFrameImageSizeInfo = _pendingImageSizeInfo.values.toSet();
+          if (_pendingImageSizeInfo.isEmpty) {
+            return;
+          }
+          developer.postEvent('Flutter.ImageSizesForFrame', <String, Object>{
+            for (final ImageSizeInfo imageSizeInfo
+                in _pendingImageSizeInfo.values)
+              imageSizeInfo.source!: imageSizeInfo.toJson(),
+          });
+          _pendingImageSizeInfo = <String, ImageSizeInfo>{};
+        },
+        debugLabel: 'paintImage.recordImageSizes',
+      );
+    }
+  }
+
   bool needClip = false;
 
   if (gestureDetails != null) {
@@ -251,104 +350,6 @@ void paintExtendedImage({
 
     if (hasEditAction) {
       canvas.transform(editActionDetails.getTransform().storage);
-    }
-  }
-
-  // Implement debug-mode and profile-mode features:
-  //  - cacheWidth/cacheHeight warning
-  //  - debugInvertOversizedImages
-  //  - debugOnPaintImage
-  //  - Flutter.ImageSizesForFrame events in timeline
-  bool invertedCanvas = false;
-  if (!kReleaseMode) {
-    // We can use the devicePixelRatio of the views directly here (instead of
-    // going through a MediaQuery) because if it changes, whatever is aware of
-    // the MediaQuery will be repainting the image anyways.
-    // Furthermore, for the memory check below we just assume that all images
-    // are decoded for the view with the highest device pixel ratio and use that
-    // as an upper bound for the display size of the image.
-    final double maxDevicePixelRatio =
-        PaintingBinding.instance.platformDispatcher.views.fold(
-      0.0,
-      (double previousValue, ui.FlutterView view) =>
-          math.max(previousValue, view.devicePixelRatio),
-    );
-    final String source =
-        debugImageLabel ??
-        '<Unknown Image(${image.width}\u00D7${image.height})>';
-    final ImageSizeInfo sizeInfo = ImageSizeInfo(
-      // Some ImageProvider implementations may not have given this.
-      source: source,
-      imageSize: Size(image.width.toDouble(), image.height.toDouble()),
-      displaySize: outputSize * maxDevicePixelRatio,
-    );
-    assert(() {
-      if (debugInvertOversizedImages &&
-          sizeInfo.decodedSizeInBytes >
-              sizeInfo.displaySizeInBytes + debugImageOverheadAllowance) {
-        final int overheadInKilobytes =
-            (sizeInfo.decodedSizeInBytes - sizeInfo.displaySizeInBytes) ~/
-            1024;
-        final int outputWidth = sizeInfo.displaySize.width.toInt();
-        final int outputHeight = sizeInfo.displaySize.height.toInt();
-        FlutterError.reportError(
-          FlutterErrorDetails(
-            exception:
-                'Image $source has a display size of '
-                '$outputWidth\u00D7$outputHeight but a decode size of '
-                '${image.width}\u00D7${image.height}, which uses an additional '
-                '${overheadInKilobytes}KB (assuming a device pixel ratio of '
-                '$maxDevicePixelRatio).\n\n'
-                'Consider resizing the asset ahead of time, supplying a cacheWidth '
-                'parameter of $outputWidth, a cacheHeight parameter of '
-                '$outputHeight, or using a ResizeImage.',
-            library: 'painting library',
-            context: ErrorDescription('while painting an image'),
-          ),
-        );
-        // Invert the colors of the canvas.
-        canvas.saveLayer(
-          destinationRect,
-          Paint()
-            ..colorFilter = const ColorFilter.matrix(<double>[
-              -1, 0, 0, 0, 255,
-              0, -1, 0, 0, 255,
-              0, 0, -1, 0, 255,
-              0, 0, 0, 1, 0,
-            ]),
-        );
-        // Flip the canvas vertically.
-        final double dy = -(rect.top + rect.height / 2.0);
-        canvas.translate(0.0, -dy);
-        canvas.scale(1.0, -1.0);
-        canvas.translate(0.0, dy);
-        invertedCanvas = true;
-      }
-      return true;
-    }());
-    // Avoid emitting events that are the same as those emitted in the last frame.
-    if (!_lastFrameImageSizeInfo.contains(sizeInfo)) {
-      final ImageSizeInfo? existingSizeInfo = _pendingImageSizeInfo[source];
-      if (existingSizeInfo == null ||
-          existingSizeInfo.displaySizeInBytes < sizeInfo.displaySizeInBytes) {
-        _pendingImageSizeInfo[source] = sizeInfo;
-      }
-      debugOnPaintImage?.call(sizeInfo);
-      SchedulerBinding.instance.addPostFrameCallback(
-        (Duration timeStamp) {
-          _lastFrameImageSizeInfo = _pendingImageSizeInfo.values.toSet();
-          if (_pendingImageSizeInfo.isEmpty) {
-            return;
-          }
-          developer.postEvent('Flutter.ImageSizesForFrame', <String, Object>{
-            for (final MapEntry<String, ImageSizeInfo> entry
-                in _pendingImageSizeInfo.entries)
-              entry.key: entry.value.toJson(),
-          });
-          _pendingImageSizeInfo = <String, ImageSizeInfo>{};
-        },
-        debugLabel: 'paintImage.recordImageSizes',
-      );
     }
   }
 
