@@ -329,6 +329,28 @@ ExtendedImage.network(
 )
 ```
 
+### custom widget gesture
+
+Use `ExtendedImageGestureWidget` when the content should stay as a widget tree,
+for example an SVG widget, chart, or video, while still using extended_image
+zoom, pan, double-tap, page-view, and slide-page behavior.
+
+```dart
+ExtendedImageGestureWidget(
+  childSize: const Size(300, 180),
+  fit: BoxFit.contain,
+  child: SvgPicture.string(svgSource),
+  initGestureConfigHandler: (state) {
+    return GestureConfig(
+      minScale: 0.8,
+      maxScale: 5.0,
+      initialScale: 1.0,
+      inPageView: false,
+    );
+  },
+)
+```
+
 ### double tap animation
 
 ```dart
