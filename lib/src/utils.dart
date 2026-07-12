@@ -210,25 +210,25 @@ extension OffsetExtensionNullable on Offset? {
 
 extension DebounceThrottlingE on Function {
   VoidFunction debounce([Duration duration = const Duration(seconds: 1)]) {
-    Timer? _debounce;
+    Timer? timer;
     return () {
-      if (_debounce?.isActive ?? false) {
-        _debounce!.cancel();
+      if (timer?.isActive ?? false) {
+        timer!.cancel();
       }
-      _debounce = Timer(duration, () {
+      timer = Timer(duration, () {
         this.call();
       });
     };
   }
 
   VoidFunction throttle([Duration duration = const Duration(seconds: 1)]) {
-    Timer? _throttle;
+    Timer? timer;
     return () {
-      if (_throttle?.isActive ?? false) {
+      if (timer?.isActive ?? false) {
         return;
       }
       this.call();
-      _throttle = Timer(duration, () {});
+      timer = Timer(duration, () {});
     };
   }
 }

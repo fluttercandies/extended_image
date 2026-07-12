@@ -18,8 +18,10 @@ import 'package:loading_more_list/loading_more_list.dart';
   },
 )
 class MemoryUsageDemo extends StatefulWidget {
+  const MemoryUsageDemo({super.key});
+
   @override
-  _MemoryUsageDemoState createState() => _MemoryUsageDemoState();
+  State<MemoryUsageDemo> createState() => _MemoryUsageDemoState();
 }
 
 class _MemoryUsageDemoState extends State<MemoryUsageDemo> {
@@ -32,16 +34,16 @@ class _MemoryUsageDemoState extends State<MemoryUsageDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('MemoryUsage'),
-        ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            MemoryUsageChart(),
-            Expanded(
-                child: LoadingMoreList<TuChongItem>(
+      appBar: AppBar(
+        title: const Text('MemoryUsage'),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const MemoryUsageChart(),
+          Expanded(
+            child: LoadingMoreList<TuChongItem>(
               ListConfig<TuChongItem>(
                 extendedListDelegate:
                     const SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
@@ -70,15 +72,16 @@ class _MemoryUsageDemoState extends State<MemoryUsageDemo> {
                             imageCacheName: imageCacheName,
                             // memory usage end
                             border: Border.all(
-                                color: Colors.grey.withValues(alpha: 0.4),
-                                width: 1.0),
+                              color: Colors.grey.withValues(alpha: 0.4),
+                              width: 1.0,
+                            ),
                             borderRadius: const BorderRadius.all(
                               Radius.circular(10.0),
                             ),
                             loadStateChanged: (ExtendedImageState value) {
                               if (value.extendedImageLoadState ==
                                   LoadState.loading) {
-                                return CommonCircularProgressIndicator();
+                                return const CommonCircularProgressIndicator();
                               }
                               return null;
                             },
@@ -92,8 +95,9 @@ class _MemoryUsageDemoState extends State<MemoryUsageDemo> {
                             decoration: BoxDecoration(
                               color: Colors.grey.withValues(alpha: 0.6),
                               border: Border.all(
-                                  color: Colors.grey.withValues(alpha: 0.4),
-                                  width: 1.0),
+                                color: Colors.grey.withValues(alpha: 0.4),
+                                width: 1.0,
+                              ),
                               borderRadius: const BorderRadius.all(
                                 Radius.circular(5.0),
                               ),
@@ -102,7 +106,9 @@ class _MemoryUsageDemoState extends State<MemoryUsageDemo> {
                               '${index + 1}',
                               textAlign: TextAlign.center,
                               style: const TextStyle(
-                                  fontSize: 12, color: Colors.white),
+                                fontSize: 12,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -114,9 +120,11 @@ class _MemoryUsageDemoState extends State<MemoryUsageDemo> {
                 padding: const EdgeInsets.all(5.0),
                 lastChildLayoutType: LastChildLayoutType.foot,
               ),
-            )),
-          ],
-        ));
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

@@ -4,21 +4,25 @@ import 'package:flutter/material.dart';
 /// make hero better when slide out
 class HeroWidget extends StatefulWidget {
   const HeroWidget({
+    super.key,
     required this.child,
     required this.tag,
     required this.slidePagekey,
     this.slideType = SlideType.onlyImage,
   });
+
   final Widget child;
   final SlideType slideType;
   final Object tag;
   final GlobalKey<ExtendedImageSlidePageState> slidePagekey;
+
   @override
-  _HeroWidgetState createState() => _HeroWidgetState();
+  State<HeroWidget> createState() => _HeroWidgetState();
 }
 
 class _HeroWidgetState extends State<HeroWidget> {
   RectTween? _rectTween;
+
   @override
   Widget build(BuildContext context) {
     return Hero(
@@ -28,11 +32,13 @@ class _HeroWidgetState extends State<HeroWidget> {
         return _rectTween!;
       },
       // make hero better when slide out
-      flightShuttleBuilder: (BuildContext flightContext,
-          Animation<double> animation,
-          HeroFlightDirection flightDirection,
-          BuildContext fromHeroContext,
-          BuildContext toHeroContext) {
+      flightShuttleBuilder: (
+        BuildContext flightContext,
+        Animation<double> animation,
+        HeroFlightDirection flightDirection,
+        BuildContext fromHeroContext,
+        BuildContext toHeroContext,
+      ) {
         // make hero more smoothly
         final Hero hero = (flightDirection == HeroFlightDirection.pop
             ? fromHeroContext.widget
@@ -70,18 +76,21 @@ class _HeroWidgetState extends State<HeroWidget> {
                   Opacity(
                     opacity: animation.value,
                     child: animatedBuilderChild,
-                  )
+                  ),
                 ],
               );
 
               // fix transform when slide out
               if (fixTransform) {
                 final Tween<Offset> offsetTween = Tween<Offset>(
-                    begin: Offset.zero,
-                    end: widget.slidePagekey.currentState!.offset);
+                  begin: Offset.zero,
+                  end: widget.slidePagekey.currentState!.offset,
+                );
 
                 final Tween<double> scaleTween = Tween<double>(
-                    begin: 1.0, end: widget.slidePagekey.currentState!.scale);
+                  begin: 1.0,
+                  end: widget.slidePagekey.currentState!.scale,
+                );
                 animatedBuilderChild = Transform.translate(
                   offset: offsetTween.evaluate(animation),
                   child: Transform.scale(

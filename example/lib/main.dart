@@ -12,7 +12,7 @@ import 'example_routes.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  MyApp() {
+  MyApp({super.key}) {
     if (!kIsWeb) {
       clearDiskCachedImages(duration: const Duration(days: 7));
     }
@@ -22,54 +22,56 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OKToast(
-        child: MaterialApp(
-      title: 'extended image demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      scrollBehavior: kIsWeb
-          ? const ScrollBehavior().copyWith(
-              dragDevices: <PointerDeviceKind>{
-                PointerDeviceKind.mouse,
-                PointerDeviceKind.touch,
-                PointerDeviceKind.stylus,
-                PointerDeviceKind.unknown
-              },
-            )
-          : null,
-      builder: (BuildContext c, Widget? w) {
-        w = Stack(
-          children: <Widget>[
-            Positioned.fill(child: w!),
-            if (kDebugMode) MemoryUsageView(),
-          ],
-        );
-        if (!kIsWeb) {
-          final MediaQueryData data = MediaQuery.of(c);
-          w = MediaQuery(
-            data: data.copyWith(
-              textScaler: TextScaler.noScaling,
-            ),
-            child: w,
+      child: MaterialApp(
+        title: 'extended image demo',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        scrollBehavior: kIsWeb
+            ? const ScrollBehavior().copyWith(
+                dragDevices: <PointerDeviceKind>{
+                  PointerDeviceKind.mouse,
+                  PointerDeviceKind.touch,
+                  PointerDeviceKind.stylus,
+                  PointerDeviceKind.unknown,
+                },
+              )
+            : null,
+        builder: (BuildContext c, Widget? w) {
+          w = Stack(
+            children: <Widget>[
+              Positioned.fill(child: w!),
+              if (kDebugMode) const MemoryUsageView(),
+            ],
           );
-        }
+          if (!kIsWeb) {
+            final MediaQueryData data = MediaQuery.of(c);
+            w = MediaQuery(
+              data: data.copyWith(
+                textScaler: TextScaler.noScaling,
+              ),
+              child: w,
+            );
+          }
 
-        return w;
-      },
-      initialRoute: Routes.fluttercandiesMainpage,
-      onGenerateRoute: (RouteSettings settings) {
-        return onGenerateRoute(
-          settings: settings,
-          getRouteSettings: getRouteSettings,
-        );
-      },
-    ));
+          return w;
+        },
+        initialRoute: Routes.fluttercandiesMainpage.name,
+        onGenerateRoute: (RouteSettings settings) {
+          return onGenerateRoute(
+            settings: settings,
+            getRouteSettings: getRouteSettings,
+          );
+        },
+      ),
+    );
   }
 }
 
 class CommonWidget extends StatelessWidget {
   const CommonWidget({
+    super.key,
     this.child,
     this.title,
   });

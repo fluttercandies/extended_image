@@ -16,8 +16,10 @@ import 'package:oktoast/oktoast.dart';
   },
 )
 class SimpleImageEditor extends StatefulWidget {
+  const SimpleImageEditor({super.key});
+
   @override
-  _SimpleImageEditorState createState() => _SimpleImageEditorState();
+  State<SimpleImageEditor> createState() => _SimpleImageEditorState();
 }
 
 class _SimpleImageEditorState extends State<SimpleImageEditor> {
@@ -53,10 +55,11 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-          child: const Icon(Icons.crop),
-          onPressed: () {
-            cropImage();
-          }),
+        child: const Icon(Icons.crop),
+        onPressed: () {
+          cropImage();
+        },
+      ),
     );
   }
 
@@ -70,7 +73,9 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
           ? (await cropImageDataWithDartLibrary(_editorController))
           : (await cropImageDataWithNativeLibrary(_editorController));
       final String? fileFath = await ImageSaver.save(
-          'extended_image_cropped_image.jpg', fileData.data!);
+        'extended_image_cropped_image.jpg',
+        fileData.data!,
+      );
       showToast('save image : $fileFath');
     } finally {
       _cropping = false;

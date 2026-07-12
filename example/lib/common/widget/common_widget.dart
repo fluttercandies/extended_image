@@ -3,23 +3,20 @@ import 'package:flutter/material.dart';
 
 class FlatButtonWithIcon extends TextButton {
   FlatButtonWithIcon({
-    Key? key,
-    required VoidCallback onPressed,
-    Clip clipBehavior = Clip.none,
-    FocusNode? focusNode,
+    super.key,
+    required VoidCallback super.onPressed,
+    Clip super.clipBehavior = Clip.none,
+    super.focusNode,
     Color? textColor,
     required Widget icon,
     required Widget label,
   }) : super(
-          key: key,
-          onPressed: onPressed,
-          clipBehavior: clipBehavior,
-          focusNode: focusNode,
           style: textColor != null
               ? ButtonStyle(
                   textStyle: WidgetStateProperty.all<TextStyle>(
-                  TextStyle(color: textColor),
-                ))
+                    TextStyle(color: textColor),
+                  ),
+                )
               : null,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -39,8 +36,12 @@ class AspectRatioItem {
 }
 
 class AspectRatioWidget extends StatelessWidget {
-  const AspectRatioWidget(
-      {this.aspectRatioS, this.aspectRatio, this.isSelected = false});
+  const AspectRatioWidget({
+    super.key,
+    this.aspectRatioS,
+    this.aspectRatio,
+    this.isSelected = false,
+  });
   final String? aspectRatioS;
   final double? aspectRatio;
   final bool isSelected;
@@ -79,7 +80,9 @@ class AspectRatioPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     canvas.drawRRect(
-        RRect.fromRectAndRadius(rect, const Radius.circular(10)), paint);
+      RRect.fromRectAndRadius(rect, const Radius.circular(10)),
+      paint,
+    );
 
     paint.color = Colors.white;
     paint.style = PaintingStyle.stroke;
@@ -88,26 +91,28 @@ class AspectRatioPainter extends CustomPainter {
         (aspectRatio != null && aspectRatio! > 0.0) ? aspectRatio! : 1.0;
     canvas.drawRect(
       getDestinationRect(
-          rect: const EdgeInsets.only(left: 10, right: 10, bottom: 20, top: 5)
-              .deflateRect(rect),
-          inputSize: Size(
-            aspectRatioResult * size.width / 2,
-            size.width / 2,
-          ),
-          fit: BoxFit.contain),
+        rect: const EdgeInsets.only(left: 10, right: 10, bottom: 20, top: 5)
+            .deflateRect(rect),
+        inputSize: Size(
+          aspectRatioResult * size.width / 2,
+          size.width / 2,
+        ),
+        fit: BoxFit.contain,
+      ),
       paint,
     );
 
     final TextPainter textPainter = TextPainter(
-        text: TextSpan(
-            text: aspectRatioS,
-            style: TextStyle(
-              color:
-                  color.computeLuminance() < 0.5 ? Colors.white : Colors.black,
-              fontSize: 12.0,
-            )),
-        textDirection: TextDirection.ltr,
-        maxLines: 1);
+      text: TextSpan(
+        text: aspectRatioS,
+        style: TextStyle(
+          color: color.computeLuminance() < 0.5 ? Colors.white : Colors.black,
+          fontSize: 12.0,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+    );
     textPainter.layout(maxWidth: rect.width);
 
     textPainter.paint(
@@ -131,6 +136,8 @@ class AspectRatioPainter extends CustomPainter {
 }
 
 class CommonCircularProgressIndicator extends StatelessWidget {
+  const CommonCircularProgressIndicator({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(

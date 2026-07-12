@@ -16,13 +16,19 @@ import '../example_routes.dart' as example_routes;
   argumentImports: <String>['import \'pages/main_page.dart\';'],
 )
 class DemoGroupPage extends StatelessWidget {
-  DemoGroupPage({required MapEntry<String, List<DemoRouteResult>> keyValue})
-      : routes = keyValue.value
-          ..sort((DemoRouteResult a, DemoRouteResult b) =>
-              a.order.compareTo(b.order)),
+  DemoGroupPage({
+    super.key,
+    required MapEntry<String, List<DemoRouteResult>> keyValue,
+  })  : routes = keyValue.value
+          ..sort(
+            (DemoRouteResult a, DemoRouteResult b) =>
+                a.order.compareTo(b.order),
+          ),
         group = keyValue.key;
+
   final List<DemoRouteResult> routes;
   final String group;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,13 +46,13 @@ class DemoGroupPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    (index + 1).toString() + '.' + page.routeResult.routeName!,
+                    '${index + 1}.${page.routeResult.routeName!}',
                     //style: TextStyle(inherit: false),
                   ),
                   Text(
                     page.routeResult.description!,
                     style: const TextStyle(color: Colors.grey),
-                  )
+                  ),
                 ],
               ),
               onTap: () {
@@ -77,26 +83,33 @@ class DemoRouteResult {
   routeName: 'MainPage',
 )
 class MainPage extends StatelessWidget {
-  MainPage() {
+  MainPage({
+    super.key,
+  }) {
     final List<String> routeNames = <String>[];
     routeNames.addAll(example_routes.routeNames);
-    routeNames.remove(Routes.fluttercandiesPicswiper);
-    routeNames.remove(Routes.fluttercandiesMainpage);
-    routeNames.remove(Routes.fluttercandiesSlidepageitem);
-    routeNames.remove(Routes.fluttercandiesDemogrouppage);
+    routeNames.remove(Routes.fluttercandiesPicswiper.name);
+    routeNames.remove(Routes.fluttercandiesMainpage.name);
+    routeNames.remove(Routes.fluttercandiesSlidepageitem.name);
+    routeNames.remove(Routes.fluttercandiesDemogrouppage.name);
     if (kIsWeb) {
-      routeNames.remove(Routes.fluttercandiesMemoryUsageDemo);
+      routeNames.remove(Routes.fluttercandiesMemoryUsageDemo.name);
     }
 
-    routesGroup.addAll(groupBy<DemoRouteResult, String>(
+    routesGroup.addAll(
+      groupBy<DemoRouteResult, String>(
         routeNames
             .map<FFRouteSettings>((String name) => getRouteSettings(name: name))
             .where((FFRouteSettings element) => element.exts != null)
             .map<DemoRouteResult>((FFRouteSettings e) => DemoRouteResult(e))
             .toList()
-          ..sort((DemoRouteResult a, DemoRouteResult b) =>
-              b.group.compareTo(a.group)),
-        (DemoRouteResult x) => x.group));
+          ..sort(
+            (DemoRouteResult a, DemoRouteResult b) =>
+                b.group.compareTo(a.group),
+          ),
+        (DemoRouteResult x) => x.group,
+      ),
+    );
   }
   final Map<String, List<DemoRouteResult>> routesGroup =
       <String, List<DemoRouteResult>>{};
@@ -123,8 +136,11 @@ class MainPage extends StatelessWidget {
                 ),
               ),
               onPressed: () {
-                launchUrl(Uri.parse(
-                    'https://github.com/fluttercandies/extended_image'));
+                launchUrl(
+                  Uri.parse(
+                    'https://github.com/fluttercandies/extended_image',
+                  ),
+                );
               },
             ),
           ),
@@ -134,12 +150,13 @@ class MainPage extends StatelessWidget {
               minWidth: 0.0,
               child: TextButton(
                 child: Image.network(
-                    'https://pub.idqqimg.com/wpa/images/group.png'),
+                  'https://pub.idqqimg.com/wpa/images/group.png',
+                ),
                 onPressed: () {
                   launchUrl(Uri.parse('https://jq.qq.com/?_wv=1027&k=5bcc0gy'));
                 },
               ),
-            )
+            ),
         ],
       ),
       body: ListView.builder(
@@ -147,30 +164,33 @@ class MainPage extends StatelessWidget {
           // final RouteResult page = routes[index];
           final String type = routesGroup.keys.toList()[index];
           return Container(
-              margin: const EdgeInsets.all(20.0),
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      (index + 1).toString() + '.' + type,
-                      //style: TextStyle(inherit: false),
-                    ),
-                    Text(
-                      '$type demos of ExtendedImage',
-                      //page.description,
-                      style: const TextStyle(color: Colors.grey),
-                    )
-                  ],
-                ),
-                onTap: () {
-                  Navigator.pushNamed(
-                      context, Routes.fluttercandiesDemogrouppage.name,
-                      arguments: Routes.fluttercandiesDemogrouppage
-                          .d(keyValue: routesGroup.entries.toList()[index]));
-                },
-              ));
+            margin: const EdgeInsets.all(20.0),
+            child: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    '${index + 1}.$type',
+                    //style: TextStyle(inherit: false),
+                  ),
+                  Text(
+                    '$type demos of ExtendedImage',
+                    //page.description,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  Routes.fluttercandiesDemogrouppage.name,
+                  arguments: Routes.fluttercandiesDemogrouppage
+                      .d(keyValue: routesGroup.entries.toList()[index]),
+                );
+              },
+            ),
+          );
         },
         itemCount: routesGroup.length,
       ),
@@ -183,8 +203,10 @@ class MainPage extends StatelessWidget {
 
                 ///clear local cahced
                 clearDiskCachedImages().then((bool done) {
-                  showToast(done ? 'clear succeed' : 'clear failed',
-                      position: const ToastPosition(align: Alignment.center));
+                  showToast(
+                    done ? 'clear succeed' : 'clear failed',
+                    position: const ToastPosition(align: Alignment.center),
+                  );
                 });
               },
               child: const Text(

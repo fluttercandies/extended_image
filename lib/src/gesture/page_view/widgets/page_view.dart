@@ -22,7 +22,7 @@ class GesturePageView extends StatefulWidget {
   /// rather than into the contents of the [GesturePageView].
   /// {@endtemplate}
   GesturePageView({
-    Key? key,
+    super.key,
     this.scrollDirection = Axis.horizontal,
     this.reverse = false,
     ExtendedPageController? controller,
@@ -40,8 +40,7 @@ class GesturePageView extends StatefulWidget {
   }) : assert(allowImplicitScrolling != null),
        assert(clipBehavior != null),
        controller = controller ?? _defaultPageController,
-       childrenDelegate = SliverChildListDelegate(children),
-       super(key: key);
+       childrenDelegate = SliverChildListDelegate(children);
 
   /// Creates a scrollable list that works page by page using widgets that are
   /// created on demand.
@@ -62,7 +61,7 @@ class GesturePageView extends StatefulWidget {
   ///
   /// {@macro flutter.widgets.PageView.allowImplicitScrolling}
   GesturePageView.builder({
-    Key? key,
+    super.key,
     this.scrollDirection = Axis.horizontal,
     this.reverse = false,
     ExtendedPageController? controller,
@@ -84,8 +83,7 @@ class GesturePageView extends StatefulWidget {
        childrenDelegate = SliverChildBuilderDelegate(
          itemBuilder,
          childCount: itemCount,
-       ),
-       super(key: key);
+       );
 
   /// Creates a scrollable list that works page by page with a custom child
   /// model.
@@ -172,7 +170,7 @@ class GesturePageView extends StatefulWidget {
   ///
   /// {@macro flutter.widgets.PageView.allowImplicitScrolling}
   GesturePageView.custom({
-    Key? key,
+    super.key,
     this.scrollDirection = Axis.horizontal,
     this.reverse = false,
     ExtendedPageController? controller,
@@ -190,8 +188,7 @@ class GesturePageView extends StatefulWidget {
   }) : assert(childrenDelegate != null),
        assert(allowImplicitScrolling != null),
        assert(clipBehavior != null),
-       controller = controller ?? _defaultPageController,
-       super(key: key);
+       controller = controller ?? _defaultPageController;
 
   /// Controls whether the widget's pages will respond to
   /// [RenderObject.showOnScreen], which will allow for implicit accessibility
@@ -440,9 +437,8 @@ class _GesturePageViewState extends State<GesturePageView> {
 class _ForceImplicitScrollPhysics extends ScrollPhysics {
   const _ForceImplicitScrollPhysics({
     required this.allowImplicitScrolling,
-    ScrollPhysics? parent,
-  }) : assert(allowImplicitScrolling != null),
-       super(parent: parent);
+    super.parent,
+  }) : assert(allowImplicitScrolling != null);
 
   @override
   _ForceImplicitScrollPhysics applyTo(ScrollPhysics? ancestor) {
@@ -458,32 +454,24 @@ class _ForceImplicitScrollPhysics extends ScrollPhysics {
 
 class _Scrollable extends Scrollable {
   const _Scrollable({
-    Key? key,
-    AxisDirection axisDirection = AxisDirection.down,
-    ScrollController? controller,
-    ScrollPhysics? physics,
-    required ViewportBuilder viewportBuilder,
-    ScrollIncrementCalculator? incrementCalculator,
-    bool excludeFromSemantics = false,
-    int? semanticChildCount,
-    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
-    String? restorationId,
-    ScrollBehavior? scrollBehavior,
+    super.axisDirection,
+    super.controller,
+    super.physics,
+    required super.viewportBuilder,
+    // ignore: unused_element_parameter
+    super.incrementCalculator,
+    // ignore: unused_element_parameter
+    super.excludeFromSemantics,
+    // ignore: unused_element_parameter
+    super.semanticChildCount,
+    super.dragStartBehavior,
+    super.restorationId,
+    super.scrollBehavior,
     this.shouldIgnorePointerWhenScrolling = true,
-  }) : super(
-         key: key,
-         axisDirection: axisDirection,
-         controller: controller,
-         physics: physics,
-         viewportBuilder: viewportBuilder,
-         incrementCalculator: incrementCalculator,
-         excludeFromSemantics: excludeFromSemantics,
-         semanticChildCount: semanticChildCount,
-         dragStartBehavior: dragStartBehavior,
-         restorationId: restorationId,
-         scrollBehavior: scrollBehavior,
-       );
+  });
+
   final bool shouldIgnorePointerWhenScrolling;
+
   @override
   _ExtendedScrollableState createState() => _ExtendedScrollableState();
 }

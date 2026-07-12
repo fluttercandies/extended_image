@@ -58,8 +58,8 @@ class TuChongRepository extends LoadingMoreBase<TuChongItem> {
         final Response result =
             await HttpClientHelper.get(Uri.parse(url)) as Response;
         feedList = TuChongSource.fromJson(
-                json.decode(result.body) as Map<String, dynamic>)
-            .feedList;
+          json.decode(result.body) as Map<String, dynamic>,
+        ).feedList;
       } else {
         feedList = mockSource.feedList!.getRange(length, length + 20).toList();
       }

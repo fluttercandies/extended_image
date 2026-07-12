@@ -1,4 +1,4 @@
-library extended_image;
+library;
 
 export 'package:extended_image_library/extended_image_library.dart'
     hide File, FileImage;

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
@@ -28,12 +27,12 @@ class ImageSaver {
 
   static Future<String?> save(String name, Uint8List fileData) async {
     final String title = '${DateTime.now().millisecondsSinceEpoch}_$name';
-    final AssetEntity? imageEntity = await PhotoManager.editor.saveImage(
+    final imageEntity = await PhotoManager.editor.saveImage(
       fileData,
       filename: name,
       title: title,
     );
-    final File? file = await imageEntity?.file;
+    final file = await imageEntity.file;
     return file?.path;
   }
 }

@@ -20,7 +20,7 @@ import 'gesture/slide_page_handler.dart';
 /// [Image]
 class ExtendedImage extends StatefulWidget {
   ExtendedImage({
-    Key? key,
+    super.key,
     required this.image,
     this.semanticLabel,
     this.excludeFromSemantics = false,
@@ -63,8 +63,7 @@ class ExtendedImage extends StatefulWidget {
            (width != null || height != null)
                ? constraints?.tighten(width: width, height: height) ??
                    BoxConstraints.tightFor(width: width, height: height)
-               : constraints,
-       super(key: key);
+               : constraints;
 
   /// Creates a widget that displays an [ImageStream] obtained from an asset
   /// bundle. The key for the image is given by the `name` argument.
@@ -193,7 +192,7 @@ class ExtendedImage extends StatefulWidget {
   ///    Flutter.
   ExtendedImage.asset(
     String name, {
-    Key? key,
+    super.key,
     AssetBundle? bundle,
     this.semanticLabel,
     this.excludeFromSemantics = false,
@@ -270,8 +269,7 @@ class ExtendedImage extends StatefulWidget {
                ? constraints?.tighten(width: width, height: height) ??
                    BoxConstraints.tightFor(width: width, height: height)
                : constraints,
-       handleLoadingProgress = false,
-       super(key: key);
+       handleLoadingProgress = false;
 
   /// Creates a widget that displays an [ImageStream] obtained from a [File].
   ///
@@ -293,7 +291,7 @@ class ExtendedImage extends StatefulWidget {
   /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
   ExtendedImage.file(
     File file, {
-    Key? key,
+    super.key,
     double scale = 1.0,
     this.semanticLabel,
     this.excludeFromSemantics = false,
@@ -363,8 +361,7 @@ class ExtendedImage extends StatefulWidget {
                ? constraints?.tighten(width: width, height: height) ??
                    BoxConstraints.tightFor(width: width, height: height)
                : constraints,
-       handleLoadingProgress = false,
-       super(key: key);
+       handleLoadingProgress = false;
 
   /// Creates a widget that displays an [ImageStream] obtained from a [Uint8List].
   ///
@@ -383,7 +380,7 @@ class ExtendedImage extends StatefulWidget {
   /// If [excludeFromSemantics] is true, then [semanticLabel] will be ignored.
   ExtendedImage.memory(
     Uint8List bytes, {
-    Key? key,
+    super.key,
     double scale = 1.0,
     this.semanticLabel,
     this.excludeFromSemantics = false,
@@ -447,12 +444,11 @@ class ExtendedImage extends StatefulWidget {
                ? constraints?.tighten(width: width, height: height) ??
                    BoxConstraints.tightFor(width: width, height: height)
                : constraints,
-       handleLoadingProgress = false,
-       super(key: key);
+       handleLoadingProgress = false;
 
   ExtendedImage.network(
     String url, {
-    Key? key,
+    super.key,
     this.semanticLabel,
     this.excludeFromSemantics = false,
     this.width,
@@ -540,8 +536,7 @@ class ExtendedImage extends StatefulWidget {
                    BoxConstraints.tightFor(width: width, height: height)
                : constraints,
        assert(cacheWidth == null || cacheWidth > 0),
-       assert(cacheHeight == null || cacheHeight > 0),
-       super(key: key);
+       assert(cacheHeight == null || cacheHeight > 0);
 
   /// key of ExtendedImageGesture
   final Key? extendedImageGestureKey;
@@ -824,7 +819,8 @@ class ExtendedImage extends StatefulWidget {
   final EdgeInsets layoutInsets;
 
   @override
-  _ExtendedImageState createState() => _ExtendedImageState();
+  State<ExtendedImage> createState() => _ExtendedImageState();
+
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
@@ -1010,14 +1006,14 @@ class _ExtendedImageState extends State<ExtendedImage>
     if (widget.shape != null) {
       switch (widget.shape!) {
         case BoxShape.circle:
-          current = ClipOval(child: current, clipBehavior: widget.clipBehavior);
+          current = ClipOval(clipBehavior: widget.clipBehavior, child: current);
           break;
         case BoxShape.rectangle:
           if (widget.borderRadius != null) {
             current = ClipRRect(
-              child: current,
               borderRadius: widget.borderRadius!,
               clipBehavior: widget.clipBehavior,
+              child: current,
             );
           }
           break;
@@ -1031,11 +1027,11 @@ class _ExtendedImageState extends State<ExtendedImage>
           border: widget.border,
           shape: widget.shape ?? BoxShape.rectangle,
         ),
-        child: current,
         size:
             widget.width != null && widget.height != null
                 ? Size(widget.width!, widget.height!)
                 : Size.zero,
+        child: current,
       );
     }
 
@@ -1051,9 +1047,9 @@ class _ExtendedImageState extends State<ExtendedImage>
         !(_loadState == LoadState.completed &&
             widget.mode == ExtendedImageMode.gesture)) {
       current = ExtendedImageSlidePageHandler(
-        child: current,
         extendedImageSlidePageState: _slidePageState,
         heroBuilderForSlidingPage: widget.heroBuilderForSlidingPage,
+        child: current,
       );
     }
 

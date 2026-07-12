@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
   },
 )
 class ZoomImageDemo extends StatelessWidget {
+  ZoomImageDemo({super.key});
+
   // you can handle gesture detail by yourself with key
   final GlobalKey<ExtendedImageGestureState> gestureKey =
       GlobalKey<ExtendedImageGestureState>();
@@ -31,7 +33,7 @@ class ZoomImageDemo extends StatelessWidget {
                   //you can also change zoom manual
                   //gestureKey.currentState.gestureDetails=GestureDetails();
                 },
-              )
+              ),
             ],
           ),
           Expanded(

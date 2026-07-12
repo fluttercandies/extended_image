@@ -19,7 +19,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
   /// The [scale], [alignment], [repeat], [matchTextDirection] and [filterQuality] arguments must
   /// not be null.
   const ExtendedRawImage({
-    Key? key,
+    super.key,
     this.image,
     this.width,
     this.height,
@@ -42,7 +42,7 @@ class ExtendedRawImage extends LeafRenderObjectWidget {
     this.isAntiAlias = false,
     this.debugImageLabel,
     this.layoutInsets = EdgeInsets.zero,
-  }) : super(key: key);
+  });
 
   /// details about edit
   final EditActionDetails? editActionDetails;

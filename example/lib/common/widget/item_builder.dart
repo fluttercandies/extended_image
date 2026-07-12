@@ -8,7 +8,7 @@ import 'package:like_button/like_button.dart';
 import 'common_widget.dart';
 
 Widget itemBuilder(BuildContext context, TuChongItem item, int index) {
-  return Container(
+  return SizedBox(
     height: kIsWeb ? 200.0 : 100.0,
     child: Stack(
       children: <Widget>[
@@ -58,7 +58,7 @@ Widget itemBuilder(BuildContext context, TuChongItem item, int index) {
                     Text(
                       item.comments.toString(),
                       style: const TextStyle(color: Colors.white),
-                    )
+                    ),
                   ],
                 ),
                 LikeButton(
@@ -77,7 +77,7 @@ Widget itemBuilder(BuildContext context, TuChongItem item, int index) {
                     } else {
                       result = Text(
                         count! >= 1000
-                            ? (count / 1000.0).toStringAsFixed(1) + 'k'
+                            ? '${(count / 1000.0).toStringAsFixed(1)}k'
                             : text,
                         style: TextStyle(color: color),
                       );
@@ -94,7 +94,7 @@ Widget itemBuilder(BuildContext context, TuChongItem item, int index) {
               ],
             ),
           ),
-        )
+        ),
       ],
     ),
   );
@@ -123,7 +123,7 @@ Widget buildWaterfallFlowItem(
           ),
           loadStateChanged: (ExtendedImageState value) {
             if (value.extendedImageLoadState == LoadState.loading) {
-              Widget loadingWidget = CommonCircularProgressIndicator();
+              Widget loadingWidget = const CommonCircularProgressIndicator();
               if (!konwSized) {
                 loadingWidget = AspectRatio(
                   aspectRatio: 1.0,
@@ -133,8 +133,9 @@ Widget buildWaterfallFlowItem(
               return loadingWidget;
             } else if (value.extendedImageLoadState == LoadState.completed) {
               item.imageRawSize = Size(
-                  value.extendedImageInfo!.image.width.toDouble(),
-                  value.extendedImageInfo!.image.height.toDouble());
+                value.extendedImageInfo!.image.width.toDouble(),
+                value.extendedImageInfo!.image.height.toDouble(),
+              );
             }
             return null;
           },
@@ -148,7 +149,9 @@ Widget buildWaterfallFlowItem(
           decoration: BoxDecoration(
             color: Colors.grey.withValues(alpha: 0.6),
             border: Border.all(
-                color: Colors.grey.withValues(alpha: 0.4), width: 1.0),
+              color: Colors.grey.withValues(alpha: 0.4),
+              width: 1.0,
+            ),
             borderRadius: const BorderRadius.all(
               Radius.circular(5.0),
             ),
@@ -196,31 +199,33 @@ Widget buildTagsWidget(
 }) {
   const double fontSize = 12.0;
   return Wrap(
-      runSpacing: 5.0,
-      spacing: 5.0,
-      children: item.tags!.take(maxNum).map<Widget>((String? tag) {
-        final Color color = item.tagColors![item.tags!.indexOf(tag)];
-        return Container(
-          padding: const EdgeInsets.all(3.0),
-          decoration: BoxDecoration(
-            color: color,
-            border: Border.all(
-                color: Colors.grey.withValues(alpha: 0.4), width: 1.0),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(5.0),
-            ),
+    runSpacing: 5.0,
+    spacing: 5.0,
+    children: item.tags!.take(maxNum).map<Widget>((String? tag) {
+      final Color color = item.tagColors![item.tags!.indexOf(tag)];
+      return Container(
+        padding: const EdgeInsets.all(3.0),
+        decoration: BoxDecoration(
+          color: color,
+          border: Border.all(
+            color: Colors.grey.withValues(alpha: 0.4),
+            width: 1.0,
           ),
-          child: Text(
-            tag!,
-            textAlign: TextAlign.start,
-            style: TextStyle(
-                fontSize: fontSize,
-                color: color.computeLuminance() < 0.5
-                    ? Colors.white
-                    : Colors.black),
+          borderRadius: const BorderRadius.all(
+            Radius.circular(5.0),
           ),
-        );
-      }).toList());
+        ),
+        child: Text(
+          tag!,
+          textAlign: TextAlign.start,
+          style: TextStyle(
+            fontSize: fontSize,
+            color: color.computeLuminance() < 0.5 ? Colors.white : Colors.black,
+          ),
+        ),
+      );
+    }).toList(),
+  );
 }
 
 Widget buildBottomWidget(TuChongItem item, {bool showAvatar = true}) {
@@ -263,7 +268,7 @@ Widget buildBottomWidget(TuChongItem item, {bool showAvatar = true}) {
           Text(
             item.comments.toString(),
             style: const TextStyle(color: Colors.black, fontSize: fontSize),
-          )
+          ),
         ],
       ),
       const SizedBox(
@@ -284,7 +289,7 @@ Widget buildBottomWidget(TuChongItem item, {bool showAvatar = true}) {
             );
           } else {
             result = Text(
-              count! >= 1000 ? (count / 1000.0).toStringAsFixed(1) + 'k' : text,
+              count! >= 1000 ? '${(count / 1000.0).toStringAsFixed(1)}k' : text,
               style: TextStyle(color: color, fontSize: fontSize),
             );
           }

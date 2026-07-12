@@ -5,7 +5,7 @@ typedef CanHorizontalOrVerticalDrag = bool Function();
 typedef ShouldAccpetHorizontalOrVerticalDrag =
     bool Function(Map<int, VelocityTracker> velocityTrackers);
 
-mixin DragGestureRecognizerMixin on _DragGestureRecognizer {
+mixin _DragGestureRecognizerMixin on _DragGestureRecognizer {
   bool get canDrag =>
       canHorizontalOrVerticalDrag == null || canHorizontalOrVerticalDrag!();
 
@@ -64,7 +64,7 @@ ExtendedVelocityTracker _defaultBuilder(PointerEvent event) =>
 /// [HorizontalDragGestureRecognizer]
 class ExtendedHorizontalDragGestureRecognizer
     extends _HorizontalDragGestureRecognizer
-    with DragGestureRecognizerMixin {
+    with _DragGestureRecognizerMixin {
   ExtendedHorizontalDragGestureRecognizer({
     super.debugOwner,
     super.supportedDevices,
@@ -83,7 +83,7 @@ class ExtendedHorizontalDragGestureRecognizer
 
 class ExtendedVerticalDragGestureRecognizer
     extends _VerticalDragGestureRecognizer
-    with DragGestureRecognizerMixin {
+    with _DragGestureRecognizerMixin {
   ExtendedVerticalDragGestureRecognizer({
     super.debugOwner,
     super.supportedDevices,

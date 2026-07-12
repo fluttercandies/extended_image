@@ -6,33 +6,46 @@ version: 1.0.0+1
 environment:
   sdk: '>=2.18.0 <4.0.0'
   flutter: '>=3.16.0'
+
 dependencies:
-  extended_sliver: any
-  ff_annotation_route_library: any
-  fl_chart: any
   flutter:
     sdk: flutter
+  intl: any
+
+  extended_image: # overrode
+  extended_image_library:
+
+  collection: any
+  extended_sliver: any
+  ff_annotation_route_core: any
+  ff_annotation_route_library: any
+  fl_chart: any
   flutter_ruler_picker: any
   http_client_helper: any
   image: any
   image_editor: any
-  intl: any
   like_button: any
   loading_more_list: any
+  loading_more_list_library: any
   oktoast: any
+  path: any
   photo_manager: any
   pull_to_refresh_notification: any
   url_launcher: any
   vm_service: any
+  video_player: any
+  web: any
   wechat_assets_picker: any
 
 dependency_overrides:
+  flutter_lints: any
+  path_provider: ^2.0.15 
+
   extended_image:
     path: ../
-  path_provider: ^2.0.15 
- 
   # extended_image_library:
-  #   path: ../../extended_image_library  
+  #   path: ../../extended_image_library
+
 flutter:
   uses-material-design: true
   assets:

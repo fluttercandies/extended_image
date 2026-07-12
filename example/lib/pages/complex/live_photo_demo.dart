@@ -20,8 +20,10 @@ import 'package:video_player/video_player.dart';
   },
 )
 class LivePhotoDemo extends StatefulWidget {
+  const LivePhotoDemo({super.key});
+
   @override
-  _LivePhotoDemoState createState() => _LivePhotoDemoState();
+  State<LivePhotoDemo> createState() => _LivePhotoDemoState();
 }
 
 class _LivePhotoDemoState extends State<LivePhotoDemo> {
@@ -34,7 +36,7 @@ class _LivePhotoDemoState extends State<LivePhotoDemo> {
     'https://photo.tuchong.com/16709139/f/278778447.jpg',
     'https://photo.tuchong.com/15195571/f/233361383.jpg',
     'https://photo.tuchong.com/5040418/f/43305517.jpg',
-    'https://photo.tuchong.com/3019649/f/302699092.jpg'
+    'https://photo.tuchong.com/3019649/f/302699092.jpg',
   ];
   bool _stopPlayLivePhotoWhenSlidingPage = false;
   bool _stopPlayLivePhotoWhenGesture = false;
@@ -110,7 +112,9 @@ class _LivePhotoDemoState extends State<LivePhotoDemo> {
                                 child: Text(
                                   'Live',
                                   style: TextStyle(
-                                      color: Colors.pink, fontSize: 12),
+                                    color: Colors.pink,
+                                    fontSize: 12,
+                                  ),
                                 ),
                               ),
                             ],
@@ -231,6 +235,8 @@ class _LivePhotoPicsWiperState extends State<LivePhotoPicsWiper> {
                 _isSliding.value = state.isSliding;
               }
             : null,
+        slideAxis: SlideAxis.both,
+        slideType: SlideType.wholePage,
         child: GestureDetector(
           child: ExtendedImageGesturePageView.builder(
             controller: ExtendedPageController(
@@ -316,8 +322,6 @@ class _LivePhotoPicsWiperState extends State<LivePhotoPicsWiper> {
             Navigator.pop(context);
           },
         ),
-        slideAxis: SlideAxis.both,
-        slideType: SlideType.wholePage,
       ),
     );
   }
@@ -522,13 +526,13 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
         copy: true,
       );
       videoWidget = FittedBox(
-        child: SizedBox(
-          child: videoWidget,
-          width: widgetDestinationRect.width,
-          height: widgetDestinationRect.height,
-        ),
         fit: BoxFit.cover,
         clipBehavior: Clip.hardEdge,
+        child: SizedBox(
+          width: widgetDestinationRect.width,
+          height: widgetDestinationRect.height,
+          child: videoWidget,
+        ),
       );
     }
 
@@ -561,11 +565,11 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
             opacity: showLive ? 1 : 0,
             duration: const Duration(milliseconds: 300),
             child: const Align(
+              alignment: Alignment.bottomLeft,
               child: Text(
                 'Live',
                 style: TextStyle(color: Colors.pink, fontSize: 20),
               ),
-              alignment: Alignment.bottomLeft,
             ),
           ),
         ),
@@ -573,8 +577,12 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
     );
   }
 
-  Widget _buildContent(bool showVideo, BuildContext context,
-      ExtendedImageGestureState? imageGestureState, Widget image) {
+  Widget _buildContent(
+    bool showVideo,
+    BuildContext context,
+    ExtendedImageGestureState? imageGestureState,
+    Widget image,
+  ) {
     late Widget child;
     if (showVideo) {
       child = VideoPlayer(_controller);
@@ -592,13 +600,13 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
             copy: true,
           );
           child = FittedBox(
-            child: SizedBox(
-              child: child,
-              width: widgetDestinationRect.width,
-              height: widgetDestinationRect.height,
-            ),
             fit: BoxFit.cover,
             clipBehavior: Clip.hardEdge,
+            child: SizedBox(
+              width: widgetDestinationRect.width,
+              height: widgetDestinationRect.height,
+              child: child,
+            ),
           );
         }
         child = imageGestureState!.wrapGestureWidget(child);
@@ -638,11 +646,11 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
           Positioned.fromRect(
             rect: destinationRect.shift(const Offset(5, -5)),
             child: const Align(
+              alignment: Alignment.bottomLeft,
               child: Text(
                 'Live',
                 style: TextStyle(color: Colors.pink, fontSize: 20),
               ),
-              alignment: Alignment.bottomLeft,
             ),
           ),
         ],
@@ -692,13 +700,13 @@ class _LivePhotoWidgetState extends State<LivePhotoWidget> {
           copy: true,
         );
         child = FittedBox(
-          child: SizedBox(
-            child: child,
-            width: widgetDestinationRect.width,
-            height: widgetDestinationRect.height,
-          ),
           fit: BoxFit.cover,
           clipBehavior: Clip.hardEdge,
+          child: SizedBox(
+            width: widgetDestinationRect.width,
+            height: widgetDestinationRect.height,
+            child: child,
+          ),
         );
       }
     }

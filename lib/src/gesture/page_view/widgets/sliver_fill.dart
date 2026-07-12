@@ -23,7 +23,7 @@ import '../rendering/sliver_fill.dart';
 class ExtendedSliverFillViewport extends StatelessWidget {
   /// Creates a sliver whose box children that each fill the viewport.
   const ExtendedSliverFillViewport({
-    Key? key,
+    super.key,
     required this.delegate,
     this.viewportFraction = 1.0,
     this.padEnds = true,
@@ -32,8 +32,7 @@ class ExtendedSliverFillViewport extends StatelessWidget {
        assert(viewportFraction > 0.0),
        assert(pageSpacing != null),
        assert(pageSpacing >= 0.0),
-       assert(padEnds != null),
-       super(key: key);
+       assert(padEnds != null);
 
   /// The fraction of the viewport that each child should fill in the main axis.
   ///
@@ -76,15 +75,13 @@ class ExtendedSliverFillViewport extends StatelessWidget {
 class _SliverFillViewportRenderObjectWidget
     extends SliverMultiBoxAdaptorWidget {
   const _SliverFillViewportRenderObjectWidget({
-    Key? key,
-    required SliverChildDelegate delegate,
+    required super.delegate,
     this.viewportFraction = 1.0,
     this.pageSpacing = 0.0,
   }) : assert(viewportFraction != null),
        assert(viewportFraction > 0.0),
        assert(pageSpacing != null),
-       assert(pageSpacing >= 0.0),
-       super(key: key, delegate: delegate);
+       assert(pageSpacing >= 0.0);
 
   final double viewportFraction;
   final double pageSpacing;

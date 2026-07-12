@@ -94,8 +94,9 @@ class VMHelper with ChangeNotifier {
   }
 
   void forceGC() {
-    if (kDebugMode)
+    if (kDebugMode) {
       serviceClient?.getAllocationProfile(main?.id ?? '', gc: true);
+    }
   }
 }
 

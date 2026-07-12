@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
   },
 )
 class LoadingProgress extends StatelessWidget {
+  const LoadingProgress({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -58,7 +60,7 @@ class LoadingProgress extends StatelessWidget {
                 return null;
               },
             ),
-          )
+          ),
         ],
       ),
     );

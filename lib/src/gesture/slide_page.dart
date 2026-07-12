@@ -20,8 +20,8 @@ class ExtendedImageSlidePage extends StatefulWidget {
     this.resetPageDuration = const Duration(milliseconds: 500),
     this.slideType = SlideType.onlyImage,
     this.onSlidingPage,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   ///The [child] contained by the ExtendedImageGesturePage.
   final Widget? child;

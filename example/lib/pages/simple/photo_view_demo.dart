@@ -14,8 +14,10 @@ import 'package:flutter/material.dart';
   },
 )
 class SimplePhotoViewDemo extends StatefulWidget {
+  const SimplePhotoViewDemo({super.key});
+
   @override
-  _SimplePhotoViewDemoState createState() => _SimplePhotoViewDemoState();
+  State<SimplePhotoViewDemo> createState() => _SimplePhotoViewDemoState();
 }
 
 class _SimplePhotoViewDemoState extends State<SimplePhotoViewDemo> {
@@ -26,7 +28,7 @@ class _SimplePhotoViewDemoState extends State<SimplePhotoViewDemo> {
     'https://photo.tuchong.com/16709139/f/278778447.jpg',
     'https://photo.tuchong.com/15195571/f/233361383.jpg',
     'https://photo.tuchong.com/5040418/f/43305517.jpg',
-    'https://photo.tuchong.com/3019649/f/302699092.jpg'
+    'https://photo.tuchong.com/3019649/f/302699092.jpg',
   ];
 
   @override
@@ -102,8 +104,10 @@ class _SimplePhotoViewDemoState extends State<SimplePhotoViewDemo> {
           for (final VelocityTracker tracker in velocityTrackers.values) {
             if (tracker is ExtendedVelocityTracker) {
               final Offset delta = tracker.getSamplesDelta();
-              offset = Offset(offset.dx * (delta.dx == 0 ? 1 : delta.dx),
-                  offset.dy * (delta.dy == 0 ? 1 : delta.dy));
+              offset = Offset(
+                offset.dx * (delta.dx == 0 ? 1 : delta.dx),
+                offset.dy * (delta.dy == 0 ? 1 : delta.dy),
+              );
             }
           }
 

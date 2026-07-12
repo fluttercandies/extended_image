@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 
 class CropImage extends StatelessWidget {
   const CropImage({
+    super.key,
     required this.index,
     required this.tuChongItem,
     this.knowImageSize,
@@ -49,94 +50,101 @@ class CropImage extends StatelessWidget {
       }
     }
 
-    return ExtendedImage.network(imageItem.imageUrl,
-        width: width,
-        clearMemoryCacheWhenDispose: false,
-        imageCacheName: 'CropImage',
-        height: height, loadStateChanged: (ExtendedImageState state) {
-      Widget? widget;
-      switch (state.extendedImageLoadState) {
-        case LoadState.loading:
-          widget = CommonCircularProgressIndicator();
-          break;
-        case LoadState.completed:
-          //if you can't konw image size before build,
-          //you have to handle crop when image is loaded.
-          //so maybe your loading widget size will not the same
-          //as image actual size, set returnLoadStateChangedWidget=true,so that
-          //image will not to be limited by size which you set for ExtendedImage first time.
-          state.returnLoadStateChangedWidget = !knowImageSize!;
+    return ExtendedImage.network(
+      imageItem.imageUrl,
+      width: width,
+      clearMemoryCacheWhenDispose: false,
+      imageCacheName: 'CropImage',
+      height: height,
+      loadStateChanged: (ExtendedImageState state) {
+        Widget? widget;
+        switch (state.extendedImageLoadState) {
+          case LoadState.loading:
+            widget = const CommonCircularProgressIndicator();
+            break;
+          case LoadState.completed:
+            //if you can't konw image size before build,
+            //you have to handle crop when image is loaded.
+            //so maybe your loading widget size will not the same
+            //as image actual size, set returnLoadStateChangedWidget=true,so that
+            //image will not to be limited by size which you set for ExtendedImage first time.
+            state.returnLoadStateChangedWidget = !knowImageSize!;
 
-          ///if you don't want override completed widget
-          ///please return null or state.completedWidget
-          //return null;
-          //return state.completedWidget;
-          widget = Hero(
-            tag: imageItem.imageUrl,
-            child: buildImage(state.extendedImageInfo!.image, num300, num400),
-          );
+            ///if you don't want override completed widget
+            ///please return null or state.completedWidget
+            //return null;
+            //return state.completedWidget;
+            widget = Hero(
+              tag: imageItem.imageUrl,
+              child: buildImage(state.extendedImageInfo!.image, num300, num400),
+            );
 
-          break;
-        case LoadState.failed:
-          widget = GestureDetector(
-            child: Stack(
-              fit: StackFit.expand,
-              children: <Widget>[
-                Image.asset(
-                  'assets/failed.jpg',
-                  fit: BoxFit.fill,
-                ),
-                const Positioned(
-                  bottom: 0.0,
-                  left: 0.0,
-                  right: 0.0,
-                  child: Text(
-                    'load image failed, click to reload',
-                    textAlign: TextAlign.center,
+            break;
+          case LoadState.failed:
+            widget = GestureDetector(
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  Image.asset(
+                    'assets/failed.jpg',
+                    fit: BoxFit.fill,
                   ),
-                )
-              ],
-            ),
-            onTap: () {
-              state.reLoadImage();
-            },
+                  const Positioned(
+                    bottom: 0.0,
+                    left: 0.0,
+                    right: 0.0,
+                    child: Text(
+                      'load image failed, click to reload',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+              onTap: () {
+                state.reLoadImage();
+              },
+            );
+            break;
+        }
+        if (index == 8 && tuChongItem.images!.length > 9) {
+          widget = Stack(
+            children: <Widget>[
+              widget,
+              Container(
+                color: Colors.grey.withValues(alpha: 0.2),
+                alignment: Alignment.center,
+                child: Text(
+                  '+${tuChongItem.images!.length - 9}',
+                  style: const TextStyle(fontSize: 18.0, color: Colors.white),
+                ),
+              ),
+            ],
           );
-          break;
-      }
-      if (index == 8 && tuChongItem.images!.length > 9) {
-        widget = Stack(children: <Widget>[
-          widget,
-          Container(
-            color: Colors.grey.withValues(alpha: 0.2),
-            alignment: Alignment.center,
-            child: Text(
-              '+${tuChongItem.images!.length - 9}',
-              style: const TextStyle(fontSize: 18.0, color: Colors.white),
-            ),
-          )
-        ]);
-      }
+        }
 
-      widget = GestureDetector(
-        child: widget,
-        onTap: () {
-          Navigator.pushNamed(
-            context,
-            Routes.fluttercandiesPicswiper.name,
-            arguments: Routes.fluttercandiesPicswiper.d(
-              index: index,
-              pics: tuChongItem.images!
-                  .map<PicSwiperItem>((ImageItem f) =>
-                      PicSwiperItem(picUrl: f.imageUrl, des: f.title))
-                  .toList(),
-              tuChongItem: tuChongItem,
-            ),
-          );
-        },
-      );
+        widget = GestureDetector(
+          child: widget,
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              Routes.fluttercandiesPicswiper.name,
+              arguments: Routes.fluttercandiesPicswiper.d(
+                index: index,
+                pics: tuChongItem.images!
+                    .map<PicSwiperItem>(
+                      (ImageItem f) =>
+                          PicSwiperItem(picUrl: f.imageUrl, des: f.title),
+                    )
+                    .toList(),
+                tuChongItem: tuChongItem,
+              ),
+            );
+          },
+        );
 
-      return widget;
-    });
+        return widget;
+      },
+    );
   }
 
   Widget buildImage(ui.Image image, double num300, double num400) {
@@ -150,10 +158,14 @@ class CropImage extends StatelessWidget {
         height: num400,
         fit: BoxFit.fill,
         sourceRect: Rect.fromLTWH(
-            0.0, 0.0, image.width.toDouble(), 4 * image.width / 3),
+          0.0,
+          0.0,
+          image.width.toDouble(),
+          4 * image.width / 3,
+        ),
       );
       if (n >= 4) {
-        imageWidget = Container(
+        imageWidget = SizedBox(
           width: num300,
           height: num400,
           child: Stack(
@@ -176,7 +188,7 @@ class CropImage extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontSize: 10.0),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         );
@@ -200,11 +212,15 @@ class CropImage extends StatelessWidget {
         height: num300,
         fit: BoxFit.fill,
         sourceRect: Rect.fromLTWH(
-            (image.width - width) / 2.0, 0.0, width, image.height.toDouble()),
+          (image.width - width) / 2.0,
+          0.0,
+          width,
+          image.height.toDouble(),
+        ),
       );
 
       if (n <= 1 / 4) {
-        imageWidget = Container(
+        imageWidget = SizedBox(
           width: num400,
           height: num300,
           child: Stack(
@@ -227,7 +243,7 @@ class CropImage extends StatelessWidget {
                     style: TextStyle(color: Colors.white, fontSize: 10.0),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         );

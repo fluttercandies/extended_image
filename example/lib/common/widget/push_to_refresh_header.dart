@@ -11,14 +11,21 @@ double hideHeight = maxDragOffset / 2.3;
 double refreshHeight = maxDragOffset / 1.5;
 
 class PullToRefreshHeader extends StatelessWidget {
-  const PullToRefreshHeader(this.info, this.lastRefreshTime, {this.color});
+  const PullToRefreshHeader(
+    this.info,
+    this.lastRefreshTime, {
+    super.key,
+    this.color,
+  });
+
   final PullToRefreshScrollNotificationInfo? info;
   final DateTime lastRefreshTime;
   final Color? color;
+
   @override
   Widget build(BuildContext context) {
     if (info == null) {
-      return Container();
+      return const SizedBox();
     }
     String text = '';
     if (info!.mode == PullToRefreshIndicatorMode.armed) {
@@ -60,8 +67,8 @@ class PullToRefreshHeader extends StatelessWidget {
                 Expanded(
                   child: Container(
                     alignment: Alignment.centerRight,
-                    child: RefreshImage(top),
                     margin: const EdgeInsets.only(right: 12.0),
+                    child: RefreshImage(top),
                   ),
                 ),
                 Column(
@@ -71,10 +78,9 @@ class PullToRefreshHeader extends StatelessWidget {
                       style: ts,
                     ),
                     Text(
-                      'Last updated:' +
-                          DateFormat('yyyy-MM-dd hh:mm').format(time),
+                      'Last updated:${DateFormat('yyyy-MM-dd hh:mm').format(time)}',
                       style: ts.copyWith(fontSize: 12),
-                    )
+                    ),
                   ],
                 ),
                 Expanded(
@@ -82,7 +88,7 @@ class PullToRefreshHeader extends StatelessWidget {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -90,7 +96,7 @@ class PullToRefreshHeader extends StatelessWidget {
 }
 
 class RefreshImage extends StatelessWidget {
-  const RefreshImage(this.top);
+  const RefreshImage(this.top, {super.key});
   final double top;
   @override
   Widget build(BuildContext context) {
@@ -107,15 +113,20 @@ class RefreshImage extends StatelessWidget {
             (1 - min(top / (refreshHeight - hideHeight), 1)) * imageHeight;
 
         canvas.drawImageRect(
-            image,
-            Rect.fromLTWH(0.0, y, imageWidth, imageHeight - y),
-            Rect.fromLTWH(rect.left, rect.top + y / imageHeight * size.height,
-                size.width, (imageHeight - y) / imageHeight * size.height),
-            Paint()
-              ..colorFilter =
-                  const ColorFilter.mode(Color(0xFFea5504), BlendMode.srcIn)
-              ..isAntiAlias = false
-              ..filterQuality = FilterQuality.low);
+          image,
+          Rect.fromLTWH(0.0, y, imageWidth, imageHeight - y),
+          Rect.fromLTWH(
+            rect.left,
+            rect.top + y / imageHeight * size.height,
+            size.width,
+            (imageHeight - y) / imageHeight * size.height,
+          ),
+          Paint()
+            ..colorFilter =
+                const ColorFilter.mode(Color(0xFFea5504), BlendMode.srcIn)
+            ..isAntiAlias = false
+            ..filterQuality = FilterQuality.low,
+        );
 
         //canvas.restore();
       },

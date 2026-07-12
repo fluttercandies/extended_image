@@ -17,8 +17,10 @@ import 'package:loading_more_list/loading_more_list.dart';
   },
 )
 class WaterfallFlowDemo extends StatefulWidget {
+  const WaterfallFlowDemo({super.key});
+
   @override
-  _WaterfallFlowDemoState createState() => _WaterfallFlowDemoState();
+  State<WaterfallFlowDemo> createState() => _WaterfallFlowDemoState();
 }
 
 class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
@@ -32,20 +34,21 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
             title: const Text('WaterfallFlowDemo'),
           ),
           Expanded(
-              child: LoadingMoreList<TuChongItem>(
-            ListConfig<TuChongItem>(
-              extendedListDelegate:
-                  const SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 300,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
+            child: LoadingMoreList<TuChongItem>(
+              ListConfig<TuChongItem>(
+                extendedListDelegate:
+                    const SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 300,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                ),
+                itemBuilder: buildWaterfallFlowItem,
+                sourceList: listSourceRepository!,
+                padding: const EdgeInsets.all(5.0),
+                lastChildLayoutType: LastChildLayoutType.foot,
               ),
-              itemBuilder: buildWaterfallFlowItem,
-              sourceList: listSourceRepository!,
-              padding: const EdgeInsets.all(5.0),
-              lastChildLayoutType: LastChildLayoutType.foot,
             ),
-          ))
+          ),
         ],
       ),
     );

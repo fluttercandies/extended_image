@@ -16,16 +16,19 @@ import 'package:oktoast/oktoast.dart';
   },
 )
 class ImageDemo extends StatefulWidget {
+  const ImageDemo({super.key});
+
   @override
-  _ImageDemoState createState() => _ImageDemoState();
+  State<ImageDemo> createState() => _ImageDemoState();
 }
 
 class _ImageDemoState extends State<ImageDemo> {
   BoxShape? boxShape;
+
   @override
   void initState() {
-    boxShape = BoxShape.circle;
     super.initState();
+    boxShape = BoxShape.circle;
   }
 
   @override
@@ -68,9 +71,11 @@ class _ImageDemoState extends State<ImageDemo> {
                   onPressed: () {
                     PaintingBinding.instance.imageCache.clear();
                     clearDiskCachedImages().then((bool done) {
-                      showToast(done ? 'clear succeed' : 'clear failed',
-                          position:
-                              const ToastPosition(align: Alignment.topCenter));
+                      showToast(
+                        done ? 'clear succeed' : 'clear failed',
+                        position:
+                            const ToastPosition(align: Alignment.topCenter),
+                      );
                     });
                   },
                 ),
@@ -82,9 +87,11 @@ class _ImageDemoState extends State<ImageDemo> {
                   child: const Text('save network image to photo'),
                   onPressed: () {
                     saveNetworkImageToPhoto(url).then((bool done) {
-                      showToast(done ? 'save succeed' : 'save failed',
-                          position:
-                              const ToastPosition(align: Alignment.topCenter));
+                      showToast(
+                        done ? 'save succeed' : 'save failed',
+                        position:
+                            const ToastPosition(align: Alignment.topCenter),
+                      );
                     });
                   },
                 ),
@@ -106,7 +113,7 @@ class _ImageDemoState extends State<ImageDemo> {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );

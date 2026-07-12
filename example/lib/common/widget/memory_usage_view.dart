@@ -5,13 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:vm_service/vm_service.dart';
 
 class MemoryUsageView extends StatefulWidget {
+  const MemoryUsageView({super.key});
+
   @override
-  _MemoryUsageViewState createState() => _MemoryUsageViewState();
+  State<MemoryUsageView> createState() => _MemoryUsageViewState();
 }
 
 class _MemoryUsageViewState extends State<MemoryUsageView> {
   double _top = 0;
   double _left = 0;
+
   @override
   void initState() {
     super.initState();
@@ -57,7 +60,9 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
         },
         child: DefaultTextStyle(
           style: TextStyle(
-              fontSize: 10, color: Colors.white.withValues(alpha: 0.68)),
+            fontSize: 10,
+            color: Colors.white.withValues(alpha: 0.68),
+          ),
           child: Container(
             decoration: ShapeDecoration(
               color: Colors.black.withValues(alpha: 0.8),
@@ -69,7 +74,7 @@ class _MemoryUsageViewState extends State<MemoryUsageView> {
                   color: Colors.black.withValues(alpha: 0.5),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
-                )
+                ),
               ],
             ),
             padding: const EdgeInsets.all(8.0),

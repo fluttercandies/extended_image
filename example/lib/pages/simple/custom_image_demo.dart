@@ -15,20 +15,24 @@ import 'package:oktoast/oktoast.dart';
   },
 )
 class CustomImageDemo extends StatefulWidget {
+  const CustomImageDemo({super.key});
+
   @override
-  _CustomImageDemoState createState() => _CustomImageDemoState();
+  State<CustomImageDemo> createState() => _CustomImageDemoState();
 }
 
 class _CustomImageDemoState extends State<CustomImageDemo>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+
   @override
   void initState() {
     _controller = AnimationController(
-        vsync: this,
-        duration: const Duration(seconds: 3),
-        lowerBound: 0.0,
-        upperBound: 1.0);
+      vsync: this,
+      duration: const Duration(seconds: 3),
+      lowerBound: 0.0,
+      upperBound: 1.0,
+    );
     super.initState();
   }
 
@@ -53,9 +57,10 @@ class _CustomImageDemoState extends State<CustomImageDemo>
               child: const Text('clear all cache'),
               onPressed: () {
                 clearDiskCachedImages().then((bool done) {
-                  showToast(done ? 'clear succeed' : 'clear failed',
-                      position:
-                          const ToastPosition(align: Alignment.topCenter));
+                  showToast(
+                    done ? 'clear succeed' : 'clear failed',
+                    position: const ToastPosition(align: Alignment.topCenter),
+                  );
                 });
               },
             ),
@@ -111,7 +116,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                                 'load image failed, click to reload',
                                 textAlign: TextAlign.center,
                               ),
-                            )
+                            ),
                           ],
                         ),
                         onTap: () {
@@ -122,7 +127,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                 },
               ),
             ),
-          )
+          ),
         ],
       ),
     );

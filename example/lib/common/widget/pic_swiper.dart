@@ -25,7 +25,7 @@ const String attachContent =
 typedef DoubleClickAnimationListener = void Function();
 
 class FloatText extends StatelessWidget {
-  const FloatText(this.text);
+  const FloatText(this.text, {super.key});
   final String text;
   @override
   Widget build(BuildContext context) {
@@ -52,11 +52,14 @@ class ImageDetail extends StatelessWidget {
   const ImageDetail(
     this.info,
     this.index,
-    this.tuChongItem,
-  );
+    this.tuChongItem, {
+    super.key,
+  });
+
   final ImageDetailInfo? info;
   final int index;
   final TuChongItem? tuChongItem;
+
   @override
   Widget build(BuildContext context) {
     String content =
@@ -70,6 +73,19 @@ class ImageDetail extends StatelessWidget {
         right: 5,
       ),
       padding: const EdgeInsets.all(20.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+        border: Border.all(
+          color: Colors.grey,
+        ),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(color: Colors.grey, blurRadius: 15.0, spreadRadius: 20.0),
+        ],
+      ),
       child: Stack(
         clipBehavior: Clip.none,
         children: <Widget>[
@@ -185,18 +201,6 @@ class ImageDetail extends StatelessWidget {
           ),
         ],
       ),
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-          border: Border.all(
-            color: Colors.grey,
-          ),
-          boxShadow: const <BoxShadow>[
-            BoxShadow(color: Colors.grey, blurRadius: 15.0, spreadRadius: 20.0),
-          ]),
     );
     return result;
     // return ExtendedTextSelectionPointerHandler(
@@ -252,8 +256,9 @@ class ImageDetailInfo {
     try {
       //
       return _maxImageDetailY ??= max(
-          key.currentContext!.size!.height - (pageSize.height - imageBottom),
-          0.1);
+        key.currentContext!.size!.height - (pageSize.height - imageBottom),
+        0.1,
+      );
     } catch (e) {
       //currentContext is not ready
       return 100.0;
@@ -262,7 +267,7 @@ class ImageDetailInfo {
 }
 
 class MySwiperPlugin extends StatelessWidget {
-  const MySwiperPlugin(this.pics, this.index, this.reBuild);
+  const MySwiperPlugin(this.pics, this.index, this.reBuild, {super.key});
   final List<PicSwiperItem>? pics;
   final int? index;
   final StreamController<int> reBuild;
@@ -291,11 +296,16 @@ class MySwiperPlugin extends StatelessWidget {
                   width: 10.0,
                 ),
                 Expanded(
-                    child: Text(pics![data.data!].des ?? '',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                            fontSize: 16.0, color: Colors.blue))),
+                  child: Text(
+                    pics![data.data!].des ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ),
                 const SizedBox(
                   width: 10.0,
                 ),
@@ -312,9 +322,12 @@ class MySwiperPlugin extends StatelessWidget {
                     onTap: () {
                       saveNetworkImageToPhoto(pics![index!].picUrl)
                           .then((bool done) {
-                        showToast(done ? 'save succeed' : 'save failed',
-                            position: const ToastPosition(
-                                align: Alignment.topCenter));
+                        showToast(
+                          done ? 'save succeed' : 'save failed',
+                          position: const ToastPosition(
+                            align: Alignment.topCenter,
+                          ),
+                        );
                       });
                     },
                   ),
@@ -337,15 +350,18 @@ class MySwiperPlugin extends StatelessWidget {
 )
 class PicSwiper extends StatefulWidget {
   const PicSwiper({
+    super.key,
     this.index,
     this.pics,
     this.tuChongItem,
   });
+
   final int? index;
   final List<PicSwiperItem>? pics;
   final TuChongItem? tuChongItem;
+
   @override
-  _PicSwiperState createState() => _PicSwiperState();
+  State<PicSwiper> createState() => _PicSwiperState();
 }
 
 class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
@@ -401,228 +417,226 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
     final Size size = MediaQuery.of(context).size;
     imageDRect = Offset.zero & size;
     Widget result = Material(
+      /// if you use ExtendedImageSlidePage and slideType =SlideType.onlyImage,
+      /// make sure your page is transparent background
+      color: Colors.transparent,
+      shadowColor: Colors.transparent,
+      child: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          ExtendedImageGesturePageView.builder(
+            controller: ExtendedPageController(
+              initialPage: widget.index!,
+              pageSpacing: 50,
+              shouldIgnorePointerWhenScrolling: false,
+            ),
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            canScrollPage: (GestureDetails? gestureDetails) {
+              return _imageDetailY >= 0;
+              //return (gestureDetails?.totalScale ?? 1.0) <= 1.0;
+            },
+            itemBuilder: (BuildContext context, int index) {
+              final String item = widget.pics![index].picUrl;
 
-        /// if you use ExtendedImageSlidePage and slideType =SlideType.onlyImage,
-        /// make sure your page is transparent background
-        color: Colors.transparent,
-        shadowColor: Colors.transparent,
-        child: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            ExtendedImageGesturePageView.builder(
-              controller: ExtendedPageController(
-                initialPage: widget.index!,
-                pageSpacing: 50,
-                shouldIgnorePointerWhenScrolling: false,
-              ),
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              canScrollPage: (GestureDetails? gestureDetails) {
-                return _imageDetailY >= 0;
-                //return (gestureDetails?.totalScale ?? 1.0) <= 1.0;
-              },
-              itemBuilder: (BuildContext context, int index) {
-                final String item = widget.pics![index].picUrl;
+              Widget image = ExtendedImage.network(
+                item,
+                fit: BoxFit.contain,
+                enableSlideOutPage: true,
+                mode: ExtendedImageMode.gesture,
+                imageCacheName: 'CropImage',
+                //layoutInsets: EdgeInsets.all(20),
+                initGestureConfigHandler: (ExtendedImageState state) {
+                  double? initialScale = 1.0;
 
-                Widget image = ExtendedImage.network(
-                  item,
-                  fit: BoxFit.contain,
-                  enableSlideOutPage: true,
-                  mode: ExtendedImageMode.gesture,
-                  imageCacheName: 'CropImage',
-                  //layoutInsets: EdgeInsets.all(20),
-                  initGestureConfigHandler: (ExtendedImageState state) {
-                    double? initialScale = 1.0;
-
-                    if (state.extendedImageInfo != null) {
-                      initialScale = initScale(
-                          size: size,
-                          initialScale: initialScale,
-                          imageSize: Size(
-                              state.extendedImageInfo!.image.width.toDouble(),
-                              state.extendedImageInfo!.image.height
-                                  .toDouble()));
-                    }
-                    return GestureConfig(
-                      inPageView: true,
-                      initialScale: initialScale!,
-                      maxScale: max(initialScale, 5.0),
-                      animationMaxScale: max(initialScale, 5.0),
-                      initialAlignment: InitialAlignment.center,
-                      //you can cache gesture state even though page view page change.
-                      //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
-                      cacheGesture: false,
+                  if (state.extendedImageInfo != null) {
+                    initialScale = initScale(
+                      size: size,
+                      initialScale: initialScale,
+                      imageSize: Size(
+                        state.extendedImageInfo!.image.width.toDouble(),
+                        state.extendedImageInfo!.image.height.toDouble(),
+                      ),
                     );
-                  },
-                  onDoubleTap: (ExtendedImageGestureState state) {
-                    ///you can use define pointerDownPosition as you can,
-                    ///default value is double tap pointer down postion.
-                    final Offset? pointerDownPosition =
-                        state.pointerDownPosition;
-                    final double? begin = state.gestureDetails!.totalScale;
-                    double end;
+                  }
+                  return GestureConfig(
+                    inPageView: true,
+                    initialScale: initialScale!,
+                    maxScale: max(initialScale, 5.0),
+                    animationMaxScale: max(initialScale, 5.0),
+                    initialAlignment: InitialAlignment.center,
+                    //you can cache gesture state even though page view page change.
+                    //remember call clearGestureDetailsCache() method at the right time.(for example,this page dispose)
+                    cacheGesture: false,
+                  );
+                },
+                onDoubleTap: (ExtendedImageGestureState state) {
+                  ///you can use define pointerDownPosition as you can,
+                  ///default value is double tap pointer down postion.
+                  final Offset? pointerDownPosition = state.pointerDownPosition;
+                  final double? begin = state.gestureDetails!.totalScale;
+                  double end;
 
-                    //remove old
-                    _doubleClickAnimation
-                        ?.removeListener(_doubleClickAnimationListener);
+                  //remove old
+                  _doubleClickAnimation
+                      ?.removeListener(_doubleClickAnimationListener);
 
-                    //stop pre
-                    _doubleClickAnimationController.stop();
+                  //stop pre
+                  _doubleClickAnimationController.stop();
 
-                    //reset to use
-                    _doubleClickAnimationController.reset();
+                  //reset to use
+                  _doubleClickAnimationController.reset();
 
-                    if (begin == doubleTapScales[0]) {
-                      end = doubleTapScales[1];
-                    } else {
-                      end = doubleTapScales[0];
-                    }
+                  if (begin == doubleTapScales[0]) {
+                    end = doubleTapScales[1];
+                  } else {
+                    end = doubleTapScales[0];
+                  }
 
-                    _doubleClickAnimationListener = () {
-                      //print(_animation.value);
-                      state.handleDoubleTap(
-                          scale: _doubleClickAnimation!.value,
-                          doubleTapPosition: pointerDownPosition);
-                    };
-                    _doubleClickAnimation = _doubleClickAnimationController
-                        .drive(Tween<double>(begin: begin, end: end));
+                  _doubleClickAnimationListener = () {
+                    //print(_animation.value);
+                    state.handleDoubleTap(
+                      scale: _doubleClickAnimation!.value,
+                      doubleTapPosition: pointerDownPosition,
+                    );
+                  };
+                  _doubleClickAnimation = _doubleClickAnimationController
+                      .drive(Tween<double>(begin: begin, end: end));
 
-                    _doubleClickAnimation!
-                        .addListener(_doubleClickAnimationListener);
+                  _doubleClickAnimation!
+                      .addListener(_doubleClickAnimationListener);
 
-                    _doubleClickAnimationController.forward();
-                  },
-                  loadStateChanged: (ExtendedImageState state) {
-                    if (state.extendedImageLoadState == LoadState.completed) {
-                      final Rect imageDRect = getDestinationRect(
-                        rect: Offset.zero & size,
-                        inputSize: Size(
-                          state.extendedImageInfo!.image.width.toDouble(),
-                          state.extendedImageInfo!.image.height.toDouble(),
-                        ),
-                        fit: BoxFit.contain,
-                      );
+                  _doubleClickAnimationController.forward();
+                },
+                loadStateChanged: (ExtendedImageState state) {
+                  if (state.extendedImageLoadState == LoadState.completed) {
+                    final Rect imageDRect = getDestinationRect(
+                      rect: Offset.zero & size,
+                      inputSize: Size(
+                        state.extendedImageInfo!.image.width.toDouble(),
+                        state.extendedImageInfo!.image.height.toDouble(),
+                      ),
+                      fit: BoxFit.contain,
+                    );
 
-                      detailKeys[index] ??= ImageDetailInfo(
-                        imageDRect: imageDRect,
-                        pageSize: size,
-                        imageInfo: state.extendedImageInfo!,
-                      );
-                      final ImageDetailInfo? imageDetailInfo =
-                          detailKeys[index];
-                      return StreamBuilder<double>(
-                        builder:
-                            (BuildContext context, AsyncSnapshot<double> data) {
-                          return ExtendedImageGesture(
-                            state,
-                            canScaleImage: (_) => _imageDetailY == 0,
-                            imageBuilder: (
-                              Widget image, {
-                              ExtendedImageGestureState? imageGestureState,
-                            }) {
-                              return Stack(
-                                children: <Widget>[
-                                  Positioned.fill(
-                                    child: image,
-                                    top: _imageDetailY,
-                                    bottom: -_imageDetailY,
-                                  ),
-                                  Positioned(
-                                    left: 0.0,
-                                    right: 0.0,
-                                    top: imageDetailInfo!.imageBottom +
-                                        _imageDetailY,
-                                    child: Opacity(
-                                      opacity: _imageDetailY == 0
-                                          ? 0
-                                          : min(
-                                              1,
-                                              _imageDetailY.abs() /
-                                                  (imageDetailInfo
-                                                          .maxImageDetailY /
-                                                      4.0),
-                                            ),
-                                      child: ImageDetail(
-                                        imageDetailInfo,
-                                        index,
-                                        widget.tuChongItem,
-                                      ),
+                    detailKeys[index] ??= ImageDetailInfo(
+                      imageDRect: imageDRect,
+                      pageSize: size,
+                      imageInfo: state.extendedImageInfo!,
+                    );
+                    final ImageDetailInfo? imageDetailInfo = detailKeys[index];
+                    return StreamBuilder<double>(
+                      builder:
+                          (BuildContext context, AsyncSnapshot<double> data) {
+                        return ExtendedImageGesture(
+                          state,
+                          canScaleImage: (_) => _imageDetailY == 0,
+                          imageBuilder: (
+                            Widget image, {
+                            ExtendedImageGestureState? imageGestureState,
+                          }) {
+                            return Stack(
+                              children: <Widget>[
+                                Positioned.fill(
+                                  top: _imageDetailY,
+                                  bottom: -_imageDetailY,
+                                  child: image,
+                                ),
+                                Positioned(
+                                  left: 0.0,
+                                  right: 0.0,
+                                  top: imageDetailInfo!.imageBottom +
+                                      _imageDetailY,
+                                  child: Opacity(
+                                    opacity: _imageDetailY == 0
+                                        ? 0
+                                        : min(
+                                            1,
+                                            _imageDetailY.abs() /
+                                                (imageDetailInfo
+                                                        .maxImageDetailY /
+                                                    4.0),
+                                          ),
+                                    child: ImageDetail(
+                                      imageDetailInfo,
+                                      index,
+                                      widget.tuChongItem,
                                     ),
                                   ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                        initialData: _imageDetailY,
-                        stream: rebuildDetail.stream,
-                      );
-                    }
-                    return null;
-                  },
-                );
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      initialData: _imageDetailY,
+                      stream: rebuildDetail.stream,
+                    );
+                  }
+                  return null;
+                },
+              );
 
-                if (index < min(9, widget.pics!.length)) {
-                  image = HeroWidget(
-                    child: image,
-                    tag: item,
-                    slideType: SlideType.onlyImage,
-                    slidePagekey: slidePagekey,
-                  );
-                }
-
-                image = GestureDetector(
+              if (index < min(9, widget.pics!.length)) {
+                image = HeroWidget(
+                  tag: item,
+                  slideType: SlideType.onlyImage,
+                  slidePagekey: slidePagekey,
                   child: image,
-                  onTap: () {
-                    if (_imageDetailY != 0) {
-                      _imageDetailY = 0;
-                      rebuildDetail.sink.add(_imageDetailY);
-                    } else {
-                      slidePagekey.currentState!.popPage();
-                      Navigator.pop(context);
-                    }
-                  },
                 );
+              }
 
-                return image;
-              },
-              itemCount: widget.pics!.length,
-              onPageChanged: (int index) {
-                _currentIndex = index;
-                rebuildIndex.add(index);
-                if (_imageDetailY != 0) {
-                  _imageDetailY = 0;
-                  rebuildDetail.sink.add(_imageDetailY);
-                }
-                _showSwiper = true;
-                rebuildSwiper.add(_showSwiper);
-                _preloadImage(index - 1);
-                _preloadImage(index + 1);
-              },
-            ),
-            StreamBuilder<bool>(
-              builder: (BuildContext c, AsyncSnapshot<bool> d) {
-                if (d.data == null || !d.data!) {
-                  return Container();
-                }
+              image = GestureDetector(
+                child: image,
+                onTap: () {
+                  if (_imageDetailY != 0) {
+                    _imageDetailY = 0;
+                    rebuildDetail.sink.add(_imageDetailY);
+                  } else {
+                    slidePagekey.currentState!.popPage();
+                    Navigator.pop(context);
+                  }
+                },
+              );
 
-                return Positioned(
-                  top: 0.0,
-                  left: 0.0,
-                  right: 0.0,
-                  child:
-                      MySwiperPlugin(widget.pics, _currentIndex, rebuildIndex),
-                );
-              },
-              initialData: true,
-              stream: rebuildSwiper.stream,
-            )
-          ],
-        ));
+              return image;
+            },
+            itemCount: widget.pics!.length,
+            onPageChanged: (int index) {
+              _currentIndex = index;
+              rebuildIndex.add(index);
+              if (_imageDetailY != 0) {
+                _imageDetailY = 0;
+                rebuildDetail.sink.add(_imageDetailY);
+              }
+              _showSwiper = true;
+              rebuildSwiper.add(_showSwiper);
+              _preloadImage(index - 1);
+              _preloadImage(index + 1);
+            },
+          ),
+          StreamBuilder<bool>(
+            builder: (BuildContext c, AsyncSnapshot<bool> d) {
+              if (d.data == null || !d.data!) {
+                return Container();
+              }
+
+              return Positioned(
+                top: 0.0,
+                left: 0.0,
+                right: 0.0,
+                child: MySwiperPlugin(widget.pics, _currentIndex, rebuildIndex),
+              );
+            },
+            initialData: true,
+            stream: rebuildSwiper.stream,
+          ),
+        ],
+      ),
+    );
 
     result = ExtendedImageSlidePage(
       key: slidePagekey,
-      child: result,
       slideAxis: SlideAxis.vertical,
       slideType: SlideType.onlyImage,
       slideScaleHandler: (
@@ -667,7 +681,9 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
 
             // print(offset.dy);
             _imageDetailY = max(
-                -detailKeys[_currentIndex!]!.maxImageDetailY, _imageDetailY);
+              -detailKeys[_currentIndex!]!.maxImageDetailY,
+              _imageDetailY,
+            );
             rebuildDetail.sink.add(_imageDetailY);
             return Offset.zero;
           }
@@ -700,12 +716,13 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
               final Offset direction =
                   details.velocity.pixelsPerSecond / magnitude * 1000;
 
-              _slideEndAnimation =
-                  _slideEndAnimationController.drive(Tween<double>(
-                begin: _imageDetailY,
-                end: (_imageDetailY + direction.dy)
-                    .clamp(-detailKeys[_currentIndex!]!.maxImageDetailY, 0.0),
-              ));
+              _slideEndAnimation = _slideEndAnimationController.drive(
+                Tween<double>(
+                  begin: _imageDetailY,
+                  end: (_imageDetailY + direction.dy)
+                      .clamp(-detailKeys[_currentIndex!]!.maxImageDetailY, 0.0),
+                ),
+              );
               _slideEndAnimationController.reset();
               _slideEndAnimationController.forward();
             }
@@ -731,6 +748,7 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
           rebuildSwiper.add(_showSwiper);
         }
       },
+      child: result,
     );
 
     return result;
@@ -753,7 +771,9 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
     super.initState();
     _currentIndex = widget.index;
     _doubleClickAnimationController = AnimationController(
-        duration: const Duration(milliseconds: 150), vsync: this);
+      duration: const Duration(milliseconds: 150),
+      vsync: this,
+    );
 
     _slideEndAnimationController = AnimationController(
       vsync: this,

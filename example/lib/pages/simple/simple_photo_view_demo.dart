@@ -14,8 +14,10 @@ import 'package:flutter/material.dart';
   },
 )
 class SimplePhotoViewDemo extends StatefulWidget {
+  const SimplePhotoViewDemo({super.key});
+
   @override
-  _SimplePhotoViewDemoState createState() => _SimplePhotoViewDemoState();
+  State<SimplePhotoViewDemo> createState() => _SimplePhotoViewDemoState();
 }
 
 class _SimplePhotoViewDemoState extends State<SimplePhotoViewDemo> {
@@ -26,7 +28,7 @@ class _SimplePhotoViewDemoState extends State<SimplePhotoViewDemo> {
     'https://photo.tuchong.com/16709139/f/278778447.jpg',
     'This is an video',
     'https://photo.tuchong.com/5040418/f/43305517.jpg',
-    'https://photo.tuchong.com/3019649/f/302699092.jpg'
+    'https://photo.tuchong.com/3019649/f/302699092.jpg',
   ];
   @override
   Widget build(BuildContext context) {
@@ -62,9 +64,10 @@ class _SimplePhotoViewDemoState extends State<SimplePhotoViewDemo> {
               ),
               onTap: () {
                 Navigator.of(context).pushNamed(
-                    Routes.fluttercandiesSimplePicsWiper.name,
-                    arguments: Routes.fluttercandiesSimplePicsWiper
-                        .d(url: url, images: images));
+                  Routes.fluttercandiesSimplePicsWiper.name,
+                  arguments: Routes.fluttercandiesSimplePicsWiper
+                      .d(url: url, images: images),
+                );
               },
             );
           },
@@ -82,11 +85,11 @@ class _SimplePhotoViewDemoState extends State<SimplePhotoViewDemo> {
   pageRouteType: PageRouteType.transparent,
 )
 class SimplePicsWiper extends StatefulWidget {
-  const SimplePicsWiper({required this.url, required this.images});
+  const SimplePicsWiper({super.key, required this.url, required this.images});
   final String url;
   final List<String> images;
   @override
-  _SimplePicsWiperState createState() => _SimplePicsWiperState();
+  State<SimplePicsWiper> createState() => _SimplePicsWiperState();
 }
 
 class _SimplePicsWiperState extends State<SimplePicsWiper> {
@@ -123,6 +126,8 @@ class _SimplePicsWiperState extends State<SimplePicsWiper> {
       color: Colors.transparent,
       child: ExtendedImageSlidePage(
         key: slidePagekey,
+        slideAxis: SlideAxis.both,
+        slideType: SlideType.wholePage,
         child: GestureDetector(
           child: ExtendedImageGesturePageView.builder(
             controller: ExtendedPageController(
@@ -153,11 +158,13 @@ class _SimplePicsWiperState extends State<SimplePicsWiper> {
                         return Hero(
                           tag: url,
                           child: result,
-                          flightShuttleBuilder: (BuildContext flightContext,
-                              Animation<double> animation,
-                              HeroFlightDirection flightDirection,
-                              BuildContext fromHeroContext,
-                              BuildContext toHeroContext) {
+                          flightShuttleBuilder: (
+                            BuildContext flightContext,
+                            Animation<double> animation,
+                            HeroFlightDirection flightDirection,
+                            BuildContext fromHeroContext,
+                            BuildContext toHeroContext,
+                          ) {
                             final Hero hero =
                                 (flightDirection == HeroFlightDirection.pop
                                     ? fromHeroContext.widget
@@ -169,6 +176,9 @@ class _SimplePicsWiperState extends State<SimplePicsWiper> {
                       },
                     )
                   : HeroWidget(
+                      tag: url,
+                      slideType: SlideType.wholePage,
+                      slidePagekey: slidePagekey,
                       child: ExtendedImage.network(
                         url,
                         enableSlideOutPage: true,
@@ -185,9 +195,6 @@ class _SimplePicsWiperState extends State<SimplePicsWiper> {
                           );
                         },
                       ),
-                      tag: url,
-                      slideType: SlideType.wholePage,
-                      slidePagekey: slidePagekey,
                     );
             },
           ),
@@ -196,8 +203,6 @@ class _SimplePicsWiperState extends State<SimplePicsWiper> {
             Navigator.pop(context);
           },
         ),
-        slideAxis: SlideAxis.both,
-        slideType: SlideType.wholePage,
       ),
     );
   }

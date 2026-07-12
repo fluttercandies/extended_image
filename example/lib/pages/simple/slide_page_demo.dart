@@ -14,8 +14,10 @@ import 'package:flutter/material.dart';
   },
 )
 class SlidePageDemo extends StatefulWidget {
+  const SlidePageDemo({super.key});
+
   @override
-  _SlidePageDemoState createState() => _SlidePageDemoState();
+  State<SlidePageDemo> createState() => _SlidePageDemoState();
 }
 
 class _SlidePageDemoState extends State<SlidePageDemo> {
@@ -26,8 +28,9 @@ class _SlidePageDemoState extends State<SlidePageDemo> {
     'https://photo.tuchong.com/16709139/f/278778447.jpg',
     'This is an video',
     'https://photo.tuchong.com/5040418/f/43305517.jpg',
-    'https://photo.tuchong.com/3019649/f/302699092.jpg'
+    'https://photo.tuchong.com/3019649/f/302699092.jpg',
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,8 +65,9 @@ class _SlidePageDemoState extends State<SlidePageDemo> {
               ),
               onTap: () {
                 Navigator.of(context).pushNamed(
-                    Routes.fluttercandiesSlidepageitem.name,
-                    arguments: Routes.fluttercandiesSlidepageitem.d(url: url));
+                  Routes.fluttercandiesSlidepageitem.name,
+                  arguments: Routes.fluttercandiesSlidepageitem.d(url: url),
+                );
               },
             );
           },
@@ -81,10 +85,12 @@ class _SlidePageDemoState extends State<SlidePageDemo> {
   pageRouteType: PageRouteType.transparent,
 )
 class SlidePage extends StatefulWidget {
-  const SlidePage({this.url});
+  const SlidePage({super.key, this.url});
+
   final String? url;
+
   @override
-  _SlidePageState createState() => _SlidePageState();
+  State<SlidePage> createState() => _SlidePageState();
 }
 
 class _SlidePageState extends State<SlidePage> {
@@ -97,6 +103,8 @@ class _SlidePageState extends State<SlidePage> {
       color: Colors.transparent,
       child: ExtendedImageSlidePage(
         key: slidePagekey,
+        slideAxis: SlideAxis.both,
+        slideType: SlideType.onlyImage,
         child: GestureDetector(
           child: widget.url == 'This is an video'
               ? ExtendedImageSlidePageHandler(
@@ -113,11 +121,13 @@ class _SlidePageState extends State<SlidePage> {
                     return Hero(
                       tag: widget.url!,
                       child: result,
-                      flightShuttleBuilder: (BuildContext flightContext,
-                          Animation<double> animation,
-                          HeroFlightDirection flightDirection,
-                          BuildContext fromHeroContext,
-                          BuildContext toHeroContext) {
+                      flightShuttleBuilder: (
+                        BuildContext flightContext,
+                        Animation<double> animation,
+                        HeroFlightDirection flightDirection,
+                        BuildContext fromHeroContext,
+                        BuildContext toHeroContext,
+                      ) {
                         final Hero hero =
                             (flightDirection == HeroFlightDirection.pop
                                 ? fromHeroContext.widget
@@ -129,21 +139,19 @@ class _SlidePageState extends State<SlidePage> {
                   },
                 )
               : HeroWidget(
+                  tag: widget.url!,
+                  slideType: SlideType.onlyImage,
+                  slidePagekey: slidePagekey,
                   child: ExtendedImage.network(
                     widget.url!,
                     enableSlideOutPage: true,
                   ),
-                  tag: widget.url!,
-                  slideType: SlideType.onlyImage,
-                  slidePagekey: slidePagekey,
                 ),
           onTap: () {
             slidePagekey.currentState!.popPage();
             Navigator.pop(context);
           },
         ),
-        slideAxis: SlideAxis.both,
-        slideType: SlideType.onlyImage,
       ),
     );
   }

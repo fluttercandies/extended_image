@@ -7,12 +7,12 @@ class ChangeNotifierBuilder extends StatefulWidget {
   /// The [child] is optional but is good practice to use if part of the widget
   /// subtree does not depend on the value of the [valueListenable].
   const ChangeNotifierBuilder({
-    Key? key,
+    super.key,
     required this.changeNotifier,
     required this.builder,
     this.child,
     this.dispose,
-  }) : super(key: key);
+  });
 
   /// The [ValueListenable] whose value you depend on in order to build.
   ///

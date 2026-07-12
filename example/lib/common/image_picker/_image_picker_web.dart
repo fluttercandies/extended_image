@@ -13,7 +13,9 @@ external void _exportRaw(String key, JSAny? value);
 
 class ImageSaver {
   ImageSaver._();
+
   static Future<String> save(String name, Uint8List fileData) async {
+    // ignore: invalid_runtime_check_with_js_interop_types
     _exportRaw(name, fileData as JSAny);
     return name;
   }

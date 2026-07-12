@@ -14,7 +14,7 @@ import 'editor_utils.dart';
 ///  create by zmtzawqlp on 2019/8/22
 ///
 
-enum _MoveType {
+enum CropRectMoveType {
   topLeft,
   topRight,
   bottomRight,
@@ -27,13 +27,13 @@ enum _MoveType {
 
 class ExtendedImageCropLayer extends StatefulWidget {
   const ExtendedImageCropLayer({
-    Key? key,
+    super.key,
     required this.editActionDetails,
     required this.editorConfig,
     required this.layoutRect,
     required this.cropAutoCenterAnimationIsCompleted,
     this.fit = BoxFit.contain,
-  }) : super(key: key);
+  });
 
   final EditActionDetails editActionDetails;
   final EditorConfig editorConfig;
@@ -64,7 +64,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   bool _pointerDown = false;
   Animation<Rect?>? _rectAnimation;
   late AnimationController _rectTweenController;
-  _MoveType? _currentMoveType;
+  CropRectMoveType? _currentMoveType;
 
   double _rotateRadians = 0;
   @override
@@ -138,16 +138,16 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             Positioned(
               top: cropRect!.top - gWidth,
               left: cropRect!.left - gWidth,
-              child: Container(
+              child: SizedBox(
                 height: gWidth * 2,
                 width: gWidth * 2,
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onPanUpdate: (DragUpdateDetails details) {
-                    moveUpdate(_MoveType.topLeft, details.delta);
+                    moveUpdate(CropRectMoveType.topLeft, details.delta);
                   },
                   onPanEnd: (_) {
-                    _moveEnd(_MoveType.topLeft);
+                    _moveEnd(CropRectMoveType.topLeft);
                   },
                 ),
               ),
@@ -156,16 +156,16 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             Positioned(
               top: cropRect!.top - gWidth,
               left: cropRect!.right - gWidth,
-              child: Container(
+              child: SizedBox(
                 height: gWidth * 2,
                 width: gWidth * 2,
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onPanUpdate: (DragUpdateDetails details) {
-                    moveUpdate(_MoveType.topRight, details.delta);
+                    moveUpdate(CropRectMoveType.topRight, details.delta);
                   },
                   onPanEnd: (_) {
-                    _moveEnd(_MoveType.topRight);
+                    _moveEnd(CropRectMoveType.topRight);
                   },
                 ),
               ),
@@ -174,16 +174,16 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             Positioned(
               top: cropRect!.bottom - gWidth,
               left: cropRect!.left - gWidth,
-              child: Container(
+              child: SizedBox(
                 height: gWidth * 2,
                 width: gWidth * 2,
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onPanUpdate: (DragUpdateDetails details) {
-                    moveUpdate(_MoveType.bottomLeft, details.delta);
+                    moveUpdate(CropRectMoveType.bottomLeft, details.delta);
                   },
                   onPanEnd: (_) {
-                    _moveEnd(_MoveType.bottomLeft);
+                    _moveEnd(CropRectMoveType.bottomLeft);
                   },
                 ),
               ),
@@ -192,16 +192,16 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             Positioned(
               top: cropRect!.bottom - gWidth,
               left: cropRect!.right - gWidth,
-              child: Container(
+              child: SizedBox(
                 height: gWidth * 2,
                 width: gWidth * 2,
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onPanUpdate: (DragUpdateDetails details) {
-                    moveUpdate(_MoveType.bottomRight, details.delta);
+                    moveUpdate(CropRectMoveType.bottomRight, details.delta);
                   },
                   onPanEnd: (_) {
-                    _moveEnd(_MoveType.bottomRight);
+                    _moveEnd(CropRectMoveType.bottomRight);
                   },
                 ),
               ),
@@ -210,16 +210,16 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             Positioned(
               top: cropRect!.top - gWidth,
               left: cropRect!.left + gWidth,
-              child: Container(
+              child: SizedBox(
                 height: gWidth * 2,
                 width: max(cropRect!.width - gWidth * 2, gWidth * 2),
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onVerticalDragUpdate: (DragUpdateDetails details) {
-                    moveUpdate(_MoveType.top, details.delta);
+                    moveUpdate(CropRectMoveType.top, details.delta);
                   },
                   onVerticalDragEnd: (_) {
-                    _moveEnd(_MoveType.top);
+                    _moveEnd(CropRectMoveType.top);
                   },
                 ),
               ),
@@ -228,16 +228,16 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             Positioned(
               top: cropRect!.top + gWidth,
               left: cropRect!.left - gWidth,
-              child: Container(
+              child: SizedBox(
                 height: max(cropRect!.height - gWidth * 2, gWidth * 2),
                 width: gWidth * 2,
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onHorizontalDragUpdate: (DragUpdateDetails details) {
-                    moveUpdate(_MoveType.left, details.delta);
+                    moveUpdate(CropRectMoveType.left, details.delta);
                   },
                   onHorizontalDragEnd: (_) {
-                    _moveEnd(_MoveType.left);
+                    _moveEnd(CropRectMoveType.left);
                   },
                 ),
               ),
@@ -246,16 +246,16 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             Positioned(
               top: cropRect!.bottom - gWidth,
               left: cropRect!.left + gWidth,
-              child: Container(
+              child: SizedBox(
                 height: gWidth * 2,
                 width: max(cropRect!.width - gWidth * 2, gWidth * 2),
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onVerticalDragUpdate: (DragUpdateDetails details) {
-                    moveUpdate(_MoveType.bottom, details.delta);
+                    moveUpdate(CropRectMoveType.bottom, details.delta);
                   },
                   onVerticalDragEnd: (_) {
-                    _moveEnd(_MoveType.bottom);
+                    _moveEnd(CropRectMoveType.bottom);
                   },
                 ),
               ),
@@ -264,16 +264,16 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             Positioned(
               top: cropRect!.top + gWidth,
               left: cropRect!.right - gWidth,
-              child: Container(
+              child: SizedBox(
                 height: max(cropRect!.height - gWidth * 2, gWidth * 2),
                 width: gWidth * 2,
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onHorizontalDragUpdate: (DragUpdateDetails details) {
-                    moveUpdate(_MoveType.right, details.delta);
+                    moveUpdate(CropRectMoveType.right, details.delta);
                   },
                   onHorizontalDragEnd: (_) {
-                    _moveEnd(_MoveType.right);
+                    _moveEnd(CropRectMoveType.right);
                   },
                 ),
               ),
@@ -294,7 +294,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     }
   }
 
-  void moveUpdate(_MoveType moveType, Offset delta) {
+  void moveUpdate(CropRectMoveType moveType, Offset delta) {
     if (isAnimating) {
       return;
     }
@@ -310,12 +310,12 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     Rect? result = cropRect;
     final double gWidth = widget.editorConfig.cornerSize.width;
     switch (moveType) {
-      case _MoveType.topLeft:
-      case _MoveType.top:
-      case _MoveType.left:
-        if (moveType == _MoveType.top) {
+      case CropRectMoveType.topLeft:
+      case CropRectMoveType.top:
+      case CropRectMoveType.left:
+        if (moveType == CropRectMoveType.top) {
           delta = Offset(0, delta.dy);
-        } else if (moveType == _MoveType.left) {
+        } else if (moveType == CropRectMoveType.left) {
           delta = Offset(delta.dx, 0);
         }
         Offset topLeft = result!.topLeft + delta;
@@ -325,7 +325,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
         );
         result = Rect.fromPoints(topLeft, result.bottomRight);
         break;
-      case _MoveType.topRight:
+      case CropRectMoveType.topRight:
         Offset topRight = result!.topRight + delta;
         topRight = Offset(
           max(topRight.dx, result.left + gWidth * 2),
@@ -333,12 +333,12 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
         );
         result = Rect.fromPoints(topRight, result.bottomLeft);
         break;
-      case _MoveType.bottomRight:
-      case _MoveType.right:
-      case _MoveType.bottom:
-        if (moveType == _MoveType.bottom) {
+      case CropRectMoveType.bottomRight:
+      case CropRectMoveType.right:
+      case CropRectMoveType.bottom:
+        if (moveType == CropRectMoveType.bottom) {
           delta = Offset(0, delta.dy);
-        } else if (moveType == _MoveType.right) {
+        } else if (moveType == CropRectMoveType.right) {
           delta = Offset(delta.dx, 0);
         }
         Offset bottomRight = result!.bottomRight + delta;
@@ -348,7 +348,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
         );
         result = Rect.fromPoints(result.topLeft, bottomRight);
         break;
-      case _MoveType.bottomLeft:
+      case CropRectMoveType.bottomLeft:
         Offset bottomLeft = result!.bottomLeft + delta;
         bottomLeft = Offset(
           min(bottomLeft.dx, result.right - gWidth * 2),
@@ -405,7 +405,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   /// handle crop rect with aspectRatio
   Rect _handleAspectRatio(
     double gWidth,
-    _MoveType moveType,
+    CropRectMoveType moveType,
     Rect result,
     Rect? layerDestinationRect,
     Offset delta,
@@ -415,9 +415,9 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     if (aspectRatio != null) {
       final double minD = gWidth * 2;
       switch (moveType) {
-        case _MoveType.top:
-        case _MoveType.bottom:
-          final bool isTop = moveType == _MoveType.top;
+        case CropRectMoveType.top:
+        case CropRectMoveType.bottom:
+          final bool isTop = moveType == CropRectMoveType.top;
           result = _doAspectRatioV(
             minD,
             result,
@@ -426,9 +426,9 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             isTop: isTop,
           );
           break;
-        case _MoveType.left:
-        case _MoveType.right:
-          final bool isLeft = moveType == _MoveType.left;
+        case CropRectMoveType.left:
+        case CropRectMoveType.right:
+          final bool isLeft = moveType == CropRectMoveType.left;
           result = _doAspectRatioH(
             minD,
             result,
@@ -437,10 +437,10 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             isLeft: isLeft,
           );
           break;
-        case _MoveType.topLeft:
-        case _MoveType.topRight:
-        case _MoveType.bottomRight:
-        case _MoveType.bottomLeft:
+        case CropRectMoveType.topLeft:
+        case CropRectMoveType.topRight:
+        case CropRectMoveType.bottomRight:
+        case CropRectMoveType.bottomLeft:
           final double dx = delta.dx.abs();
           final double dy = delta.dy.abs();
           double width = result.width;
@@ -461,19 +461,19 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
           double top = result.top;
           double left = result.left;
           switch (moveType) {
-            case _MoveType.topLeft:
+            case CropRectMoveType.topLeft:
               top = result.bottom - height;
               left = result.right - width;
               break;
-            case _MoveType.topRight:
+            case CropRectMoveType.topRight:
               top = result.bottom - height;
               left = result.left;
               break;
-            case _MoveType.bottomRight:
+            case CropRectMoveType.bottomRight:
               top = result.top;
               left = result.left;
               break;
-            case _MoveType.bottomLeft:
+            case CropRectMoveType.bottomLeft:
               top = result.top;
               left = result.right - width;
               break;
@@ -550,7 +550,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
     return rect;
   }
 
-  void _moveEnd(_MoveType moveType) {
+  void _moveEnd(CropRectMoveType moveType) {
     if (_currentMoveType != null && moveType == _currentMoveType) {
       _currentMoveType = null;
       //if (widget.editorConfig.autoCenter)

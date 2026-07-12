@@ -215,16 +215,19 @@ void paintExtendedImage({
     // Furthermore, for the memory check below we just assume that all images
     // are decoded for the view with the highest device pixel ratio and use that
     // as an upper bound for the display size of the image.
-    final double maxDevicePixelRatio =
-        PaintingBinding.instance.platformDispatcher.views.fold(
-      0.0,
-      (double previousValue, ui.FlutterView view) =>
-          math.max(previousValue, view.devicePixelRatio),
-    );
+    final double maxDevicePixelRatio = PaintingBinding
+        .instance
+        .platformDispatcher
+        .views
+        .fold(
+          0.0,
+          (double previousValue, ui.FlutterView view) =>
+              math.max(previousValue, view.devicePixelRatio),
+        );
     final ImageSizeInfo sizeInfo = ImageSizeInfo(
       // Some ImageProvider implementations may not have given this.
-      source: debugImageLabel ??
-          '<Unknown Image(${image.width}×${image.height})>',
+      source:
+          debugImageLabel ?? '<Unknown Image(${image.width}×${image.height})>',
       imageSize: Size(image.width.toDouble(), image.height.toDouble()),
       displaySize: outputSize * maxDevicePixelRatio,
     );
@@ -238,7 +241,8 @@ void paintExtendedImage({
         final int outputHeight = sizeInfo.displaySize.height.toInt();
         FlutterError.reportError(
           FlutterErrorDetails(
-            exception: 'Image $debugImageLabel has a display size of '
+            exception:
+                'Image $debugImageLabel has a display size of '
                 '$outputWidth×$outputHeight but a decode size of '
                 '${image.width}×${image.height}, which uses an additional '
                 '${overheadInKilobytes}KB (assuming a device pixel ratio of '
@@ -255,10 +259,26 @@ void paintExtendedImage({
           destinationRect,
           Paint()
             ..colorFilter = const ColorFilter.matrix(<double>[
-              -1, 0, 0, 0, 255,
-              0, -1, 0, 0, 255,
-              0, 0, -1, 0, 255,
-              0, 0, 0, 1, 0,
+              -1,
+              0,
+              0,
+              0,
+              255,
+              0,
+              -1,
+              0,
+              0,
+              255,
+              0,
+              0,
+              -1,
+              0,
+              255,
+              0,
+              0,
+              0,
+              1,
+              0,
             ]),
         );
         // Flip the canvas vertically.
@@ -407,13 +427,14 @@ void paintExtendedImage({
         rect,
         destinationRect,
         repeat,
-      ))
+      )) {
         canvas.drawImageNine(
           image,
           _scaleRect(centerSlice, scale),
           _scaleRect(tileRect, scale),
           paint,
         );
+      }
     }
   }
 

@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class MemoryUsageChart extends StatefulWidget {
+  const MemoryUsageChart({super.key});
+
   @override
-  _MemoryUsageChartState createState() => _MemoryUsageChartState();
+  State<MemoryUsageChart> createState() => _MemoryUsageChartState();
 }
 
 class _MemoryUsageChartState extends State<MemoryUsageChart> {
@@ -61,45 +63,47 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
       ),
       titlesData: FlTitlesData(
         bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-          showTitles: true,
-          getTitlesWidget: (double value, _) {
-            final int millisecondsSinceEpoch = value.toInt();
-            final DateTime dateTime =
-                DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
+          sideTitles: SideTitles(
+            showTitles: true,
+            getTitlesWidget: (double value, _) {
+              final int millisecondsSinceEpoch = value.toInt();
+              final DateTime dateTime =
+                  DateTime.fromMillisecondsSinceEpoch(millisecondsSinceEpoch);
 
-            return Padding(
-              padding: const EdgeInsets.all(0.0),
-              child: Text(
-                DateFormat('HH:mm').format(dateTime),
-                style: const TextStyle(
-                  color: Color(0xff72719b),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+              return Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: Text(
+                  DateFormat('HH:mm').format(dateTime),
+                  style: const TextStyle(
+                    color: Color(0xff72719b),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
-              ),
-            );
-          },
-          interval: const Duration(minutes: 1).inMilliseconds.toDouble(),
-        )),
+              );
+            },
+            interval: const Duration(minutes: 1).inMilliseconds.toDouble(),
+          ),
+        ),
         leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-          showTitles: true,
-          interval: 100,
-          getTitlesWidget: (double value, _) {
-            return Padding(
-              padding: const EdgeInsets.all(0.0),
-              child: Text(
-                value.toInt().toString() + 'M',
-                style: const TextStyle(
-                  color: Color(0xff75729e),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+          sideTitles: SideTitles(
+            showTitles: true,
+            interval: 100,
+            getTitlesWidget: (double value, _) {
+              return Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: Text(
+                  '${value.toInt()}M',
+                  style: const TextStyle(
+                    color: Color(0xff75729e),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
-              ),
-            );
-          },
-        )),
+              );
+            },
+          ),
+        ),
       ),
       borderData: FlBorderData(
         show: true,
@@ -138,12 +142,24 @@ class _MemoryUsageChartState extends State<MemoryUsageChart> {
     final List<FlSpot> data2 = <FlSpot>[];
     final List<FlSpot> data3 = <FlSpot>[];
     for (final MyMemoryUsage item in VMHelper().mainHistoryMemoryInfo) {
-      data1.add(FlSpot(item.dataTime.millisecondsSinceEpoch.toDouble(),
-          item.toDouble(item.heapUsage)));
-      data2.add(FlSpot(item.dataTime.millisecondsSinceEpoch.toDouble(),
-          item.toDouble(item.heapCapacity)));
-      data3.add(FlSpot(item.dataTime.millisecondsSinceEpoch.toDouble(),
-          item.toDouble(item.externalUsage)));
+      data1.add(
+        FlSpot(
+          item.dataTime.millisecondsSinceEpoch.toDouble(),
+          item.toDouble(item.heapUsage),
+        ),
+      );
+      data2.add(
+        FlSpot(
+          item.dataTime.millisecondsSinceEpoch.toDouble(),
+          item.toDouble(item.heapCapacity),
+        ),
+      );
+      data3.add(
+        FlSpot(
+          item.dataTime.millisecondsSinceEpoch.toDouble(),
+          item.toDouble(item.externalUsage),
+        ),
+      );
 
       final double minValue =
           min(min(item.heapUsage, item.heapCapacity), item.externalUsage);

@@ -37,10 +37,9 @@ Future<bool> saveNetworkImageToPhoto(String url, {bool useCache = true}) async {
   }
   final String title = '${DateTime.now().millisecondsSinceEpoch}.jpg';
   final Uint8List? data = await getNetworkImageData(url, useCache: useCache);
-  final AssetEntity? imageEntity = await PhotoManager.editor.saveImage(
-    data!,
-    filename: title,
-    title: title,
-  );
-  return imageEntity != null;
+  if (data == null) {
+    return false;
+  }
+  await PhotoManager.editor.saveImage(data, filename: title, title: title);
+  return true;
 }

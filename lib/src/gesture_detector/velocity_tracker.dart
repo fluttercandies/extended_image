@@ -39,7 +39,7 @@ class ExtendedVelocityTracker extends _VelocityTracker {
 /// have been received.
 class _VelocityTracker extends VelocityTracker {
   /// Create a new velocity tracker for a pointer [kind].
-  _VelocityTracker.withKind(PointerDeviceKind kind) : super.withKind(kind);
+  _VelocityTracker.withKind(super.kind) : super.withKind();
 
   static const int _assumePointerMoveStoppedMilliseconds = 40;
   static const int _historySize = 20;

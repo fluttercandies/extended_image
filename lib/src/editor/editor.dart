@@ -22,7 +22,7 @@ part 'image_editor_controller.dart';
 ///
 
 class ExtendedImageEditor extends StatefulWidget {
-  ExtendedImageEditor({required this.extendedImageState, Key? key})
+  ExtendedImageEditor({required this.extendedImageState, super.key})
     : assert(
         extendedImageState.imageWidget.fit == BoxFit.contain,
         'Make sure the image is all painted to crop,the fit of image must be BoxFit.contain',
@@ -30,8 +30,7 @@ class ExtendedImageEditor extends StatefulWidget {
       assert(
         extendedImageState.imageWidget.image is ExtendedImageProvider,
         'Make sure the image provider is ExtendedImageProvider, we will get raw image data from it',
-      ),
-      super(key: key);
+      );
   final ExtendedImageState extendedImageState;
   @override
   ExtendedImageEditorState createState() => ExtendedImageEditorState();
@@ -255,7 +254,6 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       ),
     );
     result = Listener(
-      child: result,
       onPointerDown: (_) {
         _layerKey.currentState?.pointerDown(true);
       },
@@ -269,6 +267,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       //   pointerDown(false);
       // },
       behavior: _editorConfig!.hitTestBehavior,
+      child: result,
     );
     return result;
   }

@@ -26,7 +26,8 @@ class EditImageInfo {
 }
 
 Future<EditImageInfo> cropImageDataWithDartLibrary(
-    ImageEditorController imageEditorController) async {
+  ImageEditorController imageEditorController,
+) async {
   print('dart library start cropping');
 
   ///crop rect base on raw image
@@ -46,8 +47,10 @@ Future<EditImageInfo> cropImageDataWithDartLibrary(
   final Uint8List data = kIsWeb &&
           imageEditorController.state!.widget.extendedImageState.imageWidget
               .image is ExtendedNetworkImageProvider
-      ? await _loadNetwork(imageEditorController.state!.widget
-          .extendedImageState.imageWidget.image as ExtendedNetworkImageProvider)
+      ? await _loadNetwork(
+          imageEditorController.state!.widget.extendedImageState.imageWidget
+              .image as ExtendedNetworkImageProvider,
+        )
 
       ///toByteData is not work on web
       ///https://github.com/flutter/flutter/issues/44908
@@ -149,7 +152,8 @@ Future<EditImageInfo> cropImageDataWithDartLibrary(
 }
 
 Future<EditImageInfo> cropImageDataWithNativeLibrary(
-    ImageEditorController imageEditorController) async {
+  ImageEditorController imageEditorController,
+) async {
   print('native library start cropping');
 
   final EditActionDetails action = imageEditorController.editActionDetails!;
@@ -240,17 +244,20 @@ void _isolateEncodeImage(SendPort port) {
 /// it may be failed, due to Cross-domain
 Future<Uint8List> _loadNetwork(ExtendedNetworkImageProvider key) async {
   try {
-    final Response? response = await HttpClientHelper.get(Uri.parse(key.url),
-        headers: key.headers,
-        timeLimit: key.timeLimit,
-        timeRetry: key.timeRetry,
-        retries: key.retries,
-        cancelToken: key.cancelToken);
+    final Response? response = await HttpClientHelper.get(
+      Uri.parse(key.url),
+      headers: key.headers,
+      timeLimit: key.timeLimit,
+      timeRetry: key.timeRetry,
+      retries: key.retries,
+      cancelToken: key.cancelToken,
+    );
     return response!.bodyBytes;
   } on OperationCanceledError catch (_) {
     print('User cancel request ${key.url}.');
     return Future<Uint8List>.error(
-        StateError('User cancel request ${key.url}.'));
+      StateError('User cancel request ${key.url}.'),
+    );
   } catch (e) {
     return Future<Uint8List>.error(StateError('failed load ${key.url}. \n $e'));
   }

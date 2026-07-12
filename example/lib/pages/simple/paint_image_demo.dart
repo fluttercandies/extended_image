@@ -16,15 +16,17 @@ import 'package:flutter/material.dart';
   },
 )
 class PaintImageDemo extends StatefulWidget {
+  const PaintImageDemo({super.key});
+
   @override
-  _PaintImageDemoState createState() => _PaintImageDemoState();
+  State<PaintImageDemo> createState() => _PaintImageDemoState();
 }
 
 class _PaintImageDemoState extends State<PaintImageDemo> {
   PaintType? paintType;
   @override
   void initState() {
-    paintType = PaintType.ClipHeart;
+    paintType = PaintType.clipHeart;
     super.initState();
   }
 
@@ -47,7 +49,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                 child: const Text('ClipHeart'),
                 onPressed: () {
                   setState(() {
-                    paintType = PaintType.ClipHeart;
+                    paintType = PaintType.clipHeart;
                   });
                 },
               ),
@@ -58,7 +60,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                 child: const Text('PaintHeart'),
                 onPressed: () {
                   setState(() {
-                    paintType = PaintType.PaintHeart;
+                    paintType = PaintType.paintHeart;
                   });
                 },
               ),
@@ -74,7 +76,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                 cache: true,
                 beforePaintImage:
                     (Canvas canvas, Rect rect, ui.Image image, Paint paint) {
-                  if (paintType == PaintType.ClipHeart) {
+                  if (paintType == PaintType.clipHeart) {
                     if (!rect.isEmpty) {
                       canvas.save();
                       canvas.clipPath(clipheart(rect, canvas));
@@ -84,23 +86,23 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
                 },
                 afterPaintImage:
                     (Canvas canvas, Rect rect, ui.Image image, Paint paint) {
-                  if (paintType == PaintType.ClipHeart) {
+                  if (paintType == PaintType.clipHeart) {
                     if (!rect.isEmpty) {
                       canvas.restore();
                     }
-                  } else if (paintType == PaintType.PaintHeart) {
+                  } else if (paintType == PaintType.paintHeart) {
                     canvas.drawPath(
-                        clipheart(rect, canvas),
-                        Paint()
-                          ..color =
-                              const Color(0x55ea5504).withValues(alpha: 0.2)
-                          ..isAntiAlias = false
-                          ..filterQuality = FilterQuality.low);
+                      clipheart(rect, canvas),
+                      Paint()
+                        ..color = const Color(0x55ea5504).withValues(alpha: 0.2)
+                        ..isAntiAlias = false
+                        ..filterQuality = FilterQuality.low,
+                    );
                   }
                 },
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -165,4 +167,4 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
   }
 }
 
-enum PaintType { ClipHeart, PaintHeart }
+enum PaintType { clipHeart, paintHeart }

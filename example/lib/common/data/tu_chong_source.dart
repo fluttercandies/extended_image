@@ -209,8 +209,14 @@ class TuChongItem {
         if (item != null) {
           tryCatch(() {
             tags.add(asT<String>(item));
-            tagColors.add(Color.fromARGB(255, Random.secure().nextInt(255),
-                Random.secure().nextInt(255), Random.secure().nextInt(255)));
+            tagColors.add(
+              Color.fromARGB(
+                255,
+                Random.secure().nextInt(255),
+                Random.secure().nextInt(255),
+                Random.secure().nextInt(255),
+              ),
+            );
           });
         }
         if (tags.length == maxNum) {
@@ -255,7 +261,8 @@ class TuChongItem {
       titleImage: jsonRes['title_image'] == null
           ? null
           : TitleImage.fromJson(
-              asT<Map<String, dynamic>>(jsonRes['title_image'])!),
+              asT<Map<String, dynamic>>(jsonRes['title_image'])!,
+            ),
       type: asT<String>(jsonRes['type']),
       update: asT<bool>(jsonRes['update']),
       url: asT<String>(jsonRes['url']),
@@ -473,7 +480,8 @@ class Site {
         if (item != null) {
           tryCatch(() {
             verificationList.add(
-                VerificationList.fromJson(asT<Map<String, dynamic>>(item)!));
+              VerificationList.fromJson(asT<Map<String, dynamic>>(item)!),
+            );
           });
         }
       }

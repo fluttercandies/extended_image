@@ -1,7 +1,5 @@
-///
-///  photo_view_demo.dart
-///  create by zmtzawqlp on 2019/4/4
-///
+// photo_view_demo.dart
+// create by zmtzawqlp on 2019/4/4
 import 'dart:async';
 
 import 'package:example/common/data/tu_chong_repository.dart';
@@ -27,8 +25,10 @@ import 'package:pull_to_refresh_notification/pull_to_refresh_notification.dart';
   },
 )
 class PhotoViewDemo extends StatefulWidget {
+  const PhotoViewDemo({super.key});
+
   @override
-  _PhotoViewDemoState createState() => _PhotoViewDemoState();
+  State<PhotoViewDemo> createState() => _PhotoViewDemoState();
 }
 
 class _PhotoViewDemoState extends State<PhotoViewDemo> {
@@ -54,159 +54,171 @@ class _PhotoViewDemoState extends State<PhotoViewDemo> {
           Container(
             padding: const EdgeInsets.all(margin),
             child: const Text(
-                'click image to show photo view, support zoom/pan image. horizontal and vertical page view are supported.'),
+              'click image to show photo view, support zoom/pan image. horizontal and vertical page view are supported.',
+            ),
           ),
           Expanded(
             child: PullToRefreshNotification(
-                pullBackOnRefresh: false,
-                maxDragOffset: maxDragOffset,
-                armedDragUpCancel: false,
-                onRefresh: onRefresh,
-                child: LoadingMoreCustomScrollView(
-                  showGlowLeading: false,
-                  physics: const ClampingScrollPhysics(),
-                  slivers: <Widget>[
-                    SliverToBoxAdapter(
-                      child: PullToRefreshContainer(
-                          (PullToRefreshScrollNotificationInfo? info) {
-                        return PullToRefreshHeader(info, dateTimeNow);
-                      }),
-                    ),
-                    LoadingMoreSliverList<TuChongItem>(
-                      SliverListConfig<TuChongItem>(
-                        extendedListDelegate:
-                            const SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 600,
-                          crossAxisSpacing: 5,
-                          mainAxisSpacing: 5,
-                        ),
-                        itemBuilder: (BuildContext context, TuChongItem item,
-                            int index) {
-                          String? title = item.site!.name;
-                          if (title == null || title == '') {
-                            title = 'Image$index';
-                          }
-
-                          String content =
-                              item.content ?? (item.excerpt ?? title);
-                          content += _attachContent;
-
-                          return Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                padding: const EdgeInsets.all(margin),
-                                child: Row(
-                                  children: <Widget>[
-                                    ExtendedImage.network(
-                                      item.avatarUrl!,
-                                      width: 40.0,
-                                      height: 40.0,
-                                      shape: BoxShape.circle,
-                                      imageCacheName: 'CropImage',
-                                      clearMemoryCacheWhenDispose: true,
-                                      border: Border.all(
-                                          color: Colors.grey
-                                              .withValues(alpha: 0.4),
-                                          width: 1.0),
-                                      loadStateChanged:
-                                          (ExtendedImageState state) {
-                                        if (state.extendedImageLoadState ==
-                                            LoadState.completed) {
-                                          return null;
-                                        }
-                                        return ExtendedImage.asset(
-                                          'assets/avatar.jpg',
-                                          imageCacheName: 'CropImage',
-                                        );
-                                      },
-                                    ),
-                                    const SizedBox(
-                                      width: margin,
-                                    ),
-                                    Text(title,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 17,
-                                        )),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                child: Text(
-                                  content,
-                                  // onSpecialTextTap: (dynamic parameter) {
-                                  //   if (parameter.toString().startsWith('\$')) {
-                                  //     launchUrl(Uri.parse(
-                                  //         'https://github.com/fluttercandies'));
-                                  //   } else if (parameter
-                                  //       .toString()
-                                  //       .startsWith('@')) {
-                                  //     launchUrl(Uri.parse(
-                                  //         'mailto:zmtzawqlp@live.com'));
-                                  //   }
-                                  // },
-                                  // specialTextSpanBuilder:
-                                  //     MySpecialTextSpanBuilder(),
-                                  //overflow: ExtendedTextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontSize: 14, color: Colors.grey),
-                                  maxLines: 5,
-                                  // overflowWidget: TextOverflowWidget(
-                                  //   child: Row(
-                                  //     mainAxisSize: MainAxisSize.min,
-                                  //     children: <Widget>[
-                                  //       const Text('\u2026 '),
-                                  //       InkWell(
-                                  //         child: const Text('more'),
-                                  //         onTap: () {
-                                  //           launchUrl(Uri.parse(
-                                  //               'https://github.com/fluttercandies/extended_text'));
-                                  //         },
-                                  //       )
-                                  //     ],
-                                  //   ),
-                                  // ),
-                                  // selectionEnabled: true,
-                                  // selectionControls:
-                                  //     _myExtendedMaterialTextSelectionControls,
-                                ),
-                                padding: const EdgeInsets.only(
-                                    left: margin,
-                                    right: margin,
-                                    bottom: margin),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: margin),
-                                child: buildTagsWidget(item),
-                              ),
-                              PicGridView(
-                                tuChongItem: item,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: margin),
-                                child:
-                                    buildBottomWidget(item, showAvatar: false),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.symmetric(
-                                    vertical: margin),
-                                color: Colors.grey.withValues(alpha: 0.2),
-                                height: margin,
-                              )
-                            ],
-                          );
-                        },
-                        sourceList: listSourceRepository,
+              pullBackOnRefresh: false,
+              maxDragOffset: maxDragOffset,
+              armedDragUpCancel: false,
+              onRefresh: onRefresh,
+              child: LoadingMoreCustomScrollView(
+                showGlowLeading: false,
+                physics: const ClampingScrollPhysics(),
+                slivers: <Widget>[
+                  SliverToBoxAdapter(
+                    child: PullToRefreshContainer(
+                        (PullToRefreshScrollNotificationInfo? info) {
+                      return PullToRefreshHeader(info, dateTimeNow);
+                    }),
+                  ),
+                  LoadingMoreSliverList<TuChongItem>(
+                    SliverListConfig<TuChongItem>(
+                      extendedListDelegate:
+                          const SliverWaterfallFlowDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 600,
+                        crossAxisSpacing: 5,
+                        mainAxisSpacing: 5,
                       ),
-                    )
-                  ],
-                )),
-          )
+                      itemBuilder: (
+                        BuildContext context,
+                        TuChongItem item,
+                        int index,
+                      ) {
+                        String? title = item.site!.name;
+                        if (title == null || title == '') {
+                          title = 'Image$index';
+                        }
+
+                        String content =
+                            item.content ?? (item.excerpt ?? title);
+                        content += _attachContent;
+
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(margin),
+                              child: Row(
+                                children: <Widget>[
+                                  ExtendedImage.network(
+                                    item.avatarUrl!,
+                                    width: 40.0,
+                                    height: 40.0,
+                                    shape: BoxShape.circle,
+                                    imageCacheName: 'CropImage',
+                                    clearMemoryCacheWhenDispose: true,
+                                    border: Border.all(
+                                      color: Colors.grey.withValues(alpha: 0.4),
+                                      width: 1.0,
+                                    ),
+                                    loadStateChanged:
+                                        (ExtendedImageState state) {
+                                      if (state.extendedImageLoadState ==
+                                          LoadState.completed) {
+                                        return null;
+                                      }
+                                      return ExtendedImage.asset(
+                                        'assets/avatar.jpg',
+                                        imageCacheName: 'CropImage',
+                                      );
+                                    },
+                                  ),
+                                  const SizedBox(
+                                    width: margin,
+                                  ),
+                                  Text(
+                                    title,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 17,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                left: margin,
+                                right: margin,
+                                bottom: margin,
+                              ),
+                              child: Text(
+                                content,
+                                // onSpecialTextTap: (dynamic parameter) {
+                                //   if (parameter.toString().startsWith('\$')) {
+                                //     launchUrl(Uri.parse(
+                                //         'https://github.com/fluttercandies'));
+                                //   } else if (parameter
+                                //       .toString()
+                                //       .startsWith('@')) {
+                                //     launchUrl(Uri.parse(
+                                //         'mailto:zmtzawqlp@live.com'));
+                                //   }
+                                // },
+                                // specialTextSpanBuilder:
+                                //     MySpecialTextSpanBuilder(),
+                                //overflow: ExtendedTextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey,
+                                ),
+                                maxLines: 5,
+                                // overflowWidget: TextOverflowWidget(
+                                //   child: Row(
+                                //     mainAxisSize: MainAxisSize.min,
+                                //     children: <Widget>[
+                                //       const Text('\u2026 '),
+                                //       InkWell(
+                                //         child: const Text('more'),
+                                //         onTap: () {
+                                //           launchUrl(Uri.parse(
+                                //               'https://github.com/fluttercandies/extended_text'));
+                                //         },
+                                //       )
+                                //     ],
+                                //   ),
+                                // ),
+                                // selectionEnabled: true,
+                                // selectionControls:
+                                //     _myExtendedMaterialTextSelectionControls,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: margin,
+                              ),
+                              child: buildTagsWidget(item),
+                            ),
+                            PicGridView(
+                              tuChongItem: item,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: margin,
+                              ),
+                              child: buildBottomWidget(item, showAvatar: false),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.symmetric(
+                                vertical: margin,
+                              ),
+                              color: Colors.grey.withValues(alpha: 0.2),
+                              height: margin,
+                            ),
+                          ],
+                        );
+                      },
+                      sourceList: listSourceRepository,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
