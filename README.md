@@ -1,8 +1,13 @@
 # extended_image
 
-[![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image) [![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers) [![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network) [![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE) [![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues) <a href="https://qm.qq.com/q/ZyJbSVjfSU">![FlutterCandies QQ 群](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ffluttercandies%2F.github%2Frefs%2Fheads%2Fmain%2Fdata.yml&query=%24.qq_group_number&label=QQ%E7%BE%A4&logo=qq&color=1DACE8)
+[![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image)
+[![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network)
+[![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues)
+[![FlutterCandies QQ 群](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ffluttercandies%2F.github%2Frefs%2Fheads%2Fmain%2Fdata.yml&query=%24.qq_group_number&label=QQ%E7%BE%A4&logo=qq&color=1DACE8)](https://qm.qq.com/q/ZyJbSVjfSU)
 
-Language: English| [中文简体](README-ZH.md)
+Language: English | [中文简体](README-ZH.md)
 
 A powerful official extension library of images, which supports placeholder(loading)/ failed state, cache network, zoom pan image, photo view, slide-out page, editor (crop, rotate, flip), paint custom etc.
 
@@ -18,7 +23,6 @@ ExtendedImage is an third-party library that extends the functionality of Flutte
 | Scaling mode                                           | Supported                                                          | Not supported                           |
 | Editing mode                                           | Supported                                                          | Not supported                           |
 | Drag-to-dismiss effect for images in a page transition | Supported                                                          | Not supported                           |
-
 
 ## Table of contents
 
@@ -66,7 +70,7 @@ ExtendedImage is an third-party library that extends the functionality of Flutte
 
 ## Import
 
-*  null-safety
+- null-safety
 
 ``` yaml
 environment:
@@ -76,7 +80,7 @@ dependencies:
   extended_image: ^4.0.0
 ```
 
-*  non-null-safety
+- non-null-safety
 
 1.22.6 to 2.0, Flutter Api has breaking change，please use non-null-safety if you under 1.22.6.
 
@@ -418,7 +422,6 @@ EditorConfig
 | hitTestBehavior        | How to behave during hit tests                                                   | HitTestBehavior.deferToChild                                 |
 | controller             | providing functions like rotating, flipping, undoing, redoing and reset actions. | null                                                         |
 
-
 ### crop aspect ratio
 
 it's a double value, so it's easy for you to define by yourself.
@@ -493,7 +496,7 @@ class EditorCropLayerPainter {
 
 ### flip, rotate, cropAspectRatio, undo ,redo , reset
 
-#### `ImageEditorController` 
+#### `ImageEditorController`
 
 ```dart
 final ImageEditorController _editorController = ImageEditorController();
@@ -509,6 +512,7 @@ final ImageEditorController _editorController = ImageEditorController();
       );
     },
 ```
+
 #### flip
 
 ```dart
@@ -520,9 +524,7 @@ final ImageEditorController _editorController = ImageEditorController();
   })
 ```
 
-
-
- #### rotate
+#### rotate
 
 ```dart
    _editorController.rotate();
@@ -535,17 +537,13 @@ final ImageEditorController _editorController = ImageEditorController();
   })
 ```
 
-
-
- #### cropAspectRatio
+#### cropAspectRatio
 
 ```dart
    _editorController.updateCropAspectRatio(CropAspectRatios.ratio4_3);
 ```
 
-
-
- #### undo
+#### undo
 
 ```dart
   bool canUndo = _editorController.canUndo;
@@ -553,7 +551,7 @@ final ImageEditorController _editorController = ImageEditorController();
 
 ```
 
- #### redo
+#### redo
 
 ```dart
   bool canRedo = _editorController.canRedo;
@@ -565,7 +563,6 @@ final ImageEditorController _editorController = ImageEditorController();
 ```dart
    _editorController.reset();
 ```
-
 
 #### history
 
@@ -713,10 +710,10 @@ if you have cache the gesture, remember call clearGestureDetailsCache() method a
 
 ExtendedImageGesturePageView
 
-| parameter    | description              | default |
-| ------------ | ------------------------ | ------- |
-| canMovePage | whether should move page | true    |
-| allowImplicitScrolling | whether to respond to implicit accessibility scrolling requests (keeps neighboring pages alive) | false |
+| parameter              | description                                                                                     | default |
+| ---------------------- | ----------------------------------------------------------------------------------------------- | ------- |
+| canMovePage            | whether should move page                                                                        | true    |
+| allowImplicitScrolling | whether to respond to implicit accessibility scrolling requests (keeps neighboring pages alive) | false   |
 
 GestureConfig
 
@@ -1033,7 +1030,7 @@ and [push to refresh header which is used in crop image demo](https://github.com
 
 By setting layoutInsets, you can ensure the image is positioned outside of obstructing elements such as
 the phone notch or home indicator if displayed in full screen. This will still allow the image margin to
-show underneath the notch if zoomed in. 
+show underneath the notch if zoomed in.
 
 ExtendedImage
 
@@ -1053,7 +1050,7 @@ ExtendedImage
 
 You can reduce memory usage with following settings now.
 
-* ExtendedResizeImage
+- ExtendedResizeImage
 
 | parameter                                                | description                                                                                                                                                                   | default  |
 | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
@@ -1083,11 +1080,11 @@ You can reduce memory usage with following settings now.
     )
 ```
 
-* clearMemoryCacheWhenDispose
+- clearMemoryCacheWhenDispose
 
 | parameter                   | description                                                                                                                                                                                                                                 | default |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| clearMemoryCacheWhenDispose | It's not good enough after Flutter 2.0, it seems that we can't release memory usage if this image is not completed(https://github.com/fluttercandies/extended_image/issues/317). It will release memory usage only for completed image now. | false   |
+| clearMemoryCacheWhenDispose | It's not good enough after Flutter 2.0, it seems that we can't release memory usage if this image is not completed(<https://github.com/fluttercandies/extended_image/issues/317>). It will release memory usage only for completed image now. | false   |
 
 ```dart
    ExtendedImage.network(
@@ -1096,7 +1093,7 @@ You can reduce memory usage with following settings now.
    )
 ```
 
-* imageCacheName
+- imageCacheName
 
 | parameter      | description                                                                                                                                               | default |
 | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |

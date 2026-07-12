@@ -1,3 +1,9 @@
+<!-- Copyright 2018 The FlutterCandies author. All rights reserved.
+Use of this source code is governed by an Apache license
+that can be found in the LICENSE file. -->
+
+# CHANGELOG
+
 ## 10.0.1
 
 * Fix issue that Scale the image to align with the crop rect only when scaleDelta is small.(#738)
@@ -6,11 +12,11 @@
 ## 10.0.0
 
 * Add WebHtmlElementStrategy for ExtendedNetworkImageProvider on Web
-* Migrate to 3.29.0 
-  
+* Migrate to 3.29.0
+
 ## 9.1.0
 
-* Removed the `enableMemoryCache` variable in `ExtendedImage`,please Use `clearMemoryCacheWhenDispose` instead for managing memory cache behavior. 
+* Removed the `enableMemoryCache` variable in `ExtendedImage`,please Use `clearMemoryCacheWhenDispose` instead for managing memory cache behavior.
 * Scale the image to align with the crop rect and make crop rect as bigger as possible when rotate Image on Editor mode.(#713)
 
 ## 9.0.9
@@ -68,14 +74,13 @@
   1. Fix issue about free angle rotation. (#702, #627, #78, #441)
   2. Fix issue about control whether the cropping box also rotate follows the rotation. (#691, #277)
   3. Fix issue about flip animation. (#397)
-  4. Fix issue about crop rect gets invalid randomly on zooming in and out. (#548) 
+  4. Fix issue about crop rect gets invalid randomly on zooming in and out. (#548)
   5. Fix issue about undo and redo. (#553)
 
 * Breaking change:
   1. EditorCropLayerPainter.paintMask method the [Size] argument to [Rect].
   2. Remove flipX support.
   3. Change the cropping process, now they are rotate, flipY and getCropRect.
-
 
 ## 8.3.1
 
@@ -94,7 +99,7 @@
 
 ## 8.2.3
 
-* fix _DragGestureRecognizer build error after https://github.com/flutter/flutter/pull/151627
+* fix _DragGestureRecognizer build error after <https://github.com/flutter/flutter/pull/151627>
 
 ## 8.2.2
 
@@ -106,7 +111,7 @@
 
 ## 8.2.0
 
-* Migrate to 3.16.0 
+* Migrate to 3.16.0
 
 ## 8.1.1
 
@@ -114,10 +119,9 @@
 
 ## 8.1.0
 
-* Migrate to 3.13.0 
-* Breaking change: remove preloadPagesCount of ExtendedImageGesturePageView. The cacheExtent of Viewport should be 0. 
+* Migrate to 3.13.0
+* Breaking change: remove preloadPagesCount of ExtendedImageGesturePageView. The cacheExtent of Viewport should be 0.
 * Add demo to instead of preloadPagesCount of ExtendedImageGesturePageView
-
 
 ## 8.0.2
 
@@ -130,8 +134,8 @@
 ## 8.0.0
 
 * Migrate to Flutter 3.10.0 and Dart 3.0.0 (#557,#563,#570,#572,#573)
-* Cherry Pick https://github.com/flutter/flutter/pull/110131
-* Cherry Pick https://github.com/flutter/flutter/pull/119495
+* Cherry Pick <https://github.com/flutter/flutter/pull/110131>
+* Cherry Pick <https://github.com/flutter/flutter/pull/119495>
 
 ## 7.0.2
 
@@ -147,7 +151,7 @@
 
 ## 6.4.1
 
-* latest code on Flutter 3.3.0 
+* latest code on Flutter 3.3.0
 
 ## 6.4.0
 
@@ -176,7 +180,7 @@
 
 ## 6.2.2
 
-* latest code on Flutter 3.0.5 
+* latest code on Flutter 3.0.5
 
 ## 6.2.1
 
@@ -196,8 +200,7 @@
 ## 6.0.3
 
 * Improve:
-  add [EditorConfig.initialCropAspectRatio] to support to set initial CropAspectRatio(#462 It's good for that you can set initial CropAspectRatio at first time and set CropAspectRatio to custom, so that the users can change CropAspectRatio as they want). 
-
+  add [EditorConfig.initialCropAspectRatio] to support to set initial CropAspectRatio(#462 It's good for that you can set initial CropAspectRatio at first time and set CropAspectRatio to custom, so that the users can change CropAspectRatio as they want).
 
 ## 6.0.2+1
 
@@ -233,6 +236,7 @@
 ## 5.1.1
 
 * Bumping flutter sdk minimum version to 2.5.0
+
 ## 5.1.0
 
 * Improve:
@@ -362,10 +366,9 @@
 
 * Improve:
 
-  1. merge from Defer image decoding when scrolling fast(https://github.com/flutter/flutter/pull/49389).
+  1. merge from Defer image decoding when scrolling fast(<https://github.com/flutter/flutter/pull/49389>).
 
   2. flutter sdk minimum version limit to 1.17.0.
-
 
 ## 0.9.0
 
@@ -569,6 +572,7 @@
   1. import extended_image_library for network cache
 
 ## 0.3.1
+
 * Issues:
   1. fix issue that AnimationController.stop() called after AnimationController.dispose().
 * Improve:
@@ -653,5 +657,6 @@
   1. public imageProvider for ExtendedImageState
 
 ## 0.1.3
+
 * First Release:
   1. Release ExtendedImage.

@@ -1,6 +1,11 @@
 # extended_image
 
-[![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image) [![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers) [![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network) [![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE) [![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues) <a href="https://qm.qq.com/q/ZyJbSVjfSU">![FlutterCandies QQ 群](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ffluttercandies%2F.github%2Frefs%2Fheads%2Fmain%2Fdata.yml&query=%24.qq_group_number&label=QQ%E7%BE%A4&logo=qq&color=1DACE8)
+[![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image)
+[![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network)
+[![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues)
+[![FlutterCandies QQ 群](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Ffluttercandies%2F.github%2Frefs%2Fheads%2Fmain%2Fdata.yml&query=%24.qq_group_number&label=QQ%E7%BE%A4&logo=qq&color=1DACE8)](https://qm.qq.com/q/ZyJbSVjfSU)
 
 文档语言: [English](README.md) | 中文简体
 
@@ -25,8 +30,6 @@ ExtendedImage 是官方 Image 的扩展三方库，主要扩展功能如下:
 | 缩放模式                                       | 支持                                                                           | 不支持                      |
 | 编辑模式                                       | 支持                                                                           | 不支持                      |
 | 拖动图片退出页面效果                           | 支持                                                                           | 不支持                      |
-
-
 
 ## 目录
 
@@ -71,10 +74,9 @@ ExtendedImage 是官方 Image 的扩展三方库，主要扩展功能如下:
   - [内存使用](#内存使用)
   - [其他 APIs](#其他-apis)
 
-
 ## 导入
 
-*  空安全
+* 空安全
 
 ``` yaml
 environment:
@@ -84,7 +86,7 @@ dependencies:
   extended_image: ^4.0.0
 ```
 
-*  非空安全
+* 非空安全
 
 1.22.6 到 2.0, Flutter Api 有 breaking change，所以 1.22.6 以下的，请使用非空安全版本
 
@@ -159,13 +161,13 @@ loadStateChanged 不仅仅只在网络图片中可以使用, 如果你的图片�
 
 注意:
 
-- 如果你不想重写某个状态，那么请返回 null
+* 如果你不想重写某个状态，那么请返回 null
 
-- 如果你想重写完成图片的 size 或者 sourceRect, 你可以通过使用 ExtendedRawImage 来完成
+* 如果你想重写完成图片的 size 或者 sourceRect, 你可以通过使用 ExtendedRawImage 来完成
 
-- 如果你想增加一些新效果 (比如动画), 你可以重写并且使用 ExtendedImageState.completedWidget
+* 如果你想增加一些新效果 (比如动画), 你可以重写并且使用 ExtendedImageState.completedWidget
 
-- ExtendedImageState.completedWidget 包含手势或者裁剪, 这样你不会丢失它们
+* ExtendedImageState.completedWidget 包含手势或者裁剪, 这样你不会丢失它们
 
 ```dart
 /// custom load state widget if you want
@@ -297,7 +299,6 @@ ExtendedImage
 | onDoubleTap              | 支持手势的时候，双击回调                                              | -    |
 | extendedImageGestureKey  | 你可以通过这个key来手动控制缩放和平移                                 | -    |
 
-
 GestureConfig
 
 | 参数              | 描述                                                                                                         | 默认值                       |
@@ -425,7 +426,6 @@ EditorConfig
 | hitTestBehavior        | 设置hittest的行为                                                                  | HitTestBehavior.deferToChild                                 |
 | controller             | 提供旋转,翻转,撤销,重做,重置, 重新设置裁剪比例等操作                               | null                                                         |
 
-
 ### 裁剪框的宽高比
 
 这是一个 double 类型，你可以自定义裁剪框的宽高比。
@@ -513,9 +513,7 @@ class EditorCropLayerPainter {
   })
 ```
 
-
-
- #### 旋转
+#### 旋转
 
 ```dart
    _editorController.rotate();
@@ -528,17 +526,13 @@ class EditorCropLayerPainter {
   })
 ```
 
-
-
- #### 重新设置裁剪比例
+#### 重新设置裁剪比例
 
 ```dart
    _editorController.updateCropAspectRatio(CropAspectRatios.ratio4_3);
 ```
 
-
-
- #### 撤消
+#### 撤消
 
 ```dart
   bool canUndo = _editorController.canUndo;
@@ -546,7 +540,7 @@ class EditorCropLayerPainter {
 
 ```
 
- #### 重做
+#### 重做
 
 ```dart
   bool canRedo = _editorController.canRedo;
@@ -578,14 +572,14 @@ class EditorCropLayerPainter {
 
 #### 使用 dart 库(稳定)
 
-- 添加 [Image](https://github.com/brendan-duncan/image) 库到 pubspec.yaml, 它是用来裁剪/旋转/翻转图片数据的
+* 添加 [Image](https://github.com/brendan-duncan/image) 库到 pubspec.yaml, 它是用来裁剪/旋转/翻转图片数据的
 
 ```yaml
 dependencies:
   image: any
 ```
 
-- 从 ExtendedImageEditorState 中获取裁剪区域以及图片数据
+* 从 ExtendedImageEditorState 中获取裁剪区域以及图片数据
 
 ```dart
   ///crop rect base on raw image
@@ -594,7 +588,7 @@ dependencies:
   var data = state.rawImageData;
 ```
 
-- 将 flutter 的图片数据转换为 image 库的数据
+* 将 flutter 的图片数据转换为 image 库的数据
 
 ```dart
   /// it costs much time and blocks ui.
@@ -607,7 +601,7 @@ dependencies:
   Image src = await lb.run<Image, List<int>>(decodeImage, data);
 ```
 
-- 翻转，旋转，裁剪数据
+* 翻转，旋转，裁剪数据
 
 ```dart
   //相机拍照的图片带有旋转，处理之前需要去掉
@@ -631,7 +625,7 @@ dependencies:
   }
 ```
 
-- 将数据转为为图片的元数据
+* 将数据转为为图片的元数据
 
 获取到的将是图片的元数据，你可以使用它来保存或者其他的一些用途
 
@@ -649,14 +643,14 @@ dependencies:
 
 #### 使用原生库(快速)
 
-- 添加 [ImageEditor](https://github.com/fluttercandies/flutter_image_editor) 库到 pubspec.yaml, 它是用来裁剪/旋转/翻转图片数据的。
+* 添加 [ImageEditor](https://github.com/fluttercandies/flutter_image_editor) 库到 pubspec.yaml, 它是用来裁剪/旋转/翻转图片数据的。
 
 ```yaml
 dependencies:
   image_editor: any
 ```
 
-- 从 ExtendedImageEditorState 中获取裁剪区域以及图片数据
+* 从 ExtendedImageEditorState 中获取裁剪区域以及图片数据
 
 ```dart
   ///crop rect base on raw image
@@ -665,7 +659,7 @@ dependencies:
   final img = state.rawImageData;
 ```
 
-- 准备裁剪选项
+* 准备裁剪选项
 
 ```dart
   if (action.hasRotateDegrees) {
@@ -682,7 +676,7 @@ dependencies:
   }
 ```
 
-- 使用 editImage 方法进行裁剪
+* 使用 editImage 方法进行裁剪
 
 获取到的将是图片的元数据，你可以使用它来保存或者其他的一些用途
 
@@ -890,7 +884,7 @@ ExtendedImage
 | 参数         | 描述                                               | 默认 |
 | ------------ | -------------------------------------------------- | ---- |
 | border       | 跟官方的含义一样，你可以通过它设置边框             | -    |
-| borderRadius | 跟官方的含义一样，你可以通过它设置圆角             |
+| borderRadius | 跟官方的含义一样，你可以通过它设置圆角             | -    |
 | shape        | 跟官方的含义一样，你可以通过它设置裁剪（矩形和圆） | -    |
 
 ```dart
@@ -1081,9 +1075,7 @@ ExtendedImage
 
 | parameter                   | description                                                                                                                                                    | default |
 | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
-| clearMemoryCacheWhenDispose | 在Flutter 2.0之后也许不会起作用, 因为没法在图片没有完成之前释放掉(https://github.com/fluttercandies/extended_image/issues/317).  现在只会释放已完成的图片资源. | false   |
-
-
+| clearMemoryCacheWhenDispose | 在Flutter 2.0之后也许不会起作用, 因为没法在图片没有完成之前释放掉(<https://github.com/fluttercandies/extended_image/issues/317>).  现在只会释放已完成的图片资源. | false   |
 
 ```dart
    ExtendedImage.network(
