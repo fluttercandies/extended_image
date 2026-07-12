@@ -12,6 +12,7 @@ analyzer:
     avoid_void_async: error
     camel_case_types: error
     constant_identifier_names: error
+    deprecated_member_use: ignore
     deprecated_member_use_from_same_package: ignore
     non_constant_identifier_names: error
     prefer_single_quotes: warning
