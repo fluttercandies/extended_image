@@ -4,6 +4,11 @@ that can be found in the LICENSE file. -->
 
 # CHANGELOG
 
+## 10.1.0
+
+* Fix `debugInvertOversizedImages` having no effect in `ExtendedImage`, and align debug image diagnostics/events with Flutter's image painting behavior. (#764)
+* Expose `allowImplicitScrolling` in `ExtendedImageGesturePageView` for implicit accessibility scrolling requests. (#765)
+
 ## 10.0.1
 
 * Fix issue that Scale the image to align with the crop rect only when scaleDelta is small.(#738)
