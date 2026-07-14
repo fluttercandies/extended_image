@@ -343,8 +343,56 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
   }
 
   void handleScaleUpdate(ScaleUpdateDetails details) {
+    final bool isSinglePointerPan =
+        details.pointerCount == 1 && details.scale == 1;
+
+    // Let the page view consume a drag along its axis before slide-out page.
+    // Otherwise the scale recognizer can win the gesture arena, slide-out can
+    // be rejected by its direction policy, and neither side handles the drag.
+    if (_pageViewState != null &&
+        !(extendedImageSlidePageState?.isSliding ?? false)) {
+      final ExtendedImageGesturePageViewState pageViewState = _pageViewState!;
+
+      final Axis axis = pageViewState.widget.scrollDirection;
+      final Offset focalPointDelta = details.focalPointDelta;
+      final double pageAxisDelta =
+          axis == Axis.horizontal ? focalPointDelta.dx : focalPointDelta.dy;
+      final double crossAxisDelta =
+          axis == Axis.horizontal ? focalPointDelta.dy : focalPointDelta.dx;
+      final bool followsPageAxis = pageAxisDelta != 0 &&
+          pageAxisDelta.abs().greaterThan(crossAxisDelta.abs());
+      final bool isAtInitialScale =
+          (_gestureDetails!.totalScale ?? 1).lessThanOrEqualTo(1);
+      final bool movePage = _pageViewState!.isDraging ||
+          (isSinglePointerPan &&
+              (isAtInitialScale
+                  ? followsPageAxis
+                  : _gestureDetails!.movePage(focalPointDelta, axis)));
+
+      if (movePage) {
+        if (!pageViewState.isDraging) {
+          pageViewState
+              .onDragDown(DragDownDetails(globalPosition: details.focalPoint));
+          pageViewState.onDragStart(
+              DragStartDetails(globalPosition: details.focalPoint));
+          //assert(!pageViewState.isDraging);
+        }
+        Offset delta = details.focalPointDelta;
+        delta =
+            axis == Axis.horizontal ? Offset(delta.dx, 0) : Offset(0, delta.dy);
+
+        pageViewState.onDragUpdate(DragUpdateDetails(
+          globalPosition: details.focalPoint,
+          delta: delta,
+          primaryDelta: axis == Axis.horizontal ? delta.dx : delta.dy,
+        ));
+
+        return;
+      }
+    }
+
     if (extendedImageSlidePageState != null &&
-        details.scale == 1.0 &&
+        isSinglePointerPan &&
         (_gestureDetails!.totalScale ?? 1) <= 1 &&
         _gestureDetails!.userOffset &&
         _gestureDetails!.actionType == ActionType.pan) {
@@ -392,42 +440,6 @@ class ExtendedImageGestureState extends State<ExtendedImageGesture>
       return;
     }
 
-    // totalScale > 1 and page view is starting to move
-    if (_pageViewState != null) {
-      final ExtendedImageGesturePageViewState pageViewState = _pageViewState!;
-
-      final Axis axis = pageViewState.widget.scrollDirection;
-      final bool movePage =
-          _pageViewState!.isDraging ||
-          (details.pointerCount == 1 &&
-              details.scale == 1 &&
-              _gestureDetails!.movePage(details.focalPointDelta, axis));
-
-      if (movePage) {
-        if (!pageViewState.isDraging) {
-          pageViewState.onDragDown(
-            DragDownDetails(globalPosition: details.focalPoint),
-          );
-          pageViewState.onDragStart(
-            DragStartDetails(globalPosition: details.focalPoint),
-          );
-          //assert(!pageViewState.isDraging);
-        }
-        Offset delta = details.focalPointDelta;
-        delta =
-            axis == Axis.horizontal ? Offset(delta.dx, 0) : Offset(0, delta.dy);
-
-        pageViewState.onDragUpdate(
-          DragUpdateDetails(
-            globalPosition: details.focalPoint,
-            delta: delta,
-            primaryDelta: axis == Axis.horizontal ? delta.dx : delta.dy,
-          ),
-        );
-
-        return;
-      }
-    }
     final double? scale =
         widget.canScaleImage(_gestureDetails)
             ? clampScale(
